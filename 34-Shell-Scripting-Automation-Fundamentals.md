@@ -706,3 +706,4 @@ Failure
 - Loops automate repetitive tasks.
 - Functions promote code reuse.
 - Error handling improves reliability.
+- Shell scripting is one of the foundational skills for DevOps Engineers.
