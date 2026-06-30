@@ -749,4 +749,4 @@ HashiCorp Configuration Language (HCL) is the language used by Terraform to defi
 - HCL is Terraform's configuration language.
 - Terraform workflow consists of init, plan, apply, and destroy.
 - State management is one of Terraform's biggest advantages.
-- Terraform is one of the most important DevOps tools in modern cloud environments.
+- Terraform is one of the most important DevOps tools in modern cloud environments......
