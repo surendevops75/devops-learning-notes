@@ -1,125 +1,267 @@
-# AWS VPC Networking Fundamentals
+# Terraform Project - Networking Fundamentals
 
-## Introduction
+## Why Are We Learning Networking?
 
-Before deploying applications in AWS, we need a network where resources can run securely.
+Before creating infrastructure using Terraform, we must understand networking concepts.
 
-AWS provides:
-
-```text
-VPC (Virtual Private Cloud)
-```
-
-A VPC is an isolated network inside AWS where we can deploy:
-
-```text
-EC2 Instances
-
-RDS Databases
-
-Load Balancers
-
-EKS Clusters
-
-NAT Gateways
-```
-
----
-
-# What is a VPC?
-
-VPC stands for:
-
-```text
-Virtual Private Cloud
-```
-
-Think of it as your own private data center inside AWS.
-
-AWS manages:
-
-```text
-Physical Infrastructure
-```
-
-You manage:
-
-```text
-Network Design
-
-Security
-
-Routing
-
-IP Addressing
-```
-
----
-
-# Real World Analogy
-
-Imagine an address:
-
-```text
-PINCODE-STREET-HOUSE-FLOOR-FLAT
-
-534673-33-25-03-302
-```
-
-Similarly in AWS:
+In the Roboshop project, we are going to create:
 
 ```text
 VPC
 
-Subnet
+Subnets
 
-Server
+Route Tables
+
+Internet Gateway
+
+NAT Gateway
+
+Security Groups
+
+EC2 Instances
+
+Load Balancers
+```
+
+All of these depend on networking fundamentals.
+
+---
+
+# Real Project Context
+
+Suppose we are building Roboshop.
+
+Services:
+
+```text
+Frontend
+
+Catalogue
+
+User
+
+Cart
+
+Shipping
+
+Payment
+
+MongoDB
+
+Redis
+
+MySQL
+
+RabbitMQ
+```
+
+Questions:
+
+```text
+How do services communicate?
+
+How do users access the application?
+
+How do private servers download packages?
+
+How do databases remain secure?
+```
+
+To answer these questions, we need networking knowledge.
+
+---
+
+# Domain Registration and DNS
+
+Suppose we buy a domain from:
+
+```text
+Hostinger
+```
+
+Example:
+
+```text
+daws86s.fun
+```
+
+But we want DNS management in:
+
+```text
+AWS Route53
 ```
 
 ---
 
-# Village Analogy
+# Steps
+
+## Buy Domain
 
 ```text
-VPC          → Village
-
-Subnet       → Street
-
-Route Table  → Roads
-
-Internet Gateway → Modem
-
-EC2 Instance → House
+Hostinger
 ```
 
 ---
 
-# Why Do We Need VPC?
+## Create Hosted Zone
 
-Benefits:
+In:
 
 ```text
-Network Isolation
+AWS Route53
+```
 
-Security
+AWS generates:
 
-Traffic Control
+```text
+NS Records
+```
 
-Custom IP Addressing
+Example:
 
+```text
+ns-100.awsdns.com
+
+ns-200.awsdns.net
+
+ns-300.awsdns.org
+
+ns-400.awsdns.co.uk
+```
+
+---
+
+## Update NS Records
+
+Login to:
+
+```text
+Hostinger
+```
+
+Replace existing NS records with Route53 NS records.
+
+---
+
+## Result
+
+Route53 becomes:
+
+```text
+Authoritative DNS Server
+```
+
+for the domain.
+
+---
+
+# DNS Resolution Flow
+
+When a user opens:
+
+```text
+www.daws86s.fun
+```
+
+DNS resolution happens as follows:
+
+```text
+Browser Cache
+        ↓
+Operating System Cache
+        ↓
+ISP DNS Resolver
+        ↓
+Root DNS Servers
+        ↓
+TLD Servers (.com/.fun/.org)
+        ↓
+Authoritative DNS Server
+        ↓
+IP Address
+```
+
+---
+
+# High Availability (HA)
+
+Goal:
+
+```text
+Application Should Continue Working
+```
+
+even if some infrastructure fails.
+
+---
+
+## Example
+
+Region:
+
+```text
+us-east-1
+```
+
+Availability Zones:
+
+```text
+us-east-1a
+
+us-east-1b
+```
+
+Deploying resources in multiple AZs provides:
+
+```text
 High Availability
 ```
 
 ---
 
+# Disaster Recovery (DR)
+
+Goal:
+
+```text
+Recover From Region Failure
+```
+
+---
+
+Example
+
+Primary:
+
+```text
+us-east-1
+```
+
+Secondary:
+
+```text
+us-west-2
+```
+
+If an entire region fails:
+
+```text
+Traffic Can Be Shifted
+```
+
+to another region.
+
+---
+
 # High Availability vs Disaster Recovery
 
-## High Availability (HA)
+## High Availability
 
 ```text
 Same Region
 
-Multiple Availability Zones
+Multiple AZs
 ```
 
 Example:
@@ -130,15 +272,9 @@ us-east-1a
 us-east-1b
 ```
 
-If one AZ fails:
-
-```text
-Application Continues Running
-```
-
 ---
 
-## Disaster Recovery (DR)
+## Disaster Recovery
 
 ```text
 Multiple Regions
@@ -152,17 +288,13 @@ us-east-1
 us-west-2
 ```
 
-If an entire region fails:
-
-```text
-Traffic Can Be Shifted
-```
-
 ---
 
 # Multi Cloud
 
-Instead of one cloud provider:
+Using multiple cloud providers.
+
+Example:
 
 ```text
 AWS
@@ -184,73 +316,17 @@ Business Continuity
 
 ---
 
-# DNS Resolution Flow
+# IP Address
 
-When a user opens:
-
-```text
-www.example.com
-```
-
-Resolution happens in this order:
-
-```text
-Browser Cache
-        ↓
-OS Cache
-        ↓
-ISP DNS Resolver
-        ↓
-Root Servers
-        ↓
-TLD Servers
-        ↓
-Authoritative Name Servers
-        ↓
-IP Address
-```
-
----
-
-# Domain Delegation Example
-
-Buy Domain:
-
-```text
-Hostinger
-```
-
-Manage DNS:
-
-```text
-Route53
-```
-
-Steps:
-
-```text
-Buy Domain
-
-Create Hosted Zone
-
-Get Route53 NS Records
-
-Update NS Records In Hostinger
-
-Route53 Becomes DNS Authority
-```
-
----
-
-# IP Address Basics
+Every device connected to a network requires an IP address.
 
 Example:
 
 ```text
-192.168.0.1
+192.168.1.10
 ```
 
-IPv4 contains:
+IPv4 consists of:
 
 ```text
 32 Bits
@@ -258,7 +334,15 @@ IPv4 contains:
 
 ---
 
-# IPv4 Structure
+# Structure of IPv4
+
+Example:
+
+```text
+192.168.1.10
+```
+
+Contains:
 
 ```text
 4 Octets
@@ -268,17 +352,11 @@ IPv4 contains:
 4 × 8 = 32 Bits
 ```
 
-Example:
-
-```text
-192.168.0.1
-```
-
 ---
 
 # Binary Basics
 
-Possible Binary Values:
+Computers understand:
 
 ```text
 0
@@ -286,9 +364,31 @@ Possible Binary Values:
 1
 ```
 
+called:
+
+```text
+Binary
+```
+
 ---
 
-# Number of Combinations
+# Decimal vs Binary
+
+Decimal:
+
+```text
+0 1 2 3 4 5 6 7 8 9
+```
+
+Binary:
+
+```text
+0 1
+```
+
+---
+
+# Number of Possible Values
 
 Formula:
 
@@ -296,19 +396,51 @@ Formula:
 2^n
 ```
 
-Examples:
+---
+
+Examples
 
 ```text
 1 Bit = 2 Values
 
 2 Bits = 4 Values
 
+3 Bits = 8 Values
+
 8 Bits = 256 Values
 ```
 
 ---
 
-# 8 Bit Range
+# Binary to Decimal Example
+
+Binary:
+
+```text
+10010101
+```
+
+Positions:
+
+```text
+7 6 5 4 3 2 1 0
+```
+
+Calculation:
+
+```text
+128 + 16 + 4 + 1
+```
+
+Result:
+
+```text
+149
+```
+
+---
+
+# 8-Bit Range
 
 Minimum:
 
@@ -330,13 +462,15 @@ Therefore:
 
 ---
 
-# IPv4 Range
+# IPv4 Address Space
+
+IPv4 contains:
 
 ```text
 32 Bits
 ```
 
-Total Addresses:
+Total addresses:
 
 ```text
 2^32
@@ -350,9 +484,9 @@ Approximately:
 
 ---
 
-# Network and Host Portion
+# Network and Host
 
-IP Address consists of:
+Every IP address contains:
 
 ```text
 Network Portion
@@ -360,7 +494,9 @@ Network Portion
 Host Portion
 ```
 
-Example:
+---
+
+Example
 
 ```text
 10.0.0.0/16
@@ -369,9 +505,9 @@ Example:
 Meaning:
 
 ```text
-16 Bits Network
+First 16 Bits → Network
 
-16 Bits Host
+Last 16 Bits → Host
 ```
 
 ---
@@ -384,12 +520,12 @@ CIDR stands for:
 Classless Inter-Domain Routing
 ```
 
-CIDR tells us:
+CIDR determines:
 
 ```text
 Network Size
 
-Available Hosts
+Host Capacity
 
 Subnet Range
 ```
@@ -397,6 +533,8 @@ Subnet Range
 ---
 
 # Example: /16
+
+Network:
 
 ```text
 10.0.0.0/16
@@ -412,7 +550,7 @@ to
 10.0.255.255
 ```
 
-Available Addresses:
+Hosts:
 
 ```text
 2^16
@@ -423,6 +561,8 @@ Available Addresses:
 ---
 
 # Example: /24
+
+Network:
 
 ```text
 10.0.1.0/24
@@ -438,7 +578,7 @@ to
 10.0.1.255
 ```
 
-Available Addresses:
+Hosts:
 
 ```text
 256 Addresses
@@ -446,490 +586,168 @@ Available Addresses:
 
 ---
 
-# Subnets
+# Why Subnetting?
 
-A subnet is a partition of a VPC.
+Suppose we have:
 
-Purpose:
+```text
+10.0.0.0/16
+```
+
+Using one huge network is difficult.
+
+Problems:
 
 ```text
 Security
 
 Maintenance
 
-Traffic Segregation
+Traffic Management
+```
+
+Solution:
+
+```text
+Subnetting
 ```
 
 ---
 
-# Example VPC
+# Example Subnets
+
+```text
+10.0.1.0/24
+
+10.0.2.0/24
+
+10.0.3.0/24
+
+10.0.4.0/24
+```
+
+---
+
+# Understanding /24
+
+Network:
+
+```text
+10.0.1.0/24
+```
+
+Available Range:
+
+```text
+10.0.1.0
+
+to
+
+10.0.1.255
+```
+
+Total Addresses:
+
+```text
+256
+```
+
+---
+
+# Common Interview Questions
+
+## What is CIDR?
+
+### Short Answer
+
+CIDR stands for Classless Inter-Domain Routing and defines network size and host capacity.
+
+### Detailed Explanation
+
+CIDR specifies how many bits belong to the network portion and how many belong to the host portion. It helps in subnet planning and IP allocation.
+
+### Example
 
 ```text
 10.0.0.0/16
 ```
 
-Subnets:
-
-```text
-10.0.1.0/24
-
-10.0.2.0/24
-
-10.0.11.0/24
-
-10.0.12.0/24
-```
+16 bits for network and 16 bits for hosts.
 
 ---
 
-# Public Subnets
-
-Example:
-
-```text
-10.0.1.0/24
-
-10.0.2.0/24
-```
-
-Usually contain:
-
-```text
-Load Balancers
-
-NAT Gateways
-
-Bastion Hosts
-```
-
----
-
-# Private Subnets
-
-Example:
-
-```text
-10.0.11.0/24
-
-10.0.12.0/24
-```
-
-Usually contain:
-
-```text
-Application Servers
-
-Databases
-
-Internal Services
-```
-
----
-
-# Internet Gateway (IGW)
-
-Internet Gateway enables:
-
-```text
-Internet Access
-```
-
-for public subnets.
-
-Without IGW:
-
-```text
-No Internet Connectivity
-```
-
----
-
-# Route Tables
-
-Route tables determine:
-
-```text
-Where Traffic Goes
-```
-
-Example:
-
-```text
-Destination → Target
-```
-
----
-
-# Default Route
-
-```text
-0.0.0.0/0
-```
-
-Meaning:
-
-```text
-Any Destination
-```
-
----
-
-# Public Route
-
-```text
-0.0.0.0/0 → Internet Gateway
-```
-
-Result:
-
-```text
-Internet Access Enabled
-```
-
----
-
-# Private Servers
-
-Private servers:
-
-```text
-Do Not Accept Direct Internet Traffic
-```
-
-Examples:
-
-```text
-Database Servers
-
-Backend Servers
-```
-
----
-
-# Ingress and Egress
-
-## Ingress
-
-Traffic entering a resource.
-
-Example:
-
-```text
-Application → Database
-```
-
-Database receives traffic.
-
----
-
-## Egress
-
-Traffic leaving a resource.
-
-Example:
-
-```bash
-dnf install mysql-server
-```
-
-Server downloads packages.
-
-Traffic originates from server.
-
-This is:
-
-```text
-Egress Traffic
-```
-
----
-
-# NAT Gateway
-
-Question:
-
-```text
-How Can Private Servers Access Internet?
-```
-
-Answer:
-
-```text
-NAT Gateway
-```
-
----
-
-# Purpose of NAT Gateway
-
-Allows:
-
-```text
-Outgoing Internet Access
-```
-
-for private servers.
-
-Examples:
-
-```text
-Software Installation
-
-Package Updates
-
-OS Patching
-
-Downloading Dependencies
-```
-
----
-
-# NAT Gateway Placement
-
-NAT Gateway must be placed in:
-
-```text
-Public Subnet
-```
-
-because it requires internet connectivity.
-
----
-
-# Elastic IP (EIP)
-
-NAT Gateway requires:
-
-```text
-Elastic IP
-```
-
-Elastic IP means:
-
-```text
-Static Public IP
-```
-
----
-
-# Typical Production VPC Architecture
-
-```text
-VPC
-│
-├── Public Subnet 1A
-│
-├── Public Subnet 1B
-│
-├── Private Subnet 1A
-│
-└── Private Subnet 1B
-```
-
----
-
-# Components of Production VPC
-
-```text
-VPC
-
-Subnets
-
-Internet Gateway
-
-Route Tables
-
-Elastic IP
-
-NAT Gateway
-```
-
----
-
-# Bastion Host
-
-A Bastion Host is:
-
-```text
-Jump Server
-```
-
-used to access private resources.
-
-Architecture:
-
-```text
-Engineer
-    ↓
-Bastion Host
-    ↓
-Private EC2
-```
-
----
-
-# VPN Access
-
-Alternative approach:
-
-```text
-Laptop
-   ↓
-VPN
-   ↓
-Private Network
-```
-
-Benefits:
-
-```text
-Secure Access
-
-No Public Exposure
-```
-
----
-
-# NACL (Network ACL)
-
-NACL stands for:
-
-```text
-Network Access Control List
-```
-
-Attached at:
-
-```text
-Subnet Level
-```
-
-Used to:
-
-```text
-Allow Traffic
-
-Deny Traffic
-```
-
----
-
-# Example
-
-Private Subnet contains:
-
-```text
-Database Server
-```
-
-Bastion Host subnet:
-
-```text
-10.0.1.0/24
-```
-
-NACL must allow:
-
-```text
-10.0.1.0/24
-```
-
-to access the database subnet.
-
----
-
-# Frequently Asked Interview Questions
-
-## What is a VPC?
+## What is an IPv4 Address?
 
 ### Short Answer
 
-A VPC is an isolated virtual network in AWS where resources can be deployed securely.
+An IPv4 address is a 32-bit address used to identify devices on a network.
 
 ### Detailed Explanation
 
-A VPC provides complete control over IP addressing, routing, subnet design, internet connectivity, and network security. It acts as a logical data center inside AWS.
+IPv4 consists of four octets, each containing 8 bits, giving a total of 32 bits.
 
-### Production Example
-
-Deploying EKS, EC2, RDS, and Load Balancers inside a VPC.
-
----
-
-## What is a Subnet?
-
-### Short Answer
-
-A subnet is a logical partition of a VPC.
-
-### Detailed Explanation
-
-Subnets divide a VPC into smaller networks for security, availability, and workload isolation.
-
-### Production Example
-
-Using public subnets for ALBs and private subnets for application servers.
-
----
-
-## What is a NAT Gateway?
-
-### Short Answer
-
-A NAT Gateway provides internet access to private subnet resources without exposing them to inbound internet traffic.
-
-### Detailed Explanation
-
-Private servers often need software updates and package downloads. NAT allows outbound internet access while keeping servers private.
-
-### Production Example
-
-Application servers in private subnets downloading updates through a NAT Gateway.
-
----
-
-## Difference Between Public and Private Subnet?
-
-### Short Answer
-
-Public subnets have routes to an Internet Gateway, while private subnets do not.
-
-### Detailed Explanation
-
-Resources in public subnets can communicate directly with the internet. Private subnet resources typically access the internet through a NAT Gateway.
-
-### Production Example
-
-ALB in public subnet and application servers in private subnet.
-
----
-
-## What is 0.0.0.0/0?
-
-### Short Answer
-
-0.0.0.0/0 represents all IPv4 addresses.
-
-### Detailed Explanation
-
-It is commonly used as the default route in route tables to direct traffic to an Internet Gateway or NAT Gateway.
-
-### Production Example
+### Example
 
 ```text
-0.0.0.0/0 → IGW
+192.168.1.10
 ```
+
+---
+
+## Difference Between High Availability and Disaster Recovery?
+
+### Short Answer
+
+High Availability protects against AZ failures, while Disaster Recovery protects against region failures.
+
+### Detailed Explanation
+
+HA uses multiple Availability Zones in the same region. DR uses multiple regions to recover from complete regional outages.
+
+### Example
+
+```text
+HA → us-east-1a + us-east-1b
+
+DR → us-east-1 + us-west-2
+```
+
+---
+
+## Why Do We Need Subnetting?
+
+### Short Answer
+
+Subnetting improves security, maintenance, and traffic management.
+
+### Detailed Explanation
+
+Instead of placing all resources in a single network, subnetting creates logical network boundaries for better organization and control.
+
+### Example
+
+Separate subnets for frontend, application, and database servers.
 
 ---
 
 # Key Takeaways
 
-- VPC is an isolated AWS network.
-- Subnets partition a VPC.
-- CIDR defines network size.
-- Public subnets use Internet Gateway.
-- Private subnets use NAT Gateway for outbound internet access.
-- Route tables control traffic flow.
-- NACLs provide subnet-level security.
-- Bastion Hosts and VPNs provide secure access to private resources.
-- Understanding VPC fundamentals is essential for AWS and Terraform interviews.
+```text
+Networking is the foundation of cloud infrastructure.
+
+DNS converts domain names into IP addresses.
+
+High Availability uses multiple AZs.
+
+Disaster Recovery uses multiple regions.
+
+IPv4 contains 32 bits.
+
+CIDR defines network size.
+
+IP addresses contain Network and Host portions.
+
+Subnetting improves security and manageability.
+
+Understanding these concepts is essential before building VPC infrastructure with Terraform.
+```
