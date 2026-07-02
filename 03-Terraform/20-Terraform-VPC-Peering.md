@@ -603,5 +603,5 @@ Peering works across regions and accounts.
 
 Communication uses private IP addresses.
 
-Security Groups and Routes must allow traffic.
+Security Groups and Routes must allow traffic....
 ```
