@@ -620,9 +620,19 @@ AWS Service Access.
 
 Authentication verifies identity. Authorization verifies permissions.
 
+### Detailed Explanation
+
+Authentication answers the question "Who are you?" and verifies whether a user belongs to the system. Authorization answers the question "What can you do?" and determines which resources and actions the authenticated user can access.
+
 ### Production Example
 
-A DevOps engineer successfully logs into AWS but cannot terminate EC2 instances because permissions are missing.
+A DevOps engineer successfully logs into AWS using username and password. Authentication succeeds. When attempting to terminate an EC2 instance, AWS checks permissions. If the required permission is missing, authorization fails and access is denied.
+
+### Follow-Up Questions
+
+- Which happens first, authentication or authorization?
+- Can authentication succeed and authorization fail?
+- Give a real AWS example of authorization.
 
 ---
 
@@ -630,11 +640,21 @@ A DevOps engineer successfully logs into AWS but cannot terminate EC2 instances 
 
 ### Short Answer
 
-Users are for humans. Roles are for temporary access and AWS services.
+Users are permanent identities for humans, whereas roles are temporary identities used by AWS services or assumed users.
+
+### Detailed Explanation
+
+An IAM User represents a person and typically has long-term credentials such as passwords or access keys. An IAM Role is assumed temporarily and provides temporary credentials. Roles are commonly attached to AWS services such as EC2, Lambda, and EKS.
 
 ### Production Example
 
-Surendra uses an IAM User. MongoDB EC2 uses an IAM Role.
+Surendra logs into AWS using an IAM User. A MongoDB EC2 instance accesses SSM Parameter Store using an attached IAM Role.
+
+### Follow-Up Questions
+
+- Can a user assume a role?
+- Can EC2 use an IAM User?
+- Why are roles preferred for AWS services?
 
 ---
 
@@ -642,11 +662,21 @@ Surendra uses an IAM User. MongoDB EC2 uses an IAM Role.
 
 ### Short Answer
 
-Policy defines permissions. Role uses those permissions.
+A policy defines permissions, whereas a role uses one or more policies to grant access.
+
+### Detailed Explanation
+
+Policies contain allowed or denied actions on AWS resources. Roles do not directly contain permissions; instead, policies are attached to roles. When a role is assumed, the permissions defined in the attached policies become available.
 
 ### Production Example
 
-MongoDB Role contains SSM Read Policy.
+A MongoDB EC2 instance has a role called MongoDBRole. The role contains an SSMReadPolicy that allows reading parameters from SSM Parameter Store.
+
+### Follow-Up Questions
+
+- Can a role have multiple policies?
+- Can a policy be attached to multiple roles?
+- What is the difference between managed and inline policies?
 
 ---
 
@@ -654,8 +684,56 @@ MongoDB Role contains SSM Read Policy.
 
 ### Short Answer
 
-Roles provide temporary credentials and eliminate hardcoded secrets.
+IAM Roles provide temporary credentials and eliminate the need to store access keys.
+
+### Detailed Explanation
+
+Access keys are long-lived credentials that can be leaked, rotated incorrectly, or exposed accidentally. IAM Roles generate temporary credentials automatically and are managed by AWS, making them much more secure.
 
 ### Production Example
 
-EC2 reads passwords from SSM Parameter Store using an IAM Role.
+A Catalogue application running on EC2 reads database credentials from SSM Parameter Store using an attached IAM Role rather than storing AWS access keys on the server.
+
+### Follow-Up Questions
+
+- What are the risks of storing access keys?
+- How does AWS provide temporary credentials?
+- Which AWS services commonly use IAM Roles?
+
+---
+
+# Key Takeaways
+
+```text
+Authentication verifies identity.
+
+Authorization verifies permissions.
+
+AWS resources are nouns.
+
+AWS actions are verbs.
+
+Users represent humans.
+
+Groups are collections of users.
+
+Policies define permissions.
+
+Roles use policies to provide access.
+
+Human access typically follows:
+User → Group → Policy → Permissions
+
+AWS service access typically follows:
+EC2 → Role → Policy → Permissions
+
+IAM Roles are preferred over access keys.
+
+EC2 instances can securely access SSM Parameter Store using IAM Roles.
+
+Policies define what can be done.
+
+Roles define who can use those permissions.
+
+Temporary credentials are more secure than long-term access keys.
+```
