@@ -322,6 +322,64 @@ catalogue.yaml
 ```
 
 ---
+# SSM Parameter Store Integration
+
+Applications often require:
+
+```text
+Passwords
+
+Secrets
+
+Database Credentials
+```
+
+Instead of hardcoding values:
+
+```text
+Store In SSM Parameter Store
+```
+
+---
+
+Example:
+
+```text
+/roboshop/dev/mysql/mysql_root_password
+```
+
+---
+
+# Production Flow
+
+```text
+Terraform
+      ↓
+Shell Script
+      ↓
+Ansible
+      ↓
+Read Password From SSM
+      ↓
+Configure MySQL
+```
+
+---
+
+# Why SSM Parameter Store?
+
+Benefits:
+
+```text
+Centralized Secret Storage
+
+Secure Access
+
+No Hardcoded Passwords
+
+Easy Environment Management
+```
+---
 
 # Complete Deployment Flow
 
