@@ -531,6 +531,93 @@ Catalogue-13
 added automatically.
 
 ---
+# Application Upgrade Strategies
+
+Suppose:
+
+```text
+10 Catalogue Servers
+```
+
+are already running.
+
+A new application version is released.
+
+There are two approaches.
+
+---
+
+## Approach 1 - Upgrade Existing Servers
+
+```text
+Collect Instance IPs
+       ↓
+Connect To Every Server
+       ↓
+Deploy New Version
+```
+
+Example:
+
+```ini
+[catalogue]
+
+catalogue-ip1
+
+catalogue-ip2
+
+catalogue-ip3
+```
+
+---
+
+### Advantages
+
+```text
+Simple
+```
+
+---
+
+### Disadvantages
+
+```text
+Configuration Drift
+
+Manual Risk
+
+Inconsistent Servers
+```
+
+---
+
+## Approach 2 - AMI Based Upgrade
+
+```text
+Create New Server
+       ↓
+Configure Using Ansible
+       ↓
+Create AMI
+       ↓
+Refresh Auto Scaling Group
+```
+
+---
+
+### Advantages
+
+```text
+Immutable Infrastructure
+
+Consistent Configuration
+
+Production Friendly
+```
+
+This is the preferred enterprise approach.
+
+---
 
 # Low Traffic Scenario
 
