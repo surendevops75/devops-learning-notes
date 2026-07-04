@@ -558,6 +558,72 @@ All Servers Running v2
 
 ---
 
+# Complete Production Deployment Pipeline
+
+A typical production deployment workflow:
+
+```text
+Create Catalogue Instance
+        ↓
+Configure Using Ansible
+        ↓
+Stop Instance
+        ↓
+Create AMI
+        ↓
+Create Launch Template
+        ↓
+Create Auto Scaling Group
+        ↓
+Attach Target Group
+        ↓
+Create ALB Listener Rule
+```
+
+---
+
+# Example
+
+Rule:
+
+```text
+catalogue.backend-alb-dev.daws86s.fun
+```
+
+↓
+
+```text
+Catalogue Target Group
+```
+
+↓
+
+```text
+Auto Scaling Instances
+```
+
+---
+
+# Final Architecture
+
+```text
+User
+   ↓
+Frontend
+   ↓
+Backend ALB
+   ↓
+Catalogue Target Group
+   ↓
+Catalogue Auto Scaling Group
+   ↓
+Catalogue Instances
+```
+
+This is the architecture commonly used in production microservices environments.
+
+---
+
 # Benefits of Rolling Deployment
 
 ```text
