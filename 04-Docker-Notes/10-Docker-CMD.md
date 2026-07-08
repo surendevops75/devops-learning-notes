@@ -1,91 +1,22 @@
-# Docker CMD vs ENTRYPOINT
+# Docker CMD
 
 ## Introduction
 
-One of the most confusing Docker topics is:
+CMD is one of the most important Dockerfile instructions.
+
+It is used to:
 
 ```text
-CMD
+Start Applications
 
-ENTRYPOINT
+Run Commands
+
+Keep Containers Alive
 ```
 
----
-
-Both are used to:
-
-```text
-Start Containers
-```
-
-but they behave differently.
+when a container starts.
 
 ---
-
-This is one of the most frequently asked Docker interview questions.
-
----
-
-# Why Do We Need CMD and ENTRYPOINT?
-
-A Docker Image is:
-
-```text
-Static
-```
-
----
-
-When a container starts:
-
-```text
-Some Process Must Start
-```
-
----
-
-Example:
-
-```text
-Nginx Container
-```
-
-must start:
-
-```text
-nginx
-```
-
----
-
-NodeJS Container:
-
-```text
-node app.js
-```
-
----
-
-Java Container:
-
-```text
-java -jar app.jar
-```
-
----
-
-CMD and ENTRYPOINT define:
-
-```text
-What Should Run
-When Container Starts
-```
-
----
-
-# CMD Instruction
-
-## What is CMD?
 
 CMD defines:
 
@@ -94,6 +25,28 @@ Default Command
 ```
 
 for a container.
+
+---
+
+Without CMD or ENTRYPOINT:
+
+```text
+Container May Start
+
+And Exit Immediately
+```
+
+---
+
+# What is CMD?
+
+CMD specifies:
+
+```text
+Default Command
+```
+
+that Docker executes when the container starts.
 
 ---
 
@@ -138,231 +91,133 @@ Container Stops.
 Reason:
 
 ```text
-CMD Completed
+Command Completed
 ```
 
 ---
 
-# CMD Executes At Runtime
+# When Does CMD Execute?
 
+CMD executes during:
+
+```text
+Container Startup
+```
+
+---
+
+NOT during:
+
+```text
+Image Build
+```
+
+---
+
+Interview Question
+
+```text
+RUN vs CMD
+```
+
+---
+
+RUN
+
+```text
+Build Time
+```
+
+---
+
+CMD
+
+```text
+Run Time
+```
+
+---
+
+# CMD Execution Flow
+
+```text
 Dockerfile
-
-```dockerfile
-FROM almalinux:9
-
-CMD ["sleep","300"]
+      ↓
+docker build
+      ↓
+Image Created
+      ↓
+docker run
+      ↓
+CMD Executes
 ```
 
 ---
 
-Build
+# CMD Forms
 
-```bash
-docker build -t sleep:v1 .
-```
-
----
-
-Run
-
-```bash
-docker run sleep:v1
-```
-
----
-
-Container Runs:
+Docker supports:
 
 ```text
-300 Seconds
+Exec Form
+
+Shell Form
 ```
 
 ---
 
-CMD executes:
-
-```text
-At Container Startup
-```
-
----
-
-# CMD Can Be Overridden
-
-Dockerfile
-
-```dockerfile
-FROM almalinux:9
-
-CMD ["echo","hello"]
-```
-
----
-
-Run
-
-```bash
-docker run cmd:v1 ls
-```
-
----
-
-Output
-
-```text
-Directory Listing
-```
-
----
-
-Reason:
-
-```text
-CMD Overridden
-```
-
----
-
-Docker ignores:
-
-```text
-echo hello
-```
-
-and executes:
-
-```text
-ls
-```
-
----
-
-# Why CMD is Useful?
-
-Provides:
-
-```text
-Default Behaviour
-```
-
----
-
-User can change:
-
-```text
-Runtime Command
-```
-
-if required.
-
----
-
-# ENTRYPOINT Instruction
-
-## What is ENTRYPOINT?
-
-ENTRYPOINT defines:
-
-```text
-Fixed Command
-```
-
-for the container.
-
----
-
-Container always starts with:
-
-```text
-Specified Command
-```
-
----
+# Exec Form (Recommended)
 
 Example
 
 ```dockerfile
-FROM almalinux:9
-
-ENTRYPOINT ["ping"]
+CMD ["nginx","-g","daemon off;"]
 ```
 
 ---
 
-Build
-
-```bash
-docker build -t ping:v1 .
-```
-
----
-
-Run
-
-```bash
-docker run ping:v1 google.com
-```
-
----
-
-Actual Command
+Advantages
 
 ```text
-ping google.com
+Better Signal Handling
+
+Preferred By Docker
+
+Production Standard
 ```
 
 ---
 
-# ENTRYPOINT Behavior
-
-ENTRYPOINT remains:
-
-```text
-Fixed
-```
-
----
-
-Arguments supplied at runtime are:
-
-```text
-Appended
-```
-
----
+# Shell Form
 
 Example
 
-Dockerfile
-
 ```dockerfile
-ENTRYPOINT ["ping"]
+CMD nginx -g "daemon off;"
 ```
 
 ---
 
-Command
-
-```bash
-docker run ping:v1 localhost
-```
+Works.
 
 ---
 
-Docker Executes
+But:
 
 ```text
-ping localhost
+Less Preferred
 ```
+
+for production.
 
 ---
 
-# Why ENTRYPOINT Exists?
+# Why CMD is Important?
 
-Used when:
+Every container needs:
 
 ```text
-Container Has One Purpose
+Main Process
 ```
 
 ---
@@ -371,49 +226,209 @@ Examples
 
 ```text
 Nginx Container
+      ↓
+nginx
 
-MySQL Container
+NodeJS Container
+      ↓
+node app.js
 
-Redis Container
-
-Application Container
+Java Container
+      ↓
+java -jar app.jar
 ```
 
 ---
 
-Container should always start:
+CMD defines:
 
 ```text
-Specific Process
+What Process Runs
 ```
+
+when container starts.
 
 ---
 
-# CMD vs ENTRYPOINT
-
-## CMD
+# Container Lifecycle
 
 ```text
-Default Command
-
-Can Be Overridden
+Container Starts
+        ↓
+CMD Executes
+        ↓
+Process Running
+        ↓
+Container Running
 ```
 
 ---
 
-## ENTRYPOINT
+If Process Stops:
 
 ```text
-Main Command
-
-Cannot Be Easily Overridden
+Container Stops
 ```
 
 ---
 
-# Example
+# Why Containers Exit?
 
-CMD
+Example
+
+```dockerfile
+CMD ["echo","hello"]
+```
+
+---
+
+Run
+
+```bash
+docker run test:v1
+```
+
+---
+
+Output
+
+```text
+hello
+```
+
+---
+
+Container Exits.
+
+---
+
+Reason:
+
+```text
+Process Finished
+```
+
+---
+
+Docker only keeps container alive while:
+
+```text
+Main Process Runs
+```
+
+---
+
+# Foreground vs Background
+
+Very Important Concept.
+
+---
+
+Bad Example
+
+```dockerfile
+CMD ["nginx"]
+```
+
+---
+
+Historically nginx:
+
+```text
+Starts
+
+Moves To Background
+```
+
+---
+
+Result
+
+```text
+Container Stops
+```
+
+---
+
+Because:
+
+```text
+Main Process Ended
+```
+
+---
+
+Correct Example
+
+```dockerfile
+CMD ["nginx","-g","daemon off;"]
+```
+
+---
+
+Meaning:
+
+```text
+Run In Foreground
+```
+
+---
+
+Container remains:
+
+```text
+Running
+```
+
+---
+
+# Why systemctl Does Not Work?
+
+Common Mistake
+
+```dockerfile
+CMD ["systemctl","start","nginx"]
+```
+
+---
+
+Usually fails.
+
+---
+
+Reason
+
+Containers do not run:
+
+```text
+systemd
+
+init
+
+full operating system
+```
+
+---
+
+Containers generally run:
+
+```text
+Single Process
+```
+
+---
+
+Therefore:
+
+```text
+systemctl
+```
+
+cannot manage services.
+
+---
+
+# CMD Can Be Overridden
 
 Dockerfile
 
@@ -431,10 +446,10 @@ docker run image ls
 
 ---
 
-Result
+Docker Executes
 
 ```text
-ls Executes
+ls
 ```
 
 ---
@@ -443,22 +458,62 @@ CMD Replaced.
 
 ---
 
-# Example
+# Why Override CMD?
 
-ENTRYPOINT
+Useful when:
 
-Dockerfile
+```text
+Testing
 
-```dockerfile
-ENTRYPOINT ["echo"]
+Debugging
+
+Troubleshooting
 ```
 
 ---
 
-Run
+Example
+
+Dockerfile
+
+```dockerfile
+CMD ["node","server.js"]
+```
+
+---
+
+Temporarily Run
 
 ```bash
-docker run image hello
+docker run image bash
+```
+
+---
+
+Container Starts:
+
+```text
+Bash Shell
+```
+
+instead of:
+
+```text
+Node Application
+```
+
+---
+
+# Multiple CMD Instructions
+
+Example
+
+```dockerfile
+CMD ["echo","hello"]
+
+CMD ["echo","docker"]
+
+CMD ["echo","world"]
 ```
 
 ---
@@ -466,312 +521,24 @@ docker run image hello
 Result
 
 ```text
-echo hello
+Last CMD Wins
 ```
 
 ---
 
-ENTRYPOINT Remains.
-
----
-
-Argument Added.
-
----
-
-# Combining ENTRYPOINT and CMD
-
-This is the most powerful approach.
-
----
-
-ENTRYPOINT
+Docker Uses
 
 ```text
-Main Command
+CMD ["echo","world"]
 ```
 
 ---
 
-CMD
-
-```text
-Default Arguments
-```
+Previous CMD Instructions Ignored.
 
 ---
 
-Example
-
-```dockerfile
-FROM almalinux:9
-
-ENTRYPOINT ["ping"]
-
-CMD ["localhost"]
-```
-
----
-
-Run
-
-```bash
-docker run ping:v1
-```
-
----
-
-Docker Executes
-
-```text
-ping localhost
-```
-
----
-
-# Override CMD Only
-
-Run
-
-```bash
-docker run ping:v1 google.com
-```
-
----
-
-Docker Executes
-
-```text
-ping google.com
-```
-
----
-
-ENTRYPOINT
-
-```text
-Unchanged
-```
-
----
-
-CMD
-
-```text
-Overridden
-```
-
----
-
-# Production Example
-
-Dockerfile
-
-```dockerfile
-FROM node:20
-
-ENTRYPOINT ["node"]
-
-CMD ["server.js"]
-```
-
----
-
-Default
-
-```bash
-docker run catalogue:v1
-```
-
----
-
-Executes
-
-```text
-node server.js
-```
-
----
-
-Override CMD
-
-```bash
-docker run catalogue:v1 app.js
-```
-
----
-
-Executes
-
-```text
-node app.js
-```
-
----
-
-# Why CMD + ENTRYPOINT Together?
-
-Provides:
-
-```text
-Fixed Application
-
-Flexible Arguments
-```
-
----
-
-Common Production Pattern.
-
----
-
-# Exec Form vs Shell Form
-
-## Exec Form (Recommended)
-
-```dockerfile
-CMD ["nginx","-g","daemon off;"]
-```
-
----
-
-Benefits
-
-```text
-Better Signal Handling
-
-Preferred By Docker
-```
-
----
-
-## Shell Form
-
-```dockerfile
-CMD nginx -g "daemon off;"
-```
-
----
-
-Works but:
-
-```text
-Less Preferred
-```
-
----
-
-# Why systemctl Fails?
-
-Dockerfile
-
-```dockerfile
-CMD ["systemctl","start","nginx"]
-```
-
----
-
-Usually fails.
-
----
-
-Reason:
-
-```text
-No systemd
-
-No init process
-```
-
-inside container.
-
----
-
-Containers run:
-
-```text
-Single Main Process
-```
-
----
-
-# Foreground Requirement
-
-Container stays alive while:
-
-```text
-Main Process Runs
-```
-
----
-
-Example
-
-```dockerfile
-CMD ["nginx","-g","daemon off;"]
-```
-
----
-
-Meaning:
-
-```text
-Run Nginx In Foreground
-```
-
----
-
-# Bad Example
-
-```dockerfile
-CMD ["echo","hello"]
-```
-
----
-
-Output
-
-```text
-hello
-```
-
----
-
-Container exits immediately.
-
----
-
-Reason:
-
-```text
-Process Finished
-```
-
----
-
-# Container Lifecycle
-
-```text
-Container Start
-        ↓
-CMD / ENTRYPOINT Executes
-        ↓
-Process Running
-        ↓
-Container Running
-```
-
----
-
-If Process Stops
-
-```text
-Container Stops
-```
-
----
-
-# Production Examples
+# Real Production Examples
 
 ## Nginx
 
@@ -805,124 +572,129 @@ CMD ["python","app.py"]
 
 ---
 
+# Production Troubleshooting
+
+Container Not Running
+
+---
+
+Check
+
+```bash
+docker ps -a
+```
+
+---
+
+Output
+
+```text
+Exited
+```
+
+---
+
+Check Logs
+
+```bash
+docker logs container-id
+```
+
+---
+
+Often Cause
+
+```text
+CMD Finished
+
+Wrong Command
+
+Application Crash
+```
+
+---
+
 # Common Interview Questions
 
-## Difference Between CMD and ENTRYPOINT?
+## What is CMD?
 
 ### Short Answer
 
-CMD provides default commands or arguments, while ENTRYPOINT defines the main executable.
+CMD specifies the default command executed when a container starts.
 
 ### Detailed Explanation
 
-CMD can be overridden completely. ENTRYPOINT remains fixed and runtime arguments are appended.
+CMD runs during container startup and defines the container's default behavior.
 
 ### Production Example
 
-ENTRYPOINT ["node"] with CMD ["server.js"].
+CMD ["node","server.js"]
 
 ### Follow-Up Questions
 
-- Can CMD and ENTRYPOINT be used together?
-- Which one is overridden?
+- Can CMD be overridden?
+- When does CMD execute?
 
 ---
 
-## Can CMD Be Overridden?
+## Difference Between RUN and CMD?
 
 ### Short Answer
 
-Yes.
+RUN executes during image build. CMD executes during container startup.
 
 ### Detailed Explanation
 
-Commands supplied during docker run replace CMD values.
+RUN configures the image while CMD starts the application.
 
 ### Production Example
 
-docker run image ls
+RUN installs nginx, CMD starts nginx.
 
 ### Follow-Up Questions
 
-- What happens to ENTRYPOINT?
-- How are CMD arguments overridden?
+- Which creates image layers?
+- Which executes during runtime?
 
 ---
 
-## Can ENTRYPOINT Be Overridden?
+## Why Do Containers Exit Immediately?
 
 ### Short Answer
 
-Not normally.
+The main process defined by CMD exits.
 
 ### Detailed Explanation
 
-Runtime values are appended to ENTRYPOINT rather than replacing it.
+Docker keeps containers alive only while the primary process is running.
 
 ### Production Example
 
-ENTRYPOINT ["ping"] plus runtime argument google.com.
+CMD ["echo","hello"] causes immediate container exit.
 
 ### Follow-Up Questions
 
-- Why use ENTRYPOINT?
-- How does Docker combine ENTRYPOINT and CMD?
-
----
-
-## Why Does systemctl Not Work In Containers?
-
-### Short Answer
-
-Containers do not run systemd.
-
-### Detailed Explanation
-
-Containers typically run a single foreground process rather than a complete operating system.
-
-### Production Example
-
-systemctl start nginx fails inside Docker containers.
-
-### Follow-Up Questions
-
-- What should start the application?
-- Why must processes run in foreground?
-
----
-
-# CMD vs ENTRYPOINT Summary
-
-| Feature | CMD | ENTRYPOINT |
-|----------|----------|----------|
-| Purpose | Default Command/Arguments | Main Executable |
-| Runtime Override | Yes | No (Arguments Appended) |
-| Common Usage | Default Arguments | Fixed Command |
-| Used Together | Yes | Yes |
-| Production Usage | Frequently | Frequently |
+- How do you keep containers alive?
+- Why must applications run in foreground?
 
 ---
 
 # Key Takeaways
 
 ```text
-CMD defines default commands or arguments.
+CMD defines the default command for a container.
 
-ENTRYPOINT defines the main executable.
+CMD executes during container startup.
 
-CMD can be overridden during docker run.
+CMD can be overridden.
 
-ENTRYPOINT remains fixed.
-
-CMD and ENTRYPOINT are often used together.
-
-ENTRYPOINT defines the command.
-
-CMD defines default arguments.
+Only the last CMD instruction is used.
 
 Containers stay alive while the main process runs.
 
 Foreground processes are required.
 
-Understanding CMD and ENTRYPOINT is critical for Docker, Kubernetes, and CI/CD pipelines.
+systemctl typically does not work inside containers.
+
+CMD is one of the most important Dockerfile instructions.
 ```
