@@ -718,9 +718,11 @@ docker build .
 
 ---
 
-# Trainer Example
+# Building Multiple Service Images
 
-Build Images
+In a microservices architecture, each service is usually built independently.
+
+Example
 
 ```bash
 for i in mongodb mysql catalogue user cart shipping payment frontend
@@ -730,7 +732,6 @@ do
     cd ..
 done
 ```
-
 ---
 
 Compose can then use:
