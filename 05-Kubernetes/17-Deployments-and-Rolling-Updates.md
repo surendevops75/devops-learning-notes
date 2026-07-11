@@ -432,46 +432,32 @@ Pod-2
 
 ---
 
-# Trainer Example
+# Rolling Update Example
 
-Current
+Current State
 
-```text
 frontend:v1
 
 2 Replicas
-```
 
----
+Target State
 
-Update To
-
-```text
 frontend:v2
-```
 
----
+2 Replicas
 
 Deployment Process
 
-```text
 Create One v2 Pod
       ↓
-
 Delete One v1 Pod
       ↓
-
 Create Another v2 Pod
       ↓
-
 Delete Remaining v1 Pod
-```
-
----
 
 Result
 
-```text
 Zero Downtime Upgrade
 ```
 
