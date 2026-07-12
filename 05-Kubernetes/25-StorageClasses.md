@@ -895,11 +895,30 @@ Errors
 
 ### Short Answer
 
-A StorageClass defines how storage should be dynamically provisioned.
+A StorageClass is a Kubernetes resource that defines how persistent storage should be dynamically provisioned.
+
+### Detailed Explanation
+
+StorageClass acts as a template for storage creation. It specifies the provisioner, parameters, reclaim policy, and volume binding mode used when a PVC requests storage.
+
+Instead of manually creating disks and Persistent Volumes, Kubernetes can automatically create storage using the StorageClass configuration.
 
 ### Production Example
 
-Creating GP3 EBS volumes automatically.
+In EKS, a StorageClass named:
+
+```yaml
+storageClassName: gp3
+```
+
+uses the AWS EBS CSI Driver to automatically create GP3 EBS volumes whenever a PVC requests storage.
+
+### Follow-Up Questions
+
+- Why do we need StorageClasses?
+- What happens if no StorageClass exists?
+- Can multiple StorageClasses exist in a cluster?
+- What is a default StorageClass?
 
 ---
 
@@ -907,11 +926,43 @@ Creating GP3 EBS volumes automatically.
 
 ### Short Answer
 
-To automate storage provisioning.
+StorageClasses automate storage provisioning and eliminate manual PV creation.
 
 ### Detailed Explanation
 
-StorageClasses eliminate manual disk and PV creation.
+Without StorageClasses:
+
+```text
+Create Disk
+ ↓
+Create PV
+ ↓
+Create PVC
+```
+
+must be done manually.
+
+With StorageClasses:
+
+```text
+PVC
+ ↓
+StorageClass
+ ↓
+Disk Created Automatically
+```
+
+This reduces operational effort and improves scalability.
+
+### Production Example
+
+In a cluster hosting 100 microservices, manually creating 100 PVs is difficult. StorageClasses allow developers to request storage through PVCs while Kubernetes provisions disks automatically.
+
+### Follow-Up Questions
+
+- What problems do StorageClasses solve?
+- How do they support self-service infrastructure?
+- Are StorageClasses mandatory for dynamic provisioning?
 
 ---
 
@@ -919,21 +970,117 @@ StorageClasses eliminate manual disk and PV creation.
 
 ### Short Answer
 
-A component responsible for creating storage resources.
+A provisioner is the component responsible for creating storage resources.
 
-### Example
+### Detailed Explanation
+
+When a PVC requests storage through a StorageClass, the provisioner communicates with the storage platform and creates the required storage resource.
+
+Examples:
+
+```text
+ebs.csi.aws.com
+
+efs.csi.aws.com
+
+disk.csi.azure.com
+```
+
+### Production Example
+
+In EKS:
 
 ```text
 ebs.csi.aws.com
 ```
 
+creates EBS volumes automatically.
+
+### Follow-Up Questions
+
+- What is the difference between an in-tree and CSI provisioner?
+- Can a StorageClass exist without a provisioner?
+- How does the provisioner communicate with AWS?
+
 ---
 
-## What is the Default StorageClass?
+## What is the AWS EBS CSI Driver?
 
 ### Short Answer
 
-The StorageClass automatically used when a PVC doesn't specify one.
+The AWS EBS CSI Driver enables Kubernetes to dynamically provision and manage EBS volumes.
+
+### Detailed Explanation
+
+CSI (Container Storage Interface) is a standard used by Kubernetes to integrate with storage systems.
+
+The EBS CSI Driver:
+
+```text
+Creates EBS Volumes
+
+Attaches Volumes
+
+Mounts Volumes
+
+Deletes Volumes
+```
+
+based on PVC requests.
+
+### Production Example
+
+MongoDB PVC requests:
+
+```text
+20Gi Storage
+```
+
+The EBS CSI Driver creates a 20Gi EBS volume automatically.
+
+### Follow-Up Questions
+
+- What does CSI stand for?
+- Why did Kubernetes move to CSI?
+- What happens if the CSI driver is missing?
+
+---
+
+## What is a Default StorageClass?
+
+### Short Answer
+
+A default StorageClass is automatically used when a PVC does not specify a StorageClass.
+
+### Detailed Explanation
+
+Clusters can designate one StorageClass as default.
+
+When a PVC is created without:
+
+```yaml
+storageClassName:
+```
+
+Kubernetes automatically uses the default StorageClass.
+
+### Production Example
+
+EKS often has:
+
+```text
+gp3 (default)
+```
+
+configured.
+
+A PVC requesting storage automatically gets a GP3 EBS volume.
+
+### Follow-Up Questions
+
+- How do you identify the default StorageClass?
+- Can multiple default StorageClasses exist?
+- How do you change the default StorageClass?
 
 ---
 
@@ -941,9 +1088,11 @@ The StorageClass automatically used when a PVC doesn't specify one.
 
 ### Short Answer
 
-Defines what happens to storage after a PVC is deleted.
+Reclaim Policy determines what happens to storage after a PVC is deleted.
 
-### Options
+### Detailed Explanation
+
+Common policies:
 
 ```text
 Delete
@@ -951,38 +1100,164 @@ Delete
 Retain
 ```
 
+Delete:
+
+```text
+PVC Deleted
+ ↓
+PV Deleted
+ ↓
+Disk Deleted
+```
+
+Retain:
+
+```text
+PVC Deleted
+ ↓
+PV Remains
+ ↓
+Disk Remains
+```
+
+### Production Example
+
+Production database volumes commonly use:
+
+```text
+Retain
+```
+
+to prevent accidental data loss.
+
+### Follow-Up Questions
+
+- What is the default reclaim policy?
+- Which policy is safer for production databases?
+- Can reclaim policies be modified later?
+
 ---
 
 ## What is WaitForFirstConsumer?
 
 ### Short Answer
 
-Storage is provisioned only after a Pod is scheduled.
+WaitForFirstConsumer delays storage provisioning until a Pod is scheduled.
 
-### Benefit
+### Detailed Explanation
 
-Improves availability zone placement.
+Instead of creating storage immediately after PVC creation, Kubernetes waits until the Pod is assigned to a node.
+
+This helps place storage in the correct Availability Zone.
+
+### Production Example
+
+In EKS:
+
+```yaml
+volumeBindingMode: WaitForFirstConsumer
+```
+
+ensures the EBS volume is created in the same AZ where the Pod will run.
+
+### Follow-Up Questions
+
+- Why is this important for EBS?
+- What happens with Immediate mode?
+- Which mode is recommended in EKS?
 
 ---
 
-# Key Takeaways
+## Explain the Complete Dynamic Provisioning Flow
+
+### Short Answer
+
+PVC triggers StorageClass, which triggers the provisioner to create storage automatically.
+
+### Detailed Explanation
+
+Flow:
 
 ```text
-StorageClass automates storage provisioning.
+PVC Created
+      ↓
 
-StorageClass acts as a storage template.
+StorageClass Selected
+      ↓
 
-Provisioners create actual storage resources.
+Provisioner Triggered
+      ↓
 
-AWS EKS commonly uses the EBS CSI Driver.
+EBS Volume Created
+      ↓
 
-StorageClasses eliminate manual PV creation.
+PV Created
+      ↓
 
-PVCs can reference specific StorageClasses.
+PVC Bound
+      ↓
 
-Default StorageClasses simplify storage requests.
-
-Reclaim policies control storage cleanup behavior.
-
-StorageClasses are the foundation of dynamic provisioning.
+Pod Mounted
 ```
+
+### Production Example
+
+Roboshop MongoDB deployment:
+
+```text
+MongoDB Pod
+      ↓
+
+PVC
+      ↓
+
+StorageClass (gp3)
+      ↓
+
+EBS CSI Driver
+      ↓
+
+20Gi EBS Volume
+```
+
+### Follow-Up Questions
+
+- At what stage is the PV created?
+- Who creates the EBS volume?
+- What happens if provisioning fails?
+
+---
+
+## StorageClass vs Persistent Volume
+
+### Short Answer
+
+StorageClass creates storage; PV represents storage.
+
+### Detailed Explanation
+
+StorageClass:
+
+```text
+Blueprint / Template
+```
+
+PV:
+
+```text
+Actual Storage Resource
+```
+
+StorageClass is used for dynamic provisioning, while PV represents the provisioned storage.
+
+### Production Example
+
+GP3 StorageClass provisions an EBS volume and Kubernetes creates a corresponding PV.
+
+### Follow-Up Questions
+
+- Can PV exist without StorageClass?
+- Can StorageClass exist without PV?
+- Which resource is consumed by a PVC?
+
+---
