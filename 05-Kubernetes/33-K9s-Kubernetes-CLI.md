@@ -127,7 +127,7 @@ already present on the workstation.
 
 # Install K9s
 
-Trainer Command
+Command
 
 ```bash
 curl -sS https://webinstall.dev/k9s | bash
