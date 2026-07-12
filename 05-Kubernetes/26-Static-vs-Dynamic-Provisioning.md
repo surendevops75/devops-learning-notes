@@ -198,6 +198,87 @@ Application gets storage.
 
 ---
 
+# Static Provisioning Prerequisites
+
+Before static provisioning can work:
+
+```text
+Install EBS/EFS CSI Drivers
+
+Configure IAM Permissions
+
+Create Storage
+
+Configure Network Access
+```
+
+---
+
+## EBS Requirements
+
+```text
+Create EBS Volume
+
+Install EBS CSI Driver
+
+Worker Nodes Need IAM Permissions
+
+Volume Must Be In Same Availability Zone As Worker Node
+```
+
+---
+
+Example
+
+```text
+Node → us-east-1a
+
+EBS Volume → us-east-1a
+```
+
+---
+
+Otherwise
+
+```text
+Volume Mount Fails
+```
+
+---
+
+## EFS Requirements
+
+```text
+Create EFS
+
+Install EFS CSI Driver
+
+Worker Nodes Need IAM Permissions
+
+Allow TCP 2049
+```
+
+---
+
+Security Group Rule
+
+```text
+EFS Security Group
+
+Allow TCP 2049
+
+From Worker Node Security Group
+```
+
+---
+
+Otherwise
+
+```text
+Mount Fails
+```
+---
+
 # Static Provisioning Example
 
 Create Disk
@@ -399,6 +480,89 @@ Step 7
 
 ```text
 Pod Uses Storage
+```
+
+---
+
+# Dynamic Provisioning Prerequisites
+
+Before dynamic provisioning can work:
+
+```text
+Install CSI Drivers
+
+Configure IAM Permissions
+
+Configure Network Access
+
+Create StorageClass
+```
+
+---
+
+## EBS Dynamic Provisioning
+
+Requirements
+
+```text
+EBS CSI Driver
+
+IAM Permissions
+
+StorageClass
+```
+
+---
+
+Workflow
+
+```text
+PVC Created
+      ↓
+
+StorageClass Invoked
+      ↓
+
+EBS Volume Created
+      ↓
+
+PV Created
+      ↓
+
+PVC Bound
+```
+
+---
+
+## EFS Dynamic Provisioning
+
+Requirements
+
+```text
+EFS CSI Driver
+
+IAM Permissions
+
+TCP 2049 Open
+
+StorageClass
+```
+
+---
+
+Workflow
+
+```text
+PVC Created
+      ↓
+
+StorageClass Invoked
+      ↓
+
+PV Created
+      ↓
+
+EFS Mounted
 ```
 
 ---
