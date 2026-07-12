@@ -817,6 +817,70 @@ Storage remains even if Pod is deleted.
 
 ---
 
+# Storage Behavior
+
+## Deployment
+
+If PVC is used:
+
+```text
+All Replicas Can Share Storage
+```
+
+depending on storage type.
+
+---
+
+Deployment does not create:
+
+```text
+Dedicated Storage Per Pod
+```
+
+---
+
+## StatefulSet
+
+Every replica gets:
+
+```text
+Dedicated PVC
+
+Dedicated Storage
+```
+
+---
+
+Example
+
+```text
+mongodb-0
+      ↓
+PVC-0
+
+mongodb-1
+      ↓
+PVC-1
+
+mongodb-2
+      ↓
+PVC-2
+```
+
+---
+
+This preserves:
+
+```text
+Pod Identity
+
+Database Data
+
+Replication Consistency
+```
+
+---
+
 # Common Stateful Workloads
 
 ## MongoDB
