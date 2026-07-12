@@ -331,6 +331,58 @@ Who Is Who
 
 ---
 
+# Peer Discovery
+
+Peer Discovery means:
+
+```text
+Finding Other Members
+
+Inside The Same Cluster
+```
+
+---
+
+Stateful applications need to know:
+
+```text
+Who Is Available?
+
+Who Is Primary?
+
+Who Is Replica?
+```
+
+---
+
+Examples
+
+```text
+MongoDB Replica Set
+
+Redis Cluster
+
+MySQL Cluster
+```
+
+---
+
+Applications continuously communicate with:
+
+```text
+Other Cluster Members
+```
+
+---
+
+This communication is called:
+
+```text
+Peer Discovery
+```
+
+---
+
 # Stable Storage
 
 Each StatefulSet Pod gets:
@@ -490,6 +542,81 @@ This creates:
 ```text
 Headless Service
 ```
+
+---
+
+# Why Headless Service Is Required
+
+Normal Service
+
+```text
+Provides One Cluster IP
+```
+
+---
+
+Example
+
+```text
+Pod-1
+
+Pod-2
+
+Pod-3
+      ↓
+
+ClusterIP
+```
+
+---
+
+Application only sees:
+
+```text
+Service IP
+```
+
+---
+
+Stateful applications need:
+
+```text
+Individual Pod Identity
+```
+
+---
+
+Headless Service provides:
+
+```text
+All Pod IPs
+
+Individual DNS Records
+
+Peer Discovery
+```
+
+---
+
+Example
+
+```text
+mongodb-0
+
+mongodb-1
+
+mongodb-2
+```
+
+---
+
+Each member can discover:
+
+```text
+Other Members
+```
+
+for replication and synchronization.
 
 ---
 
