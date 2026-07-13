@@ -454,7 +454,7 @@ On Same Node
 
 # Web and Redis Architecture
 
-Trainer Scenario
+Production Scenario
 
 ---
 
