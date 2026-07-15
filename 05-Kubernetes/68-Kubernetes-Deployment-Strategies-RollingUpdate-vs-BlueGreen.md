@@ -1172,3 +1172,39 @@ Blue-Green
 - Which was more complex?
 - How was rollback handled?
 - How was traffic switched?
+
+---
+
+# Key Takeaways
+
+```text
+Rolling Update is the default deployment strategy in Kubernetes.
+
+Rolling Update gradually replaces old pods with new pods.
+
+During Rolling Updates, old and new versions run simultaneously.
+
+Applications using Rolling Updates should maintain backward compatibility.
+
+maxSurge controls extra pods created during deployment.
+
+maxUnavailable controls how many pods can be unavailable.
+
+Blue-Green Deployment uses two separate environments.
+
+Only one environment receives production traffic at a time.
+
+Blue-Green provides very fast rollback capability.
+
+Traffic switching is typically performed using Services, Ingress, Load Balancers, or DNS.
+
+Rolling Update requires less infrastructure.
+
+Blue-Green requires duplicate infrastructure and higher cost.
+
+Rolling Update is suitable for most stateless microservices.
+
+Blue-Green is preferred for critical applications requiring instant rollback.
+
+Choosing the correct deployment strategy depends on risk, cost, and rollback requirements.
+```
