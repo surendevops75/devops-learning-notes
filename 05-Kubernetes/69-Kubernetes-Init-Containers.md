@@ -1072,3 +1072,37 @@ kubectl describe pod pod-name
 - Where are exit codes shown?
 - How do you debug networking issues?
 - How do you identify permission failures?
+
+---
+
+# Key Takeaways
+
+```text
+Init Containers run before application containers.
+
+Init Containers execute sequentially.
+
+All Init Containers must complete successfully before the main container starts.
+
+Init Containers are commonly used for dependency validation.
+
+Init Containers are useful for retrieving secrets before application startup.
+
+Init Containers can generate configuration files dynamically.
+
+Database migrations are commonly executed using Init Containers.
+
+A failed Init Container prevents application startup.
+
+Init Containers can share data with application containers using volumes.
+
+Pod status such as Init:0/3 or Init:2/3 indicates initialization progress.
+
+Logs from Init Containers should be checked separately from application logs.
+
+Init Containers improve application reliability by ensuring dependencies are ready before startup.
+
+Init Containers are widely used with IRSA and AWS Secrets Manager integrations.
+
+Production workloads often use Init Containers for startup validation and environment preparation.
+```
