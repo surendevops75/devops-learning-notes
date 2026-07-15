@@ -1230,31 +1230,285 @@ NodeGroup Configuration
 
 ### Short Answer
 
-To upgrade worker nodes without downtime and with fast rollback capability.
+To upgrade worker nodes without downtime and provide a fast rollback mechanism.
+
+### Detailed Explanation
+
+Blue-Green nodegroup upgrades create a new nodegroup running the target Kubernetes version while keeping the current nodegroup active. After validating the new nodes, workloads are migrated using cordon and drain operations. Once validation is complete, the old nodegroup is removed.
 
 ### Production Example
 
-Blue 1.32 → Green 1.33 → Move Workloads → Delete Blue.
+```text
+Blue NG 1.32
+
+↓
+
+Green NG 1.33
+
+↓
+
+Wait For Ready Nodes
+
+↓
+
+Drain Blue
+
+↓
+
+Move Workloads
+
+↓
+
+Delete Blue
+```
+
+### Follow-Up Questions
+
+- Why not upgrade nodes in-place?
+- How much extra capacity is required?
+- How do you rollback?
+- When do you delete the old nodegroup?
 
 ---
 
-## Why Detect Node Version From Kubernetes Instead Of Terraform?
+## Why Is The Control Plane Considered The Source Of Truth?
 
 ### Short Answer
 
-Running infrastructure is the source of truth.
+New nodegroups should always match the currently running control plane version.
 
-### Explanation
+### Detailed Explanation
 
-Terraform state may not always reflect the actual cluster state.
+The script reads the cluster version directly from EKS and uses that version while creating the target nodegroup. This ensures worker nodes remain compatible with the upgraded control plane.
+
+### Production Example
+
+```text
+Control Plane
+
+1.33
+```
+
+Current NodeGroup
+
+```text
+1.32
+```
+
+Target NodeGroup
+
+```text
+1.33
+```
+
+### Follow-Up Questions
+
+- What happens if node versions are ahead of the control plane?
+- Can worker nodes be newer than the control plane?
+- What is version skew?
+- How do you retrieve cluster version?
 
 ---
 
-## Why Wait For Ready Nodes Before Draining?
+## Why Detect Node Versions From Kubernetes Instead Of Terraform?
 
 ### Short Answer
 
-Workloads need healthy capacity before migration starts.
+Because running infrastructure is the source of truth.
+
+### Detailed Explanation
+
+Terraform state may become outdated because of manual changes, failed applies, or state drift. Querying Kubernetes directly ensures the script reads the actual kubelet version running on worker nodes.
+
+### Production Example
+
+Command:
+
+```bash
+kubectl get nodes \
+-l nodegroup=blue \
+-o jsonpath='{.items[0].status.nodeInfo.kubeletVersion}'
+```
+
+Output:
+
+```text
+v1.32.5-eks-xxxxx
+```
+
+Parsed Version:
+
+```text
+1.32
+```
+
+### Follow-Up Questions
+
+- What is state drift?
+- Can Terraform state become stale?
+- Why is kubeletVersion important?
+- How do you validate node versions?
+
+---
+
+## Why Create The New NodeGroup Before Draining The Old One?
+
+### Short Answer
+
+To ensure sufficient capacity exists before workload migration.
+
+### Detailed Explanation
+
+Pods cannot be safely migrated unless healthy target nodes already exist. The new nodegroup must be fully provisioned and validated before workloads are moved.
+
+### Production Example
+
+Before:
+
+```text
+Blue
+
+5 Nodes
+```
+
+Create:
+
+```text
+Green
+
+5 Nodes
+```
+
+Validate:
+
+```text
+All Nodes Ready
+```
+
+Only then:
+
+```text
+Drain Blue
+```
+
+### Follow-Up Questions
+
+- What happens if target nodes are unavailable?
+- How do you validate node readiness?
+- What if workloads exceed available capacity?
+- Why not drain first?
+
+---
+
+## Why Wait For Nodes To Become Ready?
+
+### Short Answer
+
+Workloads should only run on healthy nodes.
+
+### Detailed Explanation
+
+A node joining the cluster does not immediately mean it is ready to run production workloads. The script waits until Kubernetes reports the node condition as Ready before migration begins.
+
+### Production Example
+
+Command:
+
+```bash
+kubectl wait \
+--for=condition=Ready
+```
+
+Timeout:
+
+```text
+30 Minutes
+```
+
+### Follow-Up Questions
+
+- What conditions make a node Ready?
+- What if timeout occurs?
+- How do you troubleshoot NotReady nodes?
+- Which command verifies node health?
+
+---
+
+## Why Use Upgrade Taints On New Nodes?
+
+### Short Answer
+
+To prevent workloads from scheduling before validation is completed.
+
+### Detailed Explanation
+
+New nodes are created with a temporary NoSchedule taint. This allows the platform team to verify node health, networking, storage, and cluster connectivity before workloads are allowed to run.
+
+### Production Example
+
+Taint:
+
+```text
+upgrade=true:NoSchedule
+```
+
+Flow:
+
+```text
+Create Nodes
+
+↓
+
+Validate Nodes
+
+↓
+
+Remove Taint
+
+↓
+
+Allow Scheduling
+```
+
+### Follow-Up Questions
+
+- What is a taint?
+- What is NoSchedule?
+- Why not allow scheduling immediately?
+- How do you remove taints?
+
+---
+
+## What Is The Difference Between Cordon And Drain?
+
+### Short Answer
+
+Cordon blocks new scheduling. Drain moves existing workloads.
+
+### Detailed Explanation
+
+Cordon marks nodes as unschedulable but leaves existing workloads running. Drain safely evicts workloads and allows Kubernetes to recreate them elsewhere.
+
+### Production Example
+
+Cordon:
+
+```text
+No New Pods
+```
+
+Drain:
+
+```text
+Existing Pods Migrated
+```
+
+### Follow-Up Questions
+
+- Does cordon remove pods?
+- What happens during drain?
+- Can a drained node still run pods?
+- Which step comes first?
 
 ---
 
@@ -1262,39 +1516,93 @@ Workloads need healthy capacity before migration starts.
 
 ### Short Answer
 
-Infrastructure deletion and workload migration are high-risk actions.
+Because production migrations and infrastructure deletion are high-risk operations.
 
-### Explanation
+### Detailed Explanation
 
-Human approval prevents accidental production outages.
+The script intentionally pauses before creating or deleting infrastructure. Human approval ensures that the operator reviews the planned changes before proceeding.
+
+### Production Example
+
+Prompt:
+
+```text
+Type YES To Continue
+```
+
+Before:
+
+```text
+NodeGroup Creation
+
+NodeGroup Deletion
+
+Workload Migration
+```
+
+### Follow-Up Questions
+
+- Why not fully automate?
+- Which steps are most dangerous?
+- What happens if someone makes a mistake?
+- How do large enterprises handle approvals?
 
 ---
 
-## Difference Between Cordon And Drain?
-
-### Cordon
-
-```text
-Stop New Scheduling
-```
-
-### Drain
-
-```text
-Move Existing Workloads
-```
-
----
-
-## How Would You Rollback?
+## How Do You Validate Workload Migration?
 
 ### Short Answer
 
-Keep old nodegroup available until validation completes.
+Check application health after drain operations complete.
 
-### Flow
+### Detailed Explanation
+
+After workloads move to the target nodegroup, the platform team validates that pods are healthy and no scheduling issues exist.
+
+### Production Example
+
+Check For:
 
 ```text
+Pending
+
+CrashLoopBackOff
+
+ImagePullBackOff
+```
+
+Command:
+
+```bash
+kubectl get pods -A
+```
+
+### Follow-Up Questions
+
+- How do you validate application health?
+- What causes Pending pods?
+- What causes CrashLoopBackOff?
+- What logs would you check?
+
+---
+
+## How Would You Rollback A NodeGroup Upgrade?
+
+### Short Answer
+
+Keep the old nodegroup until validation is complete and move workloads back if necessary.
+
+### Detailed Explanation
+
+Blue-Green architecture enables rapid rollback because the previous environment remains available until the upgrade is verified.
+
+### Production Example
+
+```text
+Green Problem
+
+↓
+
 Cordon Green
 
 ↓
@@ -1303,12 +1611,60 @@ Drain Green
 
 ↓
 
-Enable Blue
+Uncordon Blue
 
 ↓
 
 Workloads Return
 ```
+
+### Follow-Up Questions
+
+- Why keep Blue alive?
+- When is rollback triggered?
+- How long should Blue remain available?
+- What validations are required before deletion?
+
+---
+
+## How Would You Upgrade A 100-Node Production Cluster?
+
+### Short Answer
+
+Upgrade in batches instead of replacing all nodes at once.
+
+### Detailed Explanation
+
+Large clusters are upgraded gradually to reduce risk and avoid capacity issues. Small batches are migrated, validated, and then removed before moving to the next batch.
+
+### Production Example
+
+```text
+100 Nodes
+
+↓
+
+Add 10 New Nodes
+
+↓
+
+Drain 10 Old Nodes
+
+↓
+
+Delete 10 Old Nodes
+
+↓
+
+Repeat
+```
+
+### Follow-Up Questions
+
+- Why not upgrade all 100 nodes together?
+- How do you determine batch size?
+- What risks exist during migration?
+- How do you monitor progress?
 
 ---
 
