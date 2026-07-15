@@ -1212,24 +1212,79 @@ Platform Validation
 
 ### Short Answer
 
-Using a shell script that validates versions, upgrades the control plane, waits for ACTIVE status, discovers addons, upgrades compatible versions, and validates the cluster.
+Using a shell script that validates versions, upgrades the control plane, waits for ACTIVE status, discovers addons dynamically, upgrades compatible addon versions, and validates the cluster.
+
+### Detailed Explanation
+
+Production EKS upgrades should be automated to reduce human errors and ensure consistency. The script validates the target version, verifies upgrade compatibility, upgrades the control plane, continuously monitors cluster status, discovers installed addons, upgrades only compatible addon versions, and validates the cluster after completion.
 
 ### Production Example
 
-Automated upgrade of roboshop-dev from 1.32 to 1.33.
+```text
+Current Cluster Version
+
+1.32
+
+↓
+
+Execute
+
+sh upgrade-cluster.sh 1.33
+
+↓
+
+Version Validation
+
+↓
+
+Control Plane Upgrade
+
+↓
+
+Wait ACTIVE
+
+↓
+
+Addon Discovery
+
+↓
+
+Addon Upgrades
+
+↓
+
+Cluster Validation
+```
+
+### Follow-Up Questions
+
+- Why automate cluster upgrades?
+- What checks do you perform before upgrading?
+- Why wait for ACTIVE status?
+- How do you validate upgrade success?
 
 ---
 
-## How Do You Prevent Unsupported Upgrades?
+## How Do You Prevent Unsupported Kubernetes Upgrades?
 
 ### Short Answer
 
-Validate that the target version is exactly one minor version ahead.
+By validating that the target version is exactly one minor version ahead of the current version.
 
-### Example
+### Detailed Explanation
+
+Kubernetes supports sequential minor upgrades. Skipping versions can cause compatibility issues and upgrade failures. The script parses major and minor versions and ensures the target version is exactly one step ahead.
+
+### Production Example
 
 ```text
 1.32 → 1.33
+
+Allowed
+```
+
+```text
+1.33 → 1.34
 
 Allowed
 ```
@@ -1240,19 +1295,55 @@ Allowed
 Rejected
 ```
 
+### Follow-Up Questions
+
+- What is version skew?
+- Why are version skips dangerous?
+- How does AWS handle unsupported upgrades?
+- Can major versions be changed directly?
+
 ---
 
-## Why Not Upgrade Addons To The Latest Version?
+## Why Upgrade The Control Plane Before Addons?
 
 ### Short Answer
 
-Latest version may not be compatible.
+Because addons must be compatible with the upgraded Kubernetes control plane.
 
-### Correct Approach
+### Detailed Explanation
+
+The control plane is the core of Kubernetes. Addons such as CoreDNS, kube-proxy, and VPC CNI rely on APIs exposed by the control plane. Upgrading addons before the control plane can lead to compatibility issues.
+
+### Production Example
 
 ```text
-Latest Compatible Version
+Control Plane
+
+1.32
+
+↓
+
+1.33
+
+↓
+
+CoreDNS Upgrade
+
+↓
+
+kube-proxy Upgrade
+
+↓
+
+VPC CNI Upgrade
 ```
+
+### Follow-Up Questions
+
+- What happens if addons are upgraded first?
+- Which addons are critical?
+- How do you verify addon compatibility?
+- What is the correct EKS upgrade order?
 
 ---
 
@@ -1260,11 +1351,185 @@ Latest Compatible Version
 
 ### Short Answer
 
-Different clusters have different addons.
+Different clusters may have different installed addons.
 
-### Benefit
+### Detailed Explanation
 
-One script works across all environments.
+Hardcoding addon names makes automation less reusable. Dynamic discovery allows the same script to work across multiple environments regardless of which addons are installed.
+
+### Production Example
+
+Cluster A:
+
+```text
+CoreDNS
+
+kube-proxy
+
+VPC CNI
+```
+
+Cluster B:
+
+```text
+CoreDNS
+
+kube-proxy
+
+VPC CNI
+
+EBS CSI
+
+EFS CSI
+```
+
+Same script works for both.
+
+### Follow-Up Questions
+
+- Which command lists addons?
+- What happens if an addon is missing?
+- Can addon lists differ between environments?
+- Why avoid hardcoding?
+
+---
+
+## How Do You Determine Which Addon Version To Upgrade To?
+
+### Short Answer
+
+The script selects the latest version compatible with the target Kubernetes version.
+
+### Detailed Explanation
+
+The latest addon version is not always compatible with the target cluster version. The script queries AWS addon compatibility information and chooses the newest supported version for the upgraded cluster.
+
+### Production Example
+
+```text
+Target Cluster Version
+
+1.33
+```
+
+Current CoreDNS:
+
+```text
+1.11
+```
+
+Latest Overall:
+
+```text
+1.15
+```
+
+Latest Compatible:
+
+```text
+1.12
+```
+
+Selected Version:
+
+```text
+1.12
+```
+
+### Follow-Up Questions
+
+- Which AWS command provides compatibility information?
+- Why not use the latest version?
+- How do you handle compatibility issues?
+- Can incompatible addons break the cluster?
+
+---
+
+## Why Not Upgrade Addons To The Latest Available Version?
+
+### Short Answer
+
+Because the latest version may not be compatible with the target Kubernetes version.
+
+### Detailed Explanation
+
+Compatibility is more important than version numbers. Production upgrades should always use supported versions rather than blindly upgrading to the newest release.
+
+### Production Example
+
+```text
+Cluster Version
+
+1.33
+```
+
+Latest CoreDNS:
+
+```text
+1.15
+```
+
+Compatible CoreDNS:
+
+```text
+1.12
+```
+
+Upgrade Target:
+
+```text
+1.12
+```
+
+### Follow-Up Questions
+
+- How do you verify compatibility?
+- What happens if compatibility is ignored?
+- Which addons are most sensitive?
+- How do you rollback addon upgrades?
+
+---
+
+## How Do You Monitor Control Plane Upgrade Progress?
+
+### Short Answer
+
+By continuously polling cluster status and version until the cluster becomes ACTIVE.
+
+### Detailed Explanation
+
+EKS upgrades are asynchronous. The upgrade request returns immediately, but the actual upgrade may take several minutes. The script repeatedly checks cluster status and version before continuing.
+
+### Production Example
+
+```text
+UPDATING
+
+↓
+
+UPDATING
+
+↓
+
+ACTIVE
+```
+
+Version:
+
+```text
+1.32
+
+↓
+
+1.33
+```
+
+### Follow-Up Questions
+
+- Why not proceed immediately?
+- How often do you poll?
+- What status values can appear?
+- What happens if the cluster stays UPDATING?
 
 ---
 
@@ -1272,7 +1537,27 @@ One script works across all environments.
 
 ### Short Answer
 
-Monitor status continuously and abort if addon becomes:
+The script monitors addon status and immediately aborts if a failure state is detected.
+
+### Detailed Explanation
+
+Continuing an upgrade after a failed addon can cause larger platform issues. The script checks addon health continuously and stops execution if any addon enters a failure state.
+
+### Production Example
+
+Monitored States:
+
+```text
+ACTIVE
+
+FAILED
+
+UPDATE_FAILED
+
+DEGRADED
+```
+
+Abort On:
 
 ```text
 FAILED
@@ -1282,20 +1567,51 @@ UPDATE_FAILED
 DEGRADED
 ```
 
+### Follow-Up Questions
+
+- How do you troubleshoot DEGRADED addons?
+- What causes addon failures?
+- Which addon failures are most critical?
+- How do you recover from a failed upgrade?
+
 ---
 
-## Why Wait For ACTIVE Before Continuing?
+## How Do You Validate An EKS Upgrade?
 
 ### Short Answer
 
-The upgrade request is asynchronous.
+Validate nodes, pods, services, ingress, storage, and networking after the upgrade.
 
-### Reason
+### Detailed Explanation
 
-The cluster must be fully upgraded before starting addon upgrades.
+Version changes alone do not guarantee success. The entire platform must be validated to ensure workloads continue operating correctly.
+
+### Production Example
+
+Verify:
+
+```text
+Nodes Ready
+
+Pods Running
+
+PVCs Bound
+
+Ingress Reachable
+
+DNS Working
+
+Monitoring Healthy
+```
+
+### Follow-Up Questions
+
+- Which kubectl commands do you use?
+- How do you validate CoreDNS?
+- How do you validate networking?
+- How do you validate storage?
 
 ---
-
 # Key Takeaways
 
 ```text
