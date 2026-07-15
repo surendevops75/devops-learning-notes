@@ -1204,52 +1204,33 @@ Secret Rotation
 
 # Common Interview Questions
 
-## What Is The Most Common Job In Production?
+## How Are Jobs Used In Your Production Environment?
 
-### Answer
+### Short Answer
+
+Jobs are used for one-time operational tasks such as database migrations, data imports, EKS upgrade validation, cache warmups, and disaster recovery testing.
+
+### Detailed Explanation
+
+Jobs are preferred whenever a task should run once, complete successfully, and exit. Unlike Deployments, Jobs are not expected to run continuously.
+
+### Production Example
 
 ```text
+Application Release
+
+↓
+
 Database Migration Job
+
+↓
+
+Schema Updated
+
+↓
+
+Application Deployment
 ```
-
----
-
-## What Is The Most Common CronJob In Production?
-
-### Answer
-
-```text
-Database Backup CronJob
-```
-
----
-
-## How Do You Prevent Overlapping CronJobs?
-
-```yaml
-concurrencyPolicy: Forbid
-```
-
----
-
-## How Do You Retry Failed Jobs?
-
-```yaml
-backoffLimit: 3
-```
-
----
-
-## Why Use A Job Instead Of A Deployment?
-
-Because:
-
-```text
-Job Completes
-
-Deployment Runs Forever
-```
-
 ---
 
 # Key Takeaways
