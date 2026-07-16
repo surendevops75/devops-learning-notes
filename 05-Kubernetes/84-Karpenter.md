@@ -644,6 +644,346 @@ Automatically.
 
 ---
 
+# Karpenter Installation Architecture
+
+## Required AWS Components
+
+Karpenter requires:
+
+```text
+OIDC Provider
+
+IAM Role
+
+SQS Queue
+
+EC2 Permissions
+
+EKS Cluster
+```
+
+---
+
+Flow
+
+```text
+Pending Pod
+
+↓
+
+Karpenter
+
+↓
+
+AWS EC2 API
+
+↓
+
+Launch Instance
+
+↓
+
+Node Joins Cluster
+
+↓
+
+Pod Scheduled
+```
+
+---
+
+# Create Karpenter Service Account
+
+Karpenter uses:
+
+```text
+IRSA
+```
+
+to access AWS APIs.
+
+---
+
+Example
+
+```bash
+eksctl create iamserviceaccount \
+  --cluster roboshop-dev \
+  --namespace karpenter \
+  --name karpenter \
+  --attach-policy-arn arn:aws:iam::<ACCOUNT_ID>:policy/KarpenterControllerPolicy \
+  --approve
+```
+
+---
+
+# Install Karpenter
+
+Helm
+
+```bash
+helm upgrade --install karpenter oci://public.ecr.aws/karpenter/karpenter \
+  --namespace karpenter \
+  --create-namespace
+```
+
+---
+
+# EC2NodeClass
+
+EC2NodeClass defines:
+
+```text
+Subnets
+
+Security Groups
+
+AMI
+
+IAM Role
+```
+
+for EC2 instances.
+
+---
+
+Think Of It As
+
+```text
+AWS Infrastructure Definition
+```
+
+for Karpenter.
+
+---
+
+Example
+
+```yaml
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+
+metadata:
+  name: default
+
+spec:
+
+  amiFamily: AL2
+
+  role: KarpenterNodeRole
+
+  subnetSelectorTerms:
+
+  - tags:
+      karpenter.sh/discovery: roboshop-dev
+
+  securityGroupSelectorTerms:
+
+  - tags:
+      karpenter.sh/discovery: roboshop-dev
+```
+
+---
+
+# NodePool
+
+NodePool defines:
+
+```text
+What Nodes Can Be Created
+```
+
+---
+
+Example
+
+```yaml
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+
+metadata:
+  name: default
+
+spec:
+
+  template:
+
+    spec:
+
+      nodeClassRef:
+        name: default
+
+      requirements:
+
+      - key: kubernetes.io/arch
+        operator: In
+        values:
+        - amd64
+
+      - key: karpenter.k8s.aws/instance-category
+        operator: In
+        values:
+        - c
+        - m
+        - r
+
+  limits:
+
+    cpu: 1000
+```
+
+---
+
+# How NodePool Works
+
+Allows Karpenter To Create
+
+```text
+Compute Optimized
+
+Memory Optimized
+
+General Purpose
+```
+
+instances.
+
+---
+
+Examples
+
+```text
+c5.large
+
+m5.large
+
+r5.large
+```
+
+---
+
+# EC2NodeClass vs NodePool
+
+## EC2NodeClass
+
+Defines
+
+```text
+Subnets
+
+Security Groups
+
+AMI
+
+IAM Role
+```
+
+---
+
+## NodePool
+
+Defines
+
+```text
+Instance Types
+
+CPU Limits
+
+Capacity Type
+
+Scheduling Rules
+```
+
+---
+
+# Real Production Example
+
+Application Requires
+
+```text
+8 CPU
+
+32 GB RAM
+```
+
+---
+
+Scheduler
+
+```text
+Cannot Place Pod
+```
+
+---
+
+Karpenter Reads
+
+```text
+NodePool
+
++
+
+EC2NodeClass
+```
+
+---
+
+Chooses
+
+```text
+m5.2xlarge
+```
+
+---
+
+Launches EC2
+
+---
+
+Node Joins Cluster
+
+---
+
+Pod Scheduled.
+
+---
+
+# Verify Karpenter
+
+Deployments
+
+```bash
+kubectl get deployment -n karpenter
+```
+
+---
+
+NodePools
+
+```bash
+kubectl get nodepools
+```
+
+---
+
+EC2NodeClasses
+
+```bash
+kubectl get ec2nodeclasses
+```
+
+---
+
+Logs
+
+```bash
+kubectl logs \
+-n karpenter \
+deployment/karpenter
+```
+
+---
+
 # Karpenter vs Cluster Autoscaler
 
 ## Cluster Autoscaler
@@ -921,6 +1261,80 @@ Launch Appropriate EC2
 - What AWS APIs are used?
 
 ---
+
+## How Is Karpenter Installed In EKS?
+
+### Short Answer
+
+Karpenter is installed using Helm and uses IRSA to access AWS APIs.
+
+### Detailed Explanation
+
+Karpenter watches pending pods and directly launches EC2 instances using the AWS EC2 API.
+
+### Production Example
+
+```text
+Pending Pod
+
+↓
+
+Karpenter
+
+↓
+
+Launch EC2
+
+↓
+
+Node Registered
+
+↓
+
+Pod Running
+```
+
+### Follow-Up Questions
+
+- What IAM permissions are required?
+- Why is IRSA used?
+- What AWS APIs does Karpenter call?
+- How does Karpenter create nodes?
+
+---
+
+## What Is The Difference Between NodePool And EC2NodeClass?
+
+### Short Answer
+
+NodePool defines what nodes can be created, while EC2NodeClass defines AWS infrastructure settings.
+
+### Production Example
+
+```text
+NodePool
+
+↓
+
+Allowed Instance Types
+
+EC2NodeClass
+
+↓
+
+Subnets
+
+Security Groups
+
+AMI
+```
+
+### Follow-Up Questions
+
+- Why are they separated?
+- What happens if NodePool is missing?
+- What happens if EC2NodeClass is missing?
+- Can multiple NodePools use the same EC2NodeClass?
 
 ## Difference Between Karpenter And Cluster Autoscaler?
 
