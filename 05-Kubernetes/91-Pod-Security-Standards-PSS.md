@@ -750,14 +750,11 @@ Can Validate
 Can Mutate
 
 Can Generate Resources
-```
-
----
 
 More Powerful.
 
----
 
+---
 # Common Production Problems
 
 ## Problem 1
