@@ -240,7 +240,7 @@ Most Common Way To Perform Squash.
 
 ---
 
-# Trainer Example
+# Example
 
 Suppose
 
