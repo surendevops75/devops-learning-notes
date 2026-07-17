@@ -192,7 +192,7 @@ Rebase Rewrites History
 
 # How Git Conflicts Really Happen?
 
-Trainer Example
+Example
 
 ```text
 Two Persons Started Egg Dosa
