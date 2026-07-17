@@ -755,60 +755,311 @@ Without Rebuilding.
 
 # Common Interview Questions
 
-## Why Is Rebase Not Recommended On Shared Branches?
+## When Should You Use Merge And Rebase?
 
-### Answer
+### Short Answer
+
+Use Merge for shared branches and Rebase for private or local branches.
+
+### Detailed Explanation
+
+Merge preserves commit history by creating a merge commit and does not modify existing commit IDs. Rebase rewrites history by creating new commit IDs and maintaining a linear history.
+
+Because rebase changes commit history, it should not be used on branches shared with other developers.
+
+### Production Example
 
 ```text
-Rebase Rewrites History
+Shared Branch
 
-Changes Commit IDs
+↓
 
-Can Break Other Developers
+Merge
+```
+
+```text
+Feature Branch
+
+↓
+
+Rebase
+```
+
+### Follow-Up Questions
+
+```text
+What is a Merge Commit?
+
+Why does Rebase change commit IDs?
+
+Can Rebase create conflicts?
+
+Why is Rebase dangerous on shared branches?
 ```
 
 ---
 
-## Why Is Merge Preferred For Teams?
+## How Do Git Conflicts Occur?
 
-### Answer
+### Short Answer
+
+Git conflicts occur when multiple developers modify the same line of code and Git cannot determine which version should be preserved.
+
+### Detailed Explanation
+
+Git automatically merges changes when modifications occur in different areas of a file. When changes occur on the same line or overlapping sections, Git requires manual intervention.
+
+### Production Example
+
+Developer A
+
+```python
+PORT=8080
+```
+
+Developer B
+
+```python
+PORT=9090
+```
+
+Git cannot determine which value is correct.
 
 ```text
-Preserves History
+Conflict
+```
 
-No Commit Rewriting
+### Follow-Up Questions
 
-Safe For Shared Branches
+```text
+Can conflicts occur during Rebase?
+
+How do you resolve conflicts?
+
+How can teams reduce conflicts?
+```
+
+---
+
+## What Is The Difference Between Long-Lived And Short-Lived Branches?
+
+### Short Answer
+
+Long-lived branches exist for extended periods, while short-lived branches are created for specific tasks and deleted after merging.
+
+### Detailed Explanation
+
+Long-lived branches typically represent environments or major development streams. Short-lived branches are used for features, bug fixes, and hotfixes.
+
+Short-lived branches reduce merge conflicts and simplify integration.
+
+### Production Example
+
+Long-Lived
+
+```text
+main
+
+develop
+
+release
+```
+
+Short-Lived
+
+```text
+feature/payment
+
+bugfix/login
+
+hotfix/checkout
+```
+
+### Follow-Up Questions
+
+```text
+Why are long-lived feature branches risky?
+
+Which branching model uses more short-lived branches?
+
+How do short-lived branches reduce conflicts?
+```
+
+---
+
+## What Is Git Flow?
+
+### Short Answer
+
+Git Flow is a branching strategy that uses dedicated branches for development, releases, features, bug fixes, and hotfixes.
+
+### Detailed Explanation
+
+Git Flow separates production, development, release preparation, and emergency fixes into dedicated branches. It provides strong release management but introduces additional complexity.
+
+### Production Example
+
+```text
+main
+
+↓
+
+develop
+
+├── feature/*
+
+├── bugfix/*
+
+├── release/*
+
+└── hotfix/*
+```
+
+### Follow-Up Questions
+
+```text
+What is a Release Branch?
+
+What is a Hotfix Branch?
+
+Why is Git Flow less common in cloud-native teams?
+```
+
+---
+
+## What Is GitHub Feature Branching Model?
+
+### Short Answer
+
+A branching strategy that uses a main branch and short-lived feature branches.
+
+### Detailed Explanation
+
+Developers create feature branches from main, implement changes, raise pull requests, and merge changes back into main after review and validation.
+
+### Production Example
+
+```text
+main
+
+↓
+
+feature/payment
+
+↓
+
+PR
+
+↓
+
+main
+```
+
+### Follow-Up Questions
+
+```text
+Why is Feature Branching popular?
+
+How does CI/CD integrate with Pull Requests?
+
+What are the advantages over Git Flow?
+```
+
+---
+
+## What Is Trunk Based Development?
+
+### Short Answer
+
+Developers integrate changes into the main branch frequently using short-lived branches.
+
+### Detailed Explanation
+
+Trunk Based Development emphasizes continuous integration, rapid feedback, and frequent merging. Teams rely heavily on automated testing and CI/CD pipelines.
+
+### Production Example
+
+```text
+Small Branch
+
+↓
+
+Merge Quickly
+
+↓
+
+main
+```
+
+### Follow-Up Questions
+
+```text
+Why do Google and Netflix use Trunk Based Development?
+
+How does CI/CD support this model?
+
+What are the risks without automated testing?
 ```
 
 ---
 
 ## Why Shouldn't We Create Environment Branches?
 
-### Answer
+### Short Answer
+
+Environment branches can result in different code existing in different environments.
+
+### Detailed Explanation
+
+The recommended DevOps practice is to promote the same artifact through DEV, QA, UAT, and PROD. Only configurations should differ between environments.
+
+### Production Example
+
+Incorrect
 
 ```text
-Different Branches Mean Different Code.
+dev
 
-Production Should Run The Same Code That Was Tested Earlier.
+qa
+
+uat
+
+prod
+```
+
+Correct
+
+```text
+Same Build
+
+↓
+
+DEV
+
+↓
+
+QA
+
+↓
+
+UAT
+
+↓
+
+PROD
+```
+
+### Follow-Up Questions
+
+```text
+What changes between environments?
+
+Why should code remain identical?
+
+How do configuration files support environment differences?
 ```
 
 ---
-
-## Which Branching Strategy Is Most Common?
-
-### Answer
-
-```text
-Feature Branching Model
-```
-
----
-
-Used By Most Organizations Today.
-
----
-
 # Key Takeaways
 
 ```text
