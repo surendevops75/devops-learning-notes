@@ -114,7 +114,7 @@ Everything happens automatically.
 
 The biggest strength of Jenkins is its **Plugin Architecture**.
 
-Your trainer mentioned:
+You mentioned:
 
 > "Jenkins power lies in plugins."
 
