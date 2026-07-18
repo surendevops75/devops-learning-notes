@@ -664,3 +664,958 @@ Typical production workflow:
 The `branch` condition makes this possible without maintaining separate pipelines.
 
 ---
+
+# Branch Pattern Matching
+
+The `branch` condition also supports pattern matching, making it suitable for repositories that follow Git branching strategies such as Git Flow or Feature Branching.
+
+Example
+
+```groovy
+stage("Deploy Development") {
+
+    when {
+
+        branch "develop"
+
+    }
+
+    steps {
+
+        sh "./deploy-dev.sh"
+
+    }
+
+}
+```
+
+Example
+
+```groovy
+stage("Release Deployment") {
+
+    when {
+
+        branch "release/*"
+
+    }
+
+    steps {
+
+        sh "./deploy-stage.sh"
+
+    }
+
+}
+```
+
+Example
+
+```groovy
+stage("Hotfix Validation") {
+
+    when {
+
+        branch "hotfix/*"
+
+    }
+
+    steps {
+
+        sh "./run-hotfix-tests.sh"
+
+    }
+
+}
+```
+
+---
+
+# Expression Condition
+
+## Purpose
+
+The `expression` condition allows Jenkins to evaluate a custom Groovy expression.
+
+It is the most flexible condition because it can evaluate:
+
+- Parameters
+- Variables
+- Environment Variables
+- File existence
+- Numeric values
+- Boolean values
+- Custom logic
+
+Syntax
+
+```groovy
+when {
+
+    expression {
+
+        expression_here
+
+    }
+
+}
+```
+
+Example
+
+```groovy
+when {
+
+    expression {
+
+        params.DEPLOY
+
+    }
+
+}
+```
+
+Pipeline Flow
+
+```text
+Boolean Parameter
+
+↓
+
+params.DEPLOY
+
+↓
+
+True?
+
+│
+
+├── Yes
+
+│      ▼
+
+│    Deploy
+
+│
+
+└── No
+
+       ▼
+
+     Skip
+```
+
+---
+
+# Production Example
+
+Deploy only when the deployment checkbox is selected.
+
+```groovy
+parameters {
+
+    booleanParam(
+        name: 'DEPLOY',
+        defaultValue: false
+    )
+
+}
+
+stage("Deploy") {
+
+    when {
+
+        expression {
+
+            params.DEPLOY
+
+        }
+
+    }
+
+    steps {
+
+        sh "./deploy.sh"
+
+    }
+
+}
+```
+
+---
+
+# Multiple Conditions Using Expression
+
+Example
+
+```groovy
+when {
+
+    expression {
+
+        params.DEPLOY &&
+        env.BRANCH_NAME == "main"
+
+    }
+
+}
+```
+
+Deployment occurs only if:
+
+- DEPLOY is true
+- Current branch is main
+
+---
+
+# Environment Condition
+
+## Purpose
+
+Executes a stage only when an environment variable contains a specific value.
+
+Syntax
+
+```groovy
+when {
+
+    environment name: "ENV",
+
+    value: "prod"
+
+}
+```
+
+Pipeline
+
+```text
+Environment Variable
+
+↓
+
+ENV
+
+↓
+
+prod ?
+
+│
+
+├── Yes
+
+│      ▼
+
+│    Execute
+
+│
+
+└── No
+
+       ▼
+
+      Skip
+```
+
+---
+
+# Production Example
+
+```groovy
+environment {
+
+    ENV="prod"
+
+}
+
+stage("Deploy") {
+
+    when {
+
+        environment
+
+        name: "ENV",
+
+        value: "prod"
+
+    }
+
+    steps {
+
+        sh "./deploy-prod.sh"
+
+    }
+
+}
+```
+
+---
+
+# Equals Condition
+
+## Purpose
+
+Compares two values.
+
+Syntax
+
+```groovy
+when {
+
+    equals expected: "prod",
+
+    actual: params.ENVIRONMENT
+
+}
+```
+
+Production Example
+
+```groovy
+parameters {
+
+    choice(
+
+        name: "ENVIRONMENT",
+
+        choices: [
+
+            "dev",
+
+            "test",
+
+            "stage",
+
+            "prod"
+
+        ]
+
+    )
+
+}
+
+stage("Production") {
+
+    when {
+
+        equals
+
+        expected: "prod",
+
+        actual: params.ENVIRONMENT
+
+    }
+
+    steps {
+
+        sh "./deploy-prod.sh"
+
+    }
+
+}
+```
+
+---
+
+# Tag Condition
+
+## Purpose
+
+Executes a stage only when the build is triggered from a Git tag.
+
+Typical use case
+
+```text
+Git Tag
+
+↓
+
+v1.0.0
+
+↓
+
+Production Release
+```
+
+Syntax
+
+```groovy
+when {
+
+    tag "v*"
+
+}
+```
+
+Production Example
+
+```groovy
+stage("Release") {
+
+    when {
+
+        tag "v*"
+
+    }
+
+    steps {
+
+        sh "./release.sh"
+
+    }
+
+}
+```
+
+Only version tags trigger releases.
+
+---
+
+# BuildingTag Condition
+
+## Purpose
+
+Checks whether the current build originates from any Git tag.
+
+Syntax
+
+```groovy
+when {
+
+    buildingTag()
+
+}
+```
+
+Difference
+
+```text
+tag
+
+↓
+
+Checks specific pattern
+
+buildingTag
+
+↓
+
+Checks whether current build is any Git tag
+```
+
+Production Example
+
+```groovy
+stage("Publish Release") {
+
+    when {
+
+        buildingTag()
+
+    }
+
+    steps {
+
+        sh "./publish.sh"
+
+    }
+
+}
+```
+
+---
+
+# Changelog Condition
+
+## Purpose
+
+Evaluates commit messages.
+
+Syntax
+
+```groovy
+when {
+
+    changelog ".*JIRA.*"
+
+}
+```
+
+Pipeline
+
+```text
+Commit
+
+↓
+
+Fixed Login
+
+↓
+
+No Match
+
+↓
+
+Skip
+```
+
+```text
+Commit
+
+↓
+
+JIRA-210 Payment Fix
+
+↓
+
+Match
+
+↓
+
+Execute
+```
+
+Production Example
+
+Run additional validation only for commits containing release keywords.
+
+```groovy
+stage("Release Validation") {
+
+    when {
+
+        changelog ".*RELEASE.*"
+
+    }
+
+    steps {
+
+        sh "./validate-release.sh"
+
+    }
+
+}
+```
+
+---
+
+# Changeset Condition
+
+## Purpose
+
+Executes a stage only when specified files are modified.
+
+One of the most useful conditions in production pipelines.
+
+Syntax
+
+```groovy
+when {
+
+    changeset "**/*.tf"
+
+}
+```
+
+Execution Flow
+
+```text
+Git Commit
+
+↓
+
+Files Changed
+
+↓
+
+Terraform?
+
+│
+
+├── Yes
+
+│      ▼
+
+│   Run Checkov
+
+│
+
+└── No
+
+       ▼
+
+     Skip
+```
+
+---
+
+# Production Example
+
+Run Checkov only when Infrastructure as Code changes.
+
+```groovy
+stage("IaC Scan") {
+
+    when {
+
+        changeset "**/*.tf"
+
+    }
+
+    steps {
+
+        sh """
+
+        checkov -d terraform/
+
+        """
+
+    }
+
+}
+```
+
+This reduces pipeline execution time by skipping unnecessary infrastructure scans.
+
+---
+
+# Another Production Example
+
+Run Docker build only when Docker-related files change.
+
+```groovy
+stage("Docker Build") {
+
+    when {
+
+        anyOf {
+
+            changeset "Dockerfile"
+
+            changeset "docker/**"
+
+        }
+
+    }
+
+    steps {
+
+        sh """
+
+        docker build -t catalogue:${BUILD_NUMBER} .
+
+        """
+
+    }
+
+}
+```
+
+---
+
+# TriggeredBy Condition
+
+## Purpose
+
+Executes a stage based on the event that started the pipeline.
+
+Examples of triggers
+
+- Manual Build
+- GitHub Webhook
+- Timer
+- Upstream Pipeline
+
+Syntax
+
+```groovy
+when {
+
+    triggeredBy "SCMTrigger"
+
+}
+```
+
+Production Example
+
+Deploy automatically only for webhook-triggered builds.
+
+```groovy
+stage("Deploy") {
+
+    when {
+
+        triggeredBy "SCMTrigger"
+
+    }
+
+    steps {
+
+        sh "./deploy.sh"
+
+    }
+
+}
+```
+
+---
+
+# anyOf Condition
+
+## Purpose
+
+Implements logical OR.
+
+The stage executes when at least one condition evaluates to true.
+
+Syntax
+
+```groovy
+when {
+
+    anyOf {
+
+        branch "develop"
+
+        branch "main"
+
+    }
+
+}
+```
+
+Execution
+
+```text
+develop ?
+
+│
+
+True
+
+↓
+
+Run
+```
+
+```text
+main ?
+
+│
+
+True
+
+↓
+
+Run
+```
+
+```text
+feature/login
+
+↓
+
+False
+
+↓
+
+Skip
+```
+
+Production Example
+
+Deploy to shared environments from either `develop` or `main`.
+
+```groovy
+stage("Deploy Shared") {
+
+    when {
+
+        anyOf {
+
+            branch "develop"
+
+            branch "main"
+
+        }
+
+    }
+
+    steps {
+
+        sh "./deploy.sh"
+
+    }
+
+}
+```
+
+---
+
+# allOf Condition
+
+## Purpose
+
+Implements logical AND.
+
+Every condition must evaluate to true.
+
+Syntax
+
+```groovy
+when {
+
+    allOf {
+
+        branch "main"
+
+        expression {
+
+            params.DEPLOY
+
+        }
+
+    }
+
+}
+```
+
+Execution
+
+```text
+Branch = main
+
+↓
+
+Yes
+
+↓
+
+DEPLOY=true
+
+↓
+
+Yes
+
+↓
+
+Execute Stage
+```
+
+If either condition fails, Jenkins skips the stage.
+
+---
+
+# Production Example
+
+Deploy to Production only when:
+
+- Branch is main
+- Deployment parameter is enabled
+
+```groovy
+stage("Production Deployment") {
+
+    when {
+
+        allOf {
+
+            branch "main"
+
+            expression {
+
+                params.DEPLOY
+
+            }
+
+        }
+
+    }
+
+    steps {
+
+        sh "./deploy-prod.sh"
+
+    }
+
+}
+```
+
+---
+
+# not Condition
+
+## Purpose
+
+Negates another condition.
+
+Syntax
+
+```groovy
+when {
+
+    not {
+
+        branch "main"
+
+    }
+
+}
+```
+
+Execution
+
+```text
+Current Branch
+
+↓
+
+main ?
+
+│
+
+Yes
+
+↓
+
+Skip
+```
+
+```text
+feature/login
+
+↓
+
+Not main
+
+↓
+
+Execute
+```
+
+Production Example
+
+Skip Production-only validation for feature branches.
+
+```groovy
+stage("Feature Validation") {
+
+    when {
+
+        not {
+
+            branch "main"
+
+        }
+
+    }
+
+    steps {
+
+        sh "./run-feature-tests.sh"
+
+    }
+
+}
+```
+
+---
