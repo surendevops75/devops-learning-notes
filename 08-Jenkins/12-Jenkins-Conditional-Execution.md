@@ -1,278 +1,184 @@
-# 12 - Jenkins Conditional Execution
+# Conditional Execution
 
-# Introduction
+## Introduction
 
-In a real-world CI/CD pipeline, not every stage should execute every time the pipeline runs.
+Not every stage in a Jenkins pipeline should execute for every build.
 
-For example:
+Example
 
-- Developers should be able to build feature branches without deploying to production.
-- Security scans may execute only when application code changes.
-- Infrastructure scans should execute only when Terraform files are modified.
-- Production deployments should occur only from the `main` branch after approval.
-- Release deployments may execute only when a Git tag is created.
+```text
+Feature Branch
+      │
+      ▼
+Build
 
-If Jenkins executed every stage on every pipeline run, it would result in:
+Test
 
-- Unnecessary deployments
-- Increased build time
-- Wasted compute resources
-- Higher infrastructure costs
-- Increased production risk
-
-To solve this problem, Jenkins provides **Conditional Execution** through the **`when` directive**.
-
-The `when` directive allows Jenkins to evaluate one or more conditions before executing a stage.
-
-If the condition evaluates to **true**, the stage executes.
-
-If the condition evaluates to **false**, Jenkins skips the stage and continues with the remaining pipeline.
-
-Conditional execution is one of the most widely used features in Declarative Pipelines because it enables organizations to build intelligent, flexible, and production-ready CI/CD workflows.
+Skip Deploy
+```
 
 ---
 
-# Learning Objectives
+```text
+Main Branch
+     │
+     ▼
+Build
 
-After completing this chapter, you should be able to:
+Test
 
-- Understand why conditional execution is important.
-- Use the `when` directive effectively.
-- Control stage execution based on:
-  - Branch
-  - Environment
-  - Parameters
-  - Git Tags
-  - Build Triggers
-  - Changed Files
-  - Custom Expressions
-- Build production-ready deployment pipelines.
-- Troubleshoot skipped stages.
-- Answer advanced interview questions on Jenkins conditional execution.
+Deploy
+```
+
+---
+
+Conditional execution helps Jenkins decide whether a stage should run or be skipped.
 
 ---
 
 # Why Do We Need Conditional Execution?
 
-Consider a simple pipeline.
+Without conditions,
+
+every stage executes.
 
 ```text
 Checkout
-
-↓
-
+     │
+     ▼
 Build
-
-↓
-
-Unit Test
-
-↓
-
+     │
+     ▼
+Test
+     │
+     ▼
 SonarQube
-
-↓
-
+     │
+     ▼
 OWASP Dependency Check
-
-↓
-
+     │
+     ▼
 Docker Build
-
-↓
-
-Docker Push
-
-↓
-
-Deploy Dev
-
-↓
-
-Deploy Test
-
-↓
-
-Deploy Stage
-
-↓
-
-Deploy Production
+     │
+     ▼
+Trivy Scan
+     │
+     ▼
+Deploy
 ```
 
-Now imagine a developer pushes code to a feature branch.
+---
 
-Should Jenkins deploy to Production?
+Problem
 
-Obviously not.
+```text
+Long Build Time
 
-Yet without conditions, Jenkins has no way of distinguishing between:
+Unnecessary Resource Usage
 
-- Feature branches
-- Development branches
-- Release branches
-- Production branches
+Accidental Deployments
+```
 
-Similarly, suppose a developer updates only documentation.
-
-Should Jenkins build Docker images?
-
-Should it run Checkov?
-
-Should it deploy Kubernetes resources?
-
-Again, the answer is no.
+---
 
 Conditional execution solves these problems.
 
 ---
 
-# Real Production Example
+# What is Conditional Execution?
 
-A company has four deployment environments.
-
-```text
-feature/*
-
-↓
-
-Build
-
-↓
-
-Test
-
-↓
-
-Stop
-```
-
-```text
-develop
-
-↓
-
-Build
-
-↓
-
-Test
-
-↓
-
-Deploy DEV
-```
-
-```text
-release/*
-
-↓
-
-Build
-
-↓
-
-Test
-
-↓
-
-Security Scan
-
-↓
-
-Deploy STAGE
-```
-
-```text
-main
-
-↓
-
-Build
-
-↓
-
-Test
-
-↓
-
-Security Scan
-
-↓
-
-Deploy Production
-```
-
-Notice that the same Jenkinsfile is used for every branch.
-
-Only the execution path changes.
-
-This is possible because of conditional execution.
+Conditional execution allows Jenkins to execute stages only when specified conditions are satisfied.
 
 ---
 
-# Pipeline Without Conditions
+Workflow
 
-Suppose a pipeline contains four stages.
+```text
+Evaluate Condition
+        │
+        ▼
+   True or False
+        │
+ ┌──────┴──────┐
+ │             │
+True         False
+ │             │
+ ▼             ▼
+Run Stage   Skip Stage
+```
+
+---
+
+# Jenkins when Directive
+
+The `when` directive is used to define stage execution conditions.
+
+---
+
+Syntax
 
 ```groovy
-stages {
+stage("Deploy") {
 
-    stage("Build") {
-
+    when {
+        branch "main"
     }
 
-    stage("Test") {
-
-    }
-
-    stage("Deploy") {
-
-    }
-
-    stage("Production") {
-
+    steps {
+        sh "./deploy.sh"
     }
 
 }
 ```
 
-Execution
+---
+
+Execution Flow
 
 ```text
-Build
-
-↓
-
-Test
-
-↓
-
-Deploy
-
-↓
-
-Production
+Stage Starts
+     │
+     ▼
+Evaluate when
+     │
+     ▼
+Condition True ?
+ ┌────┴────┐
+ │         │
+Yes       No
+ │         │
+ ▼         ▼
+Run      Skip
 ```
-
-Every stage executes.
-
-Even if deployment is not required.
 
 ---
 
-# Pipeline With Conditions
+# Branch Condition
+
+Executes a stage only when the current Git branch matches.
+
+---
+
+Syntax
+
+```groovy
+when {
+
+    branch "main"
+
+}
+```
+
+---
+
+Example
 
 ```groovy
 stage("Deploy") {
 
     when {
 
-        expression {
-
-            params.DEPLOY
-
-        }
+        branch "main"
 
     }
 
@@ -285,483 +191,58 @@ stage("Deploy") {
 }
 ```
 
-Execution
-
-```text
-Build
-
-↓
-
-Test
-
-↓
-
-Deploy?
-
-│
-
-├── Yes
-
-│     ↓
-
-│   Deploy
-
-│
-
-└── No
-
-      ↓
-
-    Skip Stage
-```
-
-The deployment stage executes only when the condition evaluates to **true**.
-
 ---
 
-# How Jenkins Evaluates Conditions
-
-Every time Jenkins reaches a stage containing a `when` block, it performs the following sequence.
-
-```text
-Previous Stage Finished
-
-        │
-
-        ▼
-
-Read when Condition
-
-        │
-
-        ▼
-
-Evaluate Condition
-
-        │
-
-   ┌────┴─────┐
-
-   │          │
-
- TRUE       FALSE
-
-   │          │
-
-   ▼          ▼
-
-Run Stage   Skip Stage
-```
-
-This evaluation happens before Jenkins executes any step inside the stage.
-
----
-
-# What is the when Directive?
-
-The `when` directive tells Jenkins whether a stage should execute.
-
-General Syntax
-
-```groovy
-stage("Deploy") {
-
-    when {
-
-        condition
-
-    }
-
-    steps {
-
-        ...
-
-    }
-
-}
-```
-
-Every Declarative Pipeline can contain multiple `when` blocks.
-
-Each stage evaluates its own conditions independently.
-
----
-
-# Trainer Example
-
-The trainer uses the following condition.
-
-```groovy
-stage("Deploy") {
-
-    when {
-
-        expression {
-
-            "$params.DEPLOY" == "true"
-
-        }
-
-    }
-
-    steps {
-
-        sh """
-
-        echo "Deploying"
-
-        """
-
-    }
-
-}
-```
-
-Although this works, a cleaner approach is:
-
-```groovy
-stage("Deploy") {
-
-    when {
-
-        expression {
-
-            params.DEPLOY
-
-        }
-
-    }
-
-    steps {
-
-        sh "echo Deploying"
-
-    }
-
-}
-```
-
-Since `DEPLOY` is already a Boolean Parameter, there is no need to compare it with a string.
-
----
-
-# Benefits of Conditional Execution
-
-Conditional execution provides several advantages.
-
-## Improved Performance
-
-Skip unnecessary stages.
-
-Instead of executing
-
-```text
-Checkout
-
-↓
-
-Build
-
-↓
-
-Test
-
-↓
-
-Docker
-
-↓
-
-Deploy
-```
-
-Jenkins may execute only
-
-```text
-Checkout
-
-↓
-
-Build
-
-↓
-
-Test
-```
-
-saving several minutes.
-
----
-
-## Faster Feedback
-
-Developers receive build results sooner because unnecessary stages are skipped.
-
----
-
-## Better Security
-
-Production deployment stages can be restricted to approved branches.
-
-Example
-
-```text
-main
-
-↓
-
-Deploy Production
-```
-
-All other branches automatically skip deployment.
-
----
-
-## Reduced Infrastructure Cost
-
-Skipping Docker builds, container scans, and Kubernetes deployments reduces compute consumption.
-
----
-
-## Cleaner Pipelines
-
-Instead of maintaining multiple Jenkinsfiles
-
-```text
-Build Pipeline
-
-Deploy Pipeline
-
-Release Pipeline
-
-Hotfix Pipeline
-```
-
-one parameterized pipeline can support all workflows.
-
----
-
-# Types of Conditions Supported by Jenkins
-
-Declarative Pipelines support multiple condition types.
-
-| Condition | Purpose |
-|-----------|---------|
-| branch | Execute on a specific Git branch |
-| expression | Evaluate custom Groovy expressions |
-| environment | Check environment variable values |
-| equals | Compare values |
-| tag | Execute when building Git tags |
-| buildingTag | Check whether the current build is a tag |
-| changelog | Search commit messages |
-| changeset | Detect modified files |
-| triggeredBy | Detect build trigger |
-| anyOf | Logical OR |
-| allOf | Logical AND |
-| not | Negate conditions |
-
-Each of these conditions solves a different production requirement.
-
----
-
-# Branch Condition
-
-## Purpose
-
-The `branch` condition executes a stage only when the current branch matches the specified value.
-
-Syntax
-
-```groovy
-when {
-
-    branch "main"
-
-}
-```
-
-Execution Flow
+Workflow
 
 ```text
 Current Branch
-
-        │
-
-        ▼
-
+      │
+      ▼
 main ?
-
-   │
-
-┌──┴──┐
-
-│     │
-
-Yes   No
-
-│     │
-
-▼     ▼
-
-Run   Skip
+ ┌────┴────┐
+ │         │
+Yes       No
+ │         │
+ ▼         ▼
+Run      Skip
 ```
+
+---
 
 Production Example
 
-```groovy
-stage("Deploy Production") {
+```text
+feature/*
+      │
+      ▼
+Build
 
-    when {
-
-        branch "main"
-
-    }
-
-    steps {
-
-        sh "./deploy-prod.sh"
-
-    }
-
-}
+Test
 ```
 
-Only the `main` branch can deploy to Production.
-
-Feature branches continue to build and test but never deploy.
-
 ---
-
-# Why Use Branch Conditions?
-
-Suppose a Git repository contains:
 
 ```text
 main
+ │
+ ▼
+Build
 
-develop
+Security Scan
 
-feature/login
-
-feature/payment
-
-release/1.2
-
-hotfix/api
-```
-
-Not every branch should perform identical actions.
-
-Typical production workflow:
-
-| Branch | Action |
-|---------|--------|
-| feature/* | Build + Test |
-| develop | Build + Test + Deploy DEV |
-| release/* | Build + Security Scan + Deploy STAGE |
-| main | Build + Security Scan + Deploy PROD |
-
-The `branch` condition makes this possible without maintaining separate pipelines.
-
----
-
-# Branch Pattern Matching
-
-The `branch` condition also supports pattern matching, making it suitable for repositories that follow Git branching strategies such as Git Flow or Feature Branching.
-
-Example
-
-```groovy
-stage("Deploy Development") {
-
-    when {
-
-        branch "develop"
-
-    }
-
-    steps {
-
-        sh "./deploy-dev.sh"
-
-    }
-
-}
-```
-
-Example
-
-```groovy
-stage("Release Deployment") {
-
-    when {
-
-        branch "release/*"
-
-    }
-
-    steps {
-
-        sh "./deploy-stage.sh"
-
-    }
-
-}
-```
-
-Example
-
-```groovy
-stage("Hotfix Validation") {
-
-    when {
-
-        branch "hotfix/*"
-
-    }
-
-    steps {
-
-        sh "./run-hotfix-tests.sh"
-
-    }
-
-}
+Deploy
 ```
 
 ---
 
 # Expression Condition
 
-## Purpose
+Executes a stage using custom Groovy expressions.
 
-The `expression` condition allows Jenkins to evaluate a custom Groovy expression.
-
-It is the most flexible condition because it can evaluate:
-
-- Parameters
-- Variables
-- Environment Variables
-- File existence
-- Numeric values
-- Boolean values
-- Custom logic
+---
 
 Syntax
-
-```groovy
-when {
-
-    expression {
-
-        expression_here
-
-    }
-
-}
-```
-
-Example
 
 ```groovy
 when {
@@ -775,47 +256,15 @@ when {
 }
 ```
 
-Pipeline Flow
-
-```text
-Boolean Parameter
-
-↓
-
-params.DEPLOY
-
-↓
-
-True?
-
-│
-
-├── Yes
-
-│      ▼
-
-│    Deploy
-
-│
-
-└── No
-
-       ▼
-
-     Skip
-```
-
 ---
 
-# Production Example
-
-Deploy only when the deployment checkbox is selected.
+Example
 
 ```groovy
 parameters {
 
     booleanParam(
-        name: 'DEPLOY',
+        name: "DEPLOY",
         defaultValue: false
     )
 
@@ -844,35 +293,47 @@ stage("Deploy") {
 
 ---
 
-# Multiple Conditions Using Expression
+Workflow
 
-Example
-
-```groovy
-when {
-
-    expression {
-
-        params.DEPLOY &&
-        env.BRANCH_NAME == "main"
-
-    }
-
-}
+```text
+DEPLOY=true ?
+      │
+ ┌────┴────┐
+ │         │
+Yes       No
+ │         │
+ ▼         ▼
+Run      Skip
 ```
 
-Deployment occurs only if:
+---
 
-- DEPLOY is true
-- Current branch is main
+Production Example
+
+```text
+Build
+   │
+   ▼
+Security Scan
+   │
+   ▼
+DEPLOY Parameter
+   │
+ ┌─┴─┐
+ │   │
+No  Yes
+ │   │
+ ▼   ▼
+End Deploy
+```
 
 ---
 
 # Environment Condition
 
-## Purpose
+Runs a stage when an environment variable matches the specified value.
 
-Executes a stage only when an environment variable contains a specific value.
+---
 
 Syntax
 
@@ -880,81 +341,45 @@ Syntax
 when {
 
     environment name: "ENV",
-
-    value: "prod"
+                value: "prod"
 
 }
-```
-
-Pipeline
-
-```text
-Environment Variable
-
-↓
-
-ENV
-
-↓
-
-prod ?
-
-│
-
-├── Yes
-
-│      ▼
-
-│    Execute
-
-│
-
-└── No
-
-       ▼
-
-      Skip
 ```
 
 ---
 
-# Production Example
+Example
 
 ```groovy
 environment {
 
-    ENV="prod"
+    ENV = "prod"
 
 }
+```
 
-stage("Deploy") {
+---
 
-    when {
+Workflow
 
-        environment
-
-        name: "ENV",
-
-        value: "prod"
-
-    }
-
-    steps {
-
-        sh "./deploy-prod.sh"
-
-    }
-
-}
+```text
+ENV=prod ?
+    │
+┌───┴────┐
+│        │
+Yes      No
+│        │
+▼        ▼
+Run     Skip
 ```
 
 ---
 
 # Equals Condition
 
-## Purpose
-
 Compares two values.
+
+---
 
 Syntax
 
@@ -962,79 +387,51 @@ Syntax
 when {
 
     equals expected: "prod",
-
-    actual: params.ENVIRONMENT
-
-}
-```
-
-Production Example
-
-```groovy
-parameters {
-
-    choice(
-
-        name: "ENVIRONMENT",
-
-        choices: [
-
-            "dev",
-
-            "test",
-
-            "stage",
-
-            "prod"
-
-        ]
-
-    )
-
-}
-
-stage("Production") {
-
-    when {
-
-        equals
-
-        expected: "prod",
-
-        actual: params.ENVIRONMENT
-
-    }
-
-    steps {
-
-        sh "./deploy-prod.sh"
-
-    }
+           actual: params.ENV
 
 }
 ```
 
 ---
 
+Workflow
+
+```text
+Compare Values
+      │
+      ▼
+Equal ?
+ ┌────┴────┐
+ │         │
+Yes       No
+ │         │
+ ▼         ▼
+Run      Skip
+```
+
+---
+
 # Tag Condition
 
-## Purpose
+Runs the stage only when the build is triggered by a Git tag.
 
-Executes a stage only when the build is triggered from a Git tag.
+---
 
-Typical use case
+Example
 
 ```text
 Git Tag
 
 ↓
 
-v1.0.0
+v2.0.0
 
 ↓
 
-Production Release
+Release Pipeline
 ```
+
+---
 
 Syntax
 
@@ -1046,35 +443,13 @@ when {
 }
 ```
 
-Production Example
-
-```groovy
-stage("Release") {
-
-    when {
-
-        tag "v*"
-
-    }
-
-    steps {
-
-        sh "./release.sh"
-
-    }
-
-}
-```
-
-Only version tags trigger releases.
-
 ---
 
-# BuildingTag Condition
+# buildingTag
 
-## Purpose
+Runs the stage if the current build originates from any Git tag.
 
-Checks whether the current build originates from any Git tag.
+---
 
 Syntax
 
@@ -1086,125 +461,22 @@ when {
 }
 ```
 
+---
+
 Difference
 
-```text
-tag
-
-↓
-
-Checks specific pattern
-
-buildingTag
-
-↓
-
-Checks whether current build is any Git tag
-```
-
-Production Example
-
-```groovy
-stage("Publish Release") {
-
-    when {
-
-        buildingTag()
-
-    }
-
-    steps {
-
-        sh "./publish.sh"
-
-    }
-
-}
-```
+| tag | buildingTag |
+|------|-------------|
+| Matches pattern | Checks any tag |
+| Example: v* | Any Git tag |
 
 ---
 
-# Changelog Condition
+# changeset
 
-## Purpose
-
-Evaluates commit messages.
-
-Syntax
-
-```groovy
-when {
-
-    changelog ".*JIRA.*"
-
-}
-```
-
-Pipeline
-
-```text
-Commit
-
-↓
-
-Fixed Login
-
-↓
-
-No Match
-
-↓
-
-Skip
-```
-
-```text
-Commit
-
-↓
-
-JIRA-210 Payment Fix
-
-↓
-
-Match
-
-↓
-
-Execute
-```
-
-Production Example
-
-Run additional validation only for commits containing release keywords.
-
-```groovy
-stage("Release Validation") {
-
-    when {
-
-        changelog ".*RELEASE.*"
-
-    }
-
-    steps {
-
-        sh "./validate-release.sh"
-
-    }
-
-}
-```
+Runs a stage only when specific files are modified.
 
 ---
-
-# Changeset Condition
-
-## Purpose
-
-Executes a stage only when specified files are modified.
-
-One of the most useful conditions in production pipelines.
 
 Syntax
 
@@ -1216,114 +488,98 @@ when {
 }
 ```
 
-Execution Flow
+---
+
+Workflow
 
 ```text
-Git Commit
-
-↓
-
-Files Changed
-
-↓
-
-Terraform?
-
-│
-
-├── Yes
-
-│      ▼
-
-│   Run Checkov
-
-│
-
-└── No
-
-       ▼
-
-     Skip
+Terraform Changed ?
+        │
+ ┌──────┴──────┐
+ │             │
+Yes           No
+ │             │
+ ▼             ▼
+Run         Skip
 ```
 
 ---
 
-# Production Example
+Production Example
 
-Run Checkov only when Infrastructure as Code changes.
+```text
+README Changed
 
-```groovy
-stage("IaC Scan") {
+↓
 
-    when {
-
-        changeset "**/*.tf"
-
-    }
-
-    steps {
-
-        sh """
-
-        checkov -d terraform/
-
-        """
-
-    }
-
-}
+Skip Checkov
 ```
-
-This reduces pipeline execution time by skipping unnecessary infrastructure scans.
 
 ---
 
-# Another Production Example
+```text
+Terraform Changed
 
-Run Docker build only when Docker-related files change.
+↓
+
+Run Checkov
+```
+
+---
+
+# changelog
+
+Runs a stage based on commit messages.
+
+---
+
+Syntax
 
 ```groovy
-stage("Docker Build") {
+when {
 
-    when {
-
-        anyOf {
-
-            changeset "Dockerfile"
-
-            changeset "docker/**"
-
-        }
-
-    }
-
-    steps {
-
-        sh """
-
-        docker build -t catalogue:${BUILD_NUMBER} .
-
-        """
-
-    }
+    changelog ".*HOTFIX.*"
 
 }
 ```
 
 ---
 
-# TriggeredBy Condition
+Example
 
-## Purpose
+```text
+Commit
 
-Executes a stage based on the event that started the pipeline.
+↓
 
-Examples of triggers
+HOTFIX
 
-- Manual Build
-- GitHub Webhook
-- Timer
-- Upstream Pipeline
+↓
+
+Regression Test
+```
+
+---
+
+# triggeredBy Condition
+
+Runs a stage based on how the pipeline was triggered.
+
+---
+
+Common Triggers
+
+```text
+GitHub Webhook
+
+Manual Build
+
+Cron Schedule
+
+Upstream Pipeline
+```
+
+---
 
 Syntax
 
@@ -1335,37 +591,56 @@ when {
 }
 ```
 
+---
+
+Workflow
+
+```text
+Pipeline Started
+       │
+       ▼
+SCM Trigger ?
+ ┌─────┴─────┐
+ │           │
+Yes         No
+ │           │
+ ▼           ▼
+Run        Skip
+```
+
+---
+
 Production Example
 
-Deploy automatically only for webhook-triggered builds.
+```text
+Git Push
 
-```groovy
-stage("Deploy") {
+↓
 
-    when {
+GitHub Webhook
 
-        triggeredBy "SCMTrigger"
+↓
 
-    }
+Deploy
+```
 
-    steps {
+---
 
-        sh "./deploy.sh"
+```text
+Manual Build
 
-    }
+↓
 
-}
+Skip Deployment
 ```
 
 ---
 
 # anyOf Condition
 
-## Purpose
+Runs a stage if **any one** condition is true.
 
-Implements logical OR.
-
-The stage executes when at least one condition evaluates to true.
+---
 
 Syntax
 
@@ -1383,81 +658,69 @@ when {
 }
 ```
 
-Execution
+---
+
+Workflow
 
 ```text
-develop ?
+Branch = develop ?
 
-│
+        OR
 
-True
+Branch = main ?
+
+        │
+
+        ▼
+
+Any True ?
+ ┌────┴────┐
+ │         │
+Yes       No
+ │         │
+ ▼         ▼
+Run      Skip
+```
+
+---
+
+Production Example
+
+```text
+develop
 
 ↓
 
-Run
+Deploy DEV
 ```
 
+---
+
 ```text
-main ?
-
-│
-
-True
+main
 
 ↓
 
-Run
+Deploy PROD
 ```
+
+---
 
 ```text
 feature/login
 
 ↓
 
-False
-
-↓
-
-Skip
-```
-
-Production Example
-
-Deploy to shared environments from either `develop` or `main`.
-
-```groovy
-stage("Deploy Shared") {
-
-    when {
-
-        anyOf {
-
-            branch "develop"
-
-            branch "main"
-
-        }
-
-    }
-
-    steps {
-
-        sh "./deploy.sh"
-
-    }
-
-}
+Skip Deployment
 ```
 
 ---
 
 # allOf Condition
 
-## Purpose
+Runs a stage only if **all conditions** are true.
 
-Implements logical AND.
-
-Every condition must evaluate to true.
+---
 
 Syntax
 
@@ -1479,74 +742,59 @@ when {
 }
 ```
 
-Execution
+---
+
+Workflow
 
 ```text
 Branch = main
-
-↓
-
-Yes
-
-↓
-
+      │
+      ▼
 DEPLOY=true
-
-↓
-
-Yes
-
-↓
-
-Execute Stage
+      │
+      ▼
+Run
 ```
-
-If either condition fails, Jenkins skips the stage.
 
 ---
 
-# Production Example
+```text
+Branch = main
+      │
+      ▼
+DEPLOY=false
+      │
+      ▼
+Skip
+```
 
-Deploy to Production only when:
+---
 
-- Branch is main
-- Deployment parameter is enabled
+Production Example
 
-```groovy
-stage("Production Deployment") {
+```text
+main
 
-    when {
+↓
 
-        allOf {
+Security Scan Passed
 
-            branch "main"
+↓
 
-            expression {
+Deployment Approved
 
-                params.DEPLOY
+↓
 
-            }
-
-        }
-
-    }
-
-    steps {
-
-        sh "./deploy-prod.sh"
-
-    }
-
-}
+Deploy
 ```
 
 ---
 
 # not Condition
 
-## Purpose
+Reverses another condition.
 
-Negates another condition.
+---
 
 Syntax
 
@@ -1562,48 +810,77 @@ when {
 }
 ```
 
-Execution
+---
+
+Workflow
 
 ```text
-Current Branch
+Branch = main ?
 
-↓
+      │
 
-main ?
+     Yes
 
-│
+      │
 
-Yes
+     not
 
-↓
+      │
+
+      ▼
 
 Skip
 ```
 
-```text
-feature/login
-
-↓
-
-Not main
-
-↓
-
-Execute
-```
+---
 
 Production Example
 
-Skip Production-only validation for feature branches.
+```text
+Feature Branch
+
+↓
+
+Run Debug Stage
+```
+
+---
+
+```text
+Main Branch
+
+↓
+
+Skip Debug Stage
+```
+
+---
+
+# Combining Conditions
+
+Multiple conditions can be combined to create secure deployment pipelines.
+
+---
+
+Example
 
 ```groovy
-stage("Feature Validation") {
+stage("Deploy") {
 
     when {
 
-        not {
+        allOf {
 
             branch "main"
+
+            expression {
+
+                params.DEPLOY
+
+            }
+
+            environment name: "ENV",
+                        value: "prod"
 
         }
 
@@ -1611,7 +888,7 @@ stage("Feature Validation") {
 
     steps {
 
-        sh "./run-feature-tests.sh"
+        sh "./deploy.sh"
 
     }
 
@@ -1619,3 +896,781 @@ stage("Feature Validation") {
 ```
 
 ---
+
+Execution Flow
+
+```text
+Branch = main ?
+        │
+   ┌────┴────┐
+   │         │
+ No         Yes
+ │           │
+ ▼           ▼
+Skip    DEPLOY=true ?
+              │
+         ┌────┴────┐
+         │         │
+        No        Yes
+         │         │
+         ▼         ▼
+      Skip     ENV=prod ?
+                   │
+              ┌────┴────┐
+              │         │
+             No        Yes
+              │         │
+              ▼         ▼
+           Skip       Deploy
+```
+
+---
+
+# Production Pipeline Example
+
+```text
+Developer Push
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency Check
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Branch = main ?
+
+↓
+
+DEPLOY = true ?
+
+↓
+
+Deploy to EKS
+```
+
+---
+
+# Best Practices
+
+## Use Branch Protection
+
+```text
+Deploy Production
+
+↓
+
+Only From
+
+↓
+
+main
+```
+
+---
+
+## Use Parameters
+
+Avoid hardcoding values.
+
+Use
+
+```text
+params.DEPLOY
+
+params.ENV
+
+params.VERSION
+```
+
+---
+
+## Skip Unnecessary Stages
+
+Example
+
+```text
+README Changed
+
+↓
+
+Skip Docker Build
+
+Skip Trivy
+```
+
+---
+
+## Keep Conditions Simple
+
+Prefer
+
+```text
+branch
+
+environment
+
+anyOf
+
+allOf
+```
+
+instead of long Groovy expressions.
+
+---
+
+## Test Both Paths
+
+Verify
+
+```text
+Condition = True
+
+↓
+
+Stage Executes
+```
+
+and
+
+```text
+Condition = False
+
+↓
+
+Stage Skipped
+```
+
+---
+
+# Troubleshooting
+
+## Stage Always Skipped
+
+Check
+
+```text
+Branch Name
+
+Parameter Value
+
+Environment Variable
+
+when Condition
+```
+
+---
+
+Useful Commands
+
+```groovy
+echo env.BRANCH_NAME
+
+echo params.DEPLOY
+
+sh "printenv"
+```
+
+---
+
+## Stage Always Executes
+
+Verify the condition is not always returning `true`.
+
+---
+
+## Wrong Branch
+
+```groovy
+echo env.BRANCH_NAME
+```
+
+---
+
+## Parameter Not Working
+
+```groovy
+echo params.toString()
+```
+
+---
+
+## changeset Not Matching
+
+Verify the file pattern.
+
+Example
+
+```groovy
+changeset "**/*.tf"
+```
+
+---
+
+## Deployment Not Triggering
+
+Verify
+
+```text
+Branch
+
+↓
+
+Parameter
+
+↓
+
+Environment
+
+↓
+
+Trigger
+```
+
+A failed condition skips the stage.
+
+---
+
+# Common Interview Questions
+
+## 1. What is Conditional Execution in Jenkins?
+
+### Short Answer
+
+Conditional execution allows Jenkins to run a stage only when specified conditions are satisfied.
+
+### Detailed Explanation
+
+Instead of executing every stage for every build, Jenkins evaluates the `when` condition before running the stage. If the condition is true, the stage executes; otherwise, it is skipped.
+
+### Production Example
+
+Deploy the application only from the `main` branch.
+
+### Follow-Up Questions
+
+- Which directive is used for conditional execution?
+- When is the `when` block evaluated?
+
+---
+
+## 2. What is the `when` Directive?
+
+### Short Answer
+
+The `when` directive controls whether a stage executes.
+
+### Detailed Explanation
+
+It is available in Declarative Pipelines and supports conditions such as branch, tag, environment, parameters, expressions, and triggers.
+
+### Production Example
+
+Run the deployment stage only for the production environment.
+
+### Follow-Up Questions
+
+- Can `when` be used inside steps?
+- Is it supported in Scripted Pipeline?
+
+---
+
+## 3. What is the Difference Between `branch` and `expression`?
+
+### Short Answer
+
+`branch` checks Git branches, while `expression` evaluates custom Groovy logic.
+
+### Detailed Explanation
+
+Use `branch` for branch-based conditions and `expression` when custom logic involving parameters or environment variables is required.
+
+### Production Example
+
+```text
+branch "main"
+
+↓
+
+Deploy
+```
+
+```text
+expression { params.DEPLOY }
+
+↓
+
+Deploy
+```
+
+### Follow-Up Questions
+
+- Which one is easier to maintain?
+- Which one is preferred for branch validation?
+
+---
+
+## 4. What is the Difference Between `anyOf` and `allOf`?
+
+### Short Answer
+
+`anyOf` works like **OR**, while `allOf` works like **AND**.
+
+### Detailed Explanation
+
+`anyOf` executes when any one condition is true.
+
+`allOf` executes only when every condition is true.
+
+### Production Example
+
+```text
+anyOf
+
+develop
+
+OR
+
+main
+
+↓
+
+Deploy
+```
+
+---
+
+```text
+allOf
+
+main
+
+AND
+
+DEPLOY=true
+
+↓
+
+Deploy
+```
+
+### Follow-Up Questions
+
+- Which one is commonly used for Production deployment?
+- Can they be nested?
+
+---
+
+## 5. What is the Difference Between `tag` and `buildingTag`?
+
+### Short Answer
+
+`tag` checks a specific tag pattern, while `buildingTag` checks whether the build was triggered from any Git tag.
+
+### Detailed Explanation
+
+Use `tag` when releases follow naming conventions such as `v1.*`.
+
+Use `buildingTag` when any tag should trigger the stage.
+
+### Production Example
+
+```text
+v2.0.0
+
+↓
+
+Release Pipeline
+```
+
+### Follow-Up Questions
+
+- Why are Git tags used for releases?
+- Which condition is more flexible?
+
+---
+
+## 6. What is the Purpose of the `changeset` Condition?
+
+### Short Answer
+
+It executes a stage only when specified files are modified.
+
+### Detailed Explanation
+
+Jenkins checks the changed files and skips unrelated stages, reducing build time.
+
+### Production Example
+
+```text
+Terraform Changed
+
+↓
+
+Run Checkov
+```
+
+---
+
+```text
+README Changed
+
+↓
+
+Skip Checkov
+```
+
+### Follow-Up Questions
+
+- Which file patterns are supported?
+- How does it improve pipeline performance?
+
+---
+
+## 7. Why Should Production Deployment Be Conditional?
+
+### Short Answer
+
+To prevent accidental deployments.
+
+### Detailed Explanation
+
+Production deployment should occur only after validating the branch, approvals, parameters, and security checks.
+
+### Production Example
+
+```text
+main
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Deploy
+```
+
+### Follow-Up Questions
+
+- Which conditions would you combine?
+- Would you deploy from feature branches?
+
+---
+
+## 8. How Do You Skip a Stage in Jenkins?
+
+### Short Answer
+
+Use the `when` directive.
+
+### Detailed Explanation
+
+If the condition evaluates to false, Jenkins automatically skips the stage.
+
+### Production Example
+
+```text
+DEPLOY=false
+
+↓
+
+Deploy Stage Skipped
+```
+
+### Follow-Up Questions
+
+- Is the skipped stage considered a failure?
+- Does the pipeline continue?
+
+---
+
+## 9. How Do You Debug a Stage That Is Always Skipped?
+
+### Short Answer
+
+Verify the condition and runtime values.
+
+### Detailed Explanation
+
+Check the current branch, parameters, environment variables, and trigger information.
+
+### Useful Commands
+
+```groovy
+echo env.BRANCH_NAME
+
+echo params.DEPLOY
+
+sh "printenv"
+```
+
+### Follow-Up Questions
+
+- How do you print environment variables?
+- How do you verify parameter values?
+
+---
+
+## 10. How Does Conditional Execution Improve Pipeline Performance?
+
+### Short Answer
+
+It prevents unnecessary stages from executing.
+
+### Detailed Explanation
+
+Only relevant stages consume build agents, CPU, memory, and execution time.
+
+### Production Example
+
+```text
+README Updated
+
+↓
+
+Skip
+
+Docker Build
+
+Trivy
+
+Deployment
+```
+
+### Follow-Up Questions
+
+- Which condition helps optimize builds?
+- Does it reduce infrastructure cost?
+
+---
+
+## 11. Scenario: Deploy Only from Main Branch
+
+### Answer
+
+```groovy
+when {
+
+    branch "main"
+
+}
+```
+
+### Production Example
+
+```text
+feature/login
+
+↓
+
+Skip Deploy
+```
+
+---
+
+```text
+main
+
+↓
+
+Deploy
+```
+
+---
+
+## 12. Scenario: Deploy Only After Manual Approval
+
+### Answer
+
+```groovy
+when {
+
+    expression {
+
+        params.DEPLOY
+
+    }
+
+}
+```
+
+### Production Example
+
+```text
+DEPLOY=false
+
+↓
+
+Skip
+```
+
+---
+
+```text
+DEPLOY=true
+
+↓
+
+Deploy
+```
+
+---
+
+## 13. Scenario: Run Checkov Only for Terraform Changes
+
+### Answer
+
+```groovy
+when {
+
+    changeset "**/*.tf"
+
+}
+```
+
+### Production Example
+
+```text
+Terraform Updated
+
+↓
+
+Run Checkov
+```
+
+---
+
+```text
+Java Updated
+
+↓
+
+Skip Checkov
+```
+
+---
+
+## 14. Scenario: Release Only When a Git Tag is Created
+
+### Answer
+
+```groovy
+when {
+
+    tag "v*"
+
+}
+```
+
+### Production Example
+
+```text
+git tag v2.1.0
+
+↓
+
+Release Pipeline
+```
+
+---
+
+## 15. Scenario: Secure Production Deployment
+
+### Answer
+
+```groovy
+when {
+
+    allOf {
+
+        branch "main"
+
+        expression {
+
+            params.DEPLOY
+
+        }
+
+        environment name: "ENV",
+                    value: "prod"
+
+    }
+
+}
+```
+
+### Production Flow
+
+```text
+main
+
+↓
+
+DEPLOY=true
+
+↓
+
+ENV=prod
+
+↓
+
+Deploy
+```
+
+---
+
+# Key Takeaways
+
+```text
+Conditional execution controls stage execution.
+
+The 'when' directive is used in Declarative Pipelines.
+
+branch checks Git branches.
+
+expression evaluates custom Groovy logic.
+
+environment validates environment variables.
+
+changeset executes stages based on modified files.
+
+tag and buildingTag support release pipelines.
+
+anyOf works like OR.
+
+allOf works like AND.
+
+not reverses a condition.
+
+Conditional execution reduces build time and infrastructure cost.
+
+Production deployments should always use multiple conditions for safety.
+```
