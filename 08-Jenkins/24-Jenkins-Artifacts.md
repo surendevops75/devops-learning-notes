@@ -1,5 +1,3 @@
-# 24-Jenkins-Artifacts.md
-
 # Jenkins Artifacts
 
 ## Introduction
