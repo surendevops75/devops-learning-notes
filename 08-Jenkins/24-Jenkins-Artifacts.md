@@ -1040,3 +1040,432 @@ Regularly monitor:
 This prevents storage-related build failures.
 
 ---
+
+# Troubleshooting
+
+## 1. Artifact Not Found
+
+### Symptoms
+
+```text
+Build Successful
+
+↓
+
+Deployment Failed
+
+↓
+
+Artifact Not Found
+```
+
+### Verify
+
+- Artifact path
+- `archiveArtifacts` configuration
+- Build logs
+- Workspace contents
+
+---
+
+## 2. Artifact Not Archived
+
+### Symptoms
+
+```text
+Build Completed
+
+↓
+
+No Archived Artifacts
+```
+
+### Verify
+
+```text
+Build Output
+
+↓
+
+Artifact Generated
+
+↓
+
+Correct File Pattern
+
+↓
+
+archiveArtifacts Step
+```
+
+Example
+
+```groovy
+archiveArtifacts artifacts: 'target/*.jar'
+```
+
+---
+
+## 3. Archive Pattern Doesn't Match
+
+### Symptoms
+
+```text
+No Artifacts Found
+```
+
+### Example
+
+Incorrect
+
+```groovy
+archiveArtifacts artifacts: 'build/*.jar'
+```
+
+Actual location
+
+```text
+target/catalog-service.jar
+```
+
+Correct
+
+```groovy
+archiveArtifacts artifacts: 'target/*.jar'
+```
+
+---
+
+## 4. Artifact Deleted Too Early
+
+### Symptoms
+
+```text
+Deployment Pipeline
+
+↓
+
+Artifact Missing
+```
+
+### Verify
+
+- Build Discarder policy
+- Retention settings
+- Cleanup jobs
+
+Increase retention if deployments occur after long approval cycles.
+
+---
+
+## 5. Workspace Cleaned Before Archive
+
+### Symptoms
+
+```text
+Build
+
+↓
+
+cleanWs()
+
+↓
+
+Archive
+
+↓
+
+No Files Found
+```
+
+### Correct Order
+
+```text
+Build
+
+↓
+
+Archive
+
+↓
+
+Clean Workspace
+```
+
+---
+
+## 6. Fingerprint Not Generated
+
+### Symptoms
+
+```text
+Artifact Archived
+
+↓
+
+No Fingerprint
+```
+
+### Verify
+
+```groovy
+archiveArtifacts(
+
+    artifacts: 'target/*.jar',
+
+    fingerprint: true
+
+)
+```
+
+---
+
+## 7. Deployment Uses Wrong Artifact Version
+
+### Symptoms
+
+```text
+Expected
+
+v2.1
+
+↓
+
+Deployed
+
+v2.0
+```
+
+### Verify
+
+- Artifact version
+- Repository path
+- Deployment configuration
+- Release pipeline
+
+---
+
+## 8. Artifact Upload to Nexus Fails
+
+### Symptoms
+
+```text
+Build
+
+↓
+
+Upload Failed
+```
+
+### Verify
+
+- Nexus URL
+- Credentials
+- Repository permissions
+- Network connectivity
+
+---
+
+## 9. Jenkins Storage Full
+
+### Symptoms
+
+```text
+Archive Failed
+
+↓
+
+No Space Left on Device
+```
+
+### Resolution
+
+- Remove old builds
+- Configure Build Discarder
+- Move artifacts to Nexus/Artifactory
+- Increase storage
+
+---
+
+## 10. Artifact Corrupted
+
+### Symptoms
+
+```text
+Download Artifact
+
+↓
+
+Cannot Execute
+```
+
+### Verify
+
+- Build logs
+- Upload process
+- Fingerprint
+- Checksum
+- Repository integrity
+
+---
+
+# Common Interview Questions
+
+## 1. What is a Jenkins Artifact?
+
+### Production-Level Answer
+
+A Jenkins artifact is a file generated during the build process that is preserved after pipeline execution. Common examples include JAR, WAR, ZIP files, test reports, and security scan reports. These artifacts are reused for deployments, testing, and auditing without rebuilding the application.
+
+### Follow-Up Questions
+
+- Where are artifacts stored?
+- Who consumes artifacts?
+- What types of files are archived?
+
+---
+
+## 2. Why do we archive artifacts?
+
+### Production-Level Answer
+
+Archiving allows build outputs to be retained after the workspace is cleaned. This enables downstream deployments, debugging, audits, and rollbacks. Without archiving, every deployment would require rebuilding the application, which introduces unnecessary risk and inconsistency.
+
+### Follow-Up Questions
+
+- What happens if artifacts aren't archived?
+- Where are archived artifacts visible?
+- Can reports also be archived?
+
+---
+
+## 3. What is the difference between a workspace and an artifact?
+
+### Production-Level Answer
+
+The workspace is the temporary directory where Jenkins performs the build, while an artifact is the final output generated from that workspace and preserved after the build completes. The workspace may be deleted, but archived artifacts remain available according to the configured retention policy.
+
+### Follow-Up Questions
+
+- Can artifacts exist without a workspace?
+- What happens after `cleanWs()`?
+- Where is the workspace located?
+
+---
+
+## 4. How do you archive artifacts in a Jenkins Pipeline?
+
+### Production-Level Answer
+
+Artifacts are archived using the `archiveArtifacts` step. I specify the file pattern for the generated outputs and usually enable fingerprinting for traceability.
+
+Example:
+
+```groovy
+archiveArtifacts(
+    artifacts: 'target/*.jar',
+    fingerprint: true
+)
+```
+
+### Follow-Up Questions
+
+- Can multiple files be archived?
+- What wildcard patterns are supported?
+- When should fingerprinting be enabled?
+
+---
+
+## 5. What is artifact fingerprinting?
+
+### Production-Level Answer
+
+Fingerprinting generates a unique identifier for an artifact, allowing Jenkins to track the same file across builds, jobs, and deployments. This helps with traceability, auditing, and identifying which build produced a deployed artifact.
+
+### Follow-Up Questions
+
+- Is fingerprinting mandatory?
+- How does Jenkins generate fingerprints?
+- Where can fingerprints be viewed?
+
+---
+
+## 6. Why do enterprises use Nexus or Artifactory instead of Jenkins?
+
+### Production-Level Answer
+
+Jenkins is primarily a CI/CD automation server, not a long-term artifact repository. Nexus and Artifactory provide version management, access control, metadata, retention policies, replication, and high availability. In production, Jenkins builds the artifact and publishes it to a repository manager, from which deployment pipelines retrieve it.
+
+### Follow-Up Questions
+
+- Which repository have you used?
+- How do deployments retrieve artifacts?
+- Why shouldn't Jenkins store artifacts forever?
+
+---
+
+## 7. Explain the Build Once, Deploy Many strategy.
+
+### Production-Level Answer
+
+The application is built once, producing a single immutable artifact. That same artifact is promoted through Development, QA, UAT, and Production without rebuilding. This ensures that every environment runs the exact same tested binary, eliminating inconsistencies caused by multiple builds.
+
+### Follow-Up Questions
+
+- Why avoid rebuilding?
+- How is promotion implemented?
+- How does rollback become easier?
+
+---
+
+## 8. How do you manage artifact retention?
+
+### Production-Level Answer
+
+I configure the Build Discarder using `logRotator()` to retain only the required number of builds or days. Long-term artifacts are stored in Nexus or Artifactory, while Jenkins keeps only recent builds needed for troubleshooting.
+
+### Follow-Up Questions
+
+- What is `buildDiscarder`?
+- Can build logs and artifacts have different retention periods?
+- How do you prevent storage exhaustion?
+
+---
+
+## 9. What should be archived in a production pipeline?
+
+### Production-Level Answer
+
+I archive deployable packages such as JAR or WAR files, unit test reports, HTML reports, OWASP Dependency Check reports, and any deployment manifests required for traceability. Temporary files, caches, and dependency directories are not archived.
+
+### Follow-Up Questions
+
+- Should Docker images be archived?
+- What reports are useful during audits?
+- Should cache directories be archived?
+
+---
+
+## 10. Explain your production artifact flow.
+
+### Production-Level Answer
+
+Our pipeline checks out the source code, builds the Java application using Maven, runs unit tests, performs SonarQube analysis and OWASP Dependency Check, generates the JAR file, archives it with fingerprinting, and publishes it to the artifact repository. Deployment pipelines then retrieve that same immutable artifact and deploy it to Amazon EKS, ensuring consistency across Development, QA, UAT, and Production.
+
+### Follow-Up Questions
+
+- Where does Trivy fit into the pipeline?
+- Why archive before cleaning the workspace?
+- How do you promote artifacts between environments?
+
+---
+
+# Key Takeaways
+
+- Artifacts are the deployable outputs generated by a Jenkins build.
+- Use `archiveArtifacts` to preserve important files after pipeline execution.
+- Enable fingerprinting to improve artifact traceability across builds and deployments.
+- Archive artifacts before cleaning the workspace.
+- Configure retention policies to control storage usage and prevent disk exhaustion.
+- Store long-term production artifacts in repositories such as Nexus or JFrog Artifactory.
+- Follow the **Build Once, Deploy Many** approach to ensure consistent and reliable deployments across all environments.
