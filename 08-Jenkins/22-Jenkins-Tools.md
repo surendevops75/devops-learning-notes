@@ -460,3 +460,552 @@ Amazon EKS
 ```
 ---
 
+# Tool Installation
+
+Jenkins can use tools in two ways:
+
+1. Automatic Installation
+2. Manual Installation
+
+The installation method depends on your organization's requirements.
+
+---
+
+# Automatic Tool Installation
+
+Jenkins downloads and installs the required tool automatically.
+
+Supported tools include:
+
+- JDK
+- Maven
+- Gradle
+- Node.js
+
+---
+
+## Workflow
+
+```text
+Pipeline Starts
+
+↓
+
+Tool Not Available
+
+↓
+
+Jenkins Downloads Tool
+
+↓
+
+Installs Tool
+
+↓
+
+Adds to PATH
+
+↓
+
+Pipeline Continues
+```
+
+---
+
+## Advantages
+
+- Quick setup
+- Consistent versions
+- No manual installation
+- Easy for development environments
+
+---
+
+## Disadvantages
+
+- Requires Internet access
+- Less control over versions
+- Not suitable for highly secured environments
+
+---
+
+# Manual Tool Installation
+
+In enterprise environments, administrators install tools manually on Jenkins agents.
+
+Jenkins only references their installation paths.
+
+---
+
+## Workflow
+
+```text
+Administrator
+
+↓
+
+Install Tool
+
+↓
+
+Configure Jenkins
+
+↓
+
+Pipeline Uses Tool
+```
+
+---
+
+## Advantages
+
+- Full control
+- Enterprise standardization
+- Offline installation
+- Better compliance
+
+---
+
+## Disadvantages
+
+- Manual maintenance
+- Version upgrades require administrator effort
+
+---
+
+# Global Tool Configuration
+
+All tools are configured from a single location.
+
+```text
+Dashboard
+
+↓
+
+Manage Jenkins
+
+↓
+
+Tools
+
+↓
+
+Configure Tool
+
+↓
+
+Save
+```
+
+---
+
+## Configured Tools
+
+```text
+Git
+
+↓
+
+JDK
+
+↓
+
+Maven
+
+↓
+
+Gradle
+
+↓
+
+Node.js
+
+↓
+
+Sonar Scanner
+```
+
+---
+
+# Tool Naming
+
+Each configured tool has a unique name.
+
+Example
+
+```text
+JDK
+
+↓
+
+jdk17
+
+------------------------
+
+Maven
+
+↓
+
+maven-3.9
+
+------------------------
+
+Git
+
+↓
+
+git-default
+```
+
+The pipeline refers to these names rather than installation paths.
+
+---
+
+# Using Tools in Jenkins Pipeline
+
+Declarative Pipelines use the `tools` block.
+
+## Example
+
+```groovy
+pipeline {
+
+    agent any
+
+    tools {
+
+        jdk 'jdk17'
+        maven 'maven-3.9'
+
+    }
+
+    stages {
+
+        stage('Build') {
+
+            steps {
+
+                sh 'java -version'
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+## Pipeline Execution
+
+```text
+Pipeline Starts
+
+↓
+
+Load JDK
+
+↓
+
+Load Maven
+
+↓
+
+Update PATH
+
+↓
+
+Execute Build
+```
+
+---
+
+# Multiple Tool Example
+
+```groovy
+pipeline {
+
+    agent any
+
+    tools {
+
+        jdk 'jdk17'
+        maven 'maven-3.9'
+        nodejs 'node18'
+
+    }
+
+    stages {
+
+        stage('Build Java') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Build UI') {
+
+            steps {
+
+                sh 'npm install'
+                sh 'npm run build'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# Production Example
+
+Microservices often contain multiple technologies.
+
+```text
+Java Service
+
+↓
+
+JDK
+
+↓
+
+Maven
+
+-----------------------
+
+Frontend
+
+↓
+
+Node.js
+
+↓
+
+npm Build
+
+-----------------------
+
+Docker
+
+↓
+
+Container Image
+```
+
+---
+
+# Tool Resolution
+
+When a pipeline starts,
+
+Jenkins performs:
+
+```text
+Read Jenkinsfile
+
+↓
+
+Find Tool
+
+↓
+
+Locate Installation
+
+↓
+
+Update PATH
+
+↓
+
+Execute Commands
+```
+
+---
+
+# Automatic PATH Configuration
+
+Jenkins automatically updates the PATH variable.
+
+Instead of
+
+```bash
+/usr/lib/jvm/java-17/bin/java
+```
+
+the pipeline simply uses
+
+```bash
+java
+```
+
+Similarly,
+
+Instead of
+
+```bash
+/opt/apache-maven/bin/mvn
+```
+
+the pipeline uses
+
+```bash
+mvn
+```
+
+---
+
+# Tool Versions
+
+Different projects may require different versions.
+
+Example
+
+```text
+Project A
+
+↓
+
+JDK 17
+
+↓
+
+Maven 3.9
+
+------------------------
+
+Project B
+
+↓
+
+JDK 21
+
+↓
+
+Gradle 8
+
+------------------------
+
+Project C
+
+↓
+
+Node.js 20
+```
+
+Jenkins selects the appropriate version based on the Jenkinsfile.
+
+---
+
+# Enterprise Tool Architecture
+
+```text
+                    Jenkins Controller
+                           │
+          Global Tool Configuration
+                           │
+      ┌─────────┬──────────┬──────────┐
+      ▼         ▼          ▼          ▼
+    JDK 17   Maven 3.9   Node 20   Git
+                           │
+                           ▼
+                 Jenkins Pipeline
+                           │
+            Load Configured Tools
+                           │
+                           ▼
+                 Build Application
+```
+
+---
+
+# Production CI/CD Example
+
+```text
+Developer Push
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Load Git
+
+↓
+
+Checkout Code
+
+↓
+
+Load JDK
+
+↓
+
+Load Maven
+
+↓
+
+Compile
+
+↓
+
+Load Sonar Scanner
+
+↓
+
+Static Analysis
+
+↓
+
+OWASP Scan
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Push to Amazon ECR
+
+↓
+
+Deploy to Amazon EKS
+```
+
+---
+
+# Manual vs Automatic Installation
+
+```text
+| Feature | Automatic | Manual |
+|---------|-----------|---------|
+| Internet Required | Yes | No |
+| Enterprise Friendly | Limited | Yes |
+| Version Control | Basic | Complete |
+| Offline Support | No | Yes |
+| Setup Time | Fast | Moderate |
+| Recommended for Production | No | Yes |
+```
+---
+
+
