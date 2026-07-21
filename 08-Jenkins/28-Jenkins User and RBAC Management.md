@@ -497,30 +497,4 @@ With RBAC
 
 Easy Management
 ```
-
 ---
-
-# Chapter Overview
-
-In this chapter, you will learn:
-
-- Jenkins Security Model
-- Security Realm
-- Authorization Strategies
-- Matrix-based Security
-- Role-Based Access Control (RBAC)
-- Creating Users
-- Managing Users
-- Creating Roles
-- Assigning Roles
-- Folder-Level Permissions
-- Project-Level Permissions
-- Service Accounts
-- API Tokens
-- LDAP Integration
-- Active Directory Integration
-- Single Sign-On (SSO)
-- Production Security Architecture
-- Best Practices
-- Troubleshooting
-- Interview Questions
