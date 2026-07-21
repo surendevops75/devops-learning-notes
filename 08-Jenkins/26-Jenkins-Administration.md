@@ -514,3 +514,557 @@ Security Warnings
                          ▼
                 Monitoring & Backup
 ```
+---
+
+# Global Configuration
+
+Global Configuration contains settings that apply to the entire Jenkins instance. These settings define how Jenkins behaves and how pipelines interact with external systems.
+
+Instead of configuring every job individually, administrators configure common settings once and reuse them across all pipelines.
+
+---
+
+# Why Global Configuration?
+
+Without Global Configuration
+
+```text
+Pipeline 1
+
+↓
+
+Configure Git
+
+------------------------
+
+Pipeline 2
+
+↓
+
+Configure Git
+
+------------------------
+
+Pipeline 3
+
+↓
+
+Configure Git
+```
+
+Repeated configuration leads to:
+
+- Inconsistency
+- Human errors
+- Difficult maintenance
+
+---
+
+With Global Configuration
+
+```text
+Global Configuration
+
+│
+
+├── Git
+
+├── Maven
+
+├── JDK
+
+├── SonarQube
+
+├── Docker
+
+├── Slack
+
+├── Email
+
+└── Credentials
+
+↓
+
+Reusable Across Pipelines
+```
+
+Benefits
+
+- Centralized management
+- Easier maintenance
+- Consistent configuration
+- Faster pipeline development
+
+---
+
+# Access Global Configuration
+
+Navigate to
+
+```text
+Dashboard
+
+↓
+
+Manage Jenkins
+
+↓
+
+System
+```
+
+or
+
+```text
+Dashboard
+
+↓
+
+Manage Jenkins
+
+↓
+
+Tools
+```
+
+depending on the configuration type.
+
+---
+
+# Types of Global Configuration
+
+```text
+Manage Jenkins
+
+│
+
+├── System
+
+├── Tools
+
+├── Credentials
+
+├── Nodes
+
+├── Clouds
+
+├── Security
+
+└── Plugins
+```
+
+---
+
+# System Configuration
+
+The **System** page contains integrations and server-wide settings.
+
+Common configurations include:
+
+- Jenkins URL
+- Email Notifications
+- Slack
+- GitHub
+- SonarQube
+- Global Environment Variables
+
+```text
+Manage Jenkins
+
+↓
+
+System
+
+↓
+
+Configure Services
+```
+
+---
+
+# Global Tool Configuration
+
+Used to configure development tools shared by all jobs.
+
+Examples
+
+```text
+Tools
+
+│
+
+├── Git
+
+├── JDK
+
+├── Maven
+
+├── Gradle
+
+├── NodeJS
+
+├── Docker
+
+└── Terraform
+```
+
+Pipelines reference these tools by name.
+
+Example
+
+```groovy
+tools {
+
+    jdk 'JDK-17'
+
+    maven 'Maven-3.9'
+
+}
+```
+
+---
+
+# Global Environment Variables
+
+Variables defined globally are available to every pipeline.
+
+Example
+
+```text
+COMPANY=ABC
+
+ENVIRONMENT=Development
+
+REGISTRY=docker.io/company
+```
+
+Pipeline
+
+```groovy
+environment {
+
+    APP = "${COMPANY}"
+
+}
+```
+
+---
+
+# SonarQube Configuration
+
+Configure SonarQube once.
+
+```text
+Manage Jenkins
+
+↓
+
+System
+
+↓
+
+SonarQube Servers
+```
+
+Provide
+
+- Server Name
+- URL
+- Authentication Token
+
+Pipeline
+
+```groovy
+withSonarQubeEnv('SonarQube') {
+
+    sh 'mvn sonar:sonar'
+
+}
+```
+
+---
+
+# Git Configuration
+
+Global Git settings include:
+
+- Git executable
+- User Name
+- User Email
+
+```text
+Git
+
+↓
+
+Clone Repository
+
+↓
+
+Pipeline
+```
+
+---
+
+# Docker Configuration
+
+Typical production configuration
+
+```text
+Jenkins
+
+↓
+
+Docker Engine
+
+↓
+
+Build Image
+
+↓
+
+Push Image
+```
+
+Common settings
+
+- Docker executable
+- Docker Host
+- Registry credentials
+
+---
+
+# Email Configuration
+
+Configure SMTP once.
+
+```text
+SMTP Server
+
+↓
+
+Authentication
+
+↓
+
+Sender Email
+
+↓
+
+Email Extension Plugin
+```
+
+All pipelines can reuse this configuration.
+
+---
+
+# Slack Configuration
+
+Configure once.
+
+```text
+Workspace
+
+↓
+
+Bot Token
+
+↓
+
+Default Channel
+
+↓
+
+Pipeline Notifications
+```
+
+---
+
+# Cloud Configuration
+
+Jenkins can dynamically provision agents.
+
+Examples
+
+```text
+Clouds
+
+│
+
+├── Kubernetes
+
+├── AWS EC2
+
+├── Azure VM
+
+└── Docker
+```
+
+Production example
+
+```text
+Pipeline
+
+↓
+
+Kubernetes Plugin
+
+↓
+
+Create Pod
+
+↓
+
+Execute Build
+
+↓
+
+Delete Pod
+```
+
+---
+
+# Jenkins URL
+
+The Jenkins URL should always be configured correctly.
+
+Example
+
+```text
+https://jenkins.company.com
+```
+
+Used for
+
+- Build URLs
+- Email notifications
+- Slack links
+- Webhooks
+
+---
+
+# Global Credentials
+
+Centralized credentials include:
+
+```text
+GitHub PAT
+
+AWS IAM
+
+Docker Hub
+
+Amazon ECR
+
+SonarQube Token
+
+SSH Keys
+```
+
+These credentials are referenced securely from pipelines.
+
+---
+
+# Enterprise Global Configuration
+
+```text
+                    Jenkins
+
+                       │
+
+       ┌───────────────┼────────────────┐
+
+       ▼               ▼                ▼
+
+   System         Tool Config      Credentials
+
+       │               │                │
+
+       ▼               ▼                ▼
+
+ SonarQube         Maven          AWS Keys
+
+ Docker            JDK            GitHub PAT
+
+ Slack             Git            SSH Keys
+
+ Email          Terraform         Secrets
+
+       └───────────────┼────────────────┘
+
+                       ▼
+
+               Production Pipelines
+```
+
+---
+
+# Configuration Management Flow
+
+```text
+Administrator
+
+↓
+
+Manage Jenkins
+
+↓
+
+Configure System
+
+↓
+
+Configure Tools
+
+↓
+
+Configure Credentials
+
+↓
+
+Save Configuration
+
+↓
+
+Available to All Pipelines
+```
+
+---
+
+# Production Example
+
+```text
+Developer Push
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Uses Global Git
+
+↓
+
+Uses Global Maven
+
+↓
+
+Uses SonarQube
+
+↓
+
+Uses Docker
+
+↓
+
+Uses AWS Credentials
+
+↓
+
+Deploy to Amazon EKS
+```
