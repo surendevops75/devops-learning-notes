@@ -468,3 +468,575 @@ Large organizations typically use a dedicated artifact repository instead of sto
 
 ---
 
+# Artifact Retention
+
+Artifacts consume storage, so they should not be kept forever.
+
+Artifact retention defines **how long Jenkins preserves archived artifacts before deleting them automatically**.
+
+A proper retention policy helps balance storage usage, compliance, and the ability to roll back deployments.
+
+---
+
+# Why Do We Need Artifact Retention?
+
+Without retention
+
+```text
+Build #1
+
+↓
+
+Archive Artifact
+
+↓
+
+Never Deleted
+
+↓
+
+Storage Grows Forever
+```
+
+Problems
+
+- Disk space exhaustion
+- Slow Jenkins performance
+- Difficult maintenance
+- Increased backup size
+
+---
+
+With retention
+
+```text
+Build
+
+↓
+
+Archive Artifact
+
+↓
+
+Retain for X Days
+
+↓
+
+Automatically Delete
+```
+
+Benefits
+
+- Saves storage
+- Faster backups
+- Easier maintenance
+- Better performance
+
+---
+
+# Build Discarder
+
+Jenkins provides the **Build Discarder** feature to automatically remove old builds and artifacts.
+
+Example
+
+```groovy
+pipeline {
+
+    agent any
+
+    options {
+
+        buildDiscarder(
+            logRotator(
+                numToKeepStr: '20',
+                artifactNumToKeepStr: '10'
+            )
+        )
+
+    }
+
+}
+```
+
+In this example:
+
+- Keep the latest **20** builds.
+- Keep artifacts for the latest **10** builds.
+
+---
+
+# Retention Based on Number of Builds
+
+```text
+Build #100
+
+↓
+
+Keep
+
+------------------------
+
+Build #99
+
+↓
+
+Keep
+
+------------------------
+
+Build #80
+
+↓
+
+Delete
+```
+
+Only the configured number of recent builds is preserved.
+
+---
+
+# Retention Based on Days
+
+Example
+
+```groovy
+buildDiscarder(
+    logRotator(
+        daysToKeepStr: '30',
+        artifactDaysToKeepStr: '15'
+    )
+)
+```
+
+Meaning
+
+```text
+Build
+
+↓
+
+30 Days
+
+↓
+
+Delete Build Logs
+
+------------------------
+
+Artifacts
+
+↓
+
+15 Days
+
+↓
+
+Delete Artifacts
+```
+
+---
+
+# Enterprise Artifact Retention Strategy
+
+Example
+
+```text
+Development
+
+↓
+
+7 Days
+
+------------------------
+
+QA
+
+↓
+
+30 Days
+
+------------------------
+
+UAT
+
+↓
+
+90 Days
+
+------------------------
+
+Production Releases
+
+↓
+
+1 Year
+```
+
+Retention policies should match business and compliance requirements.
+
+---
+
+# Promotion Instead of Rebuilding
+
+A common enterprise practice is to build the application once and promote the same artifact through environments.
+
+```text
+Developer Push
+
+↓
+
+Build Once
+
+↓
+
+Archive Artifact
+
+↓
+
+Deploy to DEV
+
+↓
+
+Deploy Same Artifact to QA
+
+↓
+
+Deploy Same Artifact to UAT
+
+↓
+
+Deploy Same Artifact to Production
+```
+
+Benefits
+
+- Same tested artifact everywhere
+- Eliminates rebuild inconsistencies
+- Easier rollback
+- Better traceability
+
+---
+
+# Jenkins vs Artifact Repository
+
+For long-term storage, organizations typically move artifacts to a repository manager.
+
+```text
+Build
+
+↓
+
+Archive in Jenkins
+
+↓
+
+Upload to Nexus
+
+↓
+
+Deploy from Nexus
+```
+
+Instead of
+
+```text
+Build
+
+↓
+
+Archive in Jenkins
+
+↓
+
+Deploy Directly
+```
+
+---
+
+# Artifact Promotion Flow
+
+```text
+GitHub
+
+↓
+
+Jenkins Build
+
+↓
+
+Generate JAR
+
+↓
+
+Archive Artifact
+
+↓
+
+Upload to Nexus
+
+↓
+
+DEV Deployment
+
+↓
+
+QA Deployment
+
+↓
+
+UAT Deployment
+
+↓
+
+Production Deployment
+```
+
+The same artifact is promoted through each stage without rebuilding.
+
+---
+
+# Production Jenkinsfile Example
+
+```groovy
+pipeline {
+
+    agent any
+
+    options {
+
+        buildDiscarder(
+            logRotator(
+                daysToKeepStr: '30',
+                numToKeepStr: '20',
+                artifactDaysToKeepStr: '15',
+                artifactNumToKeepStr: '10'
+            )
+        )
+
+    }
+
+    stages {
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+            }
+
+        }
+
+        stage('Archive') {
+
+            steps {
+
+                archiveArtifacts(
+                    artifacts: 'target/*.jar',
+                    fingerprint: true
+                )
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# Production Artifact Lifecycle
+
+```text
+Developer Push
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Workspace
+
+↓
+
+Build
+
+↓
+
+Generate JAR
+
+↓
+
+Archive Artifact
+
+↓
+
+Fingerprint
+
+↓
+
+Upload to Nexus / Artifactory
+
+↓
+
+Deploy to DEV
+
+↓
+
+Deploy to QA
+
+↓
+
+Deploy to UAT
+
+↓
+
+Deploy to Production
+
+↓
+
+Retention Policy Applied
+
+↓
+
+Automatic Cleanup
+```
+
+---
+
+# Best Practices
+
+## 1. Archive Only Required Files
+
+Archive only deployment packages and important reports.
+
+Examples
+
+- JAR
+- WAR
+- HTML Reports
+- Test Reports
+
+Avoid archiving temporary or cache files.
+
+---
+
+## 2. Build Once, Deploy Many
+
+Generate the artifact only once.
+
+```text
+Build
+
+↓
+
+Archive
+
+↓
+
+Deploy Everywhere
+```
+
+Never rebuild the application for each environment.
+
+---
+
+## 3. Use an Artifact Repository
+
+Store production artifacts in:
+
+- Nexus Repository
+- JFrog Artifactory
+- Amazon S3 (where appropriate)
+
+Avoid relying on Jenkins for long-term artifact storage.
+
+---
+
+## 4. Enable Fingerprinting
+
+Fingerprint important artifacts to track them across builds and deployments.
+
+This improves traceability and auditing.
+
+---
+
+## 5. Configure Retention Policies
+
+Automatically remove:
+
+- Old builds
+- Old artifacts
+- Obsolete reports
+
+to prevent disk space issues.
+
+---
+
+## 6. Archive Before Cleaning Workspace
+
+Always archive required outputs before executing:
+
+```groovy
+cleanWs()
+```
+
+Otherwise, generated files will be lost.
+
+---
+
+## 7. Version Artifacts Properly
+
+Use meaningful version numbers.
+
+Example
+
+```text
+catalog-service-1.4.2.jar
+```
+
+Avoid generic names like:
+
+```text
+app.jar
+```
+
+---
+
+## 8. Keep Production Artifacts Immutable
+
+Once an artifact is released, it should never be modified.
+
+Create a new version for every change.
+
+---
+
+## 9. Protect Artifact Repositories
+
+Restrict access using:
+
+- Authentication
+- Role-based access control (RBAC)
+- HTTPS
+- Audit logging
+
+---
+
+## 10. Monitor Storage Usage
+
+Regularly monitor:
+
+- Jenkins artifact storage
+- Nexus/Artifactory storage
+- Disk utilization
+- Cleanup jobs
+
+This prevents storage-related build failures.
+
+---
