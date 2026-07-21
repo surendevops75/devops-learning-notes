@@ -1,6 +1,6 @@
-# 28 - Jenkins User and RBAC Management
+# Jenkins User and RBAC Management
 
-# Introduction
+## Introduction
 
 Jenkins is often accessed by multiple teams such as Developers, DevOps Engineers, QA Engineers, Release Managers, Security Teams, and Administrators.
 
