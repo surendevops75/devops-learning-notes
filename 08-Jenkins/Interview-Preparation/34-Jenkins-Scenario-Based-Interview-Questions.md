@@ -1391,3 +1391,816 @@ Compare healthy and unhealthy Pods.
 
 ---
 
+## Scenario 31
+
+### Interview Question
+
+A Jenkins pipeline fails because the Git branch cannot be found. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A missing branch usually indicates an incorrect branch name, deleted branch, SCM configuration issue, or webhook triggering an unexpected branch.
+
+### Approach
+
+Check:
+
+- Repository URL
+- Branch name
+- Branch existence
+- SCM configuration
+- Git credentials
+- Pipeline parameters
+
+Run a manual Git clone from the build agent.
+
+### Common Root Causes
+
+- Branch deleted
+- Typographical error
+- Wrong repository
+- Incorrect parameter
+- SCM configuration mismatch
+
+### Best Practices
+
+- Validate branch names
+- Protect important branches
+- Use branch parameters
+- Review SCM configuration regularly
+
+---
+
+## Scenario 32
+
+### Interview Question
+
+A Jenkins build fails because the GitHub Personal Access Token (PAT) has expired. How would you resolve it?
+
+### Production-Level Answer
+
+PAT expiration prevents Jenkins from authenticating with GitHub. Replace the expired token and verify repository access before rerunning the pipeline.
+
+### Approach
+
+Verify:
+
+- GitHub PAT expiration
+- Jenkins credentials
+- Repository permissions
+- Pipeline credential ID
+- GitHub audit logs
+
+Update the credential in Jenkins and test Git access.
+
+### Common Root Causes
+
+- Expired PAT
+- Revoked token
+- Missing repository permissions
+- Incorrect credential mapping
+
+### Best Practices
+
+- Rotate tokens regularly
+- Monitor expiration dates
+- Use least-privilege permissions
+- Prefer GitHub Apps where applicable
+
+---
+
+## Scenario 33
+
+### Interview Question
+
+A Jenkins job remains in the "Building" state even though no work is happening. What would you investigate?
+
+### Production-Level Answer
+
+Jobs that appear stuck may be waiting for external input, hanging on a command, or blocked by infrastructure dependencies.
+
+### Approach
+
+Check:
+
+- Console logs
+- Active processes
+- Pipeline stage
+- External API calls
+- Shell scripts
+- Database connections
+- Network requests
+
+Capture a thread dump if required.
+
+### Common Root Causes
+
+- Infinite loop
+- Waiting for input
+- Hanging shell script
+- Network timeout
+- External dependency unavailable
+
+### Best Practices
+
+- Configure stage timeouts
+- Use timestamps
+- Monitor long-running builds
+- Terminate hung builds automatically
+
+---
+
+## Scenario 34
+
+### Interview Question
+
+A Jenkins pipeline fails only on one build agent but succeeds on others. How would you troubleshoot it?
+
+### Production-Level Answer
+
+This usually indicates an agent-specific configuration problem rather than an application issue.
+
+### Approach
+
+Compare:
+
+- Java version
+- Docker version
+- Git version
+- Environment variables
+- Installed tools
+- Available disk space
+- Permissions
+
+Run identical commands manually.
+
+### Common Root Causes
+
+- Missing tools
+- Different software versions
+- Permission issues
+- Corrupted workspace
+- Low disk space
+
+### Best Practices
+
+- Standardize agents
+- Use immutable build agents
+- Automate provisioning
+- Avoid manual configuration
+
+---
+
+## Scenario 35
+
+### Interview Question
+
+A Jenkins agent cannot connect to the Controller after a restart. What would you check?
+
+### Production-Level Answer
+
+Agent connectivity depends on network communication, authentication, Java compatibility, and Jenkins configuration.
+
+### Approach
+
+Verify:
+
+- Controller URL
+- Agent secret
+- Java version
+- Firewall
+- Agent logs
+- Network connectivity
+- Jenkins inbound port
+
+Restart the agent after verification.
+
+### Common Root Causes
+
+- Invalid secret
+- Firewall block
+- Java mismatch
+- Controller URL changed
+- Network interruption
+
+### Best Practices
+
+- Monitor agent connectivity
+- Automate agent startup
+- Use secure communication
+- Keep Java versions consistent
+
+---
+
+## Scenario 36
+
+### Interview Question
+
+A Jenkins pipeline suddenly starts failing after updating a Shared Library. How do you minimize production impact?
+
+### Production-Level Answer
+
+Immediately identify whether the Shared Library change introduced breaking behavior. Since multiple pipelines may use the same library, restoring service quickly is the priority.
+
+### Approach
+
+Check:
+
+- Recent commits
+- Library version
+- Pipeline failures
+- Function changes
+- Jenkins logs
+
+Rollback to the previous stable version if necessary.
+
+### Common Root Causes
+
+- Breaking API changes
+- Deleted methods
+- Syntax errors
+- Untested code
+
+### Best Practices
+
+- Version Shared Libraries
+- Test before release
+- Use semantic versioning
+- Maintain backward compatibility
+
+---
+
+## Scenario 37
+
+### Interview Question
+
+Terraform Apply fails because the backend is unavailable. What should you do?
+
+### Production-Level Answer
+
+Terraform cannot safely manage infrastructure if the remote backend is inaccessible. Restore backend connectivity before retrying.
+
+### Approach
+
+Verify:
+
+- Backend availability
+- S3 bucket
+- IAM permissions
+- Network connectivity
+- Backend configuration
+- State file accessibility
+
+Do not switch to local state.
+
+### Common Root Causes
+
+- Backend outage
+- IAM permission changes
+- Network issue
+- Incorrect backend configuration
+
+### Best Practices
+
+- Use highly available backends
+- Backup state files
+- Monitor backend health
+- Avoid manual state changes
+
+---
+
+## Scenario 38
+
+### Interview Question
+
+A Jenkins deployment fails because kubectl cannot connect to the Kubernetes cluster. How would you investigate?
+
+### Production-Level Answer
+
+The failure usually indicates authentication, kubeconfig, RBAC, or network connectivity issues.
+
+### Approach
+
+Check:
+
+- kubeconfig
+- Cluster endpoint
+- Authentication
+- RBAC permissions
+- Network connectivity
+- Cluster health
+
+Run:
+
+- kubectl cluster-info
+- kubectl get nodes
+
+### Common Root Causes
+
+- Expired credentials
+- Incorrect kubeconfig
+- Cluster unavailable
+- RBAC restrictions
+- VPN or network issue
+
+### Best Practices
+
+- Rotate cluster credentials
+- Store kubeconfig securely
+- Use least-privilege RBAC
+- Monitor cluster health
+
+---
+
+## Scenario 39
+
+### Interview Question
+
+A Helm deployment fails during a Jenkins pipeline. What would you investigate?
+
+### Production-Level Answer
+
+Helm failures may result from invalid templates, missing values, Kubernetes API errors, or release conflicts.
+
+### Approach
+
+Check:
+
+- Helm template
+- Values file
+- Release history
+- Kubernetes events
+- Namespace
+- RBAC permissions
+
+Render templates before deployment.
+
+### Common Root Causes
+
+- Invalid YAML
+- Missing values
+- Existing release conflict
+- Kubernetes API rejection
+- Namespace issue
+
+### Best Practices
+
+- Validate templates
+- Use Helm lint
+- Test in staging
+- Version Helm charts
+
+---
+
+## Scenario 40
+
+### Interview Question
+
+A production deployment succeeds, but monitoring reports increased application latency. How would you investigate?
+
+### Production-Level Answer
+
+Successful deployment does not guarantee application performance. Investigate application metrics, infrastructure health, and recent changes before considering rollback.
+
+### Approach
+
+Check:
+
+- CPU usage
+- Memory usage
+- Pod restarts
+- Database latency
+- API response times
+- Application logs
+- Grafana dashboards
+- Prometheus metrics
+
+Compare metrics with the previous stable release.
+
+### Common Root Causes
+
+- Inefficient application code
+- Resource throttling
+- Database bottleneck
+- Cache issues
+- Increased traffic
+
+### Best Practices
+
+- Monitor every deployment
+- Compare baseline metrics
+- Perform canary releases
+- Automate rollback criteria
+- Conduct post-deployment performance validation
+
+---
+
+## Scenario 41
+
+### Interview Question
+
+A Jenkins pipeline is failing because the Docker daemon is unreachable. How would you troubleshoot it?
+
+### Production-Level Answer
+
+If Jenkins cannot communicate with the Docker daemon, no container build or image operation can proceed. The issue usually lies with the Docker service, permissions, or socket configuration.
+
+### Approach
+
+Check:
+
+- Docker service status
+- Docker socket
+- Jenkins user permissions
+- Docker version
+- Disk space
+- Docker logs
+
+Run:
+
+- docker version
+- docker info
+- docker ps
+
+Verify Jenkins can execute Docker commands.
+
+### Common Root Causes
+
+- Docker service stopped
+- Permission denied
+- Docker socket unavailable
+- Disk full
+- Docker daemon crashed
+
+### Best Practices
+
+- Monitor Docker service
+- Add Jenkins user to Docker group
+- Restart Docker only after investigation
+- Use dedicated Docker build agents
+
+---
+
+## Scenario 42
+
+### Interview Question
+
+Your Jenkins pipeline suddenly fails while pulling a Docker base image. How would you investigate?
+
+### Production-Level Answer
+
+Docker pull failures usually indicate registry availability issues, authentication failures, network problems, or incorrect image references.
+
+### Approach
+
+Verify:
+
+- Image name
+- Image tag
+- Registry accessibility
+- Internet connectivity
+- Docker login
+- DNS resolution
+
+Attempt a manual Docker pull.
+
+### Common Root Causes
+
+- Wrong image tag
+- Registry outage
+- Authentication failure
+- Rate limiting
+- Network issue
+
+### Best Practices
+
+- Pin image versions
+- Cache frequently used images
+- Use enterprise registries
+- Monitor registry availability
+
+---
+
+## Scenario 43
+
+### Interview Question
+
+A Jenkins pipeline fails because the target Kubernetes namespace does not exist. What would you do?
+
+### Production-Level Answer
+
+Deployments should only target existing namespaces. If the namespace is missing, either create it through Infrastructure as Code or validate the deployment configuration.
+
+### Approach
+
+Check:
+
+- Namespace name
+- Deployment manifest
+- Helm values
+- Kubernetes context
+- Pipeline parameters
+
+Run:
+
+- kubectl get ns
+
+### Common Root Causes
+
+- Namespace deleted
+- Typographical error
+- Wrong cluster
+- Incorrect deployment configuration
+
+### Best Practices
+
+- Create namespaces using IaC
+- Validate namespace existence
+- Avoid manual namespace creation
+- Use environment-specific configurations
+
+---
+
+## Scenario 44
+
+### Interview Question
+
+A Jenkins deployment fails because Kubernetes reports "Forbidden." How would you troubleshoot it?
+
+### Production-Level Answer
+
+A "Forbidden" error usually indicates insufficient RBAC permissions for the Jenkins Service Account or Kubernetes user.
+
+### Approach
+
+Check:
+
+- Service Account
+- ClusterRole
+- RoleBinding
+- ClusterRoleBinding
+- Namespace
+- kubeconfig
+
+Review Kubernetes audit logs.
+
+### Common Root Causes
+
+- Missing RoleBinding
+- Incorrect Service Account
+- Namespace restriction
+- RBAC policy change
+
+### Best Practices
+
+- Apply least privilege
+- Separate permissions by environment
+- Audit RBAC regularly
+- Avoid cluster-admin permissions
+
+---
+
+## Scenario 45
+
+### Interview Question
+
+A Jenkins deployment fails because a Kubernetes Secret is missing. What steps would you follow?
+
+### Production-Level Answer
+
+Applications depending on Secrets cannot start if required Secrets are unavailable.
+
+Never hardcode replacement values directly into the deployment.
+
+### Approach
+
+Verify:
+
+- Secret exists
+- Secret name
+- Namespace
+- Deployment manifest
+- Helm values
+- Secret keys
+
+Run:
+
+- kubectl get secrets
+- kubectl describe secret
+
+### Common Root Causes
+
+- Secret deleted
+- Wrong namespace
+- Typographical error
+- Incorrect key name
+- Secret not deployed
+
+### Best Practices
+
+- Manage Secrets through automation
+- Validate Secret existence
+- Rotate Secrets securely
+- Never store Secrets in Git
+
+---
+
+## Scenario 46
+
+### Interview Question
+
+A Jenkins deployment fails because the application ConfigMap is missing. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Applications relying on ConfigMaps require them to exist before deployment. Missing configuration prevents successful startup.
+
+### Approach
+
+Check:
+
+- ConfigMap name
+- Namespace
+- Deployment manifest
+- Helm chart
+- Environment variables
+
+Run:
+
+- kubectl get configmaps
+
+### Common Root Causes
+
+- ConfigMap deleted
+- Wrong namespace
+- Incorrect reference
+- Helm values issue
+
+### Best Practices
+
+- Version configuration
+- Validate ConfigMaps before deployment
+- Store configuration separately
+- Use GitOps for configuration management
+
+---
+
+## Scenario 47
+
+### Interview Question
+
+A Jenkins pipeline repeatedly fails because of intermittent network connectivity. How would you investigate?
+
+### Production-Level Answer
+
+Intermittent failures are difficult because they may disappear before investigation. Correlate build failures with infrastructure metrics and network events.
+
+### Approach
+
+Check:
+
+- Network latency
+- Packet loss
+- DNS resolution
+- Firewall logs
+- VPN connectivity
+- Cloud networking
+
+Compare successful and failed builds.
+
+### Common Root Causes
+
+- Network congestion
+- DNS instability
+- Firewall interruptions
+- VPN issues
+- Cloud provider networking
+
+### Best Practices
+
+- Monitor network latency
+- Retry transient operations
+- Use highly available networking
+- Implement resilient pipelines
+
+---
+
+## Scenario 48
+
+### Interview Question
+
+A Jenkins pipeline fails because the artifact cannot be downloaded from Artifactory or Nexus. What would you investigate?
+
+### Production-Level Answer
+
+Artifact download failures usually originate from repository availability, authentication, permissions, or incorrect artifact coordinates.
+
+### Approach
+
+Verify:
+
+- Repository availability
+- Artifact version
+- Credentials
+- Network
+- Repository URL
+- Proxy settings
+
+Download the artifact manually.
+
+### Common Root Causes
+
+- Repository outage
+- Missing artifact
+- Authentication failure
+- Wrong repository URL
+- Version mismatch
+
+### Best Practices
+
+- Use repository health monitoring
+- Store immutable artifacts
+- Enable repository backups
+- Avoid manual artifact deletion
+
+---
+
+## Scenario 49
+
+### Interview Question
+
+A Jenkins pipeline succeeds, but the deployment uses an older Docker image instead of the latest one. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Using an outdated image generally indicates image caching, incorrect tags, or deployment configuration issues.
+
+### Approach
+
+Check:
+
+- Image tag
+- Deployment manifest
+- Helm values
+- ImagePullPolicy
+- Container registry
+- Git commit
+
+Verify the deployed image digest.
+
+### Common Root Causes
+
+- Using latest tag
+- Image cache
+- Deployment not updated
+- Wrong image reference
+- Helm values mismatch
+
+### Best Practices
+
+- Use immutable image tags
+- Avoid latest tag
+- Verify image digest
+- Enable deployment traceability
+
+---
+
+## Scenario 50
+
+### Interview Question
+
+A production deployment introduces critical issues immediately after release. How would you handle the incident?
+
+### Production-Level Answer
+
+The priority is restoring service as quickly as possible while minimizing customer impact. Once service is stable, perform a detailed Root Cause Analysis.
+
+### Approach
+
+1. Confirm the impact.
+2. Stop further deployments.
+3. Notify stakeholders.
+4. Roll back to the last stable release.
+5. Validate application health.
+6. Monitor metrics and logs.
+7. Perform RCA.
+8. Implement corrective actions.
+9. Document lessons learned.
+
+### Common Root Causes
+
+- Application defect
+- Configuration error
+- Infrastructure change
+- Database migration issue
+- External dependency failure
+
+### Best Practices
+
+- Maintain automated rollback pipelines
+- Perform canary or Blue-Green deployments
+- Monitor releases in real time
+- Conduct blameless postmortems
+- Continuously improve deployment processes
+
+---
