@@ -2009,3 +2009,304 @@ Review plugin compatibility, examine Jenkins logs, verify dependency versions, d
 
 Use Pipeline as Code, implement RBAC, secure credentials, use HTTPS, prefer LTS releases, run builds on dedicated agents, use ephemeral Kubernetes agents, centralize pipeline logic with Shared Libraries, implement monitoring and backups, automate configuration using JCasC, optimize pipeline performance, regularly update plugins, clean workspaces, archive important artifacts, and continuously review Jenkins security and operational health.
 
+---
+
+## Question 201
+
+### What is the difference between Continuous Integration, Continuous Delivery, and Continuous Deployment?
+
+#### Production-Level Answer
+
+Continuous Integration focuses on automatically building and testing every code commit. Continuous Delivery extends CI by automatically preparing applications for deployment while requiring manual approval for production. Continuous Deployment goes one step further by automatically deploying every successful build to production without manual intervention.
+
+---
+
+## Question 202
+
+### Why is Pipeline as Code considered a DevOps best practice?
+
+#### Production-Level Answer
+
+Pipeline as Code stores CI/CD workflows in version control alongside application code. This enables code reviews, version history, rollback, collaboration, reproducibility, and eliminates manual pipeline configuration errors.
+
+---
+
+## Question 203
+
+### Why should Jenkinsfiles be stored in the application repository?
+
+#### Production-Level Answer
+
+Keeping the Jenkinsfile with the application ensures that pipeline changes are version-controlled together with application changes. Developers can modify build logic through pull requests, making the entire delivery process auditable and repeatable.
+
+---
+
+## Question 204
+
+### What is the difference between Jenkins and GitHub Actions?
+
+#### Production-Level Answer
+
+Jenkins is a self-hosted automation platform with extensive customization and plugin support. GitHub Actions is a cloud-native CI/CD platform tightly integrated with GitHub repositories. Jenkins provides greater flexibility for enterprise environments, while GitHub Actions offers easier setup and maintenance for GitHub-hosted projects.
+
+---
+
+## Question 205
+
+### Why do many enterprises still use Jenkins?
+
+#### Production-Level Answer
+
+Large organizations use Jenkins because of its flexibility, extensive plugin ecosystem, ability to integrate with legacy systems, support for hybrid cloud environments, customizable pipelines, and mature enterprise adoption.
+
+---
+
+## Question 206
+
+### Can Jenkins be used with Kubernetes?
+
+#### Production-Level Answer
+
+Yes. Jenkins integrates with Kubernetes using the Kubernetes Plugin to dynamically provision build agents as Pods. This enables automatic scaling, isolated build environments, and efficient resource utilization.
+
+---
+
+## Question 207
+
+### Can Jenkins build Docker images?
+
+#### Production-Level Answer
+
+Yes. Jenkins can execute Docker commands or use Docker plugins to build, tag, scan, and push container images to registries such as Docker Hub, Amazon ECR, Azure ACR, or Google Artifact Registry.
+
+---
+
+## Question 208
+
+### Can Jenkins deploy applications to Kubernetes?
+
+#### Production-Level Answer
+
+Yes. Jenkins can deploy applications to Kubernetes using kubectl, Helm, Argo CD integration, or Kubernetes APIs. Authentication is typically performed using kubeconfig files or service accounts stored as Jenkins credentials.
+
+---
+
+## Question 209
+
+### Can Jenkins provision infrastructure?
+
+#### Production-Level Answer
+
+Yes. Jenkins can execute Infrastructure as Code tools such as Terraform, Ansible, or CloudFormation to provision cloud resources automatically as part of the CI/CD pipeline.
+
+---
+
+## Question 210
+
+### Can Jenkins perform security scanning?
+
+#### Production-Level Answer
+
+Yes. Jenkins integrates with security tools such as SonarQube, Trivy, OWASP Dependency Check, Veracode, Snyk, Checkmarx, and other scanners to implement DevSecOps practices within CI/CD pipelines.
+
+---
+
+## Question 211
+
+### Why is Jenkins important in DevSecOps?
+
+#### Production-Level Answer
+
+Jenkins automates security scanning alongside builds by integrating SAST, SCA, container image scanning, secret detection, and policy validation into the CI/CD pipeline, allowing vulnerabilities to be identified before deployment.
+
+---
+
+## Question 212
+
+### What is Shift Left in Jenkins pipelines?
+
+#### Production-Level Answer
+
+Shift Left means performing validation activities such as unit testing, code quality analysis, dependency scanning, and security scanning early in the development lifecycle so defects are detected before reaching production.
+
+---
+
+## Question 213
+
+### Why should unit tests run before deployment?
+
+#### Production-Level Answer
+
+Unit tests verify application logic at an early stage. Running them before deployment prevents defective code from progressing through the pipeline, reducing failures and improving software quality.
+
+---
+
+## Question 214
+
+### Why should code quality checks be automated?
+
+#### Production-Level Answer
+
+Automated code quality checks identify bugs, code smells, duplication, and maintainability issues consistently for every commit, ensuring that quality standards are enforced without relying on manual reviews alone.
+
+---
+
+## Question 215
+
+### Why should security scans fail the pipeline?
+
+#### Production-Level Answer
+
+Critical vulnerabilities should stop deployments to prevent insecure software from reaching production. Automated quality gates enforce organizational security policies consistently across all applications.
+
+---
+
+## Question 216
+
+### Why should deployments be automated?
+
+#### Production-Level Answer
+
+Automated deployments eliminate manual errors, ensure repeatable release processes, reduce deployment time, improve consistency across environments, and enable faster software delivery.
+
+---
+
+## Question 217
+
+### Why is rollback important?
+
+#### Production-Level Answer
+
+Rollback enables rapid recovery when a deployment introduces defects or instability. A reliable rollback strategy minimizes downtime and reduces the business impact of failed releases.
+
+---
+
+## Question 218
+
+### What is Blue-Green Deployment?
+
+#### Production-Level Answer
+
+Blue-Green Deployment maintains two identical production environments. New versions are deployed to the inactive environment, and traffic is switched only after successful validation, reducing downtime and simplifying rollback.
+
+---
+
+## Question 219
+
+### What is Canary Deployment?
+
+#### Production-Level Answer
+
+Canary Deployment gradually releases a new version to a small percentage of users before full deployment. This minimizes risk by allowing teams to monitor application behavior before widespread rollout.
+
+---
+
+## Question 220
+
+### Why is monitoring important after deployment?
+
+#### Production-Level Answer
+
+Deployment success does not guarantee application health. Post-deployment monitoring validates application availability, performance, resource utilization, error rates, and user experience to quickly identify production issues.
+
+---
+
+## Question 221
+
+### Why should Jenkins integrate with monitoring tools?
+
+#### Production-Level Answer
+
+Integration with monitoring platforms enables automated deployment validation, alerting, incident response, and operational visibility throughout the software delivery lifecycle.
+
+---
+
+## Question 222
+
+### What is Infrastructure as Code in Jenkins?
+
+#### Production-Level Answer
+
+Infrastructure as Code allows Jenkins to provision, modify, and destroy infrastructure using tools such as Terraform or CloudFormation, ensuring cloud resources are managed consistently through version-controlled code.
+
+---
+
+## Question 223
+
+### Why should infrastructure changes be automated?
+
+#### Production-Level Answer
+
+Automation ensures infrastructure changes are repeatable, auditable, consistent, and less prone to human error while supporting rapid environment provisioning.
+
+---
+
+## Question 224
+
+### Why is version control important for pipelines?
+
+#### Production-Level Answer
+
+Version control provides change history, collaboration, rollback capability, auditing, peer review, and traceability for pipeline modifications, improving reliability and governance.
+
+---
+
+## Question 225
+
+### How does Jenkins improve software quality?
+
+#### Production-Level Answer
+
+Jenkins improves quality by automating builds, tests, code quality analysis, security scanning, artifact management, deployment validation, and feedback, ensuring every code change follows the same quality standards.
+
+---
+
+## Question 226
+
+### How does Jenkins reduce deployment risk?
+
+#### Production-Level Answer
+
+Jenkins automates repetitive tasks, validates application quality before deployment, enforces approvals where necessary, integrates security checks, and supports rollback strategies, significantly reducing deployment failures.
+
+---
+
+## Question 227
+
+### What are the limitations of Jenkins?
+
+#### Production-Level Answer
+
+Jenkins requires infrastructure management, plugin maintenance, upgrades, security hardening, backups, and ongoing administration. Poor plugin management or lack of maintenance can lead to operational complexity.
+
+---
+
+## Question 228
+
+### What is the biggest advantage of Jenkins?
+
+#### Production-Level Answer
+
+Its greatest advantage is flexibility. Jenkins can integrate with virtually every major DevOps, cloud, testing, monitoring, security, and deployment tool, making it suitable for highly customized enterprise CI/CD environments.
+
+---
+
+## Question 229
+
+### What is the biggest challenge in maintaining Jenkins?
+
+#### Production-Level Answer
+
+Managing plugins, ensuring compatibility during upgrades, securing credentials, monitoring infrastructure, maintaining agent health, and keeping pipelines standardized are the primary operational challenges.
+
+---
+
+## Question 230
+
+### Why should every DevOps Engineer understand Jenkins?
+
+#### Production-Level Answer
+
+Jenkins remains one of the most widely used enterprise CI/CD platforms. Understanding Jenkins architecture, pipeline development, security, scaling, troubleshooting, integrations, and operational best practices is essential for designing and maintaining reliable software delivery pipelines in production environments.
+
+---
