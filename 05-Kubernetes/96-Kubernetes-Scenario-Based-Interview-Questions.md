@@ -1500,3 +1500,499 @@ kubectl describe pod <pod-name>
 
 ---
 
+# Section 3 - Node Troubleshooting Scenarios
+
+---
+
+## Scenario 31
+
+### Interview Question
+
+One of your Worker Nodes suddenly becomes **NotReady**. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A Node in the **NotReady** state cannot schedule new Pods and may eventually affect running workloads.
+
+The objective is to determine whether the issue is related to the node itself, the kubelet, networking, or the container runtime.
+
+### Approach
+
+Check node status.
+
+```bash
+kubectl get nodes
+```
+
+Describe the node.
+
+```bash
+kubectl describe node <node-name>
+```
+
+Verify
+
+- Node Conditions
+- Kubelet status
+- Container Runtime
+- Network
+- Disk
+- Memory
+- CPU
+
+SSH into the node if accessible.
+
+Check kubelet.
+
+```bash
+systemctl status kubelet
+```
+
+### Common Root Causes
+
+- Kubelet stopped
+- Container runtime failure
+- Network issue
+- Node reboot
+- Certificate expired
+- Disk full
+
+### Best Practices
+
+- Monitor node health
+- Configure node alerts
+- Automate node replacement
+- Use Managed Node Groups
+
+---
+
+## Scenario 32
+
+### Interview Question
+
+A Worker Node reports **MemoryPressure=True**. What does it mean, and how would you respond?
+
+### Production-Level Answer
+
+MemoryPressure indicates the node is running low on available memory.
+
+If memory continues to decrease, Kubernetes may evict Pods to protect node stability.
+
+### Approach
+
+Check node conditions.
+
+```bash
+kubectl describe node <node-name>
+```
+
+Review memory usage.
+
+```bash
+kubectl top node <node-name>
+```
+
+Identify
+
+- Large Pods
+- Memory leaks
+- High resource consumers
+
+### Common Root Causes
+
+- Memory leak
+- Oversized Pods
+- Too many workloads
+- Incorrect requests
+
+### Best Practices
+
+- Configure resource requests
+- Enable Cluster Autoscaler
+- Monitor node memory
+- Right-size workloads
+
+---
+
+## Scenario 33
+
+### Interview Question
+
+Your Worker Node reports **DiskPressure=True**. How would you troubleshoot it?
+
+### Production-Level Answer
+
+DiskPressure means the node is running out of available disk space.
+
+Kubernetes may stop scheduling Pods or evict existing workloads.
+
+### Approach
+
+Check node conditions.
+
+```bash
+kubectl describe node <node-name>
+```
+
+SSH into the node.
+
+Check disk usage.
+
+```bash
+df -h
+```
+
+Identify
+
+- Container images
+- Logs
+- EmptyDir volumes
+- Temporary files
+
+### Common Root Causes
+
+- Large container logs
+- Unused Docker images
+- EmptyDir growth
+- Log accumulation
+- Ephemeral storage exhaustion
+
+### Best Practices
+
+- Rotate logs
+- Clean unused images
+- Monitor disk usage
+- Configure image garbage collection
+
+---
+
+## Scenario 34
+
+### Interview Question
+
+A Worker Node reports **PIDPressure=True**. What would you investigate?
+
+### Production-Level Answer
+
+PIDPressure means the node is running out of available process IDs.
+
+Eventually, new processes cannot be created.
+
+### Approach
+
+Describe the node.
+
+```bash
+kubectl describe node <node-name>
+```
+
+SSH into the node.
+
+Check process count.
+
+```bash
+ps -e | wc -l
+```
+
+Identify
+
+- Runaway processes
+- Zombie processes
+- Misbehaving containers
+
+### Common Root Causes
+
+- Process leak
+- Infinite forks
+- Zombie processes
+- Container bug
+
+### Best Practices
+
+- Monitor PID utilization
+- Configure process limits
+- Investigate abnormal workloads
+
+---
+
+## Scenario 35
+
+### Interview Question
+
+A Worker Node suddenly disappears from the cluster. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A missing node usually indicates infrastructure failure, kubelet failure, or network connectivity issues.
+
+Determine whether the node still exists before investigating Kubernetes.
+
+### Approach
+
+Check
+
+```bash
+kubectl get nodes
+```
+
+Verify
+
+- EC2/VM status
+- SSH connectivity
+- Network
+- kubelet
+- Container runtime
+
+Check cloud provider console.
+
+### Common Root Causes
+
+- VM terminated
+- Instance reboot
+- kubelet stopped
+- Network failure
+- Cloud infrastructure issue
+
+### Best Practices
+
+- Enable node auto recovery
+- Monitor node availability
+- Use Managed Node Groups
+- Enable Cluster Autoscaler
+
+---
+
+## Scenario 36
+
+### Interview Question
+
+A Node shows **Unknown** status instead of Ready or NotReady. What does this indicate?
+
+### Production-Level Answer
+
+Node status **Unknown** means the Control Plane has stopped receiving heartbeats from the kubelet.
+
+The node may still be running, but Kubernetes has lost communication with it.
+
+### Approach
+
+Verify
+
+- Network connectivity
+- kubelet
+- Firewall
+- Control Plane
+- Node heartbeat
+
+Check kubelet logs.
+
+### Common Root Causes
+
+- Network partition
+- kubelet crash
+- Firewall issue
+- Node unreachable
+- Control Plane communication failure
+
+### Best Practices
+
+- Monitor heartbeat latency
+- Configure node health alerts
+- Investigate network stability
+
+---
+
+## Scenario 37
+
+### Interview Question
+
+Your application Pods are frequently moved between Worker Nodes. How would you investigate?
+
+### Production-Level Answer
+
+Frequent Pod movement generally indicates node instability, evictions, autoscaling events, or infrastructure issues.
+
+### Approach
+
+Review
+
+- Events
+- Node health
+- Autoscaler
+- Evictions
+- Resource utilization
+
+Check
+
+```bash
+kubectl get events --sort-by=.lastTimestamp
+```
+
+### Common Root Causes
+
+- Cluster Autoscaler
+- Node drain
+- Node failure
+- Resource pressure
+- Manual maintenance
+
+### Best Practices
+
+- Monitor node stability
+- Avoid unnecessary node replacements
+- Configure PodDisruptionBudgets
+
+---
+
+## Scenario 38
+
+### Interview Question
+
+The kubelet service has stopped on one Worker Node. What will happen, and how would you recover it?
+
+### Production-Level Answer
+
+Without kubelet, the Worker Node cannot communicate with the Kubernetes Control Plane.
+
+Eventually, the node becomes NotReady.
+
+### Approach
+
+SSH into the node.
+
+Check kubelet.
+
+```bash
+systemctl status kubelet
+```
+
+Restart if necessary.
+
+```bash
+systemctl restart kubelet
+```
+
+Review logs.
+
+```bash
+journalctl -u kubelet
+```
+
+### Common Root Causes
+
+- Configuration corruption
+- Certificate issue
+- Resource exhaustion
+- Service crash
+
+### Best Practices
+
+- Monitor kubelet
+- Enable automatic restart
+- Keep kubelet updated
+- Review kubelet logs regularly
+
+---
+
+## Scenario 39
+
+### Interview Question
+
+The container runtime on a Worker Node has stopped. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Without a container runtime, Kubernetes cannot start or manage containers on that node.
+
+### Approach
+
+Check runtime.
+
+```bash
+systemctl status containerd
+```
+
+or
+
+```bash
+systemctl status docker
+```
+
+Review logs.
+
+Check
+
+- Disk
+- Memory
+- Runtime configuration
+
+### Common Root Causes
+
+- Runtime crash
+- Disk full
+- Corrupted configuration
+- Resource exhaustion
+
+### Best Practices
+
+- Monitor runtime health
+- Keep runtime updated
+- Configure automatic restart
+- Monitor runtime logs
+
+---
+
+## Scenario 40
+
+### Interview Question
+
+A Worker Node must undergo maintenance. How would you safely remove it from service without impacting applications?
+
+### Production-Level Answer
+
+Never shut down a Worker Node directly.
+
+The correct procedure is to prevent new Pods from being scheduled, gracefully move existing workloads, perform maintenance, and then return the node to service.
+
+### Approach
+
+Prevent scheduling.
+
+```bash
+kubectl cordon <node-name>
+```
+
+Safely evict workloads.
+
+```bash
+kubectl drain <node-name> --ignore-daemonsets
+```
+
+Perform maintenance.
+
+After maintenance, make the node schedulable again.
+
+```bash
+kubectl uncordon <node-name>
+```
+
+Verify all workloads are healthy.
+
+### Common Root Causes for Maintenance
+
+- OS upgrade
+- Security patches
+- Hardware replacement
+- Kubernetes upgrade
+- Infrastructure maintenance
+
+### Best Practices
+
+- Always cordon before maintenance
+- Use drain instead of deleting Pods manually
+- Verify PodDisruptionBudgets
+- Schedule maintenance during low-traffic periods
+- Monitor workloads after uncordoning
+
+---
+
