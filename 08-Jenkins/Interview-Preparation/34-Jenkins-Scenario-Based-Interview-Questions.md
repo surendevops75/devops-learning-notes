@@ -2204,3 +2204,403 @@ The priority is restoring service as quickly as possible while minimizing custom
 - Continuously improve deployment processes
 
 ---
+
+## Scenario 51
+
+### Interview Question
+
+A Jenkins build fails because the Git repository cannot be reached over SSH. How would you troubleshoot it?
+
+### Production-Level Answer
+
+SSH connectivity failures usually originate from authentication problems, incorrect SSH keys, firewall restrictions, or repository access permissions.
+
+### Approach
+
+Verify:
+
+- SSH private key
+- Public key in GitHub/GitLab
+- Repository URL
+- SSH Agent
+- Firewall rules
+- Network connectivity
+
+Run:
+
+- ssh -T git@github.com
+- git ls-remote
+
+### Common Root Causes
+
+- Invalid SSH key
+- Key removed from repository
+- Firewall blocking port 22
+- Wrong repository URL
+- SSH Agent not running
+
+### Best Practices
+
+- Rotate SSH keys regularly
+- Use Jenkins Credentials
+- Test SSH connectivity periodically
+- Restrict repository access
+
+---
+
+## Scenario 52
+
+### Interview Question
+
+A Jenkins pipeline suddenly fails after a plugin update. What steps would you take?
+
+### Production-Level Answer
+
+Plugin updates may introduce compatibility issues with Jenkins, Pipeline syntax, or other plugins. Verify compatibility before rolling back.
+
+### Approach
+
+Check:
+
+- Recently updated plugins
+- Jenkins logs
+- Plugin dependencies
+- Plugin compatibility matrix
+- Failed stage
+
+Compare with the previous working version.
+
+### Common Root Causes
+
+- Plugin incompatibility
+- Dependency conflicts
+- Deprecated APIs
+- Incomplete plugin installation
+
+### Best Practices
+
+- Test updates in staging
+- Update plugins in batches
+- Keep plugin inventory
+- Use LTS-compatible plugins
+
+---
+
+## Scenario 53
+
+### Interview Question
+
+A Jenkins pipeline fails because an environment variable is missing. How would you investigate?
+
+### Production-Level Answer
+
+Missing environment variables usually occur due to pipeline changes, agent configuration issues, or credential binding failures.
+
+### Approach
+
+Verify:
+
+- Pipeline environment block
+- Global environment variables
+- Credential bindings
+- Agent configuration
+- Shell script
+
+Review the pipeline logs carefully.
+
+### Common Root Causes
+
+- Variable removed
+- Incorrect variable name
+- Credential binding failure
+- Agent configuration mismatch
+
+### Best Practices
+
+- Centralize environment variables
+- Validate required variables
+- Avoid hardcoding values
+- Document environment requirements
+
+---
+
+## Scenario 54
+
+### Interview Question
+
+A Jenkins pipeline reports "Permission Denied" while executing shell commands. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Permission errors generally indicate insufficient file permissions, incorrect ownership, or missing execution rights.
+
+### Approach
+
+Check:
+
+- File permissions
+- File ownership
+- Jenkins user
+- Working directory
+- Mounted volumes
+
+Run:
+
+- ls -l
+- whoami
+- pwd
+
+### Common Root Causes
+
+- Missing execute permission
+- Wrong file owner
+- Read-only filesystem
+- Incorrect mount permissions
+
+### Best Practices
+
+- Follow least privilege
+- Use proper ownership
+- Validate permissions during provisioning
+- Avoid running Jenkins as root
+
+---
+
+## Scenario 55
+
+### Interview Question
+
+A Jenkins pipeline takes much longer during the Git checkout stage than usual. How would you investigate?
+
+### Production-Level Answer
+
+Slow Git checkout is usually related to repository size, network latency, or Git server performance.
+
+### Approach
+
+Check:
+
+- Repository size
+- Network latency
+- Git server load
+- Shallow clone configuration
+- LFS usage
+- Agent location
+
+Compare checkout duration with previous builds.
+
+### Common Root Causes
+
+- Large repository
+- Git LFS downloads
+- Network congestion
+- Git server overload
+- Full clone instead of shallow clone
+
+### Best Practices
+
+- Use shallow clone
+- Archive unused branches
+- Optimize repository size
+- Monitor Git server performance
+
+---
+
+## Scenario 56
+
+### Interview Question
+
+A Jenkins build suddenly starts downloading all Maven dependencies again. Why could this happen?
+
+### Production-Level Answer
+
+Dependency redownloads typically occur when the Maven cache is cleared, a new build agent is provisioned, or repository configuration changes.
+
+### Approach
+
+Verify:
+
+- .m2 repository
+- Agent replacement
+- Workspace cleanup
+- Cache configuration
+- Repository URL
+
+Review recent infrastructure changes.
+
+### Common Root Causes
+
+- New ephemeral agent
+- Cache deleted
+- Repository configuration changed
+- Workspace cleaned
+
+### Best Practices
+
+- Cache Maven repository
+- Use shared dependency cache
+- Monitor cache utilization
+- Avoid unnecessary cleanup
+
+---
+
+## Scenario 57
+
+### Interview Question
+
+A Jenkins build succeeds, but the generated artifact is missing. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A successful build without the expected artifact usually indicates packaging issues, incorrect archive configuration, or build script errors.
+
+### Approach
+
+Check:
+
+- Build logs
+- Packaging stage
+- Archive Artifacts step
+- Output directory
+- Build tool configuration
+
+Verify artifact generation before archiving.
+
+### Common Root Causes
+
+- Packaging failure
+- Wrong output path
+- Archive pattern mismatch
+- Build script error
+
+### Best Practices
+
+- Validate artifacts before archiving
+- Use consistent output directories
+- Version artifacts
+- Store artifacts externally
+
+---
+
+## Scenario 58
+
+### Interview Question
+
+A Jenkins job is accidentally deleted. How would you recover it?
+
+### Production-Level Answer
+
+Recovery depends on whether Jenkins backups, Configuration as Code, or Job DSL are available.
+
+### Approach
+
+Check:
+
+- Jenkins backup
+- JENKINS_HOME
+- Job configuration
+- SCM
+- Job DSL repository
+
+Restore the latest verified backup if necessary.
+
+### Common Root Causes
+
+- Human error
+- Administrative mistake
+- Scripted deletion
+
+### Best Practices
+
+- Schedule automated backups
+- Store pipelines in Git
+- Use Job DSL
+- Enable RBAC
+
+---
+
+## Scenario 59
+
+### Interview Question
+
+After restoring Jenkins from backup, some jobs fail unexpectedly. What would you check?
+
+### Production-Level Answer
+
+Backup restoration may introduce differences in plugins, credentials, environment variables, or external integrations.
+
+### Approach
+
+Verify:
+
+- Plugin versions
+- Credentials
+- Agent connectivity
+- Shared Libraries
+- Tool configuration
+- Environment variables
+
+Compare restored configuration with production.
+
+### Common Root Causes
+
+- Missing credentials
+- Plugin mismatch
+- Agent registration missing
+- Configuration drift
+
+### Best Practices
+
+- Test backups regularly
+- Restore in staging first
+- Document recovery procedures
+- Keep backup validation reports
+
+---
+
+## Scenario 60
+
+### Interview Question
+
+Your Jenkins Controller crashes every day at nearly the same time. How would you investigate?
+
+### Production-Level Answer
+
+Recurring crashes often indicate scheduled jobs, backup processes, memory exhaustion, resource contention, or infrastructure events. Correlate Jenkins logs with system metrics before making changes.
+
+### Approach
+
+Review:
+
+- Jenkins logs
+- System logs
+- Cron jobs
+- Backup schedules
+- JVM heap usage
+- Garbage Collection logs
+- CPU utilization
+- Memory utilization
+- Disk I/O
+- Monitoring alerts
+
+Identify what consistently occurs just before the crash.
+
+### Common Root Causes
+
+- JVM OutOfMemoryError
+- Scheduled backup consuming resources
+- Plugin memory leak
+- Disk exhaustion
+- Infrastructure maintenance
+- Heavy concurrent builds
+
+### Best Practices
+
+- Monitor JVM metrics continuously
+- Schedule backups during low-traffic periods
+- Tune JVM heap appropriately
+- Perform regular capacity planning
+- Investigate recurring patterns instead of repeatedly restarting Jenkins
+
+---
+
