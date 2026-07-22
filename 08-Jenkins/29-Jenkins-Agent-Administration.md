@@ -1323,3 +1323,852 @@ Modern enterprise Jenkins deployments typically favor Kubernetes agents because 
 - Docker agents provide clean, reproducible build environments.
 - Kubernetes agents create ephemeral Pods for each build, making them ideal for cloud-native CI/CD.
 - Cloud agents automatically scale infrastructure based on build demand.
+
+---
+
+
+# Executors
+
+## What is an Executor?
+
+An **Executor** is a worker thread on a Jenkins Controller or Agent that executes a build.
+
+Think of an executor as a "build slot."
+
+If an agent has:
+
+```text
+Executors = 1
+```
+
+Only one build can run at a time.
+
+If an agent has:
+
+```text
+Executors = 4
+```
+
+Four builds can run simultaneously.
+
+---
+
+# Executor Architecture
+
+```text
+              Linux Agent
+
+         CPU : 8 Cores
+
+         Executors : 4
+
+                │
+
+        ┌───────┼────────┐
+
+        ▼       ▼        ▼
+
+     Build1  Build2   Build3
+
+                  ▼
+
+               Build4
+```
+
+---
+
+# Build Queue
+
+Suppose
+
+```text
+Executors = 2
+
+Incoming Builds = 5
+```
+
+Execution
+
+```text
+Build 1 → Running
+
+Build 2 → Running
+
+Build 3 → Waiting
+
+Build 4 → Waiting
+
+Build 5 → Waiting
+```
+
+The remaining builds stay in the Jenkins queue until an executor becomes available.
+
+---
+
+# Choosing Executor Count
+
+There is no fixed number.
+
+It depends on
+
+- CPU cores
+- RAM
+- Build type
+- Docker usage
+- Kubernetes resources
+
+Example
+
+```text
+Agent
+
+↓
+
+8 CPU
+
+↓
+
+16 GB RAM
+
+↓
+
+4 Executors
+```
+
+---
+
+# Production Recommendation
+
+CPU-intensive builds
+
+```text
+Executors = Number of CPU Cores / 2
+```
+
+Lightweight builds
+
+```text
+Executors = CPU Cores
+```
+
+Heavy Docker builds
+
+```text
+Executors = 1 or 2
+```
+
+Always benchmark your workloads before increasing executor count.
+
+---
+
+# Node Management
+
+A **Node** is any machine registered with Jenkins.
+
+It may be
+
+- Controller
+- Linux VM
+- Windows VM
+- Docker Host
+- Kubernetes Pod
+
+Every agent is a node.
+
+---
+
+# Node Lifecycle
+
+```text
+Create Node
+
+↓
+
+Configure
+
+↓
+
+Connect
+
+↓
+
+Assign Labels
+
+↓
+
+Execute Builds
+
+↓
+
+Monitor Health
+
+↓
+
+Maintenance
+
+↓
+
+Disconnect
+
+↓
+
+Remove
+```
+
+---
+
+# Creating a Node
+
+Navigate to
+
+```text
+Dashboard
+
+↓
+
+Manage Jenkins
+
+↓
+
+Nodes
+
+↓
+
+New Node
+```
+
+Provide
+
+```text
+Node Name
+
+Remote Root Directory
+
+Launch Method
+
+Labels
+
+Executors
+```
+
+---
+
+# Node Configuration Example
+
+```text
+Node Name
+
+↓
+
+linux-agent-01
+
+Executors
+
+↓
+
+4
+
+Labels
+
+↓
+
+linux docker java terraform
+
+Remote Directory
+
+↓
+
+/home/jenkins
+```
+
+---
+
+# Offline Nodes
+
+Sometimes an agent becomes unavailable.
+
+```text
+Controller
+
+↓
+
+linux-agent-01
+
+↓
+
+Offline
+```
+
+Possible reasons
+
+- VM shutdown
+- Network issue
+- SSH failure
+- Disk full
+- Java process stopped
+
+---
+
+# Temporarily Marking an Agent Offline
+
+Administrators often place nodes into maintenance mode.
+
+```text
+Agent
+
+↓
+
+Mark Offline
+
+↓
+
+No New Builds
+
+↓
+
+Existing Builds Finish
+
+↓
+
+Maintenance
+
+↓
+
+Bring Online
+```
+
+This prevents build interruptions during updates.
+
+---
+
+# Monitoring Agent Health
+
+Regularly monitor
+
+- CPU utilization
+- Memory usage
+- Disk space
+- Java process
+- Network latency
+- Build queue
+- Workspace size
+
+Example
+
+```text
+Linux Agent
+
+↓
+
+CPU 35%
+
+Memory 62%
+
+Disk 70%
+
+Healthy
+```
+
+---
+
+# Agent Workspace Management
+
+Every build creates files.
+
+Over time
+
+```text
+Workspace
+
+↓
+
+2 GB
+
+↓
+
+10 GB
+
+↓
+
+50 GB
+
+↓
+
+Disk Full
+```
+
+Builds begin to fail because no free space remains.
+
+---
+
+# Workspace Cleanup
+
+Production pipelines should clean workspaces regularly.
+
+Declarative Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                cleanWs()
+                sh 'mvn clean package'
+            }
+        }
+
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+
+}
+```
+
+---
+
+# Agent Maintenance
+
+Regular maintenance includes
+
+- OS patching
+- Java updates
+- Docker updates
+- Tool upgrades
+- Workspace cleanup
+- Log cleanup
+- Disk cleanup
+
+---
+
+# Maintenance Flow
+
+```text
+Mark Agent Offline
+
+↓
+
+Wait for Running Builds
+
+↓
+
+Install Updates
+
+↓
+
+Restart Services
+
+↓
+
+Verify Connection
+
+↓
+
+Bring Online
+```
+
+---
+
+# Scaling Jenkins Agents
+
+As the organization grows
+
+```text
+10 Developers
+
+↓
+
+2 Agents
+
+--------------------
+
+50 Developers
+
+↓
+
+8 Agents
+
+--------------------
+
+200 Developers
+
+↓
+
+Auto Scaling
+
+↓
+
+Kubernetes
+```
+
+---
+
+# Horizontal Scaling
+
+Instead of increasing one large server,
+
+add more agents.
+
+```text
+Controller
+
+↓
+
+Agent 1
+
+Agent 2
+
+Agent 3
+
+Agent 4
+
+Agent 5
+```
+
+Advantages
+
+- Better availability
+- Better throughput
+- Easier maintenance
+
+---
+
+# Vertical Scaling
+
+Increase resources of one agent.
+
+```text
+Before
+
+↓
+
+4 CPU
+
+8 GB RAM
+
+↓
+
+After
+
+↓
+
+16 CPU
+
+64 GB RAM
+```
+
+Useful for resource-intensive builds.
+
+---
+
+# Production Scaling Example
+
+Morning
+
+```text
+20 Builds
+
+↓
+
+5 Agents
+```
+
+Afternoon
+
+```text
+250 Builds
+
+↓
+
+Kubernetes Plugin
+
+↓
+
+Create 100 Pods
+```
+
+Night
+
+```text
+No Builds
+
+↓
+
+Delete Pods
+```
+
+Cloud-native Jenkins scales automatically with demand.
+
+---
+
+# Agent Security Best Practices
+
+- Do not run builds on the Controller.
+- Use dedicated service accounts.
+- Restrict SSH access.
+- Rotate SSH keys regularly.
+- Patch operating systems frequently.
+- Keep Java updated.
+- Use ephemeral agents for untrusted workloads.
+- Isolate production deployment agents.
+- Encrypt communication between Controller and Agents.
+
+---
+
+# Common Troubleshooting
+
+## Issue 1: Agent Offline
+
+Possible Causes
+
+- SSH failure
+- Network issue
+- Java process stopped
+- Firewall
+- Host unavailable
+
+Resolution
+
+```text
+Verify Network
+
+↓
+
+Check SSH
+
+↓
+
+Restart Agent
+
+↓
+
+Reconnect
+```
+
+---
+
+## Issue 2: Builds Waiting Forever
+
+Possible Causes
+
+- No available executors
+- Label mismatch
+- Agent offline
+
+Resolution
+
+```text
+Check Queue
+
+↓
+
+Verify Labels
+
+↓
+
+Verify Executors
+
+↓
+
+Bring Agent Online
+```
+
+---
+
+## Issue 3: Pipeline Cannot Find Agent
+
+Example
+
+```groovy
+agent {
+    label 'eks'
+}
+```
+
+But no agent has the label **eks**.
+
+Resolution
+
+```text
+Assign Label
+
+↓
+
+Reconnect Agent
+
+↓
+
+Retry Build
+```
+
+---
+
+## Issue 4: Workspace Full
+
+Symptoms
+
+```text
+No Space Left on Device
+```
+
+Resolution
+
+```text
+Clean Workspace
+
+↓
+
+Delete Old Artifacts
+
+↓
+
+Expand Disk
+
+↓
+
+Retry Build
+```
+
+---
+
+## Issue 5: Slow Builds
+
+Possible Causes
+
+- Too many executors
+- CPU contention
+- Low memory
+- Shared agent overload
+
+Resolution
+
+- Reduce executor count.
+- Add additional agents.
+- Move to Kubernetes or Docker agents.
+- Monitor CPU and memory utilization.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### Production-Level Answer
+
+What is a Jenkins Agent?
+
+A Jenkins Agent is a machine that executes build tasks on behalf of the Jenkins Controller. The Controller schedules and coordinates builds, while Agents perform the actual work.
+
+### Follow-Up Questions
+
+- What is a node?
+- Why shouldn't builds run on the Controller?
+- What are ephemeral agents?
+
+---
+
+## Question 2
+
+### Production-Level Answer
+
+Explain the difference between static and dynamic agents.
+
+Static agents are always running and permanently connected to Jenkins. Dynamic agents are provisioned on demand (for example, Docker containers or Kubernetes Pods) and removed after the build completes.
+
+---
+
+## Question 3
+
+### Production-Level Answer
+
+What are Jenkins Executors?
+
+Executors are worker threads that determine how many builds an agent can execute concurrently. More executors allow greater parallelism but require sufficient CPU and memory resources.
+
+---
+
+## Question 4
+
+### Production-Level Answer
+
+When would you use SSH agents instead of Kubernetes agents?
+
+SSH agents are suitable for stable, long-lived servers with persistent tools, while Kubernetes agents are ideal for cloud-native environments requiring elastic scaling and isolated build environments.
+
+---
+
+## Question 5
+
+### Production-Level Answer
+
+Why are labels important in Jenkins?
+
+Labels allow pipelines to target agents with specific capabilities, ensuring workloads run on the correct operating system, tools, or environment.
+
+---
+
+## Question 6
+
+### Production-Level Answer
+
+How do you scale Jenkins for hundreds of developers?
+
+Use a lightweight Controller with dynamic Kubernetes or cloud agents, auto-scaling, workload labels, distributed builds, and monitoring for agent health and queue length.
+
+---
+
+## Question 7
+
+### Production-Level Answer
+
+What causes builds to remain in the queue?
+
+Common causes include unavailable executors, offline agents, label mismatches, or insufficient build resources.
+
+---
+
+## Question 8
+
+### Production-Level Answer
+
+How do you maintain Jenkins agents?
+
+Regularly patch the operating system, update Java and build tools, clean workspaces, monitor resource utilization, rotate SSH keys, and replace unhealthy agents.
+
+---
+
+## Question 9
+
+### Production-Level Answer
+
+Why are Kubernetes agents preferred in modern CI/CD?
+
+They provide ephemeral, isolated build environments, automatic scaling, efficient resource utilization, and eliminate configuration drift between builds.
+
+---
+
+## Question 10
+
+### Production-Level Answer
+
+What is the recommended architecture for enterprise Jenkins?
+
+A lightweight Controller connected to multiple ephemeral Kubernetes or Docker agents, integrated with centralized authentication, RBAC, monitoring, and automated scaling.
+
+---
+
+# Key Takeaways
+
+- Jenkins Agents execute builds while the Controller orchestrates the CI/CD workflow.
+- Executors define how many concurrent builds an agent can process.
+- Labels ensure jobs run on compatible agents.
+- Dynamic agents (Docker/Kubernetes) provide better scalability, isolation, and cost efficiency than static agents.
+- Monitor agent health, clean workspaces, and apply regular maintenance to keep build infrastructure reliable.
+- Horizontal scaling with multiple agents is generally preferred over relying on a single powerful server.
