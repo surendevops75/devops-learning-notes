@@ -1379,3 +1379,447 @@ Test file operations inside the container.
 - Perform regular storage health checks
 
 ---
+
+# Section 8 - ConfigMaps & Secrets Troubleshooting Scenarios
+
+---
+
+## Scenario 81
+
+### Interview Question
+
+A Pod fails to start because the required **ConfigMap** is missing. How would you troubleshoot it?
+
+### Production-Level Answer
+
+When a Pod references a ConfigMap that does not exist, Kubernetes cannot inject the required configuration into the container.
+
+The Pod will fail before the application starts.
+
+### Approach
+
+Check Pod Events.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Verify ConfigMaps.
+
+```bash
+kubectl get configmap
+```
+
+Describe the ConfigMap.
+
+```bash
+kubectl describe configmap <configmap-name>
+```
+
+Verify
+
+- ConfigMap name
+- Namespace
+- Volume mounts
+- Environment variables
+
+### Common Root Causes
+
+- ConfigMap deleted
+- Wrong namespace
+- Typographical error
+- Deployment before ConfigMap creation
+
+### Best Practices
+
+- Store ConfigMaps in Git
+- Deploy ConfigMaps before applications
+- Validate manifests in CI/CD
+- Monitor missing resources
+
+---
+
+## Scenario 82
+
+### Interview Question
+
+Your Pod reports that a **Secret** cannot be found. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Secrets are required before the container starts.
+
+If the Secret does not exist or is in the wrong namespace, the Pod cannot initialize.
+
+### Approach
+
+Check Pod Events.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Verify Secrets.
+
+```bash
+kubectl get secrets
+```
+
+Describe the Secret.
+
+```bash
+kubectl describe secret <secret-name>
+```
+
+Verify
+
+- Secret name
+- Namespace
+- Secret type
+- Deployment manifest
+
+### Common Root Causes
+
+- Secret deleted
+- Wrong namespace
+- Typographical error
+- Incorrect Secret name
+
+### Best Practices
+
+- Store Secrets securely
+- Avoid manual Secret creation
+- Use GitOps
+- Rotate Secrets regularly
+
+---
+
+## Scenario 83
+
+### Interview Question
+
+Your application starts successfully, but an environment variable loaded from a ConfigMap is empty. How would you investigate?
+
+### Production-Level Answer
+
+An empty environment variable usually indicates a mapping issue rather than an application issue.
+
+Verify how the ConfigMap is referenced inside the Pod.
+
+### Approach
+
+Inspect the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Review
+
+- Environment Variables
+- ConfigMap keys
+- Pod manifest
+
+Check ConfigMap.
+
+```bash
+kubectl get configmap <configmap-name> -o yaml
+```
+
+### Common Root Causes
+
+- Wrong key
+- Missing key
+- Typographical error
+- Incorrect environment mapping
+
+### Best Practices
+
+- Use meaningful ConfigMap keys
+- Validate environment variables
+- Keep ConfigMaps version-controlled
+
+---
+
+## Scenario 84
+
+### Interview Question
+
+A Secret is mounted successfully, but the application cannot read the files. How would you troubleshoot it?
+
+### Production-Level Answer
+
+The Secret exists and is mounted, but the application may lack permissions or be reading the wrong path.
+
+### Approach
+
+Verify
+
+- Mount path
+- File permissions
+- SecurityContext
+- Application configuration
+
+Inspect the mounted directory inside the container.
+
+### Common Root Causes
+
+- Wrong mount path
+- Incorrect file permissions
+- Application reading wrong location
+- SecurityContext issue
+
+### Best Practices
+
+- Use standard mount locations
+- Validate file permissions
+- Avoid hardcoded paths
+- Test Secret mounts before deployment
+
+---
+
+## Scenario 85
+
+### Interview Question
+
+A Secret was updated, but the application continues using the old values. Why?
+
+### Production-Level Answer
+
+Updating a Secret does not automatically restart Pods.
+
+Many applications only read Secret values during startup.
+
+### Approach
+
+Verify
+
+- Secret update
+- Pod creation time
+- Mounted Secret
+- Application behavior
+
+Restart the Deployment if necessary.
+
+```bash
+kubectl rollout restart deployment <deployment-name>
+```
+
+### Common Root Causes
+
+- Application caches configuration
+- Pod not restarted
+- Secret volume refresh delay
+- Static environment variables
+
+### Best Practices
+
+- Restart workloads after Secret updates
+- Automate Secret rotation
+- Document Secret refresh behavior
+
+---
+
+## Scenario 86
+
+### Interview Question
+
+Your application reports authentication failures even though the Secret exists. How would you investigate?
+
+### Production-Level Answer
+
+The Secret may exist, but its contents could be incorrect.
+
+Always verify the Secret values before blaming the application.
+
+### Approach
+
+Check
+
+- Secret
+- Deployment
+- Environment variables
+- External service credentials
+
+Verify Secret contents carefully.
+
+### Common Root Causes
+
+- Incorrect password
+- Expired credentials
+- Wrong Secret referenced
+- Incorrect encoding
+
+### Best Practices
+
+- Rotate credentials regularly
+- Validate Secrets during deployment
+- Use external Secret managers
+
+---
+
+## Scenario 87
+
+### Interview Question
+
+Multiple Pods fail after a ConfigMap update. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A ConfigMap update can impact every workload using it.
+
+Determine whether the update introduced invalid configuration.
+
+### Approach
+
+Review
+
+- ConfigMap history
+- Deployment rollout
+- Application logs
+- Pod Events
+
+Compare old and new configuration.
+
+### Common Root Causes
+
+- Invalid configuration
+- Missing keys
+- Typographical error
+- Application incompatibility
+
+### Best Practices
+
+- Version ConfigMaps
+- Review configuration changes
+- Test configuration in staging
+- Implement change approvals
+
+---
+
+## Scenario 88
+
+### Interview Question
+
+Your team accidentally deleted a production Secret. What would you do?
+
+### Production-Level Answer
+
+A deleted Secret can immediately impact production workloads.
+
+Restore the Secret as quickly as possible while minimizing application downtime.
+
+### Approach
+
+Identify
+
+- Affected applications
+- Backup
+- GitOps repository
+- Secret Manager
+
+Restore the Secret.
+
+Restart affected workloads if necessary.
+
+### Common Root Causes
+
+- Human error
+- GitOps synchronization
+- Incorrect cleanup script
+- Unauthorized change
+
+### Best Practices
+
+- Use external Secret Managers
+- Enable RBAC
+- Audit Secret changes
+- Maintain secure backups
+
+---
+
+## Scenario 89
+
+### Interview Question
+
+You need to rotate production database credentials without causing downtime. How would you approach it?
+
+### Production-Level Answer
+
+Credential rotation should be performed gradually to prevent application failures.
+
+Coordinate Secret updates with application rollout.
+
+### Approach
+
+Update
+
+- Database credentials
+- Kubernetes Secret
+- Application Deployment
+
+Perform
+
+```bash
+kubectl rollout restart deployment <deployment-name>
+```
+
+Verify application connectivity.
+
+### Common Root Causes
+
+- Secret updated before database
+- Application cache
+- Old Pods still running
+- Credential mismatch
+
+### Best Practices
+
+- Automate Secret rotation
+- Use rolling deployments
+- Validate connectivity after rotation
+- Document credential management
+
+---
+
+## Scenario 90
+
+### Interview Question
+
+Everything appears healthy—ConfigMaps, Secrets, Pods, and Deployments—but the application still fails because of configuration issues. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Healthy Kubernetes resources do not guarantee that the application is using the expected configuration.
+
+Trace the configuration from Kubernetes to the application.
+
+### Approach
+
+Verify
+
+- ConfigMap
+- Secret
+- Deployment
+- Environment variables
+- Mounted files
+- Application logs
+
+Compare the running configuration with the expected configuration.
+
+### Common Root Causes
+
+- Wrong environment variable
+- Incorrect ConfigMap key
+- Secret mismatch
+- Application cache
+- Configuration not reloaded
+
+### Best Practices
+
+- Validate configuration after deployment
+- Monitor configuration changes
+- Use GitOps for configuration management
+- Automate configuration testing
+
+---
