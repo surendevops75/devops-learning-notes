@@ -508,3 +508,306 @@ Large organizations often manage hundreds of pipelines. Shared Libraries central
 
 ---
 
+## Question 51
+
+### What is the difference between a Shared Library and copying pipeline code into every Jenkinsfile?
+
+#### Production-Level Answer
+
+Copying pipeline code into multiple Jenkinsfiles leads to duplication, inconsistent implementations, and difficult maintenance. A Shared Library centralizes reusable functions, allowing changes to be made once and automatically used by all pipelines. This ensures consistency, reduces maintenance effort, and enforces organizational standards.
+
+---
+
+## Question 52
+
+### Where are Jenkins Shared Libraries stored?
+
+#### Production-Level Answer
+
+Shared Libraries are typically stored in a separate Git repository. Jenkins downloads the library during pipeline execution, allowing teams to version-control common pipeline functions independently from application repositories.
+
+---
+
+## Question 53
+
+### What are the main directories in a Shared Library?
+
+#### Production-Level Answer
+
+A Shared Library generally consists of three directories:
+- `vars/` for reusable global pipeline functions.
+- `src/` for reusable Groovy classes.
+- `resources/` for static files such as templates, configuration files, and scripts.
+
+---
+
+## Question 54
+
+### What is Global Pipeline Library?
+
+#### Production-Level Answer
+
+A Global Pipeline Library is configured once in Jenkins and becomes available to all pipelines. It is commonly used for enterprise-wide CI/CD standards such as Docker builds, SonarQube scans, Terraform deployment, Kubernetes deployment, notifications, and security checks.
+
+---
+
+## Question 55
+
+### What is Folder-level Shared Library?
+
+#### Production-Level Answer
+
+A Folder-level Shared Library is accessible only to pipelines within a specific Jenkins folder. It is useful when different teams require customized pipeline logic without exposing it to the entire Jenkins instance.
+
+---
+
+## Question 56
+
+### Why should pipeline logic be centralized?
+
+#### Production-Level Answer
+
+Centralizing pipeline logic improves maintainability, reduces duplication, simplifies upgrades, enforces security standards, and ensures every application follows the same CI/CD process across the organization.
+
+---
+
+## Question 57
+
+### What are Jenkins Credentials?
+
+#### Production-Level Answer
+
+Jenkins Credentials provide a secure mechanism for storing sensitive information such as usernames, passwords, SSH keys, API tokens, certificates, cloud credentials, and secret text. Credentials are encrypted and injected into pipelines only when required.
+
+---
+
+## Question 58
+
+### Why should credentials never be hardcoded?
+
+#### Production-Level Answer
+
+Hardcoding credentials exposes sensitive information in source code repositories, Jenkinsfiles, and logs, creating significant security risks. Using Jenkins Credentials protects secrets through encryption, access control, and controlled injection during pipeline execution.
+
+---
+
+## Question 59
+
+### What credential types are supported in Jenkins?
+
+#### Production-Level Answer
+
+Jenkins supports Username/Password, Secret Text, Secret File, SSH Private Key, Certificate, AWS Credentials, Kubernetes Credentials, Docker Registry Credentials, GitHub Tokens, and various plugin-specific credential types.
+
+---
+
+## Question 60
+
+### What is withCredentials?
+
+#### Production-Level Answer
+
+`withCredentials` securely injects stored Jenkins credentials into a pipeline for the duration of a specific block. Credentials are automatically masked in console logs and removed from the environment after execution.
+
+---
+
+## Question 61
+
+### How are credentials secured in Jenkins?
+
+#### Production-Level Answer
+
+Credentials are encrypted on disk, protected through Role-Based Access Control (RBAC), masked in build logs, and exposed only during pipeline execution. Production environments further integrate Jenkins with external secret managers such as HashiCorp Vault or AWS Secrets Manager.
+
+---
+
+## Question 62
+
+### What are Secret Text credentials used for?
+
+#### Production-Level Answer
+
+Secret Text credentials are commonly used for API tokens, GitHub Personal Access Tokens, SonarQube tokens, Slack Webhook URLs, Kubernetes tokens, and other single-string secrets.
+
+---
+
+## Question 63
+
+### What are Secret File credentials?
+
+#### Production-Level Answer
+
+Secret File credentials securely store files such as kubeconfig files, SSL certificates, Google Cloud service account JSON files, or other confidential configuration files required during pipeline execution.
+
+---
+
+## Question 64
+
+### What are SSH Credentials used for?
+
+#### Production-Level Answer
+
+SSH Credentials allow Jenkins to authenticate securely with Git repositories, Linux servers, deployment targets, or remote agents using SSH key-based authentication instead of passwords.
+
+---
+
+## Question 65
+
+### What is Credentials Binding?
+
+#### Production-Level Answer
+
+Credentials Binding maps stored Jenkins credentials to environment variables during pipeline execution, allowing applications and scripts to use secrets securely without exposing them in source code.
+
+---
+
+## Question 66
+
+### What are Jenkins Plugins?
+
+#### Production-Level Answer
+
+Plugins extend Jenkins functionality by integrating external tools, cloud platforms, version control systems, security scanners, notification services, container platforms, artifact repositories, and deployment technologies.
+
+---
+
+## Question 67
+
+### Why are plugins important?
+
+#### Production-Level Answer
+
+The Jenkins core provides basic automation capabilities, while plugins enable integration with technologies such as GitHub, Docker, Kubernetes, SonarQube, Terraform, Slack, AWS, Azure, GCP, Maven, Gradle, Artifactory, Nexus, and thousands of additional tools.
+
+---
+
+## Question 68
+
+### How should plugins be managed in production?
+
+#### Production-Level Answer
+
+Plugins should be upgraded during maintenance windows after compatibility testing in a staging environment. Only required plugins should be installed, unused plugins should be removed, and plugin versions should be reviewed regularly to minimize security risks.
+
+---
+
+## Question 69
+
+### Why should unused plugins be removed?
+
+#### Production-Level Answer
+
+Unused plugins consume memory, increase Jenkins startup time, expand the attack surface, introduce unnecessary dependencies, and complicate upgrades. Keeping only essential plugins improves performance and security.
+
+---
+
+## Question 70
+
+### What is Plugin Dependency?
+
+#### Production-Level Answer
+
+Many Jenkins plugins depend on other plugins. Before upgrading or removing a plugin, dependency relationships must be verified to prevent broken functionality and pipeline failures.
+
+---
+
+## Question 71
+
+### What is the Git Plugin?
+
+#### Production-Level Answer
+
+The Git Plugin integrates Jenkins with Git repositories, enabling source code checkout, branch selection, authentication, webhook triggering, changelog generation, and commit tracking.
+
+---
+
+## Question 72
+
+### What is the Pipeline Plugin?
+
+#### Production-Level Answer
+
+The Pipeline Plugin enables Pipeline as Code by allowing Jenkins to execute Declarative and Scripted Pipelines defined in Jenkinsfiles stored within source repositories.
+
+---
+
+## Question 73
+
+### What is the Docker Plugin?
+
+#### Production-Level Answer
+
+The Docker Plugin enables Jenkins to build Docker images, execute builds inside containers, provision Docker-based agents, and integrate containerized workflows into CI/CD pipelines.
+
+---
+
+## Question 74
+
+### What is the Kubernetes Plugin?
+
+#### Production-Level Answer
+
+The Kubernetes Plugin dynamically provisions ephemeral Kubernetes pods as Jenkins agents. This allows build environments to scale automatically while reducing infrastructure costs and eliminating long-running build servers.
+
+---
+
+## Question 75
+
+### What is the Role Strategy Plugin?
+
+#### Production-Level Answer
+
+The Role Strategy Plugin provides Role-Based Access Control (RBAC) by allowing administrators to assign permissions based on organizational roles such as Developer, QA, DevOps Engineer, Release Manager, and Administrator.
+
+---
+
+## Question 76
+
+### What is Jenkins RBAC?
+
+#### Production-Level Answer
+
+Role-Based Access Control restricts Jenkins access according to job responsibilities. Instead of granting administrator privileges to everyone, permissions are assigned based on least-privilege principles to improve security and governance.
+
+---
+
+## Question 77
+
+### What is Matrix Authorization?
+
+#### Production-Level Answer
+
+Matrix Authorization provides fine-grained permission management by allowing administrators to assign individual permissions for users or groups, including job creation, build execution, configuration changes, credential access, and administrative operations.
+
+---
+
+## Question 78
+
+### What is Jenkins Security Realm?
+
+#### Production-Level Answer
+
+The Security Realm defines how users authenticate to Jenkins. Authentication can be managed using Jenkins' internal user database, LDAP, Active Directory, OAuth, SAML, or Single Sign-On (SSO) providers.
+
+---
+
+## Question 79
+
+### What is Authorization Strategy?
+
+#### Production-Level Answer
+
+Authorization Strategy determines what authenticated users are permitted to do after logging into Jenkins. It defines permissions for jobs, credentials, nodes, plugins, system configuration, and administrative operations.
+
+---
+
+## Question 80
+
+### Why should anonymous access be disabled?
+
+#### Production-Level Answer
+
+Anonymous access exposes Jenkins information, build history, logs, job configurations, and potentially sensitive metadata to unauthorized users. Production Jenkins servers should require authentication for all users and restrict permissions using RBAC.
+
+---
+
