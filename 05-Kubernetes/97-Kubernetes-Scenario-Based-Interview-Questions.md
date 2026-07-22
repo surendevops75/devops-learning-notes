@@ -939,3 +939,443 @@ Test connectivity at every layer.
 - Maintain end-to-end observability
 
 ---
+
+# Section 7 - Storage Troubleshooting Scenarios
+
+---
+
+## Scenario 71
+
+### Interview Question
+
+A Pod remains in the **Pending** state because its PersistentVolumeClaim (PVC) is also Pending. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A Pod cannot start until its required PersistentVolumeClaim is successfully bound to a PersistentVolume.
+
+Investigate the storage layer before troubleshooting the application.
+
+### Approach
+
+Check PVC status.
+
+```bash
+kubectl get pvc
+```
+
+Describe the PVC.
+
+```bash
+kubectl describe pvc <pvc-name>
+```
+
+Verify
+
+- StorageClass
+- Access Mode
+- Requested Storage
+- Available PersistentVolumes
+
+### Common Root Causes
+
+- No matching PersistentVolume
+- StorageClass missing
+- Wrong AccessMode
+- Insufficient storage
+- CSI Driver issue
+
+### Best Practices
+
+- Use dynamic provisioning
+- Monitor PVC status
+- Standardize StorageClasses
+- Validate storage before deployment
+
+---
+
+## Scenario 72
+
+### Interview Question
+
+A PersistentVolumeClaim is created, but it never binds to a PersistentVolume. What would you investigate?
+
+### Production-Level Answer
+
+PVC binding depends on matching storage requirements.
+
+If no suitable PersistentVolume exists, the PVC remains Pending.
+
+### Approach
+
+Check PVC.
+
+```bash
+kubectl describe pvc <pvc-name>
+```
+
+Check PVs.
+
+```bash
+kubectl get pv
+```
+
+Compare
+
+- StorageClass
+- Capacity
+- AccessMode
+- ReclaimPolicy
+
+### Common Root Causes
+
+- StorageClass mismatch
+- Capacity mismatch
+- AccessMode mismatch
+- PV unavailable
+- CSI failure
+
+### Best Practices
+
+- Use dynamic provisioning
+- Maintain consistent StorageClasses
+- Monitor storage capacity
+
+---
+
+## Scenario 73
+
+### Interview Question
+
+Your Pod reports **FailedMount** events. How would you troubleshoot it?
+
+### Production-Level Answer
+
+FailedMount indicates Kubernetes could not attach or mount the requested storage.
+
+Investigate the volume rather than the application.
+
+### Approach
+
+Describe the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Review Events.
+
+Verify
+
+- PVC
+- PV
+- StorageClass
+- CSI Driver
+- Node
+
+### Common Root Causes
+
+- PVC Pending
+- CSI Driver unavailable
+- Volume attachment failure
+- Permission issue
+- Storage unavailable
+
+### Best Practices
+
+- Monitor CSI Drivers
+- Validate storage before deployment
+- Alert on mount failures
+
+---
+
+## Scenario 74
+
+### Interview Question
+
+An Amazon EBS volume cannot attach to a Worker Node in Amazon EKS. How would you troubleshoot it?
+
+### Production-Level Answer
+
+EBS volumes are AZ-specific and require the EBS CSI Driver.
+
+Verify both AWS and Kubernetes resources.
+
+### Approach
+
+Check
+
+- PVC
+- PV
+- EBS CSI Driver
+- Worker Node AZ
+- Volume AZ
+- IAM permissions
+
+Describe PVC.
+
+```bash
+kubectl describe pvc <pvc-name>
+```
+
+### Common Root Causes
+
+- EBS CSI Driver failure
+- AZ mismatch
+- IAM permission denied
+- Volume unavailable
+- Attachment timeout
+
+### Best Practices
+
+- Deploy EBS CSI Driver
+- Schedule Pods within the correct AZ
+- Monitor CSI Driver logs
+
+---
+
+## Scenario 75
+
+### Interview Question
+
+Your application reports **Permission Denied** while writing to a mounted volume. How would you investigate?
+
+### Production-Level Answer
+
+The volume is mounted successfully, but the application lacks permission to write.
+
+Investigate file ownership and security context.
+
+### Approach
+
+Verify
+
+- SecurityContext
+- fsGroup
+- runAsUser
+- File permissions
+- Mounted volume
+
+Inspect inside the container.
+
+### Common Root Causes
+
+- Incorrect UID
+- Missing fsGroup
+- Read-only mount
+- Volume ownership mismatch
+
+### Best Practices
+
+- Configure SecurityContext
+- Avoid running containers as root
+- Validate permissions during testing
+
+---
+
+## Scenario 76
+
+### Interview Question
+
+A PersistentVolume shows **Released** state after deleting the PVC. What does this mean?
+
+### Production-Level Answer
+
+Released means the PVC has been removed, but Kubernetes has not yet reclaimed or reused the PersistentVolume.
+
+The next action depends on the Reclaim Policy.
+
+### Approach
+
+Check PV.
+
+```bash
+kubectl get pv
+```
+
+Describe it.
+
+```bash
+kubectl describe pv <pv-name>
+```
+
+Verify
+
+- ReclaimPolicy
+- StorageClass
+- ClaimRef
+
+### Common Root Causes
+
+- Retain policy
+- Manual cleanup required
+- Storage administrator action pending
+
+### Best Practices
+
+- Understand Reclaim Policies
+- Clean released volumes
+- Monitor orphaned storage
+
+---
+
+## Scenario 77
+
+### Interview Question
+
+A StatefulSet Pod cannot start because its PersistentVolumeClaim is missing. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Each StatefulSet Pod requires its own dedicated PersistentVolumeClaim.
+
+Without storage, the Pod cannot start.
+
+### Approach
+
+Check StatefulSet.
+
+```bash
+kubectl get statefulset
+```
+
+Verify PVCs.
+
+```bash
+kubectl get pvc
+```
+
+Review Events.
+
+### Common Root Causes
+
+- Missing VolumeClaimTemplate
+- StorageClass issue
+- Dynamic provisioning failure
+- CSI Driver problem
+
+### Best Practices
+
+- Validate StatefulSet templates
+- Monitor PVC creation
+- Use dynamic provisioning
+
+---
+
+## Scenario 78
+
+### Interview Question
+
+A Pod using Amazon EFS cannot access shared files across multiple Worker Nodes. How would you investigate?
+
+### Production-Level Answer
+
+Amazon EFS supports ReadWriteMany access.
+
+Investigate mount configuration, networking, and the EFS CSI Driver.
+
+### Approach
+
+Verify
+
+- EFS CSI Driver
+- Mount Targets
+- Security Groups
+- NFS connectivity
+- PVC
+
+### Common Root Causes
+
+- Security Group blocking NFS
+- Missing Mount Target
+- CSI Driver failure
+- Incorrect filesystem ID
+
+### Best Practices
+
+- Deploy EFS CSI Driver
+- Monitor NFS connectivity
+- Validate mount targets
+
+---
+
+## Scenario 79
+
+### Interview Question
+
+Your application reports **Read-only file system** while writing to a PersistentVolume. How would you troubleshoot it?
+
+### Production-Level Answer
+
+This indicates the mounted filesystem is read-only or the volume has entered a protective state.
+
+Investigate both Kubernetes configuration and the storage backend.
+
+### Approach
+
+Verify
+
+- Mount options
+- PersistentVolume
+- PersistentVolumeClaim
+- Storage backend
+- Application configuration
+
+Inspect mount information inside the container.
+
+### Common Root Causes
+
+- ReadOnly mount
+- Storage backend issue
+- Filesystem corruption
+- Incorrect manifest
+
+### Best Practices
+
+- Verify mount options
+- Monitor storage health
+- Validate application write permissions
+
+---
+
+## Scenario 80
+
+### Interview Question
+
+Your PersistentVolumes, PersistentVolumeClaims, and Pods all appear healthy, but the application still cannot read or write data. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Healthy Kubernetes resources do not guarantee storage functionality.
+
+Investigate connectivity from the application to the underlying storage.
+
+### Approach
+
+Verify
+
+- Volume mounts
+- File permissions
+- SecurityContext
+- Storage backend
+- CSI Driver
+- Application logs
+
+Test file operations inside the container.
+
+### Common Root Causes
+
+- Application permission issue
+- Incorrect mount path
+- Storage backend failure
+- SecurityContext configuration
+- Filesystem corruption
+
+### Best Practices
+
+- Test storage after deployment
+- Monitor storage latency
+- Validate permissions
+- Perform regular storage health checks
+
+---
