@@ -1111,3 +1111,303 @@ JCasC improves consistency, supports Infrastructure as Code practices, simplifie
 
 ---
 
+## Question 111
+
+### What is a Freestyle Job?
+
+#### Production-Level Answer
+
+A Freestyle Job is the traditional Jenkins job type where build steps, triggers, and post-build actions are configured through the Jenkins UI. Although suitable for simple automation, Freestyle Jobs are difficult to version control and maintain. Modern production environments prefer Pipeline as Code using Jenkinsfiles.
+
+---
+
+## Question 112
+
+### Why are Pipeline Jobs preferred over Freestyle Jobs?
+
+#### Production-Level Answer
+
+Pipeline Jobs are version-controlled, reusable, reviewable, portable, and support complex CI/CD workflows using code. They simplify maintenance, improve collaboration, and enable Infrastructure as Code practices, making them the preferred choice for enterprise environments.
+
+---
+
+## Question 113
+
+### What is SCM in Jenkins?
+
+#### Production-Level Answer
+
+SCM (Source Code Management) refers to version control systems integrated with Jenkins, such as GitHub, GitLab, or Bitbucket. Jenkins retrieves source code from SCM repositories to build, test, scan, and deploy applications automatically.
+
+---
+
+## Question 114
+
+### How does Jenkins connect to GitHub?
+
+#### Production-Level Answer
+
+Jenkins connects to GitHub using HTTPS with Personal Access Tokens or SSH using SSH keys. Authentication is securely managed through Jenkins Credentials, while GitHub Webhooks automatically trigger pipelines when code is pushed.
+
+---
+
+## Question 115
+
+### What is a GitHub Webhook?
+
+#### Production-Level Answer
+
+A GitHub Webhook is an HTTP callback that notifies Jenkins whenever events such as push, pull request creation, or tag creation occur. Webhooks eliminate continuous polling and trigger pipelines immediately after code changes.
+
+---
+
+## Question 116
+
+### Why are Webhooks preferred over Poll SCM?
+
+#### Production-Level Answer
+
+Webhooks provide real-time notifications, reduce unnecessary API requests, lower server load, and trigger builds immediately after code changes. Poll SCM periodically checks repositories even when no changes exist, consuming unnecessary resources.
+
+---
+
+## Question 117
+
+### What is Poll SCM?
+
+#### Production-Level Answer
+
+Poll SCM is a Jenkins trigger mechanism that periodically checks the source repository for changes. If new commits are detected, Jenkins starts the pipeline. It is generally used only when webhooks cannot be configured.
+
+---
+
+## Question 118
+
+### What are Build Triggers?
+
+#### Production-Level Answer
+
+Build Triggers define how a Jenkins job starts. Common triggers include GitHub Webhooks, Poll SCM, Scheduled Cron Jobs, Upstream Jobs, Manual Execution, Remote API Calls, and Plugin-based event triggers.
+
+---
+
+## Question 119
+
+### What is an Upstream Job?
+
+#### Production-Level Answer
+
+An Upstream Job is a Jenkins job that triggers another job after successful completion. This allows complex workflows to be split into smaller reusable pipelines while maintaining execution dependencies.
+
+---
+
+## Question 120
+
+### What is a Downstream Job?
+
+#### Production-Level Answer
+
+A Downstream Job is triggered by another Jenkins job after a specific condition is met, typically successful completion. Large organizations use downstream jobs to separate infrastructure provisioning, application deployment, testing, and security scanning.
+
+---
+
+## Question 121
+
+### When should downstream jobs be used?
+
+#### Production-Level Answer
+
+Downstream jobs are useful when multiple teams share common automation, when pipelines become too large, or when infrastructure, security, deployment, and application pipelines should be maintained independently.
+
+---
+
+## Question 122
+
+### What is the Build step in Jenkins?
+
+#### Production-Level Answer
+
+The Build step triggers another Jenkins job from within a pipeline. It supports parameter passing, asynchronous execution, status propagation, and orchestration of complex CI/CD workflows.
+
+---
+
+## Question 123
+
+### What is propagate in the build step?
+
+#### Production-Level Answer
+
+The `propagate` option determines whether the downstream job's result affects the parent pipeline. When set to false, the parent pipeline continues execution even if the downstream job fails.
+
+---
+
+## Question 124
+
+### What does wait: false do in the build step?
+
+#### Production-Level Answer
+
+Setting `wait: false` allows Jenkins to trigger a downstream job asynchronously without waiting for its completion. This is useful when independent jobs should execute in parallel.
+
+---
+
+## Question 125
+
+### What is Jenkins Workspace Cleanup?
+
+#### Production-Level Answer
+
+Workspace Cleanup removes files generated during previous builds to prevent stale artifacts, reduce disk usage, and ensure every build starts in a clean environment. The Workspace Cleanup Plugin or `cleanWs()` step is commonly used.
+
+---
+
+## Question 126
+
+### Why should workspaces be cleaned?
+
+#### Production-Level Answer
+
+Old files may interfere with future builds, consume disk space, introduce inconsistent behavior, and increase troubleshooting complexity. Cleaning workspaces ensures predictable and repeatable builds.
+
+---
+
+## Question 127
+
+### What are Jenkins Artifacts?
+
+#### Production-Level Answer
+
+Artifacts are files generated during pipeline execution, such as JAR files, WAR files, Docker image metadata, reports, configuration packages, or binaries. They can be archived, published, or deployed to artifact repositories.
+
+---
+
+## Question 128
+
+### What is the difference between Workspace and Artifact?
+
+#### Production-Level Answer
+
+A Workspace contains temporary files used during pipeline execution, while Artifacts are permanent outputs intended for deployment, auditing, or future reuse. Workspaces can be deleted after builds, whereas artifacts are usually retained.
+
+---
+
+## Question 129
+
+### Why should artifacts be stored in an artifact repository?
+
+#### Production-Level Answer
+
+Artifact repositories such as Nexus or Artifactory provide centralized storage, versioning, access control, integrity verification, and deployment consistency. This prevents rebuilding applications multiple times for different environments.
+
+---
+
+## Question 130
+
+### What is Artifact Versioning?
+
+#### Production-Level Answer
+
+Artifact Versioning uniquely identifies every build using semantic versions, build numbers, commit hashes, or release tags. Versioning enables rollback, auditing, reproducibility, and deployment traceability.
+
+---
+
+## Question 131
+
+### What is Jenkins Build History?
+
+#### Production-Level Answer
+
+Build History records previous pipeline executions, including build numbers, timestamps, duration, console logs, artifacts, test reports, and execution status. It supports troubleshooting, auditing, and deployment tracking.
+
+---
+
+## Question 132
+
+### What are Build Numbers?
+
+#### Production-Level Answer
+
+Every Jenkins execution receives a unique incremental build number. Build numbers help identify artifacts, deployments, logs, and pipeline executions during troubleshooting and release management.
+
+---
+
+## Question 133
+
+### Why is Build History important?
+
+#### Production-Level Answer
+
+Build History enables teams to investigate failures, compare pipeline executions, retrieve previous artifacts, verify deployments, analyze trends, and support compliance audits.
+
+---
+
+## Question 134
+
+### What are Jenkins Environment Variables?
+
+#### Production-Level Answer
+
+Environment Variables provide configuration values available during pipeline execution, such as application names, branch names, build numbers, workspace paths, Docker image tags, cloud regions, and deployment environments.
+
+---
+
+## Question 135
+
+### What are Global Environment Variables?
+
+#### Production-Level Answer
+
+Global Environment Variables are configured once at the Jenkins system level and are available to all jobs. They are commonly used for organization-wide settings such as proxy configurations, default tool paths, or shared environment values.
+
+---
+
+## Question 136
+
+### What is BUILD_NUMBER?
+
+#### Production-Level Answer
+
+BUILD_NUMBER is a predefined Jenkins environment variable containing the unique number assigned to the current pipeline execution. It is commonly used for artifact versioning, Docker image tags, and deployment tracking.
+
+---
+
+## Question 137
+
+### What is WORKSPACE?
+
+#### Production-Level Answer
+
+WORKSPACE is a predefined environment variable containing the absolute path of the current build workspace on the executing agent.
+
+---
+
+## Question 138
+
+### What is JOB_NAME?
+
+#### Production-Level Answer
+
+JOB_NAME contains the name of the currently executing Jenkins job. It is frequently used in notifications, logging, monitoring, and deployment scripts.
+
+---
+
+## Question 139
+
+### What is BUILD_URL?
+
+#### Production-Level Answer
+
+BUILD_URL contains the direct URL of the current pipeline execution. It is commonly included in Slack messages, email notifications, and incident reports to simplify troubleshooting.
+
+---
+
+## Question 140
+
+### What is NODE_NAME?
+
+#### Production-Level Answer
+
+NODE_NAME identifies the Jenkins agent executing the current build. It helps administrators determine where workloads are running and supports troubleshooting agent-specific issues.
+
+---
+
