@@ -1026,3 +1026,477 @@ Correlate logs with Kubernetes Events.
 
 ---
 
+# Section 2 - Scheduling Scenarios
+
+---
+
+## Scenario 21
+
+### Interview Question
+
+A Pod remains in the **Pending** state, and the event says **0/5 nodes are available: Insufficient CPU**. How would you troubleshoot it?
+
+### Production-Level Answer
+
+This indicates that Kubernetes cannot find any Worker Node with enough available CPU to satisfy the Pod's resource request.
+
+The application is healthy, but the cluster lacks scheduling capacity.
+
+### Approach
+
+Check Pod events.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Check node resource utilization.
+
+```bash
+kubectl top nodes
+```
+
+Review Pod resource requests.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Verify
+
+- CPU Requests
+- CPU Limits
+- Cluster capacity
+- Running workloads
+
+### Common Root Causes
+
+- CPU requests too high
+- Cluster fully utilized
+- Cluster Autoscaler not working
+- Resource fragmentation
+- Too many workloads
+
+### Best Practices
+
+- Right-size CPU requests
+- Enable Cluster Autoscaler
+- Monitor node utilization
+- Avoid over-provisioning
+
+---
+
+## Scenario 22
+
+### Interview Question
+
+A Pod cannot be scheduled because of **Insufficient Memory**. How would you investigate?
+
+### Production-Level Answer
+
+The scheduler cannot place the Pod because every Worker Node lacks sufficient allocatable memory.
+
+### Approach
+
+Check events.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Review node memory.
+
+```bash
+kubectl top nodes
+```
+
+Verify
+
+- Memory requests
+- Memory limits
+- Existing workloads
+- Node capacity
+
+### Common Root Causes
+
+- Large memory requests
+- Memory fragmentation
+- Cluster fully utilized
+- Memory leak in workloads
+- Autoscaler failure
+
+### Best Practices
+
+- Monitor memory usage
+- Allocate realistic requests
+- Enable node auto scaling
+- Avoid oversized Pods
+
+---
+
+## Scenario 23
+
+### Interview Question
+
+A Pod cannot be scheduled because of a **Node Selector** mismatch. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A Node Selector restricts scheduling to specific Worker Nodes.
+
+If no matching node exists, the Pod remains Pending indefinitely.
+
+### Approach
+
+View Pod specification.
+
+```bash
+kubectl get pod <pod-name> -o yaml
+```
+
+Check node labels.
+
+```bash
+kubectl get nodes --show-labels
+```
+
+Compare
+
+- Required labels
+- Available labels
+
+### Common Root Causes
+
+- Incorrect label
+- Label removed
+- Typographical error
+- Wrong environment
+
+### Best Practices
+
+- Standardize node labels
+- Validate selectors
+- Automate node labeling
+- Document scheduling rules
+
+---
+
+## Scenario 24
+
+### Interview Question
+
+Pods remain Pending because of **Taints and Tolerations**. What would you check?
+
+### Production-Level Answer
+
+Taints prevent Pods from being scheduled onto specific nodes unless the Pod has a matching Toleration.
+
+### Approach
+
+Check node taints.
+
+```bash
+kubectl describe node <node-name>
+```
+
+Review Pod tolerations.
+
+```bash
+kubectl get pod <pod-name> -o yaml
+```
+
+Compare
+
+- Taints
+- Tolerations
+
+### Common Root Causes
+
+- Missing toleration
+- Incorrect taint key
+- Wrong effect
+- New node tainted
+
+### Best Practices
+
+- Use taints carefully
+- Document node roles
+- Validate tolerations before deployment
+- Avoid unnecessary taints
+
+---
+
+## Scenario 25
+
+### Interview Question
+
+A Deployment using **Node Affinity** suddenly stops scheduling new Pods. How would you investigate?
+
+### Production-Level Answer
+
+Node Affinity provides advanced scheduling rules. If no nodes satisfy the affinity conditions, Pods remain Pending.
+
+### Approach
+
+Review Pod manifest.
+
+```bash
+kubectl get deployment <deployment-name> -o yaml
+```
+
+Check node labels.
+
+```bash
+kubectl get nodes --show-labels
+```
+
+Verify
+
+- Required affinity
+- Preferred affinity
+- Available nodes
+
+### Common Root Causes
+
+- Missing labels
+- Label removed
+- Incorrect affinity rule
+- Cluster topology changed
+
+### Best Practices
+
+- Prefer preferredDuringScheduling where possible
+- Review affinity rules
+- Avoid overly restrictive scheduling
+
+---
+
+## Scenario 26
+
+### Interview Question
+
+Pods using **Pod Anti-Affinity** cannot be scheduled. Why?
+
+### Production-Level Answer
+
+Pod Anti-Affinity prevents similar Pods from running on the same node.
+
+If the cluster has too few nodes, Kubernetes cannot satisfy the rule.
+
+### Approach
+
+Check
+
+- Pod Anti-Affinity rules
+- Available nodes
+- Existing Pods
+
+Run
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Common Root Causes
+
+- Too few nodes
+- Strict anti-affinity
+- Node unavailable
+- Cluster capacity insufficient
+
+### Best Practices
+
+- Use preferred anti-affinity where appropriate
+- Scale Worker Nodes
+- Review scheduling constraints
+
+---
+
+## Scenario 27
+
+### Interview Question
+
+A Pod with **requiredDuringSchedulingIgnoredDuringExecution** never gets scheduled. How would you troubleshoot it?
+
+### Production-Level Answer
+
+This affinity rule is mandatory.
+
+If Kubernetes cannot satisfy it, the Pod will never be scheduled.
+
+### Approach
+
+Review
+
+- Affinity rules
+- Node labels
+- Scheduler events
+
+Check
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Common Root Causes
+
+- Missing node labels
+- Incorrect affinity rule
+- Infrastructure changes
+- Wrong environment
+
+### Best Practices
+
+- Use mandatory affinity only when necessary
+- Validate labels regularly
+- Monitor scheduler events
+
+---
+
+## Scenario 28
+
+### Interview Question
+
+A Pod remains Pending because of **ResourceQuota** restrictions. How would you investigate?
+
+### Production-Level Answer
+
+ResourceQuota limits how much CPU, memory, storage, or object count a namespace can consume.
+
+Once the quota is exhausted, new workloads cannot be scheduled.
+
+### Approach
+
+Check ResourceQuota.
+
+```bash
+kubectl get resourcequota
+```
+
+Describe it.
+
+```bash
+kubectl describe resourcequota
+```
+
+Compare
+
+- Requested resources
+- Available quota
+
+### Common Root Causes
+
+- Namespace quota exceeded
+- New deployment too large
+- Multiple teams sharing namespace
+- Resource requests increased
+
+### Best Practices
+
+- Monitor quotas
+- Allocate namespace budgets
+- Review requests periodically
+- Alert before exhaustion
+
+---
+
+## Scenario 29
+
+### Interview Question
+
+Pods fail admission because of **LimitRange** policies. How would you troubleshoot it?
+
+### Production-Level Answer
+
+LimitRanges enforce default and maximum resource values inside a namespace.
+
+Pods violating these limits are rejected before scheduling.
+
+### Approach
+
+Check
+
+```bash
+kubectl get limitrange
+```
+
+Describe it.
+
+```bash
+kubectl describe limitrange
+```
+
+Compare
+
+- CPU requests
+- Memory requests
+- Limits
+
+### Common Root Causes
+
+- Missing resource requests
+- Exceeding maximum limits
+- Invalid configuration
+- Namespace policy changes
+
+### Best Practices
+
+- Define requests and limits
+- Review namespace policies
+- Validate manifests during CI
+
+---
+
+## Scenario 30
+
+### Interview Question
+
+A Pod remains Pending even though every Worker Node appears healthy. How would you troubleshoot it?
+
+### Production-Level Answer
+
+When nodes appear healthy but Pods are still Pending, investigate scheduler constraints rather than infrastructure health.
+
+The scheduler only places Pods when **all** scheduling conditions are satisfied.
+
+### Approach
+
+Review
+
+- Scheduler Events
+- Node Selectors
+- Affinity
+- Anti-Affinity
+- Taints
+- Tolerations
+- PVC status
+- ResourceQuota
+- LimitRange
+- Resource requests
+
+Run
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Common Root Causes
+
+- Scheduler constraints
+- PVC Pending
+- Affinity conflict
+- ResourceQuota exceeded
+- Taints
+- LimitRange rejection
+- Unsatisfied node selector
+
+### Best Practices
+
+- Always begin with `kubectl describe pod`
+- Read scheduler events before changing manifests
+- Keep scheduling policies simple
+- Monitor scheduler metrics
+- Avoid overly restrictive scheduling rules
+
+---
+
