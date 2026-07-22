@@ -2310,3 +2310,303 @@ Managing plugins, ensuring compatibility during upgrades, securing credentials, 
 Jenkins remains one of the most widely used enterprise CI/CD platforms. Understanding Jenkins architecture, pipeline development, security, scaling, troubleshooting, integrations, and operational best practices is essential for designing and maintaining reliable software delivery pipelines in production environments.
 
 ---
+
+## Question 231
+
+### What is the difference between Jenkins Controller and Jenkins Agent?
+
+#### Production-Level Answer
+
+The Jenkins Controller manages pipeline orchestration, scheduling, credentials, plugins, users, and build queues. Jenkins Agents execute the actual build, test, scan, and deployment tasks. In production, Controllers should never be used for build execution to ensure stability and scalability.
+
+---
+
+## Question 232
+
+### Why should Jenkins Controller remain lightweight?
+
+#### Production-Level Answer
+
+The Controller handles scheduling, plugin management, authentication, and communication with agents. Running heavy builds on the Controller can consume excessive CPU, memory, and disk resources, resulting in slow UI response, build delays, and system instability.
+
+---
+
+## Question 233
+
+### How do you secure Jenkins in production?
+
+#### Production-Level Answer
+
+Production Jenkins should use HTTPS, Role-Based Access Control (RBAC), encrypted credentials, Multi-Factor Authentication where supported, regular plugin updates, LTS releases, restricted Script Console access, audit logging, firewall rules, secure agent communication, and external secret management solutions.
+
+---
+
+## Question 234
+
+### Why should Jenkins not be exposed directly to the internet?
+
+#### Production-Level Answer
+
+Direct internet exposure increases the attack surface and risks unauthorized access, brute-force attacks, and exploitation of vulnerabilities. Jenkins should be placed behind a reverse proxy, secured with HTTPS, authentication, and network access restrictions.
+
+---
+
+## Question 235
+
+### What is a Reverse Proxy in Jenkins?
+
+#### Production-Level Answer
+
+A Reverse Proxy such as NGINX or Apache sits in front of Jenkins to handle HTTPS termination, request forwarding, authentication integration, load balancing, and additional security controls.
+
+---
+
+## Question 236
+
+### Why is NGINX commonly used with Jenkins?
+
+#### Production-Level Answer
+
+NGINX provides SSL termination, request routing, compression, security headers, rate limiting, and reverse proxy capabilities, improving both security and performance for Jenkins deployments.
+
+---
+
+## Question 237
+
+### What is Build Reproducibility?
+
+#### Production-Level Answer
+
+Build Reproducibility means the same source code and pipeline configuration always produce identical artifacts regardless of when or where the build executes. Consistent build environments and dependency management are essential for reproducible builds.
+
+---
+
+## Question 238
+
+### Why are reproducible builds important?
+
+#### Production-Level Answer
+
+Reproducible builds improve debugging, auditing, compliance, release verification, and rollback by ensuring that artifacts generated from identical source code remain consistent across environments.
+
+---
+
+## Question 239
+
+### What is Build Traceability?
+
+#### Production-Level Answer
+
+Build Traceability is the ability to track an application from source code commit through build, testing, artifact generation, deployment, and production release using build numbers, commit IDs, artifact versions, and deployment records.
+
+---
+
+## Question 240
+
+### Why is traceability important?
+
+#### Production-Level Answer
+
+Traceability simplifies auditing, troubleshooting, rollback, compliance reporting, and incident investigations by linking deployed software directly to its source code and pipeline execution history.
+
+---
+
+## Question 241
+
+### What is Build Metadata?
+
+#### Production-Level Answer
+
+Build Metadata includes information such as build number, commit ID, branch, author, timestamp, artifact version, pipeline duration, agent name, and deployment target. It provides context for auditing and troubleshooting.
+
+---
+
+## Question 242
+
+### Why should build metadata be stored?
+
+#### Production-Level Answer
+
+Stored metadata supports compliance, incident response, deployment tracking, release management, and helps identify exactly which application version is running in each environment.
+
+---
+
+## Question 243
+
+### What is Continuous Feedback?
+
+#### Production-Level Answer
+
+Continuous Feedback provides developers with immediate information about build failures, test results, code quality issues, security vulnerabilities, and deployment outcomes after every code change.
+
+---
+
+## Question 244
+
+### Why is Continuous Feedback important?
+
+#### Production-Level Answer
+
+Immediate feedback allows developers to fix defects quickly, reduces technical debt, shortens release cycles, and prevents small issues from becoming large production problems.
+
+---
+
+## Question 245
+
+### What is Build Reliability?
+
+#### Production-Level Answer
+
+Build Reliability measures how consistently Jenkins pipelines produce successful and repeatable results without infrastructure failures, flaky tests, or inconsistent environments.
+
+---
+
+## Question 246
+
+### What causes unreliable Jenkins pipelines?
+
+#### Production-Level Answer
+
+Common causes include unstable infrastructure, flaky tests, manual configuration changes, inconsistent dependencies, plugin incompatibilities, resource shortages, and poor pipeline design.
+
+---
+
+## Question 247
+
+### What are Flaky Builds?
+
+#### Production-Level Answer
+
+Flaky Builds are builds that pass or fail inconsistently without any changes to the source code. They are commonly caused by unstable infrastructure, race conditions, timing issues, unreliable tests, or shared resources.
+
+---
+
+## Question 248
+
+### How do you eliminate flaky builds?
+
+#### Production-Level Answer
+
+Use stable infrastructure, isolated build environments, deterministic tests, proper synchronization, dependency version locking, sufficient resources, and consistent execution environments.
+
+---
+
+## Question 249
+
+### What is Build Isolation?
+
+#### Production-Level Answer
+
+Build Isolation ensures that each pipeline executes independently without affecting other builds by using separate workspaces, containers, or ephemeral Kubernetes Pods.
+
+---
+
+## Question 250
+
+### Why is Build Isolation important?
+
+#### Production-Level Answer
+
+Isolation prevents conflicts caused by shared files, cached dependencies, temporary data, environment variables, or simultaneous builds, improving consistency and reliability.
+
+---
+
+## Question 251
+
+### What is Workspace Isolation?
+
+#### Production-Level Answer
+
+Workspace Isolation ensures every build uses its own dedicated workspace instead of sharing files with other pipeline executions. This prevents file conflicts and inconsistent build results.
+
+---
+
+## Question 252
+
+### What is Dependency Management in Jenkins?
+
+#### Production-Level Answer
+
+Dependency Management involves downloading, caching, updating, and controlling application libraries required during builds. Jenkins integrates with package managers such as Maven, Gradle, npm, pip, and artifact repositories to manage dependencies efficiently.
+
+---
+
+## Question 253
+
+### Why should dependency versions be fixed?
+
+#### Production-Level Answer
+
+Fixed dependency versions ensure build consistency, simplify troubleshooting, improve reproducibility, and prevent unexpected failures caused by automatic dependency updates.
+
+---
+
+## Question 254
+
+### What is Build Caching?
+
+#### Production-Level Answer
+
+Build Caching stores reusable files such as dependencies or compiled components so future builds can reuse them instead of downloading or rebuilding everything from scratch.
+
+---
+
+## Question 255
+
+### Why should build caching be implemented carefully?
+
+#### Production-Level Answer
+
+While caching improves build speed, outdated or corrupted caches may cause inconsistent builds. Cache invalidation strategies should be implemented to maintain reliability.
+
+---
+
+## Question 256
+
+### What is Pipeline Maintainability?
+
+#### Production-Level Answer
+
+Pipeline Maintainability refers to how easily CI/CD pipelines can be understood, modified, extended, and debugged by different team members over time.
+
+---
+
+## Question 257
+
+### How can pipeline maintainability be improved?
+
+#### Production-Level Answer
+
+Maintainability improves through modular pipeline design, Shared Libraries, meaningful stage names, proper documentation, reusable functions, consistent coding standards, and version-controlled Jenkinsfiles.
+
+---
+
+## Question 258
+
+### Why should pipelines be modular?
+
+#### Production-Level Answer
+
+Modular pipelines improve readability, reduce duplication, simplify maintenance, encourage reuse, and allow teams to update shared functionality without modifying every Jenkinsfile.
+
+---
+
+## Question 259
+
+### What is Pipeline Standardization?
+
+#### Production-Level Answer
+
+Pipeline Standardization ensures all projects follow consistent CI/CD practices including stage naming, security checks, testing, deployment methods, notifications, and artifact management.
+
+---
+
+## Question 260
+
+### Why is pipeline standardization important?
+
+#### Production-Level Answer
+
+Standardized pipelines simplify onboarding, improve maintainability, reduce operational errors, enforce security policies, and make CI/CD processes consistent across all development teams.
+
+---
