@@ -811,3 +811,303 @@ Anonymous access exposes Jenkins information, build history, logs, job configura
 
 ---
 
+## Question 81
+
+### What is Jenkins Administration?
+
+#### Production-Level Answer
+
+Jenkins Administration involves managing the Controller, Agents, users, plugins, credentials, security, monitoring, backups, upgrades, and overall system health. A Jenkins administrator ensures the platform remains secure, highly available, scalable, and reliable for CI/CD operations.
+
+---
+
+## Question 82
+
+### What are the primary responsibilities of a Jenkins Administrator?
+
+#### Production-Level Answer
+
+A Jenkins Administrator is responsible for installing Jenkins, configuring pipelines, managing agents, maintaining plugins, securing credentials, implementing RBAC, monitoring system health, performing backups, upgrading Jenkins, troubleshooting failures, and ensuring high availability and disaster recovery.
+
+---
+
+## Question 83
+
+### How do you install Jenkins in production?
+
+#### Production-Level Answer
+
+Production Jenkins is typically installed using Linux packages, Docker containers, or Kubernetes with Helm charts. The Controller should use persistent storage, external backups, HTTPS, RBAC, and dedicated build agents instead of executing workloads locally.
+
+---
+
+## Question 84
+
+### Why is HTTPS mandatory for Jenkins?
+
+#### Production-Level Answer
+
+HTTPS encrypts communication between users, agents, Git repositories, APIs, and Jenkins. It prevents credential theft, session hijacking, and man-in-the-middle attacks while ensuring secure communication across enterprise environments.
+
+---
+
+## Question 85
+
+### What is JENKINS_HOME?
+
+#### Production-Level Answer
+
+JENKINS_HOME is the primary Jenkins data directory that stores jobs, pipelines, plugins, credentials, configuration files, user information, build history, workspaces, logs, and other runtime data. Protecting and backing up this directory is essential for disaster recovery.
+
+---
+
+## Question 86
+
+### Why is JENKINS_HOME important?
+
+#### Production-Level Answer
+
+JENKINS_HOME contains the complete Jenkins configuration and operational data. Loss of this directory without backups results in the loss of jobs, credentials, plugins, pipeline history, users, and system configuration.
+
+---
+
+## Question 87
+
+### What should be backed up in Jenkins?
+
+#### Production-Level Answer
+
+A complete backup should include JENKINS_HOME, job configurations, credentials, plugins, Shared Libraries, custom scripts, SSL certificates, configuration files, and backup documentation. Backup verification should be performed regularly through restore testing.
+
+---
+
+## Question 88
+
+### What should not be backed up?
+
+#### Production-Level Answer
+
+Temporary workspaces, caches, temporary build files, downloaded dependencies, and dynamically provisioned Kubernetes agent workspaces generally should not be backed up because they can be recreated during pipeline execution.
+
+---
+
+## Question 89
+
+### How often should Jenkins be backed up?
+
+#### Production-Level Answer
+
+Critical production environments typically perform daily incremental backups, weekly full backups, monthly archive backups, and periodic disaster recovery testing. Backup frequency depends on business requirements and acceptable recovery objectives.
+
+---
+
+## Question 90
+
+### What is Disaster Recovery (DR) in Jenkins?
+
+#### Production-Level Answer
+
+Disaster Recovery is the process of restoring Jenkins after infrastructure failures such as hardware crashes, accidental deletion, storage corruption, ransomware attacks, or cloud outages using verified backups and documented recovery procedures.
+
+---
+
+## Question 91
+
+### What is RPO?
+
+#### Production-Level Answer
+
+Recovery Point Objective (RPO) defines the maximum amount of acceptable data loss after a disaster. For example, an RPO of one hour means backup data should never be older than one hour.
+
+---
+
+## Question 92
+
+### What is RTO?
+
+#### Production-Level Answer
+
+Recovery Time Objective (RTO) defines the maximum acceptable downtime required to restore Jenkins after a failure. Organizations establish RTO values based on business continuity requirements.
+
+---
+
+## Question 93
+
+### How do you monitor Jenkins?
+
+#### Production-Level Answer
+
+Production Jenkins environments are monitored using Prometheus for metrics, Grafana for dashboards, Alertmanager for alerts, ELK or Loki for centralized logging, and operating system monitoring for CPU, memory, disk usage, network, JVM health, queue length, and executor utilization.
+
+---
+
+## Question 94
+
+### Which Jenkins metrics should be monitored?
+
+#### Production-Level Answer
+
+Important metrics include Controller CPU, memory usage, JVM heap, disk utilization, build queue length, executor usage, pipeline duration, build success rate, agent availability, response time, and plugin health.
+
+---
+
+## Question 95
+
+### Why should build duration be monitored?
+
+#### Production-Level Answer
+
+Increasing build duration often indicates infrastructure bottlenecks, plugin issues, network latency, inefficient test execution, dependency download delays, or application changes affecting pipeline performance.
+
+---
+
+## Question 96
+
+### Why should queue length be monitored?
+
+#### Production-Level Answer
+
+Queue length reflects available build capacity. A continuously growing queue usually indicates insufficient agents, overloaded executors, offline nodes, or infrastructure problems requiring immediate attention.
+
+---
+
+## Question 97
+
+### Why should JVM Heap be monitored?
+
+#### Production-Level Answer
+
+Jenkins runs on Java, making JVM health critical. Monitoring heap usage, garbage collection, and thread count helps identify memory leaks, resource exhaustion, and performance degradation before they affect pipeline execution.
+
+---
+
+## Question 98
+
+### Why is disk monitoring important?
+
+#### Production-Level Answer
+
+Jenkins stores workspaces, build logs, artifacts, plugins, and configuration data on disk. Low disk space can interrupt builds, prevent plugin installation, stop log generation, and even prevent Jenkins from starting successfully.
+
+---
+
+## Question 99
+
+### What are Jenkins System Logs?
+
+#### Production-Level Answer
+
+System Logs record Jenkins startup, shutdown, plugin loading, authentication events, agent communication, errors, warnings, and internal operations. They are the primary source for troubleshooting infrastructure-related issues.
+
+---
+
+## Question 100
+
+### What are Console Logs?
+
+#### Production-Level Answer
+
+Console Logs capture the output generated during pipeline execution, including build commands, test execution, deployment activities, shell scripts, and application logs. They are the first place to investigate build failures.
+
+---
+
+## Question 101
+
+### What is Log Rotation?
+
+#### Production-Level Answer
+
+Log Rotation automatically removes or archives old build logs to prevent uncontrolled disk usage while maintaining sufficient historical data for troubleshooting and auditing.
+
+---
+
+## Question 102
+
+### Why should build retention policies be configured?
+
+#### Production-Level Answer
+
+Build retention policies automatically remove old builds and artifacts based on age or count, preventing unnecessary storage consumption while retaining enough history for debugging and compliance.
+
+---
+
+## Question 103
+
+### What is the purpose of Safe Restart?
+
+#### Production-Level Answer
+
+Safe Restart prevents new builds from starting while allowing running builds to complete before restarting Jenkins. This minimizes disruption and avoids interrupting active deployments.
+
+---
+
+## Question 104
+
+### What is the difference between Restart and Safe Restart?
+
+#### Production-Level Answer
+
+A normal restart immediately stops Jenkins and interrupts active builds. Safe Restart waits for running builds to finish before restarting, making it the preferred option for production environments.
+
+---
+
+## Question 105
+
+### What is Jenkins Upgrade?
+
+#### Production-Level Answer
+
+A Jenkins Upgrade involves updating the Jenkins core and, when appropriate, compatible plugins to obtain security patches, bug fixes, performance improvements, and new features while ensuring compatibility with the existing environment.
+
+---
+
+## Question 106
+
+### Which Jenkins release should be used in production?
+
+#### Production-Level Answer
+
+Production environments should use Long-Term Support (LTS) releases because they are thoroughly tested, receive security updates, and provide greater stability than weekly releases.
+
+---
+
+## Question 107
+
+### What should be checked before upgrading Jenkins?
+
+#### Production-Level Answer
+
+Before upgrading, verify backups, plugin compatibility, Java compatibility, release notes, available disk space, rollback procedures, maintenance windows, and perform upgrade testing in a staging environment.
+
+---
+
+## Question 108
+
+### Why should Jenkins upgrades first be tested in staging?
+
+#### Production-Level Answer
+
+Testing upgrades in staging identifies plugin incompatibilities, Java issues, pipeline failures, and configuration problems before affecting production systems, significantly reducing operational risk.
+
+---
+
+## Question 109
+
+### What is Configuration as Code (JCasC)?
+
+#### Production-Level Answer
+
+Jenkins Configuration as Code (JCasC) stores Jenkins configuration in YAML files instead of manually configuring the UI. This enables version control, repeatable deployments, automated provisioning, and easier disaster recovery.
+
+---
+
+## Question 110
+
+### What are the benefits of JCasC?
+
+#### Production-Level Answer
+
+JCasC improves consistency, supports Infrastructure as Code practices, simplifies Jenkins provisioning, enables configuration versioning, reduces manual configuration errors, and accelerates disaster recovery through automated configuration restoration.
+
+---
+
