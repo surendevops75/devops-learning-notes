@@ -483,3 +483,459 @@ Test connectivity step by step until the failure point is identified.
 
 ---
 
+# Section 6 - Ingress Troubleshooting Scenarios
+
+---
+
+## Scenario 61
+
+### Interview Question
+
+Your Ingress resource is created successfully, but users receive **404 Not Found**. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A 404 error from an Ingress usually indicates that the request reached the Ingress Controller, but no routing rule matched the request.
+
+Focus on verifying the Ingress rules before investigating the application.
+
+### Approach
+
+Check Ingress.
+
+```bash
+kubectl get ingress
+```
+
+Describe it.
+
+```bash
+kubectl describe ingress <ingress-name>
+```
+
+Verify
+
+- Host
+- Path
+- Backend Service
+- Service Port
+- DNS
+
+Check Ingress Controller logs.
+
+### Common Root Causes
+
+- Wrong Host
+- Wrong Path
+- Service not found
+- DNS pointing incorrectly
+- Missing rewrite rule
+
+### Best Practices
+
+- Validate routing rules
+- Test with curl
+- Keep path rules simple
+- Monitor Ingress logs
+
+---
+
+## Scenario 62
+
+### Interview Question
+
+Users receive **502 Bad Gateway** from the Ingress. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A 502 error usually means the Ingress Controller cannot communicate with the backend Service or Pods.
+
+The issue is generally between the Ingress and the application.
+
+### Approach
+
+Verify
+
+- Service
+- Endpoints
+- Pod health
+- TargetPort
+- Container Port
+
+Check
+
+```bash
+kubectl get endpoints
+```
+
+Review Ingress Controller logs.
+
+### Common Root Causes
+
+- Service unavailable
+- No Endpoints
+- Wrong TargetPort
+- Application crashed
+- Network issue
+
+### Best Practices
+
+- Validate backend Services
+- Monitor endpoint availability
+- Configure readiness probes
+- Monitor Ingress metrics
+
+---
+
+## Scenario 63
+
+### Interview Question
+
+Users receive **503 Service Unavailable** after deployment. What would you investigate?
+
+### Production-Level Answer
+
+A 503 response indicates that the Ingress Controller has no healthy backend available to serve requests.
+
+### Approach
+
+Verify
+
+- Pods
+- Readiness Probes
+- Endpoints
+- Service
+- Deployment
+
+Run
+
+```bash
+kubectl get endpoints
+```
+
+Check
+
+```bash
+kubectl describe ingress <ingress-name>
+```
+
+### Common Root Causes
+
+- No Ready Pods
+- Readiness Probe failure
+- Selector mismatch
+- Deployment issue
+- Application startup failure
+
+### Best Practices
+
+- Configure readiness probes
+- Monitor endpoint health
+- Validate rollouts
+- Test Services before exposing them
+
+---
+
+## Scenario 64
+
+### Interview Question
+
+Your Ingress is created successfully, but no external IP or ALB is provisioned. How would you troubleshoot it?
+
+### Production-Level Answer
+
+If no external Load Balancer is created, investigate the Ingress Controller and cloud integration rather than the application.
+
+### Approach
+
+Check
+
+```bash
+kubectl describe ingress <ingress-name>
+```
+
+Verify
+
+- Ingress Controller
+- IngressClass
+- Controller logs
+- IAM permissions
+- Cloud Controller
+
+### Common Root Causes
+
+- Ingress Controller not running
+- Wrong IngressClass
+- IAM permission issue
+- Missing controller
+- Cloud integration failure
+
+### Best Practices
+
+- Install one supported Ingress Controller
+- Validate IAM permissions
+- Monitor controller logs
+- Verify IngressClass
+
+---
+
+## Scenario 65
+
+### Interview Question
+
+An AWS ALB is not created after deploying an Ingress on Amazon EKS. How would you investigate?
+
+### Production-Level Answer
+
+In EKS, the AWS Load Balancer Controller is responsible for creating the ALB.
+
+If the ALB is not created, verify the controller before troubleshooting Kubernetes resources.
+
+### Approach
+
+Check
+
+- AWS Load Balancer Controller
+- Controller logs
+- IAM Role
+- IRSA
+- Subnet tags
+- Security Groups
+
+Describe the Ingress.
+
+```bash
+kubectl describe ingress <ingress-name>
+```
+
+### Common Root Causes
+
+- Controller not installed
+- IRSA issue
+- Missing subnet tags
+- IAM permission denied
+- Invalid annotations
+
+### Best Practices
+
+- Monitor AWS Load Balancer Controller
+- Validate IRSA
+- Tag subnets correctly
+- Use official annotations
+
+---
+
+## Scenario 66
+
+### Interview Question
+
+HTTPS is not working even though the Ingress is configured with TLS. What would you investigate?
+
+### Production-Level Answer
+
+TLS failures generally occur because of certificate issues, incorrect Secrets, or Ingress configuration problems.
+
+### Approach
+
+Verify
+
+- TLS Secret
+- Certificate
+- Host
+- DNS
+- Ingress TLS configuration
+
+Describe Ingress.
+
+```bash
+kubectl describe ingress <ingress-name>
+```
+
+### Common Root Causes
+
+- Missing Secret
+- Expired certificate
+- Wrong hostname
+- Certificate mismatch
+- DNS issue
+
+### Best Practices
+
+- Monitor certificate expiration
+- Automate certificate renewal
+- Validate TLS before production
+- Secure Secrets
+
+---
+
+## Scenario 67
+
+### Interview Question
+
+Traffic reaches the ALB, but requests never reach the application Pods. How would you troubleshoot it?
+
+### Production-Level Answer
+
+If traffic reaches the Load Balancer but not the Pods, investigate the Service and Endpoints before the application.
+
+### Approach
+
+Verify
+
+- ALB Target Groups
+- Service
+- Endpoints
+- Pod readiness
+- Health checks
+
+Check
+
+```bash
+kubectl get endpoints
+```
+
+### Common Root Causes
+
+- No Endpoints
+- Health check failure
+- Wrong Service selector
+- TargetPort mismatch
+- Readiness Probe failure
+
+### Best Practices
+
+- Monitor Target Groups
+- Configure health checks
+- Test Services independently
+- Monitor endpoint health
+
+---
+
+## Scenario 68
+
+### Interview Question
+
+Your Ingress works for one hostname but fails for another. How would you investigate?
+
+### Production-Level Answer
+
+Multiple hostnames require matching DNS records and Ingress rules.
+
+A mismatch causes routing failures.
+
+### Approach
+
+Verify
+
+- DNS records
+- Host rules
+- TLS configuration
+- Backend Service
+
+Describe Ingress.
+
+```bash
+kubectl describe ingress <ingress-name>
+```
+
+### Common Root Causes
+
+- Missing DNS record
+- Wrong hostname
+- Certificate mismatch
+- Typographical error
+- Missing rule
+
+### Best Practices
+
+- Standardize hostnames
+- Validate DNS propagation
+- Test every host individually
+
+---
+
+## Scenario 69
+
+### Interview Question
+
+The AWS ALB health checks continuously fail even though the Pods are running. What would you investigate?
+
+### Production-Level Answer
+
+Running Pods do not guarantee successful health checks.
+
+The ALB health endpoint must return a successful response.
+
+### Approach
+
+Verify
+
+- Health check path
+- Readiness Probe
+- Application endpoint
+- Security Groups
+- Target Groups
+
+Review application logs.
+
+### Common Root Causes
+
+- Wrong health path
+- Application not Ready
+- Security Group restriction
+- Wrong TargetPort
+- HTTP 500 responses
+
+### Best Practices
+
+- Use dedicated health endpoints
+- Keep health checks lightweight
+- Monitor ALB Target Groups
+- Validate health paths
+
+---
+
+## Scenario 70
+
+### Interview Question
+
+Everything appears healthy—Pods, Services, Ingress, and ALB—but users still cannot access the application. How would you troubleshoot it?
+
+### Production-Level Answer
+
+When every Kubernetes resource appears healthy, investigate the complete request path from the user's browser to the application.
+
+Troubleshoot one layer at a time instead of making assumptions.
+
+### Approach
+
+Verify
+
+- DNS
+- ALB
+- Security Groups
+- Ingress
+- Service
+- Endpoints
+- Pod
+- Application logs
+
+Test connectivity at every layer.
+
+### Common Root Causes
+
+- DNS propagation delay
+- Security Group blocking traffic
+- Firewall
+- Wrong ALB listener
+- Backend application issue
+- External network problem
+
+### Best Practices
+
+- Troubleshoot layer by layer
+- Validate external connectivity after deployment
+- Monitor every networking component
+- Maintain end-to-end observability
+
+---
