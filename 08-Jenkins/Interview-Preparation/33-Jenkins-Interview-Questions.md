@@ -1711,3 +1711,301 @@ The Kubernetes Plugin dynamically creates ephemeral Pods as Jenkins agents whene
 
 ---
 
+## Question 171
+
+### What are Ephemeral Agents?
+
+#### Production-Level Answer
+
+Ephemeral Agents are temporary build agents created only for the duration of a pipeline execution. After the build completes, they are automatically destroyed. This ensures clean build environments, improves security, and eliminates leftover files from previous builds.
+
+---
+
+## Question 172
+
+### Why are Ephemeral Agents preferred over Static Agents?
+
+#### Production-Level Answer
+
+Ephemeral Agents provide clean environments for every build, eliminate configuration drift, reduce maintenance effort, improve security, and automatically scale based on workload. Static agents require regular maintenance and are more prone to inconsistencies caused by leftover files or manual changes.
+
+---
+
+## Question 173
+
+### What is Configuration Drift in Jenkins Agents?
+
+#### Production-Level Answer
+
+Configuration Drift occurs when build agents gradually become inconsistent due to manual software installation, updates, or configuration changes. This leads to unpredictable builds. Ephemeral agents eliminate drift by provisioning identical environments for every execution.
+
+---
+
+## Question 174
+
+### How can Configuration Drift be prevented?
+
+#### Production-Level Answer
+
+Configuration Drift can be prevented by using Infrastructure as Code, immutable build agents, Docker containers, Kubernetes Pods, automated configuration management, and avoiding manual changes on build servers.
+
+---
+
+## Question 175
+
+### What are Immutable Build Environments?
+
+#### Production-Level Answer
+
+Immutable Build Environments are preconfigured execution environments that are never modified after creation. If changes are required, a new environment is created instead of updating the existing one, ensuring consistency across all builds.
+
+---
+
+## Question 176
+
+### What is Jenkins Executor Utilization?
+
+#### Production-Level Answer
+
+Executor Utilization measures how efficiently Jenkins executors are being used. Low utilization indicates idle resources, while consistently high utilization may require additional agents or workload optimization.
+
+---
+
+## Question 177
+
+### How do you identify overloaded Jenkins Agents?
+
+#### Production-Level Answer
+
+Overloaded agents can be identified through high CPU utilization, excessive memory usage, long build queues, increased pipeline duration, frequent build failures, JVM resource exhaustion, and monitoring dashboards such as Prometheus and Grafana.
+
+---
+
+## Question 178
+
+### What causes long Jenkins Build Queues?
+
+#### Production-Level Answer
+
+Long build queues are usually caused by insufficient executors, offline agents, overloaded nodes, resource bottlenecks, long-running builds, or limited infrastructure capacity.
+
+---
+
+## Question 179
+
+### How can Jenkins Build Queues be reduced?
+
+#### Production-Level Answer
+
+Queue length can be reduced by adding more agents, increasing executor capacity where appropriate, parallelizing workloads, optimizing build duration, using Kubernetes-based dynamic agents, and removing unnecessary pipeline stages.
+
+---
+
+## Question 180
+
+### What is Build Optimization?
+
+#### Production-Level Answer
+
+Build Optimization involves reducing pipeline execution time by optimizing compilation, caching dependencies, parallelizing stages, minimizing unnecessary work, using incremental builds, and efficiently utilizing build infrastructure.
+
+---
+
+## Question 181
+
+### How can Jenkins Pipeline execution time be reduced?
+
+#### Production-Level Answer
+
+Pipeline execution time can be reduced by running independent stages in parallel, caching dependencies, using faster build agents, avoiding redundant builds, optimizing test execution, using incremental builds, and provisioning scalable infrastructure.
+
+---
+
+## Question 182
+
+### Why should dependency caching be used?
+
+#### Production-Level Answer
+
+Dependency caching avoids downloading the same libraries repeatedly during every build. This significantly reduces build time, lowers network usage, and improves overall pipeline efficiency.
+
+---
+
+## Question 183
+
+### What is Incremental Build?
+
+#### Production-Level Answer
+
+An Incremental Build compiles or processes only the files that have changed since the previous build instead of rebuilding the entire application, reducing execution time and resource consumption.
+
+---
+
+## Question 184
+
+### Why should unnecessary pipeline stages be avoided?
+
+#### Production-Level Answer
+
+Every additional stage increases execution time and infrastructure cost. Pipelines should execute only the stages required for the current branch, environment, or deployment target.
+
+---
+
+## Question 185
+
+### What is Pipeline Optimization?
+
+#### Production-Level Answer
+
+Pipeline Optimization is the process of improving CI/CD efficiency by reducing execution time, improving resource utilization, minimizing failures, and simplifying pipeline design while maintaining software quality.
+
+---
+
+## Question 186
+
+### What is Build Failure?
+
+#### Production-Level Answer
+
+A Build Failure occurs when one or more pipeline stages cannot complete successfully due to compilation errors, failed tests, infrastructure issues, missing dependencies, configuration problems, or deployment failures.
+
+---
+
+## Question 187
+
+### What is an Unstable Build?
+
+#### Production-Level Answer
+
+An Unstable Build is a pipeline execution where the build completes but reports issues such as failed unit tests, code quality violations, or warnings that do not completely stop the pipeline.
+
+---
+
+## Question 188
+
+### What is an Aborted Build?
+
+#### Production-Level Answer
+
+An Aborted Build is a pipeline execution intentionally stopped by a user, administrator, timeout configuration, or another automated process before completion.
+
+---
+
+## Question 189
+
+### What is a Failed Deployment?
+
+#### Production-Level Answer
+
+A Failed Deployment occurs when an application cannot be successfully deployed because of infrastructure issues, application errors, Kubernetes failures, insufficient permissions, network problems, or configuration errors.
+
+---
+
+## Question 190
+
+### How do you troubleshoot a failed Jenkins Pipeline?
+
+#### Production-Level Answer
+
+Troubleshooting begins by identifying the failed stage, reviewing console logs, checking recent code changes, verifying credentials, validating infrastructure availability, examining agent health, confirming plugin functionality, and reproducing the issue in a controlled environment if necessary.
+
+---
+
+## Question 191
+
+### What should be checked first when a pipeline fails?
+
+#### Production-Level Answer
+
+The first step is identifying the exact stage where the failure occurred and reviewing the corresponding console logs. Most failures can be diagnosed by examining the error message generated during that stage.
+
+---
+
+## Question 192
+
+### How do you troubleshoot Git checkout failures?
+
+#### Production-Level Answer
+
+Verify repository availability, network connectivity, Git credentials, SSH keys or access tokens, repository permissions, branch names, DNS resolution, and webhook configuration. Also confirm the Git plugin is functioning correctly.
+
+---
+
+## Question 193
+
+### How do you troubleshoot Maven build failures?
+
+#### Production-Level Answer
+
+Check compilation errors, dependency resolution, Maven settings, repository availability, Java version compatibility, disk space, corrupted caches, and application code changes affecting the build.
+
+---
+
+## Question 194
+
+### How do you troubleshoot Docker build failures?
+
+#### Production-Level Answer
+
+Verify Dockerfile syntax, Docker daemon availability, registry authentication, image naming, build context, available disk space, network connectivity, and resource allocation on the build agent.
+
+---
+
+## Question 195
+
+### How do you troubleshoot Kubernetes deployment failures?
+
+#### Production-Level Answer
+
+Check deployment manifests, Kubernetes events, pod status, container logs, image availability, namespace configuration, RBAC permissions, resource quotas, readiness probes, and cluster connectivity.
+
+---
+
+## Question 196
+
+### How do you troubleshoot Jenkins Agent offline issues?
+
+#### Production-Level Answer
+
+Verify agent connectivity, Java installation, network communication, firewall rules, authentication, disk space, CPU utilization, agent logs, and whether the agent service is running correctly.
+
+---
+
+## Question 197
+
+### What causes Jenkins Agents to disconnect?
+
+#### Production-Level Answer
+
+Common causes include network interruptions, JVM crashes, insufficient memory, disk exhaustion, firewall restrictions, expired credentials, infrastructure failures, Kubernetes pod termination, or cloud instance shutdown.
+
+---
+
+## Question 198
+
+### How do you troubleshoot Jenkins Controller startup failures?
+
+#### Production-Level Answer
+
+Review Jenkins startup logs, verify Java compatibility, check plugin compatibility, confirm available disk space, validate JENKINS_HOME integrity, and investigate any configuration changes made before the failure.
+
+---
+
+## Question 199
+
+### How do you troubleshoot plugin-related issues?
+
+#### Production-Level Answer
+
+Review plugin compatibility, examine Jenkins logs, verify dependency versions, disable recently installed plugins if necessary, test in a staging environment, and ensure plugins match the Jenkins LTS version.
+
+---
+
+## Question 200
+
+### What are the most important Jenkins best practices?
+
+#### Production-Level Answer
+
+Use Pipeline as Code, implement RBAC, secure credentials, use HTTPS, prefer LTS releases, run builds on dedicated agents, use ephemeral Kubernetes agents, centralize pipeline logic with Shared Libraries, implement monitoring and backups, automate configuration using JCasC, optimize pipeline performance, regularly update plugins, clean workspaces, archive important artifacts, and continuously review Jenkins security and operational health.
+
