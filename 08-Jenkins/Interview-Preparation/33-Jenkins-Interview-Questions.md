@@ -3312,3 +3312,204 @@ Versioning simplifies rollback, deployment verification, troubleshooting, depend
 ---
 
 
+## Question 331
+
+### What is a Release Candidate (RC)?
+
+#### Production-Level Answer
+
+A Release Candidate is a build that has successfully passed all required validation, testing, security scans, and quality gates and is considered ready for production deployment pending final approval.
+
+---
+
+## Question 332
+
+### What is a Production Release?
+
+#### Production-Level Answer
+
+A Production Release is the deployment of an approved application version into the live production environment where it becomes available to end users.
+
+---
+
+## Question 333
+
+### What is a Hotfix Deployment?
+
+#### Production-Level Answer
+
+A Hotfix Deployment is an emergency production release intended to resolve critical issues such as outages, security vulnerabilities, or major application defects with minimal delay.
+
+---
+
+## Question 334
+
+### What is an Emergency Change?
+
+#### Production-Level Answer
+
+An Emergency Change is a high-priority production modification performed to restore service availability or mitigate critical business risks while following expedited approval procedures.
+
+---
+
+## Question 335
+
+### How should emergency deployments be handled?
+
+#### Production-Level Answer
+
+Emergency deployments should follow documented emergency change procedures, include necessary approvals, perform minimum validation, maintain audit records, and be followed by post-deployment verification and root cause analysis.
+
+---
+
+## Question 336
+
+### What is Change Approval?
+
+#### Production-Level Answer
+
+Change Approval is the formal authorization process required before deploying significant application or infrastructure changes into production to ensure governance and risk management.
+
+---
+
+## Question 337
+
+### What is CAB Approval?
+
+#### Production-Level Answer
+
+CAB (Change Advisory Board) Approval is the review and authorization of high-risk production changes by stakeholders to ensure business impact, risks, rollback plans, and implementation procedures are properly evaluated.
+
+---
+
+## Question 338
+
+### Why should rollback procedures be documented before deployment?
+
+#### Production-Level Answer
+
+Rollback procedures enable rapid recovery when deployments fail. Documenting rollback steps before deployment minimizes downtime and ensures predictable incident response.
+
+---
+
+## Question 339
+
+### What is Post Deployment Validation?
+
+#### Production-Level Answer
+
+Post Deployment Validation verifies that the deployed application is functioning correctly by executing health checks, smoke tests, monitoring dashboards, API validation, and log analysis.
+
+---
+
+## Question 340
+
+### Why should deployments be monitored after completion?
+
+#### Production-Level Answer
+
+Many production issues appear only after user traffic reaches the application. Monitoring detects performance degradation, application errors, infrastructure issues, and abnormal behavior immediately after deployment.
+
+---
+
+## Question 341
+
+### What is Root Cause Analysis (RCA)?
+
+#### Production-Level Answer
+
+Root Cause Analysis is the structured process of identifying the underlying cause of an incident rather than only addressing its symptoms. Effective RCA prevents recurring failures and improves system reliability.
+
+---
+
+## Question 342
+
+### Why is RCA important after pipeline failures?
+
+#### Production-Level Answer
+
+Performing RCA helps identify recurring infrastructure issues, process weaknesses, application defects, or configuration problems, allowing teams to implement permanent corrective actions.
+
+---
+
+## Question 343
+
+### What is Mean Time To Recovery (MTTR)?
+
+#### Production-Level Answer
+
+Mean Time To Recovery (MTTR) measures the average time required to restore a failed application or service after an incident. Lower MTTR indicates faster operational recovery and improved service reliability.
+
+---
+
+## Question 344
+
+### How can Jenkins help reduce MTTR?
+
+#### Production-Level Answer
+
+Jenkins reduces MTTR through automated deployments, rollback pipelines, rapid build generation, deployment traceability, notifications, and integration with monitoring and incident management systems.
+
+---
+
+## Question 345
+
+### What is Mean Time Between Failures (MTBF)?
+
+#### Production-Level Answer
+
+Mean Time Between Failures (MTBF) measures the average operational time between system failures. Increasing MTBF indicates improved stability and higher software reliability.
+
+---
+
+## Question 346
+
+### How does Jenkins improve software reliability?
+
+#### Production-Level Answer
+
+Jenkins improves reliability by automating testing, enforcing quality gates, integrating security scans, ensuring consistent deployments, reducing manual errors, and providing rapid feedback to development teams.
+
+---
+
+## Question 347
+
+### What are the key characteristics of a mature CI/CD pipeline?
+
+#### Production-Level Answer
+
+A mature CI/CD pipeline includes Pipeline as Code, automated testing, security scanning, artifact management, Infrastructure as Code, automated deployments, monitoring, rollback mechanisms, approvals, observability, and continuous improvement practices.
+
+---
+
+## Question 348
+
+### What are the common mistakes made while designing Jenkins pipelines?
+
+#### Production-Level Answer
+
+Common mistakes include hardcoding credentials, running builds on the Controller, skipping automated testing, ignoring security scanning, duplicating pipeline code, lacking rollback procedures, poor monitoring, excessive plugin installation, and manual deployment processes.
+
+---
+
+## Question 349
+
+### If you were designing Jenkins from scratch for an enterprise, what would your architecture look like?
+
+#### Production-Level Answer
+
+A production architecture would include an LTS Jenkins Controller behind NGINX with HTTPS, RBAC integrated with LDAP/SSO, Jenkins Configuration as Code, Shared Libraries, GitHub Webhooks, Kubernetes-based ephemeral agents, external artifact repositories, SonarQube, Trivy, Terraform, Prometheus, Grafana, centralized logging, automated backups, disaster recovery procedures, and secure credential management using an external secrets solution.
+
+---
+
+## Question 350
+
+### As a DevOps Engineer, what Jenkins best practices do you always follow?
+
+#### Production-Level Answer
+
+I always implement Pipeline as Code, use Shared Libraries for reusable logic, execute builds on ephemeral agents instead of the Controller, secure credentials through Jenkins Credentials or external secret managers, automate testing and security scanning, archive required artifacts, monitor Jenkins using Prometheus and Grafana, use LTS releases, regularly update plugins after testing, automate backups, implement RBAC, use HTTPS, maintain Infrastructure as Code, optimize pipeline performance, document rollback procedures, and continuously improve CI/CD workflows based on operational feedback.
+
+---
+
+# End of Jenkins Interview Questions
