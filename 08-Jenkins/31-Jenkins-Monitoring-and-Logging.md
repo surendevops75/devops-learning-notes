@@ -827,3 +827,701 @@ Alert if Threshold Exceeded
 - Queue length, executor utilization, and disk usage are critical production metrics.
 - Pipeline duration trends help identify performance regressions.
 - JVM monitoring is essential for maintaining Controller stability.
+
+---
+
+
+# Jenkins Logs
+
+## What are Jenkins Logs?
+
+Logs are chronological records of events that occur inside Jenkins.
+
+They capture
+
+- User actions
+- Pipeline execution
+- Plugin activity
+- System events
+- Errors
+- Warnings
+
+Logs are the first place administrators look when troubleshooting production issues.
+
+---
+
+# Logging Architecture
+
+```text
+             Jenkins Controller
+
+                    │
+
+        ┌───────────┼────────────┐
+
+        ▼           ▼            ▼
+
+ System Log   Build Logs   Plugin Logs
+
+        ▼           ▼            ▼
+
+     File System   Console    Log Recorders
+
+                    │
+
+                    ▼
+
+             ELK / Splunk / Loki
+```
+
+---
+
+# Types of Jenkins Logs
+
+```text
+Jenkins Logs
+
+│
+
+├── System Logs
+
+├── Build Logs
+
+├── Pipeline Console Logs
+
+├── Agent Logs
+
+├── Audit Logs
+
+├── Plugin Logs
+
+└── JVM Logs
+```
+
+---
+
+# System Logs
+
+System logs contain Jenkins runtime information.
+
+Examples
+
+- Startup
+- Shutdown
+- Plugin loading
+- Authentication
+- Network issues
+- Internal errors
+
+Example
+
+```text
+Jenkins Started
+
+↓
+
+Plugin Loaded
+
+↓
+
+Agent Connected
+
+↓
+
+Pipeline Started
+```
+
+---
+
+# Build Logs
+
+Every build generates its own log.
+
+Example
+
+```text
+Checkout Code
+
+↓
+
+Compile
+
+↓
+
+Run Tests
+
+↓
+
+Docker Build
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+```
+
+These logs are displayed in the Jenkins Console Output.
+
+---
+
+# Pipeline Console Logs
+
+Declarative and Scripted Pipelines generate detailed execution logs.
+
+Example
+
+```text
+[Pipeline] Start
+
+↓
+
+[Pipeline] Checkout
+
+↓
+
+[Pipeline] Build
+
+↓
+
+[Pipeline] Test
+
+↓
+
+[Pipeline] Deploy
+
+↓
+
+Finished: SUCCESS
+```
+
+---
+
+# Agent Logs
+
+Agent logs help diagnose communication problems.
+
+Common events
+
+- Agent connected
+- Agent disconnected
+- SSH failures
+- Network timeout
+- Workspace issues
+
+---
+
+# Plugin Logs
+
+Plugins often create their own logs.
+
+Examples
+
+```text
+Git Plugin
+
+↓
+
+Clone Failed
+
+------------------
+
+Docker Plugin
+
+↓
+
+Connection Failed
+
+------------------
+
+Kubernetes Plugin
+
+↓
+
+Pod Creation Failed
+```
+
+---
+
+# Audit Logs
+
+Audit logs record security-related events.
+
+Examples
+
+```text
+User Login
+
+↓
+
+Permission Change
+
+↓
+
+Credential Update
+
+↓
+
+Job Deleted
+
+↓
+
+Plugin Installed
+```
+
+Useful for compliance and security investigations.
+
+---
+
+# JVM Logs
+
+Java Virtual Machine logs include
+
+- Heap usage
+- Garbage Collection
+- Thread dumps
+- OutOfMemory errors
+
+Example
+
+```text
+Heap Full
+
+↓
+
+Full GC
+
+↓
+
+Application Slow
+```
+
+---
+
+# Log Locations
+
+Linux installations commonly store logs in
+
+```text
+/var/log/jenkins/
+```
+
+Systemd-based installations
+
+```bash
+journalctl -u jenkins
+```
+
+Jenkins internal logs
+
+```text
+JENKINS_HOME/logs/
+```
+
+---
+
+# Build Log Location
+
+Each build stores its console output under
+
+```text
+JENKINS_HOME/jobs/
+
+↓
+
+Job Name
+
+↓
+
+builds/
+
+↓
+
+Console Log
+```
+
+---
+
+# Viewing Console Output
+
+Navigate to
+
+```text
+Dashboard
+
+↓
+
+Job
+
+↓
+
+Build Number
+
+↓
+
+Console Output
+```
+
+---
+
+# Log Levels
+
+Different log levels indicate severity.
+
+```text
+TRACE
+
+↓
+
+DEBUG
+
+↓
+
+INFO
+
+↓
+
+WARNING
+
+↓
+
+ERROR
+```
+
+---
+
+## TRACE
+
+Most detailed logging.
+
+Used during deep debugging.
+
+---
+
+## DEBUG
+
+Developer-oriented information.
+
+Useful while troubleshooting plugins or pipelines.
+
+---
+
+## INFO
+
+Normal operational messages.
+
+Example
+
+```text
+Pipeline Started
+
+↓
+
+Agent Connected
+
+↓
+
+Build Finished
+```
+
+---
+
+## WARNING
+
+Potential problems.
+
+Example
+
+```text
+Disk Usage High
+
+↓
+
+Plugin Deprecated
+
+↓
+
+Retrying Connection
+```
+
+---
+
+## ERROR
+
+Critical failures.
+
+Example
+
+```text
+Agent Lost
+
+↓
+
+Deployment Failed
+
+↓
+
+Authentication Error
+```
+
+---
+
+# Custom Log Recorders
+
+Jenkins allows administrators to create custom log recorders.
+
+Navigate to
+
+```text
+Dashboard
+
+↓
+
+Manage Jenkins
+
+↓
+
+System Log
+
+↓
+
+Add New Log Recorder
+```
+
+Useful for
+
+- Plugin debugging
+- Kubernetes integration
+- Git troubleshooting
+- Authentication issues
+
+---
+
+# Example Log Recorder
+
+```text
+Git Plugin
+
+↓
+
+Logger
+
+↓
+
+hudson.plugins.git
+
+↓
+
+Level
+
+↓
+
+DEBUG
+```
+
+Only Git-related logs will be collected.
+
+---
+
+# Monitoring Tools
+
+Enterprise Jenkins environments integrate with external monitoring systems.
+
+Popular choices
+
+```text
+Prometheus
+
+Grafana
+
+ELK
+
+Loki
+
+Splunk
+
+Datadog
+
+New Relic
+```
+
+---
+
+# Prometheus Integration
+
+Prometheus collects metrics from Jenkins.
+
+Architecture
+
+```text
+Jenkins
+
+↓
+
+Prometheus Plugin
+
+↓
+
+Prometheus Server
+
+↓
+
+Grafana Dashboard
+```
+
+---
+
+# Prometheus Metrics
+
+Common metrics include
+
+- Build count
+- Queue size
+- Build duration
+- Executor usage
+- JVM memory
+- Node status
+- HTTP requests
+
+---
+
+# Grafana
+
+Grafana visualizes Jenkins metrics.
+
+Example Dashboard
+
+```text
+CPU
+
+Memory
+
+Queue
+
+Executors
+
+Failed Builds
+
+Build Duration
+
+Agent Status
+```
+
+Dashboards help identify trends and bottlenecks quickly.
+
+---
+
+# ELK Stack Integration
+
+Logs are commonly centralized using ELK.
+
+Architecture
+
+```text
+Jenkins
+
+↓
+
+Filebeat
+
+↓
+
+Logstash
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+Benefits
+
+- Centralized logs
+- Powerful search
+- Long-term retention
+- Correlation across systems
+
+---
+
+# Loki Integration
+
+A lightweight alternative for log aggregation.
+
+```text
+Jenkins
+
+↓
+
+Promtail
+
+↓
+
+Loki
+
+↓
+
+Grafana
+```
+
+Useful when Grafana is already part of the monitoring stack.
+
+---
+
+# Production Monitoring Flow
+
+```text
+Pipeline Executes
+
+↓
+
+Metrics Exported
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alertmanager
+
+↓
+
+Slack
+
+↓
+
+DevOps Engineer
+```
+
+---
+
+# Best Practices
+
+- Centralize logs in ELK, Loki, or Splunk.
+- Configure log rotation to prevent disks from filling.
+- Retain logs according to compliance requirements.
+- Enable DEBUG logging only during troubleshooting.
+- Create custom log recorders for problematic plugins.
+- Regularly review failed build logs and system warnings.
+
+---
+
+# Key Points
+
+- Jenkins provides system, build, agent, plugin, audit, and JVM logs.
+- Console Output is the primary source for pipeline troubleshooting.
+- Use appropriate log levels to balance detail and performance.
+- Integrate Jenkins with Prometheus and Grafana for metrics.
+- Centralize logs using ELK, Loki, or Splunk for enterprise-scale observability.
+
+---
+
