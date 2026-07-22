@@ -1354,3 +1354,455 @@ Ensure the volume is attached to the new node before expecting the database to s
 - Validate disaster recovery procedures
 
 ---
+
+# Section 13 - DaemonSet Troubleshooting Scenarios
+
+---
+
+## Scenario 131
+
+### Interview Question
+
+A DaemonSet is expected to run on every Worker Node, but Pods are missing from several nodes. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A DaemonSet automatically creates one Pod per eligible Worker Node.
+
+If Pods are missing, investigate node eligibility, taints, scheduling constraints, and node health.
+
+### Approach
+
+Check DaemonSets.
+
+```bash
+kubectl get daemonsets
+```
+
+Describe the DaemonSet.
+
+```bash
+kubectl describe daemonset <daemonset-name>
+```
+
+Verify
+
+- Desired Pods
+- Current Pods
+- Ready Pods
+- Node Selector
+- Tolerations
+- Node Conditions
+
+### Common Root Causes
+
+- Node NotReady
+- Missing tolerations
+- Node selector mismatch
+- Scheduler constraints
+- Resource exhaustion
+
+### Best Practices
+
+- Monitor DaemonSet coverage
+- Validate scheduling rules
+- Alert on missing DaemonSet Pods
+- Keep node labels standardized
+
+---
+
+## Scenario 132
+
+### Interview Question
+
+A newly added Worker Node does not receive a DaemonSet Pod. How would you investigate?
+
+### Production-Level Answer
+
+DaemonSets automatically deploy Pods on newly joined Worker Nodes.
+
+If this does not happen, investigate scheduling rules and node readiness.
+
+### Approach
+
+Check node status.
+
+```bash
+kubectl get nodes
+```
+
+Describe the node.
+
+```bash
+kubectl describe node <node-name>
+```
+
+Check DaemonSet.
+
+```bash
+kubectl describe daemonset <daemonset-name>
+```
+
+### Common Root Causes
+
+- Node NotReady
+- Taints
+- Node selector mismatch
+- Scheduler failure
+- DaemonSet paused
+
+### Best Practices
+
+- Validate new node onboarding
+- Monitor DaemonSet scheduling
+- Test node scaling regularly
+
+---
+
+## Scenario 133
+
+### Interview Question
+
+A DaemonSet Pod continuously enters CrashLoopBackOff on every Worker Node. How would you troubleshoot it?
+
+### Production-Level Answer
+
+When every DaemonSet Pod fails, the issue usually exists in the application or configuration rather than a specific node.
+
+### Approach
+
+Check Pods.
+
+```bash
+kubectl get pods -o wide
+```
+
+Review logs.
+
+```bash
+kubectl logs <pod-name>
+```
+
+Describe the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+### Common Root Causes
+
+- Invalid configuration
+- Missing ConfigMap
+- Missing Secret
+- Container image issue
+- Application bug
+
+### Best Practices
+
+- Test DaemonSets before production
+- Monitor restart counts
+- Validate configuration
+
+---
+
+## Scenario 134
+
+### Interview Question
+
+A DaemonSet rollout stops after updating only a few nodes. How would you troubleshoot it?
+
+### Production-Level Answer
+
+DaemonSets update Pods gradually according to the configured update strategy.
+
+Investigate the rollout status and Pod health.
+
+### Approach
+
+Check rollout.
+
+```bash
+kubectl rollout status daemonset <daemonset-name>
+```
+
+Describe the DaemonSet.
+
+```bash
+kubectl describe daemonset <daemonset-name>
+```
+
+Review
+
+- Updated Pods
+- Ready Pods
+- Events
+
+### Common Root Causes
+
+- Failed Pods
+- Node unavailable
+- Resource shortage
+- Probe failures
+
+### Best Practices
+
+- Monitor rollout progress
+- Use RollingUpdate strategy
+- Validate node health before upgrades
+
+---
+
+## Scenario 135
+
+### Interview Question
+
+A monitoring DaemonSet such as Fluent Bit or Node Exporter stops collecting data from one Worker Node. How would you investigate?
+
+### Production-Level Answer
+
+Since DaemonSets run one Pod per node, missing metrics from one node usually indicate a node-specific issue.
+
+### Approach
+
+Check
+
+- Node health
+- DaemonSet Pod
+- Logs
+- Network
+- Resource utilization
+
+Verify Pod placement.
+
+```bash
+kubectl get pods -o wide
+```
+
+### Common Root Causes
+
+- Node failure
+- Pod crash
+- Network issue
+- Resource exhaustion
+- Volume mount failure
+
+### Best Practices
+
+- Monitor DaemonSet availability
+- Alert on missing node metrics
+- Validate node connectivity
+
+---
+
+## Scenario 136
+
+### Interview Question
+
+A DaemonSet Pod cannot start because the required HostPath volume is unavailable. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Many infrastructure DaemonSets depend on HostPath volumes.
+
+Verify the required directories exist on the Worker Node.
+
+### Approach
+
+Describe the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+SSH into the Worker Node.
+
+Verify
+
+- HostPath
+- File permissions
+- Mount points
+
+### Common Root Causes
+
+- Missing directory
+- Incorrect HostPath
+- Permission denied
+- Node configuration issue
+
+### Best Practices
+
+- Standardize node configuration
+- Validate HostPath usage
+- Avoid unnecessary HostPath mounts
+
+---
+
+## Scenario 137
+
+### Interview Question
+
+A DaemonSet Pod runs successfully on Linux nodes but never schedules on Windows nodes. Why?
+
+### Production-Level Answer
+
+DaemonSets follow node selectors and operating system constraints.
+
+Verify that the DaemonSet supports the target operating system.
+
+### Approach
+
+Check
+
+- Node labels
+- OS labels
+- Node selectors
+- Container image
+
+Run
+
+```bash
+kubectl get nodes --show-labels
+```
+
+### Common Root Causes
+
+- Linux-only image
+- Wrong node selector
+- Unsupported OS
+- Scheduling constraints
+
+### Best Practices
+
+- Use OS-specific DaemonSets
+- Validate node labels
+- Test heterogeneous clusters
+
+---
+
+## Scenario 138
+
+### Interview Question
+
+After upgrading Kubernetes, several DaemonSet Pods fail to start. How would you investigate?
+
+### Production-Level Answer
+
+DaemonSets often interact closely with the host operating system.
+
+Version incompatibility is a common cause after upgrades.
+
+### Approach
+
+Verify
+
+- Kubernetes version
+- DaemonSet version
+- Container image
+- Logs
+- Events
+
+Compare supported versions.
+
+### Common Root Causes
+
+- API incompatibility
+- Old image
+- Host kernel changes
+- Deprecated configuration
+
+### Best Practices
+
+- Upgrade DaemonSets with the cluster
+- Read release notes
+- Test upgrades in staging
+
+---
+
+## Scenario 139
+
+### Interview Question
+
+A DaemonSet is consuming excessive CPU on every Worker Node. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Since DaemonSets run on every node, resource issues can affect the entire cluster.
+
+Identify whether the application or configuration is responsible.
+
+### Approach
+
+Check resource usage.
+
+```bash
+kubectl top pods -A
+```
+
+Review
+
+- CPU
+- Memory
+- Logs
+- Configuration
+
+Compare with historical metrics.
+
+### Common Root Causes
+
+- Infinite processing loop
+- Large log volume
+- Configuration issue
+- Application bug
+
+### Best Practices
+
+- Configure resource requests
+- Set resource limits
+- Monitor cluster-wide utilization
+- Profile applications regularly
+
+---
+
+## Scenario 140
+
+### Interview Question
+
+A critical logging DaemonSet fails across the entire cluster during a production incident. How would you respond?
+
+### Production-Level Answer
+
+Logging DaemonSets are part of the observability platform.
+
+Without centralized logging, troubleshooting becomes significantly more difficult.
+
+Prioritize restoring logging before investigating secondary issues.
+
+### Approach
+
+Verify
+
+- DaemonSet status
+- Worker Nodes
+- Logs
+- Configuration
+- Storage
+- Network
+
+Restore logging services first, then continue investigating the production incident.
+
+### Common Root Causes
+
+- Bad rollout
+- Configuration error
+- Cluster upgrade
+- Storage failure
+- Network outage
+
+### Best Practices
+
+- Maintain redundant logging
+- Test DaemonSet rollouts
+- Monitor observability components
+- Keep rollback procedures documented
+
+---
