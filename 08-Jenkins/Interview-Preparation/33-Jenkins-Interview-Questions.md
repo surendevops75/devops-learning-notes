@@ -207,3 +207,304 @@ Declarative Pipelines are generally preferred for production because they are st
 Yes. Declarative Pipelines can include `script` blocks that execute Scripted Pipeline logic when advanced programming constructs such as loops, complex conditions, or custom Groovy code are required.
 
 ---
+
+## Question 21
+
+### What is a Stage in Jenkins Pipeline?
+
+#### Production-Level Answer
+
+A Stage is a logical phase of a Jenkins Pipeline that groups related tasks together. Typical stages include Checkout, Build, Unit Test, Code Quality, Security Scan, Package, Deploy, and Post Deployment Validation. Stages improve pipeline readability, visualization, troubleshooting, and enable conditional or parallel execution.
+
+---
+
+## Question 22
+
+### What is a Step in Jenkins?
+
+#### Production-Level Answer
+
+A Step is an individual operation executed within a stage. Examples include `git`, `sh`, `checkout`, `echo`, `build`, `archiveArtifacts`, `junit`, and `input`. Multiple steps together perform the work assigned to a pipeline stage.
+
+---
+
+## Question 23
+
+### What is the difference between Stage and Step?
+
+#### Production-Level Answer
+
+A Stage represents a logical phase of the CI/CD pipeline, while a Step is an individual task executed within that phase. For example, "Build" is a stage, whereas executing `mvn package` inside it is a step.
+
+---
+
+## Question 24
+
+### What is the purpose of the agent directive?
+
+#### Production-Level Answer
+
+The `agent` directive specifies where a pipeline or stage should execute. It can run on any available agent, a specific labeled node, inside a Docker container, or on a dynamically provisioned Kubernetes pod. Selecting the correct agent improves resource utilization and enables platform-specific builds.
+
+---
+
+## Question 25
+
+### What is the difference between agent any and agent none?
+
+#### Production-Level Answer
+
+`agent any` allows Jenkins to execute the pipeline on any available agent. `agent none` prevents automatic agent allocation, requiring each stage to define its own agent. This is useful when different stages need different execution environments.
+
+---
+
+## Question 26
+
+### What are Labels in Jenkins?
+
+#### Production-Level Answer
+
+Labels are tags assigned to agents that allow pipelines to target specific execution environments. For example, Linux builds can run on agents labeled `linux`, Windows builds on `windows`, and Docker builds on agents labeled `docker`. Labels simplify workload distribution across heterogeneous environments.
+
+---
+
+## Question 27
+
+### What is the environment block?
+
+#### Production-Level Answer
+
+The `environment` block defines environment variables available throughout the pipeline or within a specific stage. It centralizes configuration values such as application names, Docker image tags, AWS regions, repository URLs, and credentials references, improving maintainability.
+
+---
+
+## Question 28
+
+### What are Pipeline Parameters?
+
+#### Production-Level Answer
+
+Pipeline Parameters allow users to provide input before pipeline execution. They make pipelines reusable by accepting values such as application version, deployment environment, branch name, image tag, or infrastructure configuration without modifying the Jenkinsfile.
+
+---
+
+## Question 29
+
+### What types of Parameters are available?
+
+#### Production-Level Answer
+
+Jenkins supports String, Boolean, Choice, Password, Text, File, Credentials, and Active Choice parameters. The parameter type should match the required user input while avoiding exposure of sensitive information.
+
+---
+
+## Question 30
+
+### What is the purpose of the options block?
+
+#### Production-Level Answer
+
+The `options` block configures pipeline behavior, including build timeout, timestamps, build discarding, retry policies, concurrent build restrictions, and durability settings. It improves reliability and resource management in production pipelines.
+
+---
+
+## Question 31
+
+### What is timeout() in Jenkins?
+
+#### Production-Level Answer
+
+The `timeout` option automatically terminates builds that exceed a specified execution time. This prevents hung pipelines from occupying executors indefinitely and improves resource utilization in busy Jenkins environments.
+
+---
+
+## Question 32
+
+### Why is disableConcurrentBuilds() used?
+
+#### Production-Level Answer
+
+`disableConcurrentBuilds()` prevents multiple executions of the same pipeline from running simultaneously. It avoids conflicts when deployments modify shared resources such as databases, Kubernetes clusters, Terraform state files, or production infrastructure.
+
+---
+
+## Question 33
+
+### What is buildDiscarder()?
+
+#### Production-Level Answer
+
+`buildDiscarder()` automatically removes old build records and artifacts according to a retention policy. It helps control disk usage and prevents Jenkins storage from growing indefinitely.
+
+---
+
+## Question 34
+
+### What is retry()?
+
+#### Production-Level Answer
+
+`retry()` automatically re-executes failed pipeline steps a specified number of times. It is commonly used for temporary failures such as network interruptions, repository connectivity issues, or cloud API throttling, but should not be used to hide genuine application defects.
+
+---
+
+## Question 35
+
+### What is timestamps()?
+
+#### Production-Level Answer
+
+The `timestamps()` option adds timestamps to every console log entry. It improves troubleshooting by allowing teams to measure execution duration, identify slow stages, and correlate Jenkins logs with external monitoring systems.
+
+---
+
+## Question 36
+
+### What is the post block?
+
+#### Production-Level Answer
+
+The `post` block defines actions that execute after pipeline completion regardless of success or failure. It is commonly used for notifications, artifact archiving, workspace cleanup, report publishing, and deployment rollback activities.
+
+---
+
+## Question 37
+
+### What are the common post conditions?
+
+#### Production-Level Answer
+
+Common post conditions include `always`, `success`, `failure`, `unstable`, `changed`, `aborted`, `unsuccessful`, and `cleanup`. These conditions enable pipelines to perform different actions based on execution results.
+
+---
+
+## Question 38
+
+### What is when in Jenkins Pipeline?
+
+#### Production-Level Answer
+
+The `when` directive enables conditional execution of stages based on criteria such as branch name, environment variables, parameters, tags, expressions, or build status. It prevents unnecessary stage execution and supports environment-specific workflows.
+
+---
+
+## Question 39
+
+### What is parallel execution?
+
+#### Production-Level Answer
+
+Parallel execution allows multiple independent stages to run simultaneously, reducing overall pipeline duration. Common production use cases include running unit tests, integration tests, security scans, and multi-platform builds concurrently.
+
+---
+
+## Question 40
+
+### What are the advantages of parallel stages?
+
+#### Production-Level Answer
+
+Parallel stages significantly reduce build time, improve resource utilization, enable simultaneous testing across multiple environments, and provide faster feedback to developers without compromising pipeline quality.
+
+---
+
+## Question 41
+
+### What is matrix execution?
+
+#### Production-Level Answer
+
+Matrix execution allows a pipeline to automatically execute combinations of parameters such as operating systems, Java versions, Node.js versions, or browser types. It simplifies multi-platform testing without duplicating pipeline code.
+
+---
+
+## Question 42
+
+### What is stash and unstash?
+
+#### Production-Level Answer
+
+`stash` temporarily stores files generated during one stage so they can be retrieved later using `unstash`, even when stages execute on different agents. This avoids rebuilding artifacts multiple times and enables efficient multi-agent pipelines.
+
+---
+
+## Question 43
+
+### What is archiveArtifacts?
+
+#### Production-Level Answer
+
+`archiveArtifacts` stores build outputs within Jenkins after pipeline completion. Archived artifacts remain available for download, auditing, debugging, and deployment without requiring the application to be rebuilt.
+
+---
+
+## Question 44
+
+### What is fingerprinting?
+
+#### Production-Level Answer
+
+Fingerprinting uniquely identifies artifacts using checksums, allowing Jenkins to trace where an artifact was created, stored, and deployed. This improves traceability and supports auditing in enterprise environments.
+
+---
+
+## Question 45
+
+### What is input()?
+
+#### Production-Level Answer
+
+The `input` step pauses pipeline execution until a user provides manual approval or required input. It is commonly used before production deployments, database migrations, or other high-risk operations that require change approval.
+
+---
+
+## Question 46
+
+### What is a Multibranch Pipeline?
+
+#### Production-Level Answer
+
+A Multibranch Pipeline automatically discovers branches in a Git repository and creates separate pipelines for each branch using the Jenkinsfile present in that branch. This supports feature branch development and branch-specific CI/CD workflows.
+
+---
+
+## Question 47
+
+### Why are Multibranch Pipelines preferred?
+
+#### Production-Level Answer
+
+They eliminate manual job creation, automatically detect new branches, support branch-specific Jenkinsfiles, simplify feature development, and integrate efficiently with GitHub and GitLab workflows.
+
+---
+
+## Question 48
+
+### What is Blue Ocean?
+
+#### Production-Level Answer
+
+Blue Ocean is a modern Jenkins user interface that provides improved pipeline visualization, easier pipeline editing, and enhanced user experience. Although many organizations still use the classic UI, Blue Ocean simplifies pipeline monitoring for development teams.
+
+---
+
+## Question 49
+
+### What is a Shared Library?
+
+#### Production-Level Answer
+
+A Shared Library is a reusable collection of Groovy code, pipeline functions, and templates shared across multiple Jenkins pipelines. It eliminates duplicate code, enforces organizational standards, and simplifies maintenance of enterprise CI/CD pipelines.
+
+---
+
+## Question 50
+
+### Why are Shared Libraries important in enterprise environments?
+
+#### Production-Level Answer
+
+Large organizations often manage hundreds of pipelines. Shared Libraries centralize common logic such as Docker builds, SonarQube scans, Terraform execution, Kubernetes deployments, notifications, and security checks, ensuring consistency while reducing maintenance effort.
+
+---
+
