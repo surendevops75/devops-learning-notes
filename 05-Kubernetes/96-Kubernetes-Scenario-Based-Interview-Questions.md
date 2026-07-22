@@ -1996,3 +1996,459 @@ Verify all workloads are healthy.
 
 ---
 
+# Section 4 - Deployment Troubleshooting Scenarios
+
+---
+
+## Scenario 41
+
+### Interview Question
+
+A Deployment is stuck during a Rolling Update. Some Pods are running the new version, while others remain on the old version. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A Rolling Update should gradually replace old Pods with new ones. If the rollout stalls, Kubernetes has detected that the new Pods are not becoming healthy.
+
+The focus should be on why the new ReplicaSet cannot progress.
+
+### Approach
+
+Check rollout status.
+
+```bash
+kubectl rollout status deployment <deployment-name>
+```
+
+Describe the Deployment.
+
+```bash
+kubectl describe deployment <deployment-name>
+```
+
+Review
+
+- ReplicaSets
+- Pod Events
+- Readiness Probes
+- Image
+- Resource availability
+
+### Common Root Causes
+
+- Readiness Probe failure
+- CrashLoopBackOff
+- ImagePullBackOff
+- Insufficient resources
+- Progress deadline exceeded
+
+### Best Practices
+
+- Always monitor rollout status
+- Use readiness probes correctly
+- Keep rolling updates gradual
+- Test deployments in staging first
+
+---
+
+## Scenario 42
+
+### Interview Question
+
+A Deployment reports **ProgressDeadlineExceeded**. What does it mean, and how would you investigate?
+
+### Production-Level Answer
+
+ProgressDeadlineExceeded means Kubernetes waited for the Deployment to complete, but the rollout did not finish within the configured deadline.
+
+### Approach
+
+Check Deployment.
+
+```bash
+kubectl describe deployment <deployment-name>
+```
+
+Review
+
+- Events
+- ReplicaSets
+- Pod health
+- Readiness
+- Image
+- Logs
+
+### Common Root Causes
+
+- Pods never become Ready
+- Image pull failure
+- Startup failure
+- Resource shortage
+- Probe failures
+
+### Best Practices
+
+- Configure realistic progress deadlines
+- Monitor deployments
+- Validate health checks
+- Test images before release
+
+---
+
+## Scenario 43
+
+### Interview Question
+
+After deployment, all Pods are running, but users still access the old application version. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Running Pods do not guarantee traffic is reaching the updated version.
+
+Investigate the entire traffic path.
+
+### Approach
+
+Verify
+
+- Deployment
+- Service
+- Endpoints
+- Ingress
+- Load Balancer
+- Browser cache
+- CDN
+
+Check ReplicaSets.
+
+```bash
+kubectl get rs
+```
+
+### Common Root Causes
+
+- Old ReplicaSet still serving traffic
+- Service selector mismatch
+- Ingress cache
+- CDN cache
+- Incorrect image tag
+
+### Best Practices
+
+- Use immutable image tags
+- Validate rollout
+- Test application version after deployment
+- Monitor endpoints
+
+---
+
+## Scenario 44
+
+### Interview Question
+
+A Deployment shows the desired number of replicas, but only some Pods are available. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Available replicas represent Pods that are Ready and capable of serving traffic.
+
+If available replicas are fewer than desired replicas, investigate Pod health.
+
+### Approach
+
+Check Deployment.
+
+```bash
+kubectl get deployment
+```
+
+Describe it.
+
+```bash
+kubectl describe deployment <deployment-name>
+```
+
+Review
+
+- Ready Pods
+- Events
+- ReplicaSets
+- Probe failures
+
+### Common Root Causes
+
+- Readiness Probe failure
+- CrashLoopBackOff
+- Scheduling issues
+- Resource shortage
+
+### Best Practices
+
+- Monitor deployment availability
+- Configure probes correctly
+- Alert on unavailable replicas
+
+---
+
+## Scenario 45
+
+### Interview Question
+
+A Deployment continuously creates new ReplicaSets after every deployment. Why could this happen?
+
+### Production-Level Answer
+
+Every Deployment change creates a new ReplicaSet.
+
+Unexpected ReplicaSets often indicate frequent configuration changes rather than application changes.
+
+### Approach
+
+Review rollout history.
+
+```bash
+kubectl rollout history deployment <deployment-name>
+```
+
+Compare
+
+- Image
+- Labels
+- Annotations
+- Environment variables
+
+### Common Root Causes
+
+- Image tag changes
+- Manifest modifications
+- GitOps synchronization
+- Annotation updates
+
+### Best Practices
+
+- Use version-controlled manifests
+- Avoid unnecessary updates
+- Review rollout history regularly
+
+---
+
+## Scenario 46
+
+### Interview Question
+
+A newly deployed application immediately crashes after deployment. What should you investigate first?
+
+### Production-Level Answer
+
+Do not immediately rollback.
+
+First determine whether the issue is related to configuration, infrastructure, or the application itself.
+
+### Approach
+
+Check
+
+```bash
+kubectl logs <pod-name>
+```
+
+Describe Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Verify
+
+- ConfigMaps
+- Secrets
+- Database
+- Startup command
+- Environment variables
+
+### Common Root Causes
+
+- Application bug
+- Missing Secret
+- Wrong configuration
+- Database unavailable
+- Invalid image
+
+### Best Practices
+
+- Validate deployments in staging
+- Use automated testing
+- Implement canary deployments
+- Monitor application logs
+
+---
+
+## Scenario 47
+
+### Interview Question
+
+A Deployment accidentally uses the wrong Docker image tag in production. How would you recover?
+
+### Production-Level Answer
+
+If the incorrect image causes customer impact, quickly restore the previous stable version.
+
+### Approach
+
+View rollout history.
+
+```bash
+kubectl rollout history deployment <deployment-name>
+```
+
+Rollback.
+
+```bash
+kubectl rollout undo deployment <deployment-name>
+```
+
+Verify rollout.
+
+```bash
+kubectl rollout status deployment <deployment-name>
+```
+
+### Common Root Causes
+
+- Human error
+- Wrong CI variable
+- Incorrect Git tag
+- Registry tagging issue
+
+### Best Practices
+
+- Use immutable tags
+- Automate image validation
+- Require deployment approvals
+- Monitor releases
+
+---
+
+## Scenario 48
+
+### Interview Question
+
+A Deployment rollback also fails. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A failed rollback usually indicates that the previous version is no longer deployable due to infrastructure or configuration changes.
+
+### Approach
+
+Review
+
+- Rollout history
+- ReplicaSets
+- ConfigMaps
+- Secrets
+- Database compatibility
+- Image availability
+
+### Common Root Causes
+
+- Old image deleted
+- Database schema mismatch
+- Missing ConfigMap
+- Secret updated
+- Infrastructure changes
+
+### Best Practices
+
+- Retain previous images
+- Maintain backward compatibility
+- Test rollback procedures
+- Document deployment dependencies
+
+---
+
+## Scenario 49
+
+### Interview Question
+
+A Deployment succeeds, but the application becomes slower after the release. How would you investigate?
+
+### Production-Level Answer
+
+Successful deployment only confirms Pods are running.
+
+Performance issues require application and infrastructure analysis.
+
+### Approach
+
+Check
+
+- CPU usage
+- Memory usage
+- Pod logs
+- Prometheus metrics
+- Grafana dashboards
+- Database latency
+- External API latency
+
+Compare metrics before and after deployment.
+
+### Common Root Causes
+
+- Application regression
+- Increased resource consumption
+- Database bottleneck
+- Slow external API
+- Configuration changes
+
+### Best Practices
+
+- Monitor application performance
+- Perform load testing
+- Compare deployment metrics
+- Define performance baselines
+
+---
+
+## Scenario 50
+
+### Interview Question
+
+A Deployment finishes successfully, but users report intermittent failures immediately after the release. How would you troubleshoot it?
+
+### Production-Level Answer
+
+Intermittent failures often indicate that only some Pods are unhealthy while others continue serving traffic.
+
+Compare healthy and unhealthy Pods to identify inconsistencies.
+
+### Approach
+
+Verify
+
+- Pod health
+- Readiness
+- Service Endpoints
+- Logs
+- Node placement
+- Resource usage
+- Deployment Events
+
+Compare failing Pods with healthy Pods.
+
+### Common Root Causes
+
+- One unhealthy Pod
+- Readiness failures
+- Node-specific issue
+- Configuration drift
+- External dependency instability
+
+### Best Practices
+
+- Monitor deployment health continuously
+- Validate every Pod after rollout
+- Use canary deployments
+- Automate rollback based on health metrics
+
+---
