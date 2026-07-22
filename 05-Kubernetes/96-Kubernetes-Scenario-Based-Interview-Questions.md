@@ -546,3 +546,483 @@ Test the readiness endpoint from inside the container if possible.
 
 ---
 
+## Scenario 11
+
+### Interview Question
+
+Your Pods continuously fail the **Liveness Probe** and keep restarting. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A failing Liveness Probe causes Kubernetes to restart the container because it assumes the application is unhealthy.
+
+The application may actually be healthy, but an incorrectly configured probe can create an infinite restart loop.
+
+### Approach
+
+Describe the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Review Events.
+
+Check:
+
+- Liveness Probe path
+- Container port
+- Probe timeout
+- Initial delay
+- Failure threshold
+- Application logs
+
+Verify the health endpoint manually.
+
+### Common Root Causes
+
+- Wrong endpoint
+- Wrong port
+- Timeout too small
+- Slow application
+- Backend dependency failure
+- Incorrect HTTP response
+
+### Best Practices
+
+- Keep liveness checks simple
+- Don't perform database calls
+- Configure realistic timeout values
+- Test probes before production
+
+---
+
+## Scenario 12
+
+### Interview Question
+
+A newly deployed application never becomes Ready because the **Startup Probe** keeps failing. What would you investigate?
+
+### Production-Level Answer
+
+Startup Probes are designed for slow-starting applications.
+
+If Startup Probes fail repeatedly, Kubernetes kills the container before initialization completes.
+
+### Approach
+
+Check
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Verify
+
+- Startup Probe
+- Application startup time
+- JVM initialization
+- Database connection
+- Logs
+
+Measure actual startup duration.
+
+### Common Root Causes
+
+- Startup timeout too small
+- Heavy application initialization
+- Database unavailable
+- External API dependency
+- JVM warm-up
+
+### Best Practices
+
+- Use Startup Probe for slow applications
+- Increase failure threshold
+- Measure startup time
+- Separate startup and liveness probes
+
+---
+
+## Scenario 13
+
+### Interview Question
+
+A Pod remains in **Init:0/1** state for several minutes. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A Pod cannot start its main container until every Init Container completes successfully.
+
+Focus on the Init Container rather than the application container.
+
+### Approach
+
+Check Pod status.
+
+```bash
+kubectl get pods
+```
+
+Describe the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Review Init Container logs.
+
+```bash
+kubectl logs <pod-name> -c <init-container>
+```
+
+Verify
+
+- Scripts
+- Database connectivity
+- Volume mounts
+- Network
+- Permissions
+
+### Common Root Causes
+
+- Database unavailable
+- Script failure
+- Wrong image
+- Missing Secret
+- Permission denied
+
+### Best Practices
+
+- Keep Init Containers lightweight
+- Log every initialization step
+- Avoid long-running tasks
+- Validate dependencies before startup
+
+---
+
+## Scenario 14
+
+### Interview Question
+
+One container inside a **multi-container Pod** crashes while the other continues running. How would you investigate?
+
+### Production-Level Answer
+
+Each container has its own lifecycle.
+
+A single failing container may impact the application even if the Pod remains Running.
+
+Investigate the failing container independently.
+
+### Approach
+
+List containers.
+
+```bash
+kubectl get pod <pod-name> -o yaml
+```
+
+View logs.
+
+```bash
+kubectl logs <pod-name> -c <container-name>
+```
+
+Compare
+
+- Environment variables
+- Mounted volumes
+- Resources
+- Commands
+
+### Common Root Causes
+
+- Wrong configuration
+- Missing dependency
+- Resource limit exceeded
+- Application exception
+
+### Best Practices
+
+- Monitor every container separately
+- Allocate resources individually
+- Separate application and helper containers
+
+---
+
+## Scenario 15
+
+### Interview Question
+
+Your Sidecar container is healthy, but the main application container keeps failing. How would you troubleshoot it?
+
+### Production-Level Answer
+
+A healthy Sidecar only confirms that supporting services are functioning.
+
+The main application container must be investigated independently.
+
+### Approach
+
+Check
+
+- Application logs
+- Sidecar logs
+- Shared volumes
+- Shared configuration
+- Resource limits
+
+Verify communication between containers.
+
+### Common Root Causes
+
+- Shared volume issue
+- Configuration mismatch
+- Application bug
+- Sidecar dependency unavailable
+
+### Best Practices
+
+- Monitor containers separately
+- Avoid unnecessary container dependencies
+- Share only required resources
+
+---
+
+## Scenario 16
+
+### Interview Question
+
+How would you debug a production Pod without modifying the running container?
+
+### Production-Level Answer
+
+Use Ephemeral Containers for production debugging.
+
+They allow temporary debugging without rebuilding or restarting the application Pod.
+
+### Approach
+
+Launch an Ephemeral Container.
+
+```bash
+kubectl debug -it <pod-name> --image=busybox
+```
+
+Investigate
+
+- Network
+- DNS
+- File system
+- Running processes
+- Mounted volumes
+
+Exit after debugging.
+
+### Common Root Causes Found
+
+- DNS issue
+- Missing files
+- Network connectivity
+- Configuration problems
+- Storage issues
+
+### Best Practices
+
+- Use Ephemeral Containers only for debugging
+- Avoid modifying production containers
+- Remove debugging sessions after investigation
+
+---
+
+## Scenario 17
+
+### Interview Question
+
+A Pod shows **Completed** status, but users report the application is down. Why?
+
+### Production-Level Answer
+
+Completed means the container finished execution successfully.
+
+If the workload is intended to run continuously, the wrong Kubernetes resource may have been used.
+
+### Approach
+
+Verify
+
+- Deployment
+- Job
+- CronJob
+- Pod manifest
+- Restart Policy
+
+Determine whether the workload should be long-running.
+
+### Common Root Causes
+
+- Job used instead of Deployment
+- RestartPolicy Never
+- Batch workload completed
+- Incorrect manifest
+
+### Best Practices
+
+- Use Deployments for applications
+- Use Jobs for batch workloads
+- Review Restart Policies
+- Validate manifests
+
+---
+
+## Scenario 18
+
+### Interview Question
+
+Your Pod reports **CreateContainerError** immediately after scheduling. How would you troubleshoot it?
+
+### Production-Level Answer
+
+CreateContainerError occurs after scheduling but before container startup.
+
+The container runtime cannot create the container.
+
+### Approach
+
+Describe the Pod.
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Check
+
+- Image
+- Commands
+- Arguments
+- Mounted volumes
+- Container runtime logs
+
+Review Events.
+
+### Common Root Causes
+
+- Invalid command
+- Missing executable
+- Volume mount failure
+- Permission issue
+- Runtime error
+
+### Best Practices
+
+- Validate startup commands
+- Test images locally
+- Review manifests carefully
+- Keep container images minimal
+
+---
+
+## Scenario 19
+
+### Interview Question
+
+Several Pods are suddenly marked as **Evicted**. How would you investigate?
+
+### Production-Level Answer
+
+Evicted Pods indicate the Kubernetes scheduler removed workloads because the Node was under resource pressure.
+
+Investigate the Worker Node rather than the application.
+
+### Approach
+
+Check
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Review
+
+- Node conditions
+- Memory Pressure
+- Disk Pressure
+- PID Pressure
+
+Check Node.
+
+```bash
+kubectl describe node <node-name>
+```
+
+### Common Root Causes
+
+- Memory exhaustion
+- Disk full
+- Ephemeral storage exhausted
+- Node pressure
+- Large log files
+
+### Best Practices
+
+- Monitor node resources
+- Configure requests and limits
+- Clean temporary files
+- Enable Cluster Autoscaler
+
+---
+
+## Scenario 20
+
+### Interview Question
+
+A production Pod is failing, but its logs disappear after every restart. How would you troubleshoot it?
+
+### Production-Level Answer
+
+When a container restarts, the latest logs may not contain the original failure.
+
+Always retrieve logs from the previous container instance before investigating further.
+
+### Approach
+
+View current logs.
+
+```bash
+kubectl logs <pod-name>
+```
+
+View previous logs.
+
+```bash
+kubectl logs <pod-name> --previous
+```
+
+Review
+
+- Events
+- Restart count
+- Probe failures
+- Exit code
+- Application errors
+
+Correlate logs with Kubernetes Events.
+
+### Common Root Causes
+
+- Application crash
+- OOMKilled
+- Probe failure
+- Missing configuration
+- Dependency unavailable
+
+### Best Practices
+
+- Always check `--previous` logs
+- Enable centralized logging
+- Retain application logs
+- Correlate logs with monitoring alerts
+
+---
+
