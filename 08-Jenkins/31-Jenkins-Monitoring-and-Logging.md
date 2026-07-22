@@ -1525,3 +1525,776 @@ DevOps Engineer
 
 ---
 
+
+# Alerting
+
+## Why Alerting?
+
+Monitoring dashboards are useful only when someone is actively watching them.
+
+In production, Jenkins should automatically notify the DevOps team whenever a critical event occurs.
+
+Examples
+
+- Controller Down
+- Agent Offline
+- Disk Full
+- Build Queue Growing
+- High JVM Memory
+- Continuous Build Failures
+
+Alerting enables proactive incident response.
+
+---
+
+# Alerting Architecture
+
+```text
+                 Jenkins
+
+                     │
+
+              Prometheus
+
+                     │
+
+              Alertmanager
+
+                     │
+
+      ┌──────────────┼──────────────┐
+
+      ▼              ▼              ▼
+
+    Slack         Email       PagerDuty
+```
+
+---
+
+# Common Alert Channels
+
+```text
+Slack
+
+Microsoft Teams
+
+Email
+
+PagerDuty
+
+Opsgenie
+
+SMS
+
+Webhook
+```
+
+---
+
+# Production Alert Flow
+
+```text
+CPU > 90%
+
+↓
+
+Prometheus Detects
+
+↓
+
+Alertmanager
+
+↓
+
+Slack Notification
+
+↓
+
+DevOps Engineer
+
+↓
+
+Investigation Begins
+```
+
+---
+
+# Controller Alerts
+
+The Jenkins Controller should always be monitored.
+
+Recommended alerts
+
+- Controller Down
+- CPU > 85%
+- Memory > 80%
+- Disk Usage > 85%
+- JVM Heap > 80%
+- Queue Length > Threshold
+- Response Time High
+
+---
+
+# Agent Alerts
+
+Monitor every build agent.
+
+Generate alerts for
+
+```text
+Agent Offline
+
+SSH Failure
+
+Disk Full
+
+Memory High
+
+Workspace Full
+
+Executor Busy
+
+Network Timeout
+```
+
+---
+
+# Pipeline Alerts
+
+Alerts should notify teams when
+
+- Build Failed
+- Deployment Failed
+- Pipeline Timeout
+- Security Scan Failed
+- Test Failure Rate Increased
+- Deployment Rollback Triggered
+
+---
+
+# Queue Alerts
+
+Large queues usually indicate insufficient build capacity.
+
+Example
+
+```text
+Queue
+
+↓
+
+5 Builds
+
+Healthy
+
+----------------
+
+Queue
+
+↓
+
+75 Builds
+
+Critical
+```
+
+Possible causes
+
+- Offline agents
+- Insufficient executors
+- Infrastructure failure
+
+---
+
+# Disk Alerts
+
+Recommended thresholds
+
+```text
+70%
+
+↓
+
+Warning
+
+-----------------
+
+85%
+
+↓
+
+High Priority
+
+-----------------
+
+95%
+
+↓
+
+Critical
+```
+
+Never allow Jenkins disks to become completely full.
+
+---
+
+# JVM Alerts
+
+Monitor
+
+```text
+Heap Usage
+
+Garbage Collection
+
+Thread Count
+
+OutOfMemory Errors
+```
+
+Example
+
+```text
+Heap
+
+↓
+
+88%
+
+↓
+
+Alert
+
+↓
+
+Investigate
+```
+
+---
+
+# Build Failure Alerts
+
+One failed build is not always a problem.
+
+Example
+
+```text
+Build 1
+
+Failed
+
+↓
+
+Developer Fixes
+
+↓
+
+Build 2
+
+Success
+```
+
+However,
+
+```text
+25 Consecutive Failures
+
+↓
+
+Alert
+
+↓
+
+Investigation Required
+```
+
+---
+
+# Production Monitoring Dashboard
+
+Typical Grafana Dashboard
+
+```text
+Controller
+
+CPU
+
+Memory
+
+Disk
+
+Heap
+
+Queue
+
+Executors
+
+---------------------
+
+Agents
+
+Online
+
+Offline
+
+CPU
+
+Memory
+
+---------------------
+
+Pipelines
+
+Success %
+
+Failure %
+
+Average Duration
+
+Deployments
+
+---------------------
+
+Infrastructure
+
+Network
+
+Storage
+
+Latency
+```
+
+---
+
+# Capacity Planning
+
+Monitoring historical metrics helps estimate future infrastructure needs.
+
+Example
+
+```text
+January
+
+20 Builds
+
+↓
+
+March
+
+120 Builds
+
+↓
+
+June
+
+450 Builds
+```
+
+Decision
+
+```text
+Add More Agents
+
+Increase Controller Resources
+
+Move to Kubernetes Agents
+```
+
+---
+
+# Trend Analysis
+
+Historical monitoring identifies performance regressions.
+
+Example
+
+```text
+Average Build Time
+
+↓
+
+5 min
+
+↓
+
+6 min
+
+↓
+
+8 min
+
+↓
+
+12 min
+```
+
+Something changed.
+
+Investigate
+
+- Plugin updates
+- Infrastructure
+- Pipeline changes
+
+---
+
+# Security Monitoring
+
+Monitor
+
+```text
+Failed Login Attempts
+
+↓
+
+Permission Changes
+
+↓
+
+Credential Updates
+
+↓
+
+Plugin Installation
+
+↓
+
+Administrator Activity
+```
+
+These events help detect unauthorized access.
+
+---
+
+# Log Rotation
+
+Logs grow continuously.
+
+Without rotation
+
+```text
+Logs
+
+↓
+
+5 GB
+
+↓
+
+20 GB
+
+↓
+
+100 GB
+
+↓
+
+Disk Full
+```
+
+Configure log rotation to archive or remove old logs.
+
+---
+
+# Build Retention
+
+Keep only the required number of builds.
+
+Example
+
+```text
+Keep Last
+
+50 Builds
+
+↓
+
+Delete Older Builds
+```
+
+This prevents uncontrolled storage growth.
+
+---
+
+# Production Best Practices
+
+## Monitoring
+
+- Monitor Controllers and Agents separately.
+- Keep dashboards simple and actionable.
+- Define alert thresholds based on historical trends.
+- Monitor queue length and executor utilization.
+- Review dashboards daily.
+
+---
+
+## Logging
+
+- Centralize logs using ELK or Loki.
+- Rotate logs automatically.
+- Retain logs according to compliance requirements.
+- Archive important audit logs.
+- Avoid excessive DEBUG logging in production.
+
+---
+
+## Alerting
+
+- Alert only on actionable events.
+- Avoid alert fatigue by reducing unnecessary notifications.
+- Escalate unresolved alerts automatically.
+- Test alert rules regularly.
+- Integrate alerts with Slack, Teams, or PagerDuty.
+
+---
+
+# Common Troubleshooting
+
+## Issue 1: Jenkins Controller Slow
+
+Possible Causes
+
+- High CPU usage
+- Memory pressure
+- Excessive plugins
+- Too many builds
+
+Resolution
+
+```text
+Check Dashboard
+
+↓
+
+Review JVM
+
+↓
+
+Review Queue
+
+↓
+
+Scale Agents
+```
+
+---
+
+## Issue 2: Queue Growing Rapidly
+
+Possible Causes
+
+- Offline agents
+- Busy executors
+- Label mismatch
+
+Resolution
+
+```text
+Check Queue
+
+↓
+
+Verify Agents
+
+↓
+
+Increase Capacity
+```
+
+---
+
+## Issue 3: Frequent Agent Disconnects
+
+Possible Causes
+
+- Network instability
+- SSH timeout
+- JVM crash
+- Resource exhaustion
+
+Resolution
+
+```text
+Review Agent Logs
+
+↓
+
+Check Network
+
+↓
+
+Restart Agent
+
+↓
+
+Verify Stability
+```
+
+---
+
+## Issue 4: High Heap Usage
+
+Possible Causes
+
+- Memory leak
+- Large builds
+- Heavy plugins
+
+Resolution
+
+```text
+Analyze Heap
+
+↓
+
+Increase JVM Memory
+
+↓
+
+Update Plugins
+
+↓
+
+Restart During Maintenance
+```
+
+---
+
+## Issue 5: Disk Usage Increasing
+
+Possible Causes
+
+- Large workspaces
+- Excessive artifacts
+- Long log retention
+
+Resolution
+
+```text
+Clean Workspaces
+
+↓
+
+Archive Artifacts
+
+↓
+
+Rotate Logs
+
+↓
+
+Expand Storage
+```
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### Production-Level Answer
+
+Why is monitoring important in Jenkins?
+
+Monitoring helps detect performance issues, infrastructure failures, resource bottlenecks, and capacity problems before they affect developers or production deployments.
+
+---
+
+## Question 2
+
+### Production-Level Answer
+
+What metrics do you monitor on a Jenkins Controller?
+
+CPU usage, memory, JVM heap, garbage collection, disk utilization, queue length, executor utilization, thread count, and response time.
+
+---
+
+## Question 3
+
+### Production-Level Answer
+
+How do you monitor Jenkins in production?
+
+Using the Prometheus plugin to expose metrics, Prometheus to collect them, Grafana for dashboards, Alertmanager for notifications, and ELK/Loki for centralized logging.
+
+---
+
+## Question 4
+
+### Production-Level Answer
+
+What is the difference between monitoring and logging?
+
+Monitoring provides real-time metrics about system health, while logging records detailed events that help explain failures and support troubleshooting.
+
+---
+
+## Question 5
+
+### Production-Level Answer
+
+What should trigger Jenkins alerts?
+
+Controller downtime, offline agents, high CPU or memory usage, disk utilization, long build queues, pipeline failures, and repeated deployment failures.
+
+---
+
+## Question 6
+
+### Production-Level Answer
+
+Why should Jenkins logs be centralized?
+
+Centralized logging simplifies troubleshooting, enables long-term retention, supports searching across multiple servers, and improves security auditing.
+
+---
+
+## Question 7
+
+### Production-Level Answer
+
+How do you troubleshoot a growing Jenkins queue?
+
+Check executor availability, verify agent status, inspect labels, analyze controller performance, and add or scale agents if necessary.
+
+---
+
+## Question 8
+
+### Production-Level Answer
+
+Why monitor JVM metrics?
+
+Jenkins runs on the JVM, so monitoring heap usage, garbage collection, and thread count helps identify memory leaks, performance degradation, and stability issues.
+
+---
+
+## Question 9
+
+### Production-Level Answer
+
+What is alert fatigue?
+
+Alert fatigue occurs when teams receive too many unnecessary alerts, causing important incidents to be ignored. Alerts should focus on actionable production events.
+
+---
+
+## Question 10
+
+### Production-Level Answer
+
+Describe a production-grade Jenkins monitoring architecture.
+
+A production setup uses Prometheus to scrape Jenkins metrics, Grafana for visualization, Alertmanager for notifications, ELK or Loki for centralized logging, and Slack or PagerDuty for incident response.
+
+---
+
+# Key Takeaways
+
+- Monitoring ensures Jenkins remains healthy, available, and scalable.
+- Logging provides the detailed information required to troubleshoot failures.
+- Monitor Controllers, Agents, Pipelines, JVM, Queues, Executors, and Infrastructure.
+- Use Prometheus, Grafana, and Alertmanager for metrics and alerting.
+- Use ELK or Loki for centralized log management.
+- Define meaningful alerts, rotate logs, and continuously review trends to maintain a reliable enterprise Jenkins platform.
