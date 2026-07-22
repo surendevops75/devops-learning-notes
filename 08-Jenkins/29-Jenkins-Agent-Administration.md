@@ -2172,3 +2172,5 @@ A lightweight Controller connected to multiple ephemeral Kubernetes or Docker ag
 - Dynamic agents (Docker/Kubernetes) provide better scalability, isolation, and cost efficiency than static agents.
 - Monitor agent health, clean workspaces, and apply regular maintenance to keep build infrastructure reliable.
 - Horizontal scaling with multiple agents is generally preferred over relying on a single powerful server.
+
+---
