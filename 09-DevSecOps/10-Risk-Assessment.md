@@ -2,38 +2,39 @@
 
 ## Introduction
 
-Risk Assessment is the process of identifying, analyzing, and prioritizing security risks that could impact an application, infrastructure, or business. It helps organizations understand which threats pose the greatest risk and where security efforts should be focused.
+Risk Assessment is the process of identifying, analyzing, evaluating, and prioritizing security risks that may impact an application, infrastructure, or business. It helps organizations understand which risks require immediate attention and which risks can be accepted, mitigated, transferred, or avoided.
 
-In DevSecOps, Risk Assessment is performed continuously throughout the Software Development Life Cycle (SDLC) to reduce the likelihood and impact of security incidents.
+In DevSecOps, Risk Assessment is a continuous activity performed throughout the Secure SDLC to reduce the likelihood and impact of security incidents.
 
 ---
 
 ## Why Do We Need Risk Assessment?
 
-Every application faces security threats, but not all threats carry the same level of risk.
+Modern applications face numerous security threats.
 
 Without Risk Assessment:
 
-- Critical vulnerabilities may be ignored.
-- Resources may be wasted on low-priority issues.
-- Business-critical assets remain exposed.
-- Compliance requirements become difficult to meet.
-- Security investments may be ineffective.
+- Critical vulnerabilities may remain unnoticed
+- Security resources may be spent on low-priority issues
+- Compliance requirements may not be met
+- Business-critical assets may remain exposed
+- Security decisions become reactive instead of proactive
 
-Risk Assessment helps organizations prioritize security efforts based on business impact.
+Risk Assessment enables organizations to focus on the highest-risk areas first.
 
 ---
 
 ## What is Risk Assessment?
 
-Risk Assessment evaluates potential threats by considering:
+Risk Assessment evaluates security risks by answering five important questions.
 
-- What asset is being protected?
+- What are we protecting?
 - What threats exist?
 - What vulnerabilities can be exploited?
-- What is the likelihood of an attack?
+- How likely is the attack?
 - What would be the business impact?
-- What controls can reduce the risk?
+
+Based on these answers, organizations implement appropriate security controls.
 
 ---
 
@@ -52,11 +53,11 @@ Identify Vulnerabilities
 
 ↓
 
-Analyze Likelihood
+Determine Likelihood
 
 ↓
 
-Analyze Impact
+Determine Impact
 
 ↓
 
@@ -64,7 +65,7 @@ Calculate Risk
 
 ↓
 
-Implement Controls
+Implement Security Controls
 
 ↓
 
@@ -75,54 +76,57 @@ Review & Monitor
 
 # Key Components of Risk Assessment
 
-## Asset
+## Assets
 
-Anything valuable to the organization.
+Assets are valuable resources that require protection.
 
 Examples
 
 - Customer Data
-- Kubernetes Cluster
-- AWS Account
 - Source Code
+- Kubernetes Cluster
+- AWS Resources
 - Secrets
 - Databases
+- CI/CD Pipeline
 
 ---
 
-## Threat
+## Threats
 
-Anything capable of causing harm.
+Threats are events or actors capable of causing damage.
 
 Examples
 
 - Hackers
-- Malware
 - Insider Threats
-- DDoS Attacks
+- Malware
+- Ransomware
 - Supply Chain Attacks
+- DDoS Attacks
 
 ---
 
-## Vulnerability
+## Vulnerabilities
 
-A weakness that can be exploited.
+Vulnerabilities are weaknesses that attackers can exploit.
 
 Examples
 
-- Weak Passwords
-- Public S3 Bucket
 - SQL Injection
+- Weak Passwords
 - Missing MFA
+- Public S3 Buckets
 - Vulnerable Dependencies
+- Misconfigured Security Groups
 
 ---
 
 ## Likelihood
 
-The probability that a threat will exploit a vulnerability.
+Likelihood represents the probability that a threat will exploit a vulnerability.
 
-Examples
+Typical Ratings
 
 - Low
 - Medium
@@ -132,21 +136,21 @@ Examples
 
 ## Impact
 
-The damage caused if the threat succeeds.
+Impact measures the damage caused if the attack succeeds.
 
 Examples
 
 - Financial Loss
-- Reputation Damage
 - Data Breach
 - Service Downtime
-- Compliance Violations
+- Reputation Damage
+- Regulatory Penalties
 
 ---
 
-## Risk Formula
+# Risk Formula
 
-A commonly used approach is:
+A commonly used formula is:
 
 ```text
 Risk = Likelihood × Impact
@@ -157,6 +161,8 @@ Example
 | Likelihood | Impact | Risk |
 |------------|--------|------|
 | Low | Low | Low |
+| Low | High | Medium |
+| Medium | Medium | Medium |
 | Medium | High | High |
 | High | High | Critical |
 
@@ -165,17 +171,17 @@ Example
 # Risk Matrix
 
 ```text
-                Impact
+                    Impact
 
-           Low  Med  High
+              Low   Medium   High
 
-High       Med  High Critical
+High          Med    High   Critical
 
-Medium     Low  Med  High
+Medium        Low    Medium   High
 
-Low        Low  Low  Med
+Low           Low     Low    Medium
 
-          Likelihood
+             Likelihood
 ```
 
 This matrix helps prioritize remediation activities.
@@ -190,9 +196,9 @@ Risks affecting business operations.
 
 Examples
 
-- Revenue loss
-- Compliance penalties
-- Reputation damage
+- Revenue Loss
+- Customer Trust
+- Reputation Damage
 
 ---
 
@@ -202,9 +208,9 @@ Risks related to technology.
 
 Examples
 
-- Unpatched software
-- Vulnerable dependencies
-- Weak authentication
+- Vulnerable Applications
+- Misconfigured Infrastructure
+- Outdated Software
 
 ---
 
@@ -214,15 +220,15 @@ Risks caused by operational failures.
 
 Examples
 
-- Human error
-- Misconfiguration
-- Backup failure
+- Human Error
+- Backup Failure
+- Deployment Failure
 
 ---
 
 ## Compliance Risk
 
-Risks related to regulatory requirements.
+Risks associated with regulatory requirements.
 
 Examples
 
@@ -233,7 +239,7 @@ Examples
 
 ---
 
-# Risk Treatment Options
+# Risk Treatment Strategies
 
 ```text
 Risk Identified
@@ -242,45 +248,50 @@ Risk Identified
 
 Choose Strategy
 
-↓
-
-Accept
-
-OR
-
-Mitigate
-
-OR
-
-Transfer
-
-OR
-
-Avoid
+├── Accept
+├── Mitigate
+├── Transfer
+└── Avoid
 ```
 
 ### Accept
 
-The organization accepts the risk.
+The organization accepts the risk because the impact is minimal or the mitigation cost outweighs the benefit.
 
 ### Mitigate
 
-Implement security controls to reduce risk.
+Reduce the likelihood or impact by implementing security controls.
+
+Examples
+
+- MFA
+- Encryption
+- WAF
+- IAM
 
 ### Transfer
 
-Transfer the risk through insurance or third-party services.
+Transfer the financial impact to another party.
+
+Examples
+
+- Cyber Insurance
+- Managed Security Services
 
 ### Avoid
 
-Remove the activity that introduces the risk.
+Eliminate the activity causing the risk.
+
+Example
+
+Disable an insecure public API instead of exposing it.
 
 ---
 
 # Risk Assessment Workflow
 
 ```text
-Business Requirement
+Business Requirements
 
 ↓
 
@@ -296,7 +307,7 @@ Risk Assessment
 
 ↓
 
-Define Security Controls
+Security Controls
 
 ↓
 
@@ -304,7 +315,7 @@ Development
 
 ↓
 
-Testing
+Security Testing
 
 ↓
 
@@ -317,7 +328,7 @@ Continuous Monitoring
 
 ---
 
-## DevSecOps Pipeline Integration
+## Pipeline Integration
 
 ```text
 Business Requirements
@@ -380,10 +391,14 @@ Production
 
 ↓
 
-Falco Monitoring
+Falco
+
+↓
+
+Monitoring
 ```
 
-Risk Assessment determines where security controls should be applied within the pipeline.
+Risk Assessment determines where security controls should be implemented throughout the pipeline.
 
 ---
 
@@ -425,10 +440,10 @@ Continuous Monitoring
 
 ## Production Example
 
-A team plans to expose an internal API to the internet.
+An organization plans to expose an internal REST API publicly.
 
 ```text
-Identify Asset
+Asset
 
 ↓
 
@@ -452,44 +467,48 @@ Mitigation
 
 Authentication
 
-Rate Limiting
+↓
 
-WAF
+Rate Limiting
 
 ↓
 
-Deploy
+Web Application Firewall
+
+↓
+
+Deploy Securely
 ```
 
-The identified risks are reduced before deployment.
+The API is protected before being released to production.
 
 ---
 
 ## Best Practices
 
-- Perform Risk Assessments early
-- Review risks regularly
-- Prioritize critical assets
-- Document identified risks
-- Update assessments after architecture changes
-- Use a standardized risk scoring model
+- Perform Risk Assessments early in the SDLC
+- Prioritize business-critical assets
+- Use standardized risk scoring
+- Review risks periodically
 - Automate vulnerability scanning
-- Continuously monitor production
-- Involve business and technical teams
-- Review compliance requirements
+- Document all identified risks
+- Update assessments after architectural changes
+- Involve developers, security teams, and business stakeholders
+- Monitor production continuously
+- Review compliance requirements regularly
 
 ---
 
 ## Common Mistakes
 
+- Performing Risk Assessment only once
 - Ignoring business impact
-- Assessing risks only once
-- Prioritizing all risks equally
-- Missing third-party risks
+- Treating every risk equally
+- Ignoring third-party dependencies
+- Failing to document risks
 - Ignoring insider threats
-- Poor documentation
-- Not updating risk assessments
 - Delaying remediation of critical risks
+- Not updating the Risk Register
 
 ---
 
@@ -497,39 +516,39 @@ The identified risks are reduced before deployment.
 
 ## Issue 1
 
-### Critical Vulnerability Not Prioritized
+### Critical Vulnerabilities Are Not Prioritized
 
 **Cause**
 
-Improper risk scoring.
+Risk scoring was inaccurate.
 
 **Resolution**
 
 ```text
-Review Likelihood
+Review Risk Matrix
 
 ↓
 
-Review Impact
+Recalculate Likelihood
 
 ↓
 
-Recalculate Risk
+Recalculate Impact
 
 ↓
 
-Prioritize Remediation
+Prioritize Critical Risks
 ```
 
 ---
 
 ## Issue 2
 
-### Security Controls Do Not Reduce Risk
+### Security Controls Fail to Reduce Risk
 
 **Cause**
 
-Controls do not address the identified threat.
+The selected controls do not address the identified threat.
 
 **Resolution**
 
@@ -538,54 +557,54 @@ Review Threat
 
 ↓
 
-Select Appropriate Control
+Review Controls
+
+↓
+
+Implement Better Controls
 
 ↓
 
 Validate Effectiveness
-
-↓
-
-Deploy
 ```
 
 ---
 
 ## Issue 3
 
-### Compliance Audit Finds Unaddressed Risks
+### Compliance Audit Reports High-Risk Findings
 
 **Cause**
 
-Risk Register was not updated.
+Risk Assessments were outdated.
 
 **Resolution**
 
 ```text
-Review Assets
-
-↓
-
 Update Risk Register
 
 ↓
 
-Implement Controls
+Perform New Assessment
 
 ↓
 
-Reassess
+Implement Missing Controls
+
+↓
+
+Revalidate Compliance
 ```
 
 ---
 
 ## Issue 4
 
-### New Architecture Introduces Unknown Risks
+### New Cloud Architecture Introduces Security Risks
 
 **Cause**
 
-Risk Assessment was not repeated after design changes.
+Risk Assessment was not performed after the architecture changed.
 
 **Resolution**
 
@@ -594,7 +613,7 @@ Review Architecture
 
 ↓
 
-Perform New Assessment
+Perform Assessment
 
 ↓
 
@@ -602,18 +621,18 @@ Update Controls
 
 ↓
 
-Deploy
+Deploy Securely
 ```
 
 ---
 
 ## Issue 5
 
-### Production Incident Occurs Despite Previous Assessment
+### Security Incident Occurs Despite Previous Assessment
 
 **Cause**
 
-Threat landscape changed after deployment.
+New attack techniques emerged after deployment.
 
 **Resolution**
 
@@ -622,15 +641,15 @@ Investigate Incident
 
 ↓
 
+Update Threat Model
+
+↓
+
 Update Risk Assessment
 
 ↓
 
-Improve Controls
-
-↓
-
-Continuous Monitoring
+Improve Security Controls
 ```
 
 ---
@@ -641,7 +660,7 @@ Continuous Monitoring
 
 ### What is Risk Assessment?
 
-Risk Assessment is the process of identifying, analyzing, evaluating, and prioritizing security risks so appropriate mitigation strategies can be implemented.
+Risk Assessment is the process of identifying, analyzing, evaluating, and prioritizing security risks so organizations can implement appropriate security controls.
 
 ---
 
@@ -649,13 +668,13 @@ Risk Assessment is the process of identifying, analyzing, evaluating, and priori
 
 ### Why is Risk Assessment important in DevSecOps?
 
-It helps organizations focus on the highest-priority risks, enabling secure software delivery while optimizing security resources.
+It enables teams to focus on the highest-priority risks, improving security while optimizing development effort and resources.
 
 ---
 
 ## Question 3
 
-### What are the main components of Risk Assessment?
+### What are the key components of Risk Assessment?
 
 Assets, Threats, Vulnerabilities, Likelihood, Impact, Risk Score, and Security Controls.
 
@@ -665,21 +684,21 @@ Assets, Threats, Vulnerabilities, Likelihood, Impact, Risk Score, and Security C
 
 ### What is the difference between a Threat and a Vulnerability?
 
-A threat is something capable of causing harm, while a vulnerability is a weakness that a threat can exploit.
+A threat is something capable of causing damage, whereas a vulnerability is a weakness that allows the threat to succeed.
 
 ---
 
 ## Question 5
 
-### How is Risk commonly calculated?
+### How is Risk typically calculated?
 
-Risk is commonly estimated using the relationship between Likelihood and Impact, often expressed as Risk = Likelihood × Impact.
+Risk is commonly estimated by evaluating the likelihood of an attack and the potential business impact if it occurs.
 
 ---
 
 ## Question 6
 
-### What are the common risk treatment strategies?
+### What are the four common Risk Treatment strategies?
 
 Accept, Mitigate, Transfer, and Avoid.
 
@@ -689,15 +708,15 @@ Accept, Mitigate, Transfer, and Avoid.
 
 ### When should Risk Assessments be performed?
 
-During planning and design, before major releases, after architectural changes, following security incidents, and periodically throughout the application lifecycle.
+During planning, architecture design, before major releases, after infrastructure changes, after security incidents, and periodically throughout the application lifecycle.
 
 ---
 
 ## Question 8
 
-### How does Risk Assessment support Threat Modeling?
+### How does Threat Modeling support Risk Assessment?
 
-Threat Modeling identifies potential threats, while Risk Assessment evaluates their likelihood and impact to determine which risks require mitigation.
+Threat Modeling identifies potential threats, while Risk Assessment evaluates their likelihood and impact to determine remediation priorities.
 
 ---
 
@@ -705,22 +724,22 @@ Threat Modeling identifies potential threats, while Risk Assessment evaluates th
 
 ### Can Risk Assessment eliminate all security risks?
 
-No. It helps identify and prioritize risks, but continuous monitoring and periodic reassessment are required because the threat landscape constantly evolves.
+No. Risk Assessment reduces and prioritizes risks, but continuous monitoring, vulnerability management, and periodic reassessment remain essential.
 
 ---
 
 ## Question 10
 
-### How is Risk Assessment integrated into DevSecOps?
+### How is Risk Assessment integrated into a DevSecOps pipeline?
 
-Risk Assessment is performed before development begins and guides architecture decisions, security controls, automated security testing, and monitoring throughout the DevSecOps pipeline.
+Risk Assessment influences architecture decisions, security controls, CI/CD security checks, vulnerability scanning, deployment policies, and runtime monitoring to ensure risks are continuously managed throughout the software lifecycle.
 
 ---
 
 # Key Takeaways
 
-- Risk Assessment helps prioritize security efforts based on business impact.
-- Assets, threats, vulnerabilities, likelihood, and impact are the foundation of risk analysis.
+- Risk Assessment helps organizations identify and prioritize security risks.
+- Assets, threats, vulnerabilities, likelihood, and impact form the foundation of risk analysis.
 - Risk treatment strategies include Accept, Mitigate, Transfer, and Avoid.
-- Continuous Risk Assessment is essential because applications and threats evolve over time.
-- Effective Risk Assessment enables organizations to build secure, resilient, and compliant software.
+- Risk Assessment should be a continuous activity throughout the Secure SDLC.
+- Effective Risk Assessment enables secure, resilient, and compliant software delivery.
