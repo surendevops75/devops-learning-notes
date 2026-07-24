@@ -515,19 +515,3 @@ Useful for scanning repositories before cloning into CI/CD environments.
 
 ---
 
-# Next Part
-
-In Part 2, we'll cover:
-
-- Trivy Configuration
-- Registry Authentication (Amazon ECR, Azure ACR, Docker Hub)
-- Authentication & Permissions
-- Proxy Configuration
-- `trivy.yaml`
-- Ignore Files
-- Severity Filtering
-- Cache Management
-- Secret Scanning
-- License Scanning
-- RBAC for Kubernetes
-- Enterprise Best Practices
