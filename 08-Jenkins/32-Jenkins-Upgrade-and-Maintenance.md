@@ -1415,9 +1415,8 @@ Retest
 
 ## Question 1
 
-### Production-Level Answer
 
-Why is Jenkins LTS recommended for production?
+### Why is Jenkins LTS recommended for production?
 
 LTS releases receive long-term support, security patches, and stability fixes, making them more suitable for enterprise environments than weekly releases.
 
@@ -1431,9 +1430,8 @@ LTS releases receive long-term support, security patches, and stability fixes, m
 
 ## Question 2
 
-### Production-Level Answer
 
-What should you do before upgrading Jenkins?
+### What should you do before upgrading Jenkins?
 
 Create and verify a backup, review release notes, check plugin and Java compatibility, test the upgrade in a staging environment, schedule a maintenance window, and prepare a rollback plan.
 
@@ -1441,9 +1439,8 @@ Create and verify a backup, review release notes, check plugin and Java compatib
 
 ## Question 3
 
-### Production-Level Answer
 
-What is Safe Restart?
+### What is Safe Restart?
 
 Safe Restart prevents new builds from starting while allowing running builds to finish before restarting Jenkins, minimizing disruption.
 
@@ -1451,9 +1448,8 @@ Safe Restart prevents new builds from starting while allowing running builds to 
 
 ## Question 4
 
-### Production-Level Answer
 
-Why should plugins be upgraded in small batches?
+### Why should plugins be upgraded in small batches?
 
 Upgrading a few plugins at a time makes it easier to identify compatibility issues and reduces the risk of widespread failures.
 
@@ -1461,9 +1457,8 @@ Upgrading a few plugins at a time makes it easier to identify compatibility issu
 
 ## Question 5
 
-### Production-Level Answer
 
-What is Jenkins Configuration as Code (JCasC)?
+### What is Jenkins Configuration as Code (JCasC)?
 
 JCasC stores Jenkins configuration in YAML files, enabling version control, repeatable deployments, and easier disaster recovery.
 
@@ -1471,9 +1466,8 @@ JCasC stores Jenkins configuration in YAML files, enabling version control, repe
 
 ## Question 6
 
-### Production-Level Answer
 
-How would you roll back a failed Jenkins upgrade?
+### How would you roll back a failed Jenkins upgrade?
 
 Restore the verified backup of JENKINS_HOME, reinstall the previous Jenkins version if necessary, validate plugins, reconnect agents, and confirm pipelines are functioning.
 
@@ -1481,9 +1475,8 @@ Restore the verified backup of JENKINS_HOME, reinstall the previous Jenkins vers
 
 ## Question 7
 
-### Production-Level Answer
 
-Why should unused plugins be removed?
+### Why should unused plugins be removed?
 
 Unused plugins increase memory usage, startup time, maintenance effort, and the overall security attack surface.
 
@@ -1491,9 +1484,8 @@ Unused plugins increase memory usage, startup time, maintenance effort, and the 
 
 ## Question 8
 
-### Production-Level Answer
 
-How often should maintenance be performed?
+### How often should maintenance be performed?
 
 Routine tasks such as workspace cleanup and backup verification should be performed daily, while plugin reviews, security audits, and upgrades should follow scheduled weekly, monthly, or quarterly maintenance windows.
 
@@ -1501,9 +1493,8 @@ Routine tasks such as workspace cleanup and backup verification should be perfor
 
 ## Question 9
 
-### Production-Level Answer
 
-Why is a staging environment important for upgrades?
+### Why is a staging environment important for upgrades?
 
 It allows teams to validate compatibility, detect issues, and test pipelines before applying changes to production, reducing operational risk.
 
@@ -1511,9 +1502,8 @@ It allows teams to validate compatibility, detect issues, and test pipelines bef
 
 ## Question 10
 
-### Production-Level Answer
 
-What are the most important post-upgrade checks?
+### What are the most important post-upgrade checks?
 
 Verify Jenkins startup, plugin loading, agent connectivity, authentication, credentials, pipeline execution, and overall system health before returning the service to users.
 
