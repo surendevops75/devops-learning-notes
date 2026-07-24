@@ -1688,3 +1688,671 @@ Deploy to Kubernetes
 
 ---
 
+# Enterprise DevSecOps Pipeline
+
+The following workflow shows how Trivy is integrated into a production DevSecOps pipeline.
+
+```text
+                    Developer
+                         │
+                         ▼
+                  Feature Branch
+                         │
+                         ▼
+                     Git Push
+                         │
+                         ▼
+                  Pull Request
+                         │
+                         ▼
+                  Code Review
+                         │
+                         ▼
+                  Merge to Main
+                         │
+                         ▼
+              Jenkins / GitHub Actions
+                         │
+                         ▼
+                   Checkout Code
+                         │
+                         ▼
+                 Compile Application
+                         │
+                         ▼
+                    Unit Testing
+                         │
+                         ▼
+                SonarQube Analysis
+                         │
+                         ▼
+                  Quality Gate
+                         │
+                         ▼
+                Build Docker Image
+                         │
+                         ▼
+                 Trivy Image Scan
+                         │
+                         ▼
+              HIGH / CRITICAL Check
+                  ┌────────┴────────┐
+                  │                 │
+                PASS              FAIL
+                  │                 │
+                  ▼                 ▼
+            Generate SBOM     Stop Pipeline
+                  │
+                  ▼
+          Cosign Image Signing
+                  │
+                  ▼
+            Push to Amazon ECR
+                  │
+                  ▼
+        Update GitOps Repository
+                  │
+                  ▼
+               ArgoCD Sync
+                  │
+                  ▼
+            Deploy to Amazon EKS
+                  │
+                  ▼
+             Smoke Testing
+                  │
+                  ▼
+              Production
+```
+
+---
+
+# Report Analysis
+
+Understanding the scan results is as important as running the scan.
+
+Example output.
+
+```text
+Target
+
+payment-service:1.0
+
+Total Vulnerabilities
+
+HIGH      : 4
+
+CRITICAL  : 1
+
+MEDIUM    : 12
+
+LOW       : 18
+```
+
+Security teams should prioritize fixing:
+
+1. Critical
+2. High
+3. Medium
+4. Low
+
+---
+
+# Vulnerability Report
+
+Typical report sections include:
+
+```text
+Package Name
+
+Installed Version
+
+Fixed Version
+
+Severity
+
+CVE ID
+
+Description
+```
+
+Example.
+
+| Package | Installed | Fixed | Severity |
+|----------|------------|---------|----------|
+| openssl | 3.0.2 | 3.0.15 | CRITICAL |
+| curl | 7.81 | 7.88 | HIGH |
+| glibc | 2.35 | 2.36 | HIGH |
+
+---
+
+# Secret Scan Report
+
+Example.
+
+```text
+HIGH
+
+AWS Secret Access Key
+
+File
+
+application.yml
+
+Line
+
+25
+```
+
+Immediate action:
+
+- Remove the secret
+- Rotate the credential
+- Update the secret manager
+- Commit the corrected code
+
+---
+
+# Misconfiguration Report
+
+Example findings.
+
+```text
+Deployment
+
+↓
+
+Container Running as Root
+
+↓
+
+HIGH
+```
+
+```text
+Security Group
+
+↓
+
+0.0.0.0/0
+
+↓
+
+HIGH
+```
+
+```text
+S3 Bucket
+
+↓
+
+Public Access Enabled
+
+↓
+
+CRITICAL
+```
+
+---
+
+# SBOM Report
+
+Generated SBOM includes:
+
+- Operating system packages
+- Application libraries
+- Third-party dependencies
+- Package versions
+- Licenses
+
+Example.
+
+```text
+payment-service
+
+↓
+
+Spring Boot
+
+↓
+
+Log4j
+
+↓
+
+Jackson
+
+↓
+
+OpenSSL
+
+↓
+
+glibc
+```
+
+SBOMs are useful for:
+
+- Compliance
+- Supply chain audits
+- Incident response
+- Vulnerability tracking
+
+---
+
+# Integrating with Security Dashboards
+
+Trivy reports can be integrated with:
+
+- GitHub Security
+- DefectDojo
+- Dependency-Track
+- ELK Stack
+- SIEM platforms
+- Custom dashboards
+
+Typical workflow.
+
+```text
+Trivy
+
+↓
+
+JSON/SARIF Report
+
+↓
+
+Security Dashboard
+
+↓
+
+Security Team Review
+
+↓
+
+Remediation
+```
+
+---
+
+# Enterprise Best Practices
+
+## Image Security
+
+- Use minimal base images such as Alpine or Distroless where appropriate.
+- Remove unused packages from container images.
+- Regularly rebuild images with the latest security updates.
+- Scan every image before pushing to a registry.
+
+---
+
+## CI/CD
+
+- Run Trivy on every Pull Request.
+- Fail the pipeline for HIGH and CRITICAL vulnerabilities.
+- Generate SBOMs for every production image.
+- Sign container images after successful scans.
+
+---
+
+## Registry Security
+
+- Scan images before pushing to the registry.
+- Periodically rescan existing registry images.
+- Remove vulnerable image tags.
+- Enforce image signing before deployment.
+
+---
+
+## Kubernetes
+
+- Scan manifests before deployment.
+- Use Trivy Operator for continuous cluster scanning.
+- Restrict Trivy permissions using least-privilege RBAC.
+- Review Kubernetes misconfiguration reports regularly.
+
+---
+
+## Operations
+
+- Update the vulnerability database daily.
+- Keep Trivy updated to the latest stable version.
+- Archive historical reports for auditing.
+- Automate report generation for every release.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Scanning only production images.
+
+Correct approach.
+
+```text
+Every Pull Request
+
+↓
+
+Every Build
+
+↓
+
+Every Image
+
+↓
+
+Every Release
+```
+
+---
+
+## Mistake 2
+
+Ignoring HIGH vulnerabilities.
+
+```text
+HIGH Today
+
+↓
+
+Critical Tomorrow
+
+↓
+
+Production Incident
+```
+
+Always investigate HIGH findings before deployment.
+
+---
+
+## Mistake 3
+
+Using outdated vulnerability databases.
+
+```text
+Old Database
+
+↓
+
+Missed CVEs
+
+↓
+
+False Sense of Security
+```
+
+Update the database daily.
+
+---
+
+## Mistake 4
+
+Scanning only Docker images.
+
+Remember that infrastructure, Kubernetes manifests, and source repositories also require scanning.
+
+---
+
+## Mistake 5
+
+Ignoring secrets detected by Trivy.
+
+Leaked credentials can lead to:
+
+- Unauthorized access
+- Data breaches
+- Infrastructure compromise
+
+Secrets should be removed immediately and rotated.
+
+---
+
+# Common Troubleshooting
+
+## Issue 1
+
+### Vulnerability Database Download Failed
+
+**Cause**
+
+No internet connectivity or proxy restrictions.
+
+**Resolution**
+
+```text
+Check Network
+
+↓
+
+Verify Proxy
+
+↓
+
+Download Database
+
+↓
+
+Retry Scan
+```
+
+---
+
+## Issue 2
+
+### Private Registry Authentication Failed
+
+**Cause**
+
+Expired credentials or missing permissions.
+
+**Resolution**
+
+```text
+Authenticate Registry
+
+↓
+
+Verify Credentials
+
+↓
+
+Retry Image Scan
+```
+
+---
+
+## Issue 3
+
+### Image Not Found
+
+**Cause**
+
+The image was not built or the image tag is incorrect.
+
+**Resolution**
+
+```text
+Docker Build
+
+↓
+
+Verify Image Tag
+
+↓
+
+Run Trivy
+```
+
+---
+
+## Issue 4
+
+### Pipeline Failed Due to HIGH Vulnerabilities
+
+**Cause**
+
+Detected vulnerabilities exceeded the configured threshold.
+
+**Resolution**
+
+```text
+Review Report
+
+↓
+
+Update Dependencies
+
+↓
+
+Rebuild Image
+
+↓
+
+Re-run Scan
+```
+
+---
+
+## Issue 5
+
+### Kubernetes Scan Permission Denied
+
+**Cause**
+
+Service Account lacks required RBAC permissions.
+
+**Resolution**
+
+```text
+Verify Service Account
+
+↓
+
+Review ClusterRole
+
+↓
+
+Update ClusterRoleBinding
+
+↓
+
+Retry Scan
+```
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is Trivy and why is it used?
+
+**Answer**
+
+Trivy is a security scanner that detects vulnerabilities, secrets, misconfigurations, licenses, and supply chain risks across container images, filesystems, repositories, Infrastructure as Code, and Kubernetes environments.
+
+---
+
+## Question 2
+
+### Where does Trivy fit into a DevSecOps pipeline?
+
+**Answer**
+
+Trivy runs after the Docker image is built but before the image is pushed to the container registry or deployed to Kubernetes, ensuring vulnerable artifacts are blocked early.
+
+---
+
+## Question 3
+
+### What types of scans does Trivy support?
+
+**Answer**
+
+Trivy supports container image scanning, filesystem scanning, repository scanning, Kubernetes scanning, Infrastructure as Code scanning, secret detection, license scanning, and SBOM generation.
+
+---
+
+## Question 4
+
+### Why should Trivy run before pushing images to Amazon ECR?
+
+**Answer**
+
+Running Trivy before pushing images prevents vulnerable images from being stored in the registry and deployed to production.
+
+---
+
+## Question 5
+
+### How do you fail a Jenkins pipeline when vulnerabilities are found?
+
+**Answer**
+
+Use the `--exit-code 1` option with the desired severity level (for example, HIGH and CRITICAL). If matching vulnerabilities are detected, Trivy exits with a non-zero status and Jenkins marks the build as failed.
+
+---
+
+## Question 6
+
+### How do you authenticate Trivy to scan private registries?
+
+**Answer**
+
+Authenticate using the registry's supported mechanism, such as AWS CLI for Amazon ECR, Docker login for Docker Hub, Azure CLI for Azure Container Registry, or GitHub tokens for GHCR.
+
+---
+
+## Question 7
+
+### What is an SBOM and why is it important?
+
+**Answer**
+
+A Software Bill of Materials (SBOM) lists all software components and dependencies in an application. It improves supply chain visibility, compliance, vulnerability management, and incident response.
+
+---
+
+## Question 8
+
+### How do you reduce false positives in Trivy?
+
+**Answer**
+
+Keep the vulnerability database updated, use `.trivyignore` only for approved exceptions, review findings regularly, and rescan after dependency updates.
+
+---
+
+## Question 9
+
+### How do you scan Kubernetes manifests before deployment?
+
+**Answer**
+
+Use `trivy config` to analyze Kubernetes YAML files for insecure configurations before they are applied to the cluster.
+
+---
+
+## Question 10
+
+### What are the key enterprise best practices for Trivy?
+
+**Answer**
+
+Automate scans in CI/CD, update the vulnerability database regularly, fail builds for HIGH and CRITICAL vulnerabilities, generate SBOMs, use least-privilege access, protect registry credentials, and integrate reports with security dashboards.
+
+---
+
+# Key Takeaways
+
+- Trivy is an enterprise security scanner for containers, filesystems, repositories, Kubernetes, Infrastructure as Code, secrets, licenses, and SBOMs.
+- Integrate Trivy into CI/CD immediately after building container images and before publishing them.
+- Authenticate securely with private registries using managed credentials or secret stores.
+- Scan images, source code, Kubernetes manifests, and Terraform configurations as part of every build.
+- Generate SBOMs to improve software supply chain visibility and compliance.
+- Configure pipelines to fail automatically when HIGH or CRITICAL vulnerabilities are detected.
+- Protect Kubernetes environments using Trivy Operator and least-privilege RBAC.
+- Keep vulnerability databases updated and review reports continuously to maintain a secure software delivery pipeline.
