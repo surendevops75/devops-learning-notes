@@ -514,3 +514,519 @@ sonar hard nproc 8192
 ```
 
 ---
+
+# Configure SonarQube as a Service
+
+Create a systemd service so SonarQube starts automatically after server reboot.
+
+Create the service file.
+
+```bash
+sudo vi /etc/systemd/system/sonarqube.service
+```
+
+Add the following configuration.
+
+```ini
+[Unit]
+Description=SonarQube Service
+After=network.target postgresql.service
+
+[Service]
+Type=forking
+
+User=sonar
+Group=sonar
+
+ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+
+Restart=always
+
+LimitNOFILE=131072
+LimitNPROC=8192
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Reload systemd.
+
+```bash
+sudo systemctl daemon-reload
+```
+
+Enable the service.
+
+```bash
+sudo systemctl enable sonarqube
+```
+
+Start SonarQube.
+
+```bash
+sudo systemctl start sonarqube
+```
+
+Verify status.
+
+```bash
+sudo systemctl status sonarqube
+```
+
+Expected output
+
+```text
+active (running)
+```
+
+---
+
+# Configure Nginx Reverse Proxy
+
+In production, SonarQube should not be exposed directly on port **9000**.
+
+Recommended Architecture
+
+```text
+Internet
+
+↓
+
+HTTPS :443
+
+↓
+
+Nginx
+
+↓
+
+SonarQube :9000
+```
+
+Install Nginx.
+
+```bash
+sudo apt install nginx -y
+```
+
+Create configuration.
+
+```bash
+sudo vi /etc/nginx/sites-available/sonarqube
+```
+
+Example configuration.
+
+```nginx
+server {
+
+    listen 80;
+
+    server_name sonar.company.com;
+
+    location / {
+
+        proxy_pass http://127.0.0.1:9000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    }
+
+}
+```
+
+Enable configuration.
+
+```bash
+sudo ln -s /etc/nginx/sites-available/sonarqube /etc/nginx/sites-enabled/
+```
+
+Test configuration.
+
+```bash
+sudo nginx -t
+```
+
+Restart Nginx.
+
+```bash
+sudo systemctl restart nginx
+```
+
+---
+
+# Enable HTTPS
+
+For production deployments, always use HTTPS.
+
+Example using Let's Encrypt.
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+```
+
+Generate certificate.
+
+```bash
+sudo certbot --nginx
+```
+
+Now SonarQube becomes available at
+
+```text
+https://sonar.company.com
+```
+
+---
+
+# First Login
+
+Open
+
+```text
+https://sonar.company.com
+```
+
+Default credentials
+
+```text
+Username
+
+admin
+
+Password
+
+admin
+```
+
+Immediately change the default password.
+
+---
+
+# Create Your First Project
+
+Navigate to
+
+```text
+Projects
+
+↓
+
+Create Project
+```
+
+Example
+
+```text
+Project Name
+
+payment-service
+
+Project Key
+
+payment-service
+```
+
+---
+
+# Generate Project Token
+
+Navigate
+
+```text
+Project
+
+↓
+
+Administration
+
+↓
+
+Security
+
+↓
+
+Generate Token
+```
+
+Example
+
+```text
+payment-service-token
+```
+
+Save the token securely.
+
+It will later be used by Jenkins or GitHub Actions.
+
+---
+
+# Create Quality Profile
+
+Navigate
+
+```text
+Quality Profiles
+```
+
+Select language.
+
+Example
+
+```text
+Java
+```
+
+Copy the built-in profile.
+
+```text
+Sonar Way
+
+↓
+
+Copy
+
+↓
+
+Company Java Profile
+```
+
+Customize rules according to organizational standards.
+
+---
+
+# Configure Quality Gate
+
+Navigate
+
+```text
+Quality Gates
+```
+
+Example production Quality Gate.
+
+| Metric | Condition |
+|---------|-----------|
+| Bugs | 0 Blocker |
+| Vulnerabilities | 0 Critical |
+| Security Hotspots | Reviewed |
+| Coverage | >80% |
+| Duplicate Code | <3% |
+
+Pipeline flow.
+
+```text
+Sonar Analysis
+
+↓
+
+Quality Gate
+
+↓
+
+PASS
+
+↓
+
+Continue Deployment
+
+OR
+
+FAIL
+
+↓
+
+Pipeline Stops
+```
+
+---
+
+# Authentication Methods
+
+Enterprise deployments rarely use only local users.
+
+Supported authentication.
+
+```text
+SonarQube
+
+↓
+
+Local Authentication
+
+LDAP
+
+GitHub OAuth
+
+GitLab OAuth
+
+Azure AD
+
+SAML
+
+OIDC
+```
+
+---
+
+# LDAP Integration
+
+Common in enterprise environments.
+
+```text
+Developer
+
+↓
+
+Corporate Active Directory
+
+↓
+
+LDAP
+
+↓
+
+SonarQube
+```
+
+Example configuration.
+
+```properties
+sonar.security.realm=LDAP
+
+ldap.url=ldap://ldap.company.com
+
+ldap.bindDn=cn=admin,dc=company,dc=com
+
+ldap.bindPassword=********
+```
+
+Benefits
+
+- Centralized authentication
+- No local passwords
+- Automatic onboarding
+- Easier user management
+
+---
+
+# OAuth / OIDC Authentication
+
+Many organizations integrate SonarQube with GitHub or Azure AD.
+
+```text
+Developer
+
+↓
+
+GitHub Login
+
+↓
+
+OAuth
+
+↓
+
+SonarQube
+```
+
+Advantages
+
+- Single Sign-On (SSO)
+- MFA support
+- Central identity management
+
+---
+
+# Users and Groups
+
+Instead of assigning permissions directly to users, companies manage access through groups.
+
+Example.
+
+```text
+Users
+
+↓
+
+Groups
+
+↓
+
+Permissions
+```
+
+Recommended groups.
+
+```text
+Administrators
+
+Security Team
+
+Developers
+
+QA Team
+
+Auditors
+
+CI Service Accounts
+```
+
+---
+
+# Production RBAC
+
+Example permission model.
+
+| Role | Responsibilities |
+|------|------------------|
+| System Administrator | Full administration, plugins, upgrades, users, global settings |
+| Project Administrator | Manage project settings, quality profiles, branches, permissions |
+| Security Team | Review vulnerabilities, hotspots, security reports |
+| Developer | Execute analyses, view issues, resolve assigned findings |
+| QA Team | View quality reports and coverage metrics |
+| Auditor | Read-only access for compliance and audit reviews |
+| CI Service Account | Execute pipeline scans using project token only |
+
+**Best Practice:** Never use the default `admin` account in CI/CD pipelines. Create a dedicated **service account** with the minimum required permissions and use project-specific tokens stored in your CI/CD secret manager.
+
+---
+
+# API Tokens
+
+Instead of username/password authentication, CI/CD pipelines should use API tokens.
+
+Example
+
+```text
+Jenkins
+
+↓
+
+Credentials Manager
+
+↓
+
+SonarQube Token
+
+↓
+
+Pipeline Authentication
+```
+
+Never hardcode tokens in pipeline scripts or repositories.
+
+Store them in:
+
+- Jenkins Credentials
+- GitHub Secrets
+- GitLab CI Variables
+- Azure Key Vault
+- HashiCorp Vault
+- AWS Secrets Manager
+
+---
+
