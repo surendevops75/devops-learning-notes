@@ -1030,3 +1030,653 @@ Store them in:
 
 ---
 
+# Jenkins Integration
+
+Most enterprise organizations integrate SonarQube with Jenkins to perform automated code quality analysis during every build.
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+GitHub Repository
+
+↓
+
+Webhook
+
+↓
+
+Jenkins Pipeline
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube Analysis
+
+↓
+
+Quality Gate
+
+↓
+
+Continue Pipeline
+```
+
+---
+
+# Install SonarQube Plugin in Jenkins
+
+Navigate to
+
+```text
+Manage Jenkins
+
+↓
+
+Plugins
+
+↓
+
+Available Plugins
+
+↓
+
+Search
+
+↓
+
+SonarQube Scanner
+```
+
+Install
+
+```text
+SonarQube Scanner
+```
+
+Restart Jenkins.
+
+---
+
+# Configure SonarQube Server
+
+Navigate
+
+```text
+Manage Jenkins
+
+↓
+
+System
+
+↓
+
+SonarQube Servers
+
+↓
+
+Add SonarQube
+```
+
+Example
+
+| Field | Value |
+|--------|-------|
+| Name | SonarQube |
+| Server URL | https://sonar.company.com |
+| Server Authentication Token | Jenkins Credential |
+
+---
+
+# Create SonarQube Token
+
+SonarQube
+
+```text
+Administration
+
+↓
+
+Security
+
+↓
+
+Users
+
+↓
+
+Tokens
+
+↓
+
+Generate Token
+```
+
+Example
+
+```text
+jenkins-sonarqube-token
+```
+
+Copy the token.
+
+---
+
+# Store Token in Jenkins
+
+Navigate
+
+```text
+Manage Jenkins
+
+↓
+
+Credentials
+
+↓
+
+Global Credentials
+
+↓
+
+Add Credentials
+```
+
+Kind
+
+```text
+Secret Text
+```
+
+ID
+
+```text
+sonarqube-token
+```
+
+Paste the generated token.
+
+Never store tokens directly inside Jenkinsfiles.
+
+---
+
+# Configure Sonar Scanner
+
+Navigate
+
+```text
+Manage Jenkins
+
+↓
+
+Global Tool Configuration
+
+↓
+
+SonarQube Scanner
+
+↓
+
+Add Scanner
+```
+
+Example
+
+```text
+Name
+
+SonarScanner
+```
+
+Install Automatically
+
+✔ Enabled
+
+---
+
+# Project Configuration
+
+Every application requires a Sonar configuration.
+
+Example directory
+
+```text
+payment-service/
+
+├── pom.xml
+├── Jenkinsfile
+├── sonar-project.properties
+├── src/
+└── target/
+```
+
+---
+
+# sonar-project.properties
+
+```properties
+sonar.projectKey=payment-service
+
+sonar.projectName=Payment Service
+
+sonar.projectVersion=1.0
+
+sonar.sources=src
+
+sonar.java.binaries=target
+
+sonar.sourceEncoding=UTF-8
+
+sonar.host.url=https://sonar.company.com
+
+sonar.token=${SONAR_TOKEN}
+```
+
+---
+
+# Maven Integration
+
+Run analysis
+
+```bash
+mvn clean verify sonar:sonar
+```
+
+Pipeline
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Maven Sonar Plugin
+
+↓
+
+Upload Report
+
+↓
+
+Quality Gate
+```
+
+---
+
+# Gradle Integration
+
+Example
+
+```bash
+./gradlew sonarqube
+```
+
+Example configuration
+
+```groovy
+plugins {
+
+    id "org.sonarqube"
+
+}
+```
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    tools {
+
+        maven 'Maven3'
+
+    }
+
+    environment {
+
+        SCANNER_HOME = tool 'SonarScanner'
+
+    }
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                git branch: 'main',
+                url: 'https://github.com/company/payment-service.git'
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Unit Test') {
+
+            steps {
+
+                sh 'mvn test'
+
+            }
+
+        }
+
+        stage('SonarQube Analysis') {
+
+            steps {
+
+                withSonarQubeEnv('SonarQube') {
+
+                    sh '''
+                    mvn sonar:sonar \
+                    -Dsonar.projectKey=payment-service \
+                    -Dsonar.projectName="Payment Service"
+                    '''
+
+                }
+
+            }
+
+        }
+
+        stage('Quality Gate') {
+
+            steps {
+
+                timeout(time:5, unit:'MINUTES') {
+
+                    waitForQualityGate abortPipeline: true
+
+                }
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# How Quality Gate Works
+
+```text
+Source Code
+
+↓
+
+Sonar Scanner
+
+↓
+
+Upload Results
+
+↓
+
+SonarQube Server
+
+↓
+
+Evaluate Rules
+
+↓
+
+Quality Gate
+
+↓
+
+PASS
+
+↓
+
+Next Pipeline Stage
+
+OR
+
+FAIL
+
+↓
+
+Pipeline Stops
+```
+
+---
+
+# GitHub Actions Integration
+
+Store the following GitHub Secrets.
+
+```text
+SONAR_TOKEN
+
+SONAR_HOST_URL
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: SonarQube Analysis
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  sonar:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Setup Java
+
+      uses: actions/setup-java@v4
+
+      with:
+
+        distribution: temurin
+
+        java-version: 17
+
+    - name: Cache Maven
+
+      uses: actions/cache@v4
+
+      with:
+
+        path: ~/.m2
+
+        key: maven
+
+    - name: Build
+
+      run: mvn clean verify
+
+    - name: SonarQube Scan
+
+      env:
+
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      run: |
+
+        mvn sonar:sonar \
+        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+```
+
+---
+
+# GitLab CI Integration
+
+Example
+
+```yaml
+sonarqube-check:
+
+  image: maven:3.9
+
+  script:
+
+    - mvn clean verify sonar:sonar
+```
+
+---
+
+# Multi-Branch Analysis
+
+Enterprise teams rarely analyze only the main branch.
+
+Example
+
+```text
+main
+
+develop
+
+release
+
+feature/payment
+
+feature/login
+
+hotfix
+```
+
+SonarQube tracks quality independently for every branch.
+
+---
+
+# Pull Request Analysis
+
+Every Pull Request is scanned before merge.
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Quality Gate
+
+↓
+
+Approve Merge
+```
+
+This prevents low-quality or vulnerable code from entering the main branch.
+
+---
+
+# Branch Protection Workflow
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+SonarQube
+
+↓
+
+Quality Gate
+
+↓
+
+PASS
+
+↓
+
+Reviewer Approval
+
+↓
+
+Merge
+
+↓
+
+Deployment
+```
+
+---
+
+# Enterprise Best Practices
+
+- Analyze every Pull Request.
+- Never bypass the Quality Gate.
+- Store authentication tokens in a secure secret manager.
+- Use dedicated service accounts for CI/CD.
+- Configure separate Quality Profiles for different languages.
+- Enforce minimum code coverage thresholds.
+- Regularly review Security Hotspots.
+- Keep SonarQube and plugins updated.
+- Monitor analysis performance and database health.
+- Back up the SonarQube database regularly.
+
+---
+
