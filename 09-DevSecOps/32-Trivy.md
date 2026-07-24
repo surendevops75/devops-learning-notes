@@ -515,3 +515,536 @@ Useful for scanning repositories before cloning into CI/CD environments.
 
 ---
 
+# Trivy Configuration
+
+Trivy can be configured using:
+
+- Command-line arguments
+- Environment variables
+- Configuration file (`trivy.yaml`)
+
+Using a configuration file provides consistency across local development, CI/CD pipelines, and production environments.
+
+---
+
+# Configuration Priority
+
+When multiple configuration methods are used, Trivy follows this order.
+
+```text
+Command Line Arguments
+
+↓
+
+Environment Variables
+
+↓
+
+trivy.yaml
+
+↓
+
+Default Values
+```
+
+---
+
+# Configuration File
+
+Create a configuration file.
+
+```bash
+mkdir -p ~/.trivy
+
+vi ~/.trivy/trivy.yaml
+```
+
+Example configuration.
+
+```yaml
+cache:
+  dir: ~/.cache/trivy
+
+db:
+  auto-update: true
+
+scan:
+  security-checks:
+    - vuln
+    - secret
+    - config
+
+severity:
+  - HIGH
+  - CRITICAL
+
+exit-code: 1
+
+format: table
+
+ignore-unfixed: false
+```
+
+---
+
+# Common Configuration Options
+
+| Setting | Purpose |
+|----------|----------|
+| cache.dir | Location of Trivy cache |
+| db.auto-update | Automatically update vulnerability database |
+| security-checks | Enable vulnerability, secret, config scanning |
+| severity | Vulnerability levels to report |
+| exit-code | Pipeline exit status |
+| format | Output format |
+| ignore-unfixed | Ignore vulnerabilities without fixes |
+
+---
+
+# Registry Authentication
+
+Private container registries require authentication before Trivy can pull and scan images.
+
+Supported registries include:
+
+- Amazon ECR
+- Azure Container Registry (ACR)
+- Docker Hub
+- Google Artifact Registry (GAR)
+- GitHub Container Registry (GHCR)
+- Harbor
+- JFrog Artifactory
+
+---
+
+# Amazon ECR Authentication
+
+Authenticate using AWS CLI.
+
+```bash
+aws ecr get-login-password \
+| docker login \
+--username AWS \
+--password-stdin \
+123456789012.dkr.ecr.us-east-1.amazonaws.com
+```
+
+Scan an image.
+
+```bash
+trivy image \
+123456789012.dkr.ecr.us-east-1.amazonaws.com/payment-service:1.0
+```
+
+---
+
+# Azure Container Registry (ACR)
+
+Login.
+
+```bash
+az acr login --name companyregistry
+```
+
+Scan.
+
+```bash
+trivy image companyregistry.azurecr.io/payment-service:v1
+```
+
+---
+
+# Docker Hub Authentication
+
+```bash
+docker login
+```
+
+Scan.
+
+```bash
+trivy image company/payment-service:latest
+```
+
+---
+
+# GitHub Container Registry (GHCR)
+
+Authenticate.
+
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io \
+-u USERNAME \
+--password-stdin
+```
+
+Scan.
+
+```bash
+trivy image ghcr.io/company/payment-service:latest
+```
+
+---
+
+# Authentication Flow
+
+```text
+Trivy
+
+↓
+
+Registry Authentication
+
+↓
+
+Download Image
+
+↓
+
+Extract Layers
+
+↓
+
+Analyze Packages
+
+↓
+
+Generate Report
+```
+
+---
+
+# Using Environment Variables
+
+Credentials should never be hardcoded.
+
+Example.
+
+```bash
+export AWS_ACCESS_KEY_ID=xxxxxxxx
+
+export AWS_SECRET_ACCESS_KEY=xxxxxxxx
+
+export AWS_DEFAULT_REGION=us-east-1
+```
+
+CI/CD platforms should inject credentials securely.
+
+Examples:
+
+- Jenkins Credentials
+- GitHub Secrets
+- GitLab CI Variables
+- AWS Secrets Manager
+- Azure Key Vault
+- HashiCorp Vault
+
+---
+
+# Proxy Configuration
+
+Many enterprise environments use outbound proxy servers.
+
+Example.
+
+```bash
+export HTTP_PROXY=http://proxy.company.com:8080
+
+export HTTPS_PROXY=http://proxy.company.com:8080
+
+export NO_PROXY=localhost,127.0.0.1
+```
+
+Verify.
+
+```bash
+env | grep PROXY
+```
+
+---
+
+# Cache Management
+
+Trivy caches:
+
+- Vulnerability Database
+- Java Database
+- Scan Results
+
+Default location.
+
+```text
+~/.cache/trivy
+```
+
+Clear cache.
+
+```bash
+trivy clean --all
+```
+
+View cache size.
+
+```bash
+du -sh ~/.cache/trivy
+```
+
+---
+
+# Updating Cache
+
+Download the latest database.
+
+```bash
+trivy image --download-db-only
+```
+
+Download Java database.
+
+```bash
+trivy image --download-java-db-only
+```
+
+Production recommendation:
+
+Schedule automatic database updates during non-business hours to reduce CI/CD execution time.
+
+---
+
+# Ignore File
+
+Some vulnerabilities may be accepted temporarily.
+
+Create an ignore file.
+
+```bash
+vi .trivyignore
+```
+
+Example.
+
+```text
+CVE-2024-12345
+
+CVE-2024-56789
+```
+
+Run.
+
+```bash
+trivy image \
+--ignorefile .trivyignore \
+payment-service:latest
+```
+
+Use ignore files only after formal security approval.
+
+---
+
+# Severity Filtering
+
+Scan only HIGH and CRITICAL vulnerabilities.
+
+```bash
+trivy image \
+--severity HIGH,CRITICAL \
+payment-service:latest
+```
+
+Include MEDIUM severity.
+
+```bash
+trivy image \
+--severity MEDIUM,HIGH,CRITICAL \
+payment-service:latest
+```
+
+---
+
+# Exit Codes
+
+Exit codes determine whether the CI/CD pipeline continues.
+
+Example.
+
+```bash
+trivy image \
+--exit-code 1 \
+--severity HIGH,CRITICAL \
+payment-service:latest
+```
+
+Behavior.
+
+```text
+No HIGH/CRITICAL
+
+↓
+
+Exit Code 0
+
+↓
+
+Pipeline Continues
+```
+
+```text
+HIGH/CRITICAL Found
+
+↓
+
+Exit Code 1
+
+↓
+
+Pipeline Fails
+```
+
+---
+
+# Secret Scanning
+
+Trivy detects exposed secrets such as:
+
+- AWS Access Keys
+- AWS Secret Keys
+- GitHub Tokens
+- GitLab Tokens
+- Private Keys
+- API Keys
+- Passwords
+
+Run.
+
+```bash
+trivy fs \
+--scanners secret .
+```
+
+Example output.
+
+```text
+HIGH
+
+AWS Secret Key
+
+Location
+
+config/application.yml
+```
+
+---
+
+# License Scanning
+
+Organizations often restrict software licenses.
+
+Scan licenses.
+
+```bash
+trivy fs \
+--scanners license .
+```
+
+Example.
+
+```text
+MIT
+
+Apache-2.0
+
+GPL-3.0
+```
+
+This helps ensure compliance with organizational licensing policies.
+
+---
+
+# Kubernetes RBAC
+
+When scanning Kubernetes clusters, Trivy requires appropriate permissions.
+
+Example architecture.
+
+```text
+Trivy Operator
+
+↓
+
+Service Account
+
+↓
+
+ClusterRole
+
+↓
+
+ClusterRoleBinding
+
+↓
+
+Kubernetes API
+```
+
+Example Service Account.
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trivy
+  namespace: trivy-system
+```
+
+Example ClusterRole.
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: trivy-role
+rules:
+- apiGroups: [""]
+  resources:
+  - pods
+  - namespaces
+  - nodes
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+```
+
+Example ClusterRoleBinding.
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: trivy-binding
+subjects:
+- kind: ServiceAccount
+  name: trivy
+  namespace: trivy-system
+roleRef:
+  kind: ClusterRole
+  name: trivy-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+---
+
+# Enterprise Best Practices
+
+- Use a centralized `trivy.yaml` across all projects.
+- Store registry credentials in a secrets manager.
+- Scan only authenticated images from trusted registries.
+- Fail the pipeline for HIGH and CRITICAL vulnerabilities.
+- Keep the vulnerability database updated daily.
+- Review ignored CVEs periodically and remove them once fixes are available.
+- Use dedicated Kubernetes service accounts with least-privilege RBAC.
+- Clean the cache periodically on build agents to avoid stale data.
+- Integrate secret and license scanning into every CI/CD pipeline.
+- Generate machine-readable reports (SARIF, JSON) for security dashboards.
+
