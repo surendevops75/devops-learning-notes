@@ -1048,3 +1048,643 @@ roleRef:
 - Integrate secret and license scanning into every CI/CD pipeline.
 - Generate machine-readable reports (SARIF, JSON) for security dashboards.
 
+---
+
+# Filesystem Scanning
+
+Filesystem scanning analyzes application source code, configuration files, dependencies, secrets, licenses, and Infrastructure as Code (IaC) before building a container image.
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+Application Source Code
+
+↓
+
+Trivy Filesystem Scan
+
+↓
+
+Vulnerabilities
+
+Secrets
+
+Misconfigurations
+
+Licenses
+
+↓
+
+Security Report
+```
+
+Run a filesystem scan.
+
+```bash
+trivy fs .
+```
+
+Scan a specific directory.
+
+```bash
+trivy fs /opt/projects/payment-service
+```
+
+Scan only vulnerabilities.
+
+```bash
+trivy fs \
+--scanners vuln .
+```
+
+---
+
+# Git Repository Scanning
+
+Trivy can scan Git repositories without requiring a local clone.
+
+```bash
+trivy repo https://github.com/company/payment-service
+```
+
+Private repositories require authentication.
+
+Example.
+
+```bash
+export GITHUB_TOKEN=<token>
+
+trivy repo https://github.com/company/payment-service
+```
+
+Repository scanning detects:
+
+- Vulnerable dependencies
+- Secrets
+- Misconfigurations
+- License issues
+
+---
+
+# Docker Image Scanning
+
+Container image scanning is one of Trivy's most common production use cases.
+
+## Architecture
+
+```text
+Docker Build
+
+↓
+
+Docker Image
+
+↓
+
+Trivy
+
+↓
+
+Extract Layers
+
+↓
+
+Operating System Packages
+
+↓
+
+Application Dependencies
+
+↓
+
+Vulnerability Database
+
+↓
+
+Security Report
+```
+
+Scan a local image.
+
+```bash
+trivy image payment-service:latest
+```
+
+Scan a remote image.
+
+```bash
+trivy image nginx:latest
+```
+
+Scan only HIGH and CRITICAL vulnerabilities.
+
+```bash
+trivy image \
+--severity HIGH,CRITICAL \
+payment-service:latest
+```
+
+Ignore unfixed vulnerabilities.
+
+```bash
+trivy image \
+--ignore-unfixed \
+payment-service:latest
+```
+
+Exit with failure when vulnerabilities are found.
+
+```bash
+trivy image \
+--exit-code 1 \
+--severity HIGH,CRITICAL \
+payment-service:latest
+```
+
+---
+
+# Kubernetes Scanning
+
+Trivy supports scanning Kubernetes clusters and Kubernetes manifests.
+
+## Scan Kubernetes Cluster
+
+```bash
+trivy k8s cluster
+```
+
+## Scan a Namespace
+
+```bash
+trivy k8s namespace production
+```
+
+## Scan Pods
+
+```bash
+trivy k8s pod payment-service
+```
+
+---
+
+# Kubernetes Manifest Scanning
+
+Scan deployment manifests before deployment.
+
+```bash
+trivy config k8s/
+```
+
+Scan a single YAML file.
+
+```bash
+trivy config deployment.yaml
+```
+
+Trivy detects:
+
+- Privileged containers
+- Missing resource limits
+- Containers running as root
+- Missing securityContext
+- Insecure capabilities
+- Insecure hostPath mounts
+
+---
+
+# Terraform Scanning
+
+Trivy scans Infrastructure as Code before infrastructure provisioning.
+
+```text
+Terraform Code
+
+↓
+
+Trivy Config Scan
+
+↓
+
+Security Checks
+
+↓
+
+Deployment
+```
+
+Scan Terraform files.
+
+```bash
+trivy config terraform/
+```
+
+Example findings.
+
+```text
+HIGH
+
+S3 Bucket Public Access
+
+HIGH
+
+Security Group Open to 0.0.0.0/0
+
+MEDIUM
+
+Encryption Disabled
+```
+
+---
+
+# Helm Chart Scanning
+
+Scan Helm charts.
+
+```bash
+trivy config helm-chart/
+```
+
+This identifies insecure Kubernetes configurations before deployment.
+
+---
+
+# Secret Scanning Example
+
+Example application.
+
+```text
+payment-service/
+
+├── app.py
+├── config.yml
+├── secrets.env
+└── Dockerfile
+```
+
+Run.
+
+```bash
+trivy fs \
+--scanners secret .
+```
+
+Possible output.
+
+```text
+HIGH
+
+AWS Secret Access Key
+
+File
+
+secrets.env
+```
+
+---
+
+# Misconfiguration Scanning
+
+Trivy detects common security misconfigurations.
+
+Examples include:
+
+- Public S3 buckets
+- Unencrypted storage
+- Privileged containers
+- Containers running as root
+- Missing security contexts
+- Excessive Linux capabilities
+- Open security groups
+
+Example.
+
+```bash
+trivy config infrastructure/
+```
+
+---
+
+# SBOM Generation
+
+Software Bill of Materials (SBOM) provides an inventory of software components.
+
+## Architecture
+
+```text
+Docker Image
+
+↓
+
+Trivy
+
+↓
+
+Package Discovery
+
+↓
+
+Generate SBOM
+
+↓
+
+Compliance
+
+Security
+
+Auditing
+```
+
+Generate CycloneDX SBOM.
+
+```bash
+trivy image \
+--format cyclonedx \
+-o sbom.json \
+payment-service:latest
+```
+
+Generate SPDX SBOM.
+
+```bash
+trivy image \
+--format spdx-json \
+-o sbom-spdx.json \
+payment-service:latest
+```
+
+Benefits:
+
+- Supply chain visibility
+- License compliance
+- Dependency inventory
+- Faster vulnerability response
+
+---
+
+# Report Formats
+
+Trivy supports multiple output formats.
+
+| Format | Use Case |
+|---------|----------|
+| Table | Human-readable reports |
+| JSON | Automation |
+| SARIF | GitHub Security |
+| CycloneDX | SBOM |
+| SPDX | SBOM |
+| Template | Custom reporting |
+
+Example JSON report.
+
+```bash
+trivy image \
+--format json \
+-o report.json \
+payment-service:latest
+```
+
+Generate SARIF report.
+
+```bash
+trivy image \
+--format sarif \
+-o trivy-results.sarif \
+payment-service:latest
+```
+
+---
+
+# Jenkins Integration
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Build Image
+
+↓
+
+Trivy Scan
+
+↓
+
+PASS
+
+↓
+
+Push Image
+
+OR
+
+FAIL
+
+↓
+
+Stop Pipeline
+```
+
+Install Trivy on every Jenkins build agent.
+
+Verify.
+
+```bash
+trivy --version
+```
+
+Store registry credentials securely using Jenkins Credentials.
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                git branch: 'main',
+                    url: 'https://github.com/company/payment-service.git'
+
+            }
+
+        }
+
+        stage('Build Image') {
+
+            steps {
+
+                sh 'docker build -t payment-service:latest .'
+
+            }
+
+        }
+
+        stage('Trivy Scan') {
+
+            steps {
+
+                sh '''
+                trivy image \
+                --severity HIGH,CRITICAL \
+                --exit-code 1 \
+                payment-service:latest
+                '''
+            }
+
+        }
+
+        stage('Push Image') {
+
+            steps {
+
+                sh 'docker push payment-service:latest'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Store the following secrets.
+
+```text
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+
+AWS_REGION
+```
+
+If using a private registry, also configure the required registry credentials.
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Trivy Scan
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  security:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Build Image
+
+        run: docker build -t payment-service:latest .
+
+      - name: Run Trivy
+
+        uses: aquasecurity/trivy-action@0.28.0
+
+        with:
+          image-ref: payment-service:latest
+          format: table
+          exit-code: '1'
+          severity: HIGH,CRITICAL
+```
+
+---
+
+# GitLab CI Integration
+
+```yaml
+trivy_scan:
+
+  image: aquasec/trivy:latest
+
+  script:
+
+    - trivy image \
+      --severity HIGH,CRITICAL \
+      --exit-code 1 \
+      payment-service:latest
+```
+
+---
+
+# Recommended Scan Order
+
+```text
+Filesystem Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Secret Scan
+
+↓
+
+Build Docker Image
+
+↓
+
+Container Image Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Push Container Registry
+
+↓
+
+Deploy to Kubernetes
+```
+
+---
+
