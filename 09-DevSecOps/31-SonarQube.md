@@ -1680,3 +1680,584 @@ Deployment
 
 ---
 
+# Enterprise DevSecOps Pipeline
+
+The following pipeline represents how SonarQube is integrated into a production-grade DevSecOps workflow.
+
+```text
+                    Developer
+                         │
+                         ▼
+                 Feature Branch
+                         │
+                         ▼
+                  Git Push
+                         │
+                         ▼
+                 Pull Request (PR)
+                         │
+                         ▼
+                  Code Review
+                         │
+                         ▼
+                  Merge to Main
+                         │
+                         ▼
+              Jenkins / GitHub Actions
+                         │
+                         ▼
+                 Checkout Source
+                         │
+                         ▼
+                  Install Dependencies
+                         │
+                         ▼
+                  Compile Application
+                         │
+                         ▼
+                     Unit Tests
+                         │
+                         ▼
+                 Code Coverage (JaCoCo)
+                         │
+                         ▼
+                SonarQube Code Analysis
+                         │
+                         ▼
+                    Quality Gate
+               ┌─────────┴─────────┐
+               │                   │
+             PASS                FAIL
+               │                   │
+               │             Stop Pipeline
+               │                   │
+               ▼                   ▼
+        Software Composition   Developer Fix
+        Analysis (SCA)              │
+               │                   │
+               ▼                   │
+        Secret Scanning            │
+               │                   │
+               ▼                   │
+        Build Docker Image         │
+               │                   │
+               ▼                   │
+      Trivy Container Scan         │
+               │                   │
+               ▼                   │
+          Generate SBOM            │
+               │                   │
+               ▼                   │
+        Cosign Image Signing       │
+               │                   │
+               ▼                   │
+        Push to Amazon ECR         │
+               │                   │
+               ▼                   │
+      Update GitOps Repository     │
+               │                   │
+               ▼                   │
+             ArgoCD Sync           │
+               │                   │
+               ▼                   │
+        Deploy to Amazon EKS       │
+               │
+               ▼
+           Smoke Tests
+               │
+               ▼
+          Production
+               │
+               ▼
+         Prometheus Metrics
+               │
+               ▼
+        Grafana Dashboards
+               │
+               ▼
+            ELK Logging
+```
+
+---
+
+# Reports & Dashboards
+
+SonarQube generates comprehensive reports that help developers, security engineers, and managers understand code quality and security.
+
+## Project Dashboard
+
+Displays
+
+- Overall Quality Gate Status
+- Bugs
+- Vulnerabilities
+- Code Smells
+- Security Hotspots
+- Technical Debt
+- Code Coverage
+- Duplicate Code
+- Reliability Rating
+- Maintainability Rating
+
+---
+
+## Security Dashboard
+
+Security teams primarily monitor:
+
+```text
+Critical Vulnerabilities
+
+↓
+
+High Vulnerabilities
+
+↓
+
+Security Hotspots
+
+↓
+
+Reviewed Hotspots
+
+↓
+
+Resolved Issues
+```
+
+---
+
+## Technical Debt Dashboard
+
+Provides visibility into:
+
+- Estimated remediation time
+- Maintainability rating
+- Code smells
+- Duplicate code
+- Long-term improvement trends
+
+---
+
+## Pull Request Dashboard
+
+Developers can review:
+
+- New bugs
+- New vulnerabilities
+- Coverage changes
+- Quality Gate status
+- Inline issue comments
+
+---
+
+# Enterprise Best Practices
+
+## Installation
+
+- Use PostgreSQL instead of the embedded database.
+- Deploy SonarQube behind an Nginx reverse proxy.
+- Always enable HTTPS.
+- Use DNS instead of IP addresses.
+- Schedule regular database backups.
+
+---
+
+## Authentication
+
+- Integrate with LDAP or Azure AD.
+- Enable Single Sign-On (SSO).
+- Disable default administrator credentials.
+- Enforce Multi-Factor Authentication (through the identity provider).
+
+---
+
+## Security
+
+- Store API tokens in Jenkins Credentials, GitHub Secrets, or a secrets manager.
+- Never hardcode tokens in repositories.
+- Rotate tokens periodically.
+- Restrict administrative access using RBAC.
+- Audit user activity regularly.
+
+---
+
+## CI/CD
+
+- Scan every Pull Request.
+- Block deployments when the Quality Gate fails.
+- Enforce minimum code coverage.
+- Review Security Hotspots before release.
+- Run SonarQube before Docker image creation.
+
+---
+
+## Operations
+
+- Monitor CPU, memory, and database usage.
+- Upgrade SonarQube regularly.
+- Keep language plugins up to date.
+- Archive inactive projects.
+- Monitor Elasticsearch health.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Ignoring Quality Gate failures.
+
+Result
+
+```text
+Vulnerable Code
+
+↓
+
+Production
+
+↓
+
+Security Incident
+```
+
+---
+
+## Mistake 2
+
+Using the administrator token in CI/CD.
+
+Correct approach
+
+```text
+Jenkins
+
+↓
+
+Dedicated Service Account
+
+↓
+
+Project Token
+```
+
+---
+
+## Mistake 3
+
+Skipping Pull Request analysis.
+
+Result
+
+```text
+Unreviewed Code
+
+↓
+
+Merged
+
+↓
+
+Production Issues
+```
+
+---
+
+## Mistake 4
+
+Scanning only before releases.
+
+Correct approach
+
+```text
+Every Commit
+
+↓
+
+Every Pull Request
+
+↓
+
+Every Build
+```
+
+---
+
+## Mistake 5
+
+Ignoring Security Hotspots.
+
+Remember:
+
+A Security Hotspot requires manual review before deciding whether it is a true vulnerability or acceptable in context.
+
+---
+
+# Common Troubleshooting
+
+## Issue 1
+
+### Quality Gate Failed
+
+**Cause**
+
+Critical vulnerabilities, blocker bugs, or insufficient test coverage.
+
+**Resolution**
+
+```text
+Pipeline Failed
+
+↓
+
+Open Sonar Dashboard
+
+↓
+
+Review Findings
+
+↓
+
+Fix Code
+
+↓
+
+Commit Changes
+
+↓
+
+Pipeline Re-runs
+
+↓
+
+Quality Gate Passed
+```
+
+---
+
+## Issue 2
+
+### Sonar Scanner Authentication Failed
+
+**Cause**
+
+Expired or incorrect authentication token.
+
+**Resolution**
+
+```text
+Generate New Token
+
+↓
+
+Update Jenkins Credentials
+
+↓
+
+Restart Pipeline
+```
+
+---
+
+## Issue 3
+
+### Coverage Report Not Displayed
+
+**Cause**
+
+JaCoCo report was not generated or not referenced correctly.
+
+**Resolution**
+
+```text
+Run Unit Tests
+
+↓
+
+Generate JaCoCo Report
+
+↓
+
+Configure sonar.coverage.jacoco.xmlReportPaths
+
+↓
+
+Run Sonar Analysis Again
+```
+
+---
+
+## Issue 4
+
+### SonarQube Server Cannot Connect to PostgreSQL
+
+**Cause**
+
+Database service is unavailable or JDBC configuration is incorrect.
+
+**Resolution**
+
+```text
+Check PostgreSQL
+
+↓
+
+Verify JDBC URL
+
+↓
+
+Verify Username
+
+↓
+
+Verify Password
+
+↓
+
+Restart SonarQube
+```
+
+---
+
+## Issue 5
+
+### Analysis Takes Too Long
+
+**Cause**
+
+Large repositories or unnecessary files included in the scan.
+
+**Resolution**
+
+```text
+Exclude Generated Files
+
+↓
+
+Exclude Build Artifacts
+
+↓
+
+Optimize Scanner Configuration
+
+↓
+
+Re-run Analysis
+```
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### Explain how SonarQube fits into your DevSecOps pipeline.
+
+**Answer**
+
+SonarQube runs after unit testing and code coverage generation. It performs static code analysis, uploads results to the SonarQube server, evaluates the Quality Gate, and blocks the pipeline if quality or security requirements are not met. Only code that passes the Quality Gate proceeds to container build and deployment.
+
+---
+
+## Question 2
+
+### Why should SonarQube run before Docker image creation?
+
+**Answer**
+
+Running SonarQube before building the container prevents insecure or low-quality code from being packaged into images, saving build time and reducing downstream risk.
+
+---
+
+## Question 3
+
+### How do you authenticate Jenkins with SonarQube?
+
+**Answer**
+
+Generate a project token in SonarQube, store it securely in Jenkins Credentials, configure the SonarQube server in Jenkins, and use `withSonarQubeEnv` within the Jenkins pipeline.
+
+---
+
+## Question 4
+
+### What is a Quality Gate?
+
+**Answer**
+
+A Quality Gate is a set of predefined quality conditions, such as zero critical vulnerabilities and minimum code coverage. The pipeline continues only if all conditions are satisfied.
+
+---
+
+## Question 5
+
+### What is the difference between a Quality Profile and a Quality Gate?
+
+**Answer**
+
+A Quality Profile defines the analysis rules applied to the code, while a Quality Gate evaluates the analysis results against defined thresholds to determine whether the build passes.
+
+---
+
+## Question 6
+
+### How do you secure SonarQube in production?
+
+**Answer**
+
+Use HTTPS, integrate with LDAP or SSO, enforce RBAC, use dedicated service accounts, store tokens securely, and regularly update SonarQube and its plugins.
+
+---
+
+## Question 7
+
+### How do you analyze Pull Requests?
+
+**Answer**
+
+Configure the CI pipeline to trigger SonarQube analysis on every Pull Request. Developers review the Quality Gate results before the PR is approved and merged.
+
+---
+
+## Question 8
+
+### How do you manage SonarQube permissions?
+
+**Answer**
+
+Assign permissions through groups and roles. Developers receive analysis permissions, Security teams review findings, Auditors have read-only access, and CI uses dedicated service accounts with minimal privileges.
+
+---
+
+## Question 9
+
+### How do you troubleshoot a failed Quality Gate?
+
+**Answer**
+
+Open the SonarQube dashboard, identify blocker issues or failed conditions, fix the source code, commit the changes, and rerun the pipeline until the Quality Gate passes.
+
+---
+
+## Question 10
+
+### Which reports do development and security teams commonly use?
+
+**Answer**
+
+Teams monitor project dashboards, security reports, technical debt metrics, code coverage trends, duplicate code statistics, and Pull Request analysis to improve code quality and security continuously.
+
+---
+
+# Key Takeaways
+
+- SonarQube is an enterprise SAST platform integrated into CI/CD pipelines.
+- Install SonarQube using PostgreSQL and expose it securely through an HTTPS reverse proxy.
+- Integrate with LDAP, OAuth, or SSO for centralized authentication.
+- Use RBAC and dedicated CI service accounts with project-specific tokens.
+- Configure Quality Profiles and Quality Gates to enforce coding and security standards.
+- Integrate SonarQube with Jenkins, GitHub Actions, or GitLab CI to automate analysis.
+- Analyze every Pull Request and block deployments when the Quality Gate fails.
+- Run SonarQube before building container images to stop insecure code early.
+- Continuously monitor reports, review Security Hotspots, and maintain the SonarQube platform.
