@@ -540,3 +540,516 @@ Low Severity : 5
 ```
 
 If policy violations are detected, the pipeline should fail and require remediation before continuing.
+
+---
+
+# Veracode Configuration
+
+Veracode can be configured using:
+
+- API Credentials
+- Credentials File
+- Environment Variables
+- CI/CD Secrets
+- Policy Configuration
+
+A centralized configuration ensures consistent security scanning across development, testing, and production environments.
+
+---
+
+# Configuration Priority
+
+When multiple authentication methods are available, Veracode uses the following priority.
+
+```text
+Environment Variables
+
+↓
+
+Credentials File
+
+↓
+
+Interactive Login (CLI)
+
+↓
+
+Default Configuration
+```
+
+---
+
+# API Authentication
+
+Veracode APIs use API Key authentication instead of username/password authentication.
+
+Environment variables.
+
+```bash
+export VERACODE_API_KEY_ID=xxxxxxxxxxxxxxxx
+
+export VERACODE_API_KEY_SECRET=xxxxxxxxxxxxxxxx
+```
+
+Credentials file.
+
+```ini
+[default]
+
+veracode_api_key_id=xxxxxxxxxxxxxxxx
+
+veracode_api_key_secret=xxxxxxxxxxxxxxxx
+```
+
+Verify authentication.
+
+```bash
+veracode applications list
+```
+
+---
+
+# Enterprise Credential Management
+
+Never store API credentials inside:
+
+- Source code
+- Git repositories
+- Jenkinsfiles
+- Docker images
+- Terraform variables
+
+Store credentials securely using:
+
+- Jenkins Credentials
+- GitHub Secrets
+- GitLab CI Variables
+- AWS Secrets Manager
+- Azure Key Vault
+- HashiCorp Vault
+
+Architecture.
+
+```text
+Developer
+
+↓
+
+Secret Manager
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Veracode API
+
+↓
+
+Security Scan
+```
+
+---
+
+# Pipeline Scan Configuration
+
+Pipeline Scan is optimized for CI/CD.
+
+Example.
+
+```bash
+java -jar pipeline-scan.jar \
+--file target/payment-service.jar \
+--fail_on_severity="Very High,High"
+```
+
+Behavior.
+
+```text
+Application Build
+
+↓
+
+Upload Binary
+
+↓
+
+Security Scan
+
+↓
+
+Policy Evaluation
+
+↓
+
+PASS
+
+↓
+
+Continue Pipeline
+
+OR
+
+FAIL
+
+↓
+
+Pipeline Stops
+```
+
+---
+
+# Policy Configuration
+
+Security policies define the minimum security requirements that applications must satisfy before deployment.
+
+Example policy.
+
+| Rule | Value |
+|------|-------|
+| Very High Severity | 0 |
+| High Severity | 0 |
+| Medium Severity | Review Required |
+| Low Severity | Allowed |
+| CWE Coverage | Enabled |
+
+Example workflow.
+
+```text
+Pipeline Scan
+
+↓
+
+Policy Evaluation
+
+↓
+
+PASS
+
+↓
+
+Deployment
+
+OR
+
+FAIL
+
+↓
+
+Developer Remediation
+```
+
+---
+
+# Sandbox Configuration
+
+Sandboxes provide isolated environments for testing without affecting production results.
+
+Example.
+
+```text
+Payment Service
+
+├── Production
+
+├── QA Sandbox
+
+├── Development Sandbox
+
+└── Feature Sandbox
+```
+
+Benefits.
+
+- Test security fixes
+- Validate new features
+- Separate development from production
+- Prevent false production reports
+
+---
+
+# Applications
+
+Each application should have its own profile.
+
+Example.
+
+```text
+Organization
+
+│
+
+├── Payment Service
+
+├── Inventory Service
+
+├── User Service
+
+├── Order Service
+
+└── Notification Service
+```
+
+Benefits.
+
+- Separate reporting
+- Individual policies
+- Easier auditing
+- Team ownership
+
+---
+
+# Teams
+
+Applications should be grouped by business ownership.
+
+Example.
+
+```text
+Organization
+
+│
+
+├── Digital Banking
+
+├── Platform Engineering
+
+├── Mobile Team
+
+├── Security Team
+
+└── Shared Services
+```
+
+This simplifies permission management and reporting.
+
+---
+
+# User Management
+
+Typical enterprise users include:
+
+- Security Administrator
+- Security Engineer
+- Development Lead
+- Developer
+- Auditor
+- Compliance Officer
+- CI/CD Service Account
+
+Avoid sharing user accounts.
+
+Each user should have an individual identity.
+
+---
+
+# Role-Based Access Control (RBAC)
+
+Example permission model.
+
+| Role | Responsibilities |
+|------|------------------|
+| Administrator | Manage platform, users, policies, integrations |
+| Security Team | Review findings, approve mitigations, manage scans |
+| Development Lead | Manage application scans and remediation |
+| Developer | View findings and fix vulnerabilities |
+| Auditor | Read-only access to reports and compliance data |
+| CI Service Account | Execute automated scans only |
+
+Apply the Principle of Least Privilege.
+
+---
+
+# Single Sign-On (SSO)
+
+Large organizations integrate Veracode with corporate identity providers.
+
+Supported options include:
+
+- SAML
+- OIDC
+- Azure AD
+- Okta
+- Ping Identity
+
+Authentication flow.
+
+```text
+Developer
+
+↓
+
+Corporate Identity Provider
+
+↓
+
+Single Sign-On
+
+↓
+
+Veracode Platform
+```
+
+Benefits.
+
+- Centralized authentication
+- Multi-Factor Authentication
+- User lifecycle management
+- Reduced password management
+
+---
+
+# Proxy Configuration
+
+Some enterprise environments require outbound traffic through a proxy.
+
+Example.
+
+```bash
+export HTTPS_PROXY=http://proxy.company.com:8080
+
+export HTTP_PROXY=http://proxy.company.com:8080
+
+export NO_PROXY=localhost,127.0.0.1
+```
+
+Verify.
+
+```bash
+env | grep PROXY
+```
+
+---
+
+# Scan Modes
+
+Veracode supports multiple scan types.
+
+| Scan | Purpose |
+|------|----------|
+| Pipeline Scan | Fast CI/CD security checks |
+| Static Analysis | Comprehensive binary analysis |
+| Software Composition Analysis | Open-source dependency scanning |
+| Dynamic Analysis | Runtime web application testing |
+| Container Security | Container image assessment |
+
+Typical workflow.
+
+```text
+Developer
+
+↓
+
+Pipeline Scan
+
+↓
+
+Merge
+
+↓
+
+Static Analysis
+
+↓
+
+Production Approval
+```
+
+---
+
+# Security Policies
+
+Different applications may require different policies.
+
+Example.
+
+```text
+Critical Banking Application
+
+↓
+
+Strict Policy
+
+↓
+
+Zero High Severity Findings
+```
+
+```text
+Internal Utility
+
+↓
+
+Standard Policy
+
+↓
+
+Limited Exceptions Allowed
+```
+
+Policy-based governance ensures consistent security requirements across the organization.
+
+---
+
+# Mitigation Workflow
+
+Not every finding can be fixed immediately.
+
+Example process.
+
+```text
+Security Finding
+
+↓
+
+Developer Review
+
+↓
+
+Security Team Review
+
+↓
+
+Approve Mitigation
+
+↓
+
+Document Exception
+
+↓
+
+Next Release
+```
+
+All mitigations should be documented and periodically reviewed.
+
+---
+
+# Compliance Reporting
+
+Veracode provides reports that support compliance frameworks such as:
+
+- PCI DSS
+- ISO 27001
+- SOC 2
+- NIST
+- HIPAA
+- OWASP ASVS
+
+Reports help demonstrate secure development practices during audits.
+
+---
+
+# Enterprise Best Practices
+
+- Integrate Veracode into every CI/CD pipeline.
+- Use Pipeline Scan for rapid feedback during development.
+- Schedule full Static Analysis for release builds.
+- Enforce security policies before production deployments.
+- Store API credentials in a secure secrets manager.
+- Integrate SSO with the corporate identity provider.
+- Use RBAC and least-privilege access for all users.
+- Separate production and development scans using sandboxes.
+- Review mitigations regularly and remove expired exceptions.
+- Monitor compliance reports as part of regular security governance.
