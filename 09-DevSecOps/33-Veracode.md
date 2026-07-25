@@ -1053,3 +1053,580 @@ Reports help demonstrate secure development practices during audits.
 - Separate production and development scans using sandboxes.
 - Review mitigations regularly and remove expired exceptions.
 - Monitor compliance reports as part of regular security governance.
+
+---
+
+# Static Application Security Testing (SAST)
+
+Static Analysis scans compiled application binaries without executing the application.
+
+Unlike Pipeline Scan, Static Analysis performs a comprehensive security assessment and is typically executed for release builds.
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+Build Application
+
+↓
+
+Package Binary
+
+↓
+
+Upload to Veracode
+
+↓
+
+Static Analysis
+
+↓
+
+Security Findings
+
+↓
+
+Policy Evaluation
+
+↓
+
+PASS / FAIL
+```
+
+---
+
+# Supported Package Types
+
+Veracode supports numerous application packages.
+
+Examples include:
+
+- Java (.jar, .war, .ear)
+- .NET (.dll, .exe)
+- JavaScript
+- Python
+- Go
+- PHP
+- Ruby
+- Android APK
+- iOS IPA
+
+---
+
+# Upload an Application
+
+Example using the CLI.
+
+```bash
+veracode static scan submit \
+--appname "Payment Service" \
+--file target/payment-service.jar
+```
+
+Workflow.
+
+```text
+Package Application
+
+↓
+
+Upload Binary
+
+↓
+
+Static Analysis
+
+↓
+
+Results Available
+```
+
+---
+
+# Static Analysis Results
+
+Typical findings include:
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Command Injection
+- Path Traversal
+- XML External Entity (XXE)
+- Insecure Cryptography
+- Authentication Issues
+- Authorization Issues
+
+Each finding includes:
+
+- Severity
+- CWE ID
+- File Name
+- Line Number (when available)
+- Remediation Guidance
+
+---
+
+# Software Composition Analysis (SCA)
+
+Software Composition Analysis identifies vulnerable third-party libraries and open-source dependencies.
+
+## Architecture
+
+```text
+Application
+
+↓
+
+Dependency Analysis
+
+↓
+
+Known CVEs
+
+↓
+
+License Review
+
+↓
+
+Security Report
+```
+
+Example scan.
+
+```bash
+veracode sca scan
+```
+
+SCA identifies:
+
+- Vulnerable packages
+- Outdated dependencies
+- License violations
+- Dependency risk
+
+---
+
+# Dependency Risk Example
+
+```text
+Spring Boot
+
+↓
+
+Jackson
+
+↓
+
+Log4j
+
+↓
+
+Known CVE
+
+↓
+
+Upgrade Required
+```
+
+Benefits.
+
+- Early detection of vulnerable libraries
+- Faster remediation
+- Supply chain visibility
+- License compliance
+
+---
+
+# Dynamic Application Security Testing (DAST)
+
+Dynamic Analysis evaluates a running application by simulating real-world attacks.
+
+Unlike SAST, the application must be deployed and accessible.
+
+## Architecture
+
+```text
+Running Web Application
+
+↓
+
+Veracode DAST
+
+↓
+
+HTTP Requests
+
+↓
+
+Attack Simulation
+
+↓
+
+Security Findings
+```
+
+Typical vulnerabilities detected:
+
+- Cross-Site Scripting (XSS)
+- SQL Injection
+- Session Management Issues
+- Authentication Weaknesses
+- CSRF
+- Security Header Issues
+
+---
+
+# API Security Testing
+
+Modern applications expose REST and GraphQL APIs.
+
+Veracode validates API endpoints for security vulnerabilities.
+
+Architecture.
+
+```text
+API Specification
+
+↓
+
+API Scan
+
+↓
+
+Authentication
+
+↓
+
+Endpoint Testing
+
+↓
+
+Security Report
+```
+
+API testing helps identify:
+
+- Broken authentication
+- Authorization issues
+- Injection vulnerabilities
+- Sensitive data exposure
+- Improper API configuration
+
+---
+
+# Container Security
+
+Veracode also evaluates container images for security risks.
+
+Typical workflow.
+
+```text
+Docker Image
+
+↓
+
+Veracode
+
+↓
+
+Package Analysis
+
+↓
+
+Known CVEs
+
+↓
+
+Policy Evaluation
+```
+
+Container analysis includes:
+
+- Operating system packages
+- Application libraries
+- Vulnerable dependencies
+- Configuration issues
+
+---
+
+# Secret Detection
+
+Veracode detects sensitive credentials committed to source code.
+
+Examples include:
+
+- AWS Access Keys
+- Azure Credentials
+- GitHub Tokens
+- API Keys
+- Private Keys
+- Passwords
+
+Workflow.
+
+```text
+Source Code
+
+↓
+
+Secret Detection
+
+↓
+
+Credential Found
+
+↓
+
+Developer Notification
+```
+
+Secrets should be removed immediately and rotated.
+
+---
+
+# Jenkins Integration
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Pipeline Scan
+
+↓
+
+Static Analysis
+
+↓
+
+Policy Evaluation
+
+↓
+
+Continue Pipeline
+```
+
+Store Veracode API credentials in Jenkins Credentials.
+
+Required credentials.
+
+```text
+VERACODE_API_KEY_ID
+
+VERACODE_API_KEY_SECRET
+```
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    environment {
+
+        VERACODE_API_KEY_ID = credentials('veracode-api-id')
+        VERACODE_API_KEY_SECRET = credentials('veracode-api-secret')
+
+    }
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                git branch: 'main',
+                    url: 'https://github.com/company/payment-service.git'
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Pipeline Scan') {
+
+            steps {
+
+                sh '''
+                java -jar pipeline-scan.jar \
+                --file target/payment-service.jar \
+                --fail_on_severity="Very High,High"
+                '''
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Store the following GitHub Secrets.
+
+```text
+VERACODE_API_KEY_ID
+
+VERACODE_API_KEY_SECRET
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Veracode Pipeline Scan
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  veracode:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+
+        run: mvn clean package
+
+      - name: Run Veracode Pipeline Scan
+
+        env:
+          VERACODE_API_KEY_ID: ${{ secrets.VERACODE_API_KEY_ID }}
+          VERACODE_API_KEY_SECRET: ${{ secrets.VERACODE_API_KEY_SECRET }}
+
+        run: |
+          java -jar pipeline-scan.jar \
+          --file target/payment-service.jar \
+          --fail_on_severity="Very High,High"
+```
+
+---
+
+# GitLab CI Integration
+
+```yaml
+veracode_scan:
+
+  image: eclipse-temurin:17
+
+  script:
+
+    - mvn clean package
+
+    - java -jar pipeline-scan.jar \
+      --file target/payment-service.jar \
+      --fail_on_severity="Very High,High"
+```
+
+---
+
+# Report Formats
+
+Veracode provides multiple reporting options.
+
+| Report | Purpose |
+|---------|----------|
+| PDF | Executive reports |
+| HTML | Security review |
+| JSON | CI/CD automation |
+| XML | Tool integration |
+| CSV | Compliance and auditing |
+
+---
+
+# Recommended Scan Strategy
+
+```text
+Developer
+
+↓
+
+Pipeline Scan
+
+↓
+
+Pull Request
+
+↓
+
+Merge
+
+↓
+
+Build
+
+↓
+
+Static Analysis
+
+↓
+
+Software Composition Analysis
+
+↓
+
+Policy Evaluation
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Image Scan
+
+↓
+
+Deploy
+```
+
+---
+
