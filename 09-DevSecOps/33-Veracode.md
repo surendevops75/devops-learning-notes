@@ -1630,3 +1630,607 @@ Deploy
 
 ---
 
+# Enterprise DevSecOps Pipeline
+
+The following workflow illustrates how Veracode integrates into a production DevSecOps pipeline.
+
+```text
+                    Developer
+                         │
+                         ▼
+                  Feature Branch
+                         │
+                         ▼
+                     Git Push
+                         │
+                         ▼
+                  Pull Request
+                         │
+                         ▼
+                  Code Review
+                         │
+                         ▼
+                  Merge to Main
+                         │
+                         ▼
+             Jenkins / GitHub Actions
+                         │
+                         ▼
+                 Checkout Source Code
+                         │
+                         ▼
+                  Compile Application
+                         │
+                         ▼
+                     Unit Testing
+                         │
+                         ▼
+                  SonarQube Analysis
+                         │
+                         ▼
+                   Quality Gate
+                         │
+                         ▼
+               Veracode Pipeline Scan
+                         │
+                         ▼
+               Static Analysis (SAST)
+                         │
+                         ▼
+      Software Composition Analysis (SCA)
+                         │
+                         ▼
+                 Policy Evaluation
+                  ┌────────┴────────┐
+                  │                 │
+                PASS              FAIL
+                  │                 │
+                  ▼                 ▼
+           Build Docker Image   Stop Pipeline
+                  │
+                  ▼
+             Trivy Image Scan
+                  │
+                  ▼
+             Generate SBOM
+                  │
+                  ▼
+          Cosign Image Signing
+                  │
+                  ▼
+            Push to Amazon ECR
+                  │
+                  ▼
+       Update GitOps Repository
+                  │
+                  ▼
+              ArgoCD Sync
+                  │
+                  ▼
+           Deploy to Amazon EKS
+                  │
+                  ▼
+             Smoke Testing
+                  │
+                  ▼
+              Production
+```
+
+---
+
+# Policy Evaluation
+
+Security policies determine whether an application satisfies the organization's security requirements.
+
+Typical policy checks include:
+
+- Very High severity flaws
+- High severity flaws
+- Open-source vulnerabilities
+- Policy compliance
+- CWE coverage
+- Scan completion status
+
+Example workflow.
+
+```text
+Scan Completed
+
+↓
+
+Policy Evaluation
+
+↓
+
+Compliant
+
+↓
+
+Continue Deployment
+
+OR
+
+Non-Compliant
+
+↓
+
+Block Release
+```
+
+---
+
+# Report Analysis
+
+Veracode provides detailed remediation guidance for every finding.
+
+Typical information includes:
+
+- Severity
+- CWE ID
+- CVE ID
+- Affected Component
+- File Name
+- Function Name
+- Remediation Guidance
+- References
+
+Example.
+
+| Finding | Severity | CWE |
+|---------|----------|-----|
+| SQL Injection | Very High | CWE-89 |
+| Cross-Site Scripting | High | CWE-79 |
+| Hardcoded Password | Medium | CWE-798 |
+
+---
+
+# Risk Prioritization
+
+Development teams should prioritize remediation using the following order.
+
+```text
+Very High
+
+↓
+
+High
+
+↓
+
+Medium
+
+↓
+
+Low
+
+↓
+
+Informational
+```
+
+Critical business applications should not proceed to production with unresolved Very High or High findings.
+
+---
+
+# Security Dashboards
+
+Veracode provides dashboards for multiple stakeholders.
+
+## Developer Dashboard
+
+Displays:
+
+- Assigned vulnerabilities
+- Fix recommendations
+- Scan history
+- Policy status
+
+---
+
+## Security Dashboard
+
+Displays:
+
+- Organization-wide risk
+- Application risk
+- Compliance status
+- Policy violations
+- Security trends
+
+---
+
+## Executive Dashboard
+
+Provides management with:
+
+- Risk posture
+- Compliance metrics
+- Application health
+- Security trends
+- Remediation progress
+
+---
+
+# Compliance Reporting
+
+Veracode supports compliance initiatives including:
+
+- PCI DSS
+- ISO 27001
+- SOC 2
+- HIPAA
+- NIST
+- OWASP ASVS
+- CIS Benchmarks
+
+Reports help demonstrate adherence to secure software development practices during audits.
+
+---
+
+# Enterprise Best Practices
+
+## CI/CD
+
+- Run Pipeline Scan on every Pull Request.
+- Perform Static Analysis for release builds.
+- Enable Software Composition Analysis for all applications.
+- Block releases when security policies fail.
+- Integrate findings into developer workflows.
+
+---
+
+## Security Governance
+
+- Define organization-wide security policies.
+- Use separate policies for critical and non-critical applications.
+- Review policy exceptions periodically.
+- Track remediation timelines.
+- Monitor security trends across applications.
+
+---
+
+## Authentication
+
+- Integrate with SAML or OIDC.
+- Enable Single Sign-On.
+- Enforce Multi-Factor Authentication through the identity provider.
+- Rotate API credentials regularly.
+- Store credentials in an enterprise secrets manager.
+
+---
+
+## Operations
+
+- Review scan failures daily.
+- Archive scan reports.
+- Keep CLI tools updated.
+- Remove unused applications.
+- Periodically review user permissions.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Running only release scans.
+
+Correct approach.
+
+```text
+Developer
+
+↓
+
+Every Pull Request
+
+↓
+
+Pipeline Scan
+
+↓
+
+Release Scan
+
+↓
+
+Production
+```
+
+---
+
+## Mistake 2
+
+Ignoring Software Composition Analysis findings.
+
+Many security incidents originate from vulnerable third-party libraries rather than custom application code.
+
+---
+
+## Mistake 3
+
+Sharing API credentials.
+
+Correct approach.
+
+```text
+CI/CD
+
+↓
+
+Dedicated Service Account
+
+↓
+
+API Credentials
+
+↓
+
+Veracode
+```
+
+---
+
+## Mistake 4
+
+Creating permanent policy exceptions.
+
+Security exceptions should:
+
+- Be documented
+- Have business justification
+- Be approved
+- Include an expiry date
+- Be reviewed regularly
+
+---
+
+## Mistake 5
+
+Ignoring developer remediation guidance.
+
+Veracode provides recommended fixes for each finding.
+
+These recommendations should be reviewed before implementing custom solutions.
+
+---
+
+# Common Troubleshooting
+
+## Issue 1
+
+### Authentication Failed
+
+**Cause**
+
+Invalid or expired API credentials.
+
+**Resolution**
+
+```text
+Verify API Keys
+
+↓
+
+Update Credentials
+
+↓
+
+Retry Scan
+```
+
+---
+
+## Issue 2
+
+### Upload Failed
+
+**Cause**
+
+Unsupported package format or incomplete build artifact.
+
+**Resolution**
+
+```text
+Build Application
+
+↓
+
+Verify Artifact
+
+↓
+
+Upload Again
+```
+
+---
+
+## Issue 3
+
+### Policy Scan Failed
+
+**Cause**
+
+Application violates one or more security policies.
+
+**Resolution**
+
+```text
+Review Findings
+
+↓
+
+Fix Vulnerabilities
+
+↓
+
+Rebuild
+
+↓
+
+Re-run Scan
+```
+
+---
+
+## Issue 4
+
+### Pipeline Scan Timeout
+
+**Cause**
+
+Large application package or network connectivity issues.
+
+**Resolution**
+
+```text
+Verify Network
+
+↓
+
+Reduce Package Size
+
+↓
+
+Retry Scan
+```
+
+---
+
+## Issue 5
+
+### SSO Login Failure
+
+**Cause**
+
+Identity provider configuration or certificate issues.
+
+**Resolution**
+
+```text
+Verify SAML/OIDC Configuration
+
+↓
+
+Validate Certificates
+
+↓
+
+Retry Authentication
+```
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is Veracode?
+
+**Answer**
+
+Veracode is a cloud-based Application Security platform that provides SAST, Software Composition Analysis, Dynamic Analysis, Container Security, API Security, Secrets Detection, Policy Management, and compliance reporting.
+
+---
+
+## Question 2
+
+### How is Veracode different from SonarQube?
+
+**Answer**
+
+SonarQube primarily focuses on code quality and static code analysis, whereas Veracode provides a broader enterprise application security platform with SAST, SCA, DAST, security policies, governance, compliance reporting, and centralized vulnerability management.
+
+---
+
+## Question 3
+
+### What is the difference between Pipeline Scan and Static Analysis?
+
+**Answer**
+
+Pipeline Scan is a lightweight scan designed for rapid CI/CD feedback, while Static Analysis performs a comprehensive binary analysis and is typically executed for release or compliance purposes.
+
+---
+
+## Question 4
+
+### Why should Veracode run before Docker image creation?
+
+**Answer**
+
+Running Veracode before building the container ensures application-level vulnerabilities are identified and remediated before packaging the application into a container image.
+
+---
+
+## Question 5
+
+### How do you authenticate CI/CD pipelines with Veracode?
+
+**Answer**
+
+Store the Veracode API Key ID and API Key Secret in a secure credential manager such as Jenkins Credentials, GitHub Secrets, GitLab CI Variables, or a dedicated secrets management solution.
+
+---
+
+## Question 6
+
+### What is Software Composition Analysis?
+
+**Answer**
+
+Software Composition Analysis identifies vulnerabilities, outdated dependencies, and license issues in third-party libraries and open-source packages used by an application.
+
+---
+
+## Question 7
+
+### What is a Veracode Policy?
+
+**Answer**
+
+A policy defines the organization's security requirements, such as acceptable vulnerability thresholds and compliance rules, that applications must satisfy before deployment.
+
+---
+
+## Question 8
+
+### Why are Sandboxes used?
+
+**Answer**
+
+Sandboxes provide isolated environments where development teams can test scans and remediation efforts without affecting production application results.
+
+---
+
+## Question 9
+
+### How do you handle policy violations?
+
+**Answer**
+
+Review the findings, prioritize remediation based on severity, resolve vulnerabilities, rebuild the application, and rerun the scan until the application complies with the defined security policy.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for Veracode?
+
+**Answer**
+
+Integrate scans into every CI/CD pipeline, enforce security policies, use secure API credential management, enable SSO and RBAC, perform both Pipeline Scans and full Static Analysis, monitor compliance reports, and regularly review policy exceptions.
+
+---
+
+# Key Takeaways
+
+- Veracode is a comprehensive cloud-native Application Security platform.
+- Integrate Pipeline Scans into every CI/CD pipeline for rapid feedback.
+- Perform full Static Analysis before production releases.
+- Use Software Composition Analysis to identify vulnerable third-party dependencies.
+- Enforce organization-wide security policies before deployments.
+- Secure API credentials using enterprise secret management solutions.
+- Integrate with SSO and RBAC for centralized access control.
+- Use compliance reports and security dashboards to support governance and auditing.
+- Combine Veracode with SonarQube, Trivy, SBOM generation, and image signing to build a complete enterprise DevSecOps pipeline.
