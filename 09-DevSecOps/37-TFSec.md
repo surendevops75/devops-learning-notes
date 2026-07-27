@@ -796,3 +796,550 @@ Generate Report
 
 ---
 
+# Scanning Terraform Projects
+
+TFSec performs static security analysis on Terraform code before infrastructure is provisioned.
+
+Project structure.
+
+```text
+terraform/
+
+├── provider.tf
+
+├── variables.tf
+
+├── outputs.tf
+
+├── main.tf
+
+├── vpc.tf
+
+├── eks.tf
+
+└── rds.tf
+```
+
+Run the scan.
+
+```bash
+tfsec terraform/
+```
+
+Workflow.
+
+```text
+Terraform Files
+
+↓
+
+Parse Resources
+
+↓
+
+Load Security Rules
+
+↓
+
+Evaluate Resources
+
+↓
+
+Generate Findings
+```
+
+---
+
+# Scanning Multiple Terraform Projects
+
+Enterprise repositories often contain multiple Terraform projects.
+
+Example.
+
+```text
+Infrastructure
+
+├── networking/
+
+├── eks/
+
+├── monitoring/
+
+├── security/
+
+└── databases/
+```
+
+Run.
+
+```bash
+tfsec infrastructure/
+```
+
+Each project is analyzed independently.
+
+---
+
+# Scanning Terraform Modules
+
+Modules should be scanned before publishing them to a module registry.
+
+Example.
+
+```text
+terraform
+
+├── modules
+
+│   ├── vpc
+
+│   ├── eks
+
+│   └── iam
+
+└── environments
+```
+
+Run.
+
+```bash
+tfsec terraform/modules/
+```
+
+Workflow.
+
+```text
+Terraform Module
+
+↓
+
+Security Scan
+
+↓
+
+PASS / FAIL
+
+↓
+
+Publish
+```
+
+---
+
+# Example 1 - Public S3 Bucket
+
+## Insecure Configuration
+
+```hcl
+resource "aws_s3_bucket" "logs" {
+
+  bucket = "company-logs"
+
+}
+```
+
+Finding.
+
+```text
+AWS S3 Bucket
+
+↓
+
+Public Access Controls Missing
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_s3_bucket_public_access_block" "logs" {
+
+  bucket = aws_s3_bucket.logs.id
+
+  block_public_acls       = true
+
+  block_public_policy     = true
+
+  ignore_public_acls      = true
+
+  restrict_public_buckets = true
+
+}
+```
+
+---
+
+# Example 2 - Unencrypted EBS Volume
+
+## Insecure Configuration
+
+```hcl
+resource "aws_ebs_volume" "database" {
+
+  availability_zone = "us-east-1a"
+
+  size = 100
+
+}
+```
+
+Finding.
+
+```text
+Encryption Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_ebs_volume" "database" {
+
+  availability_zone = "us-east-1a"
+
+  size = 100
+
+  encrypted = true
+
+}
+```
+
+---
+
+# Example 3 - Security Group Allows SSH from Anywhere
+
+## Insecure Configuration
+
+```hcl
+resource "aws_security_group" "ssh" {
+
+  ingress {
+
+    from_port = 22
+
+    to_port = 22
+
+    protocol = "tcp"
+
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
+
+}
+```
+
+Finding.
+
+```text
+SSH Accessible from Internet
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_security_group" "ssh" {
+
+  ingress {
+
+    from_port = 22
+
+    to_port = 22
+
+    protocol = "tcp"
+
+    cidr_blocks = ["10.0.0.0/16"]
+
+  }
+
+}
+```
+
+---
+
+# Example 4 - Public RDS Instance
+
+## Insecure Configuration
+
+```hcl
+resource "aws_db_instance" "database" {
+
+  publicly_accessible = true
+
+}
+```
+
+Finding.
+
+```text
+Database Publicly Accessible
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_db_instance" "database" {
+
+  publicly_accessible = false
+
+}
+```
+
+---
+
+# Example 5 - Unencrypted S3 Bucket
+
+## Insecure Configuration
+
+```hcl
+resource "aws_s3_bucket" "backup" {
+
+  bucket = "company-backup"
+
+}
+```
+
+Finding.
+
+```text
+Server Side Encryption Not Enabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_s3_bucket_server_side_encryption_configuration" "backup" {
+
+  bucket = aws_s3_bucket.backup.id
+
+  rule {
+
+    apply_server_side_encryption_by_default {
+
+      sse_algorithm = "AES256"
+
+    }
+
+  }
+
+}
+```
+
+---
+
+# Example 6 - IAM Policy with Wildcards
+
+## Insecure Configuration
+
+```json
+{
+
+  "Version": "2012-10-17",
+
+  "Statement": [
+
+    {
+
+      "Effect": "Allow",
+
+      "Action": "*",
+
+      "Resource": "*"
+
+    }
+
+  ]
+
+}
+```
+
+Finding.
+
+```text
+IAM Wildcard Permissions
+```
+
+---
+
+## Secure Configuration
+
+```json
+{
+
+  "Version": "2012-10-17",
+
+  "Statement": [
+
+    {
+
+      "Effect": "Allow",
+
+      "Action": [
+
+        "s3:GetObject"
+
+      ],
+
+      "Resource": [
+
+        "arn:aws:s3:::company-data/*"
+
+      ]
+
+    }
+
+  ]
+
+}
+```
+
+---
+
+# Example 7 - Unencrypted RDS Storage
+
+## Insecure Configuration
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  storage_encrypted = false
+
+}
+```
+
+Finding.
+
+```text
+Database Storage Encryption Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  storage_encrypted = true
+
+}
+```
+
+---
+
+# Example 8 - EKS Cluster Logging Disabled
+
+## Insecure Configuration
+
+```hcl
+resource "aws_eks_cluster" "eks" {
+
+  name = "production"
+
+}
+```
+
+Finding.
+
+```text
+EKS Control Plane Logging Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_eks_cluster" "eks" {
+
+  enabled_cluster_log_types = [
+
+    "api",
+
+    "audit",
+
+    "authenticator"
+
+  ]
+
+}
+```
+
+---
+
+# Scan Workflow
+
+```text
+Terraform Project
+
+↓
+
+TFSec
+
+↓
+
+Security Rules
+
+↓
+
+Resource Evaluation
+
+↓
+
+PASS / FAIL
+
+↓
+
+Security Report
+```
+
+---
+
+# Severity Workflow
+
+```text
+Critical
+
+↓
+
+High
+
+↓
+
+Medium
+
+↓
+
+Low
+
+↓
+
+Informational
+```
+
+High and Critical findings should block production deployments.
+
+---
+
+# Enterprise Best Practices
+
+- Scan every Terraform project before merge.
+- Validate reusable Terraform modules before publishing.
+- Fix High and Critical findings immediately.
+- Encrypt storage resources by default.
+- Restrict network access using least privilege.
+- Enable encryption for databases and storage.
+- Protect cloud resources with secure IAM policies.
+- Enable audit logging for managed cloud services.
+- Integrate TFSec into every Infrastructure as Code pipeline.
+- Store reports for compliance and security audits.
+
+---
+
