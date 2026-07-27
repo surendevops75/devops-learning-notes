@@ -2029,3 +2029,880 @@ Falco continuously evaluates runtime activity without requiring application chan
 
 ---
 
+# Jenkins Integration
+
+Falco is a runtime security platform rather than a build-time scanner.
+
+Instead of running inside the CI pipeline, Jenkins deploys Falco to Kubernetes and validates that runtime monitoring is operational.
+
+Enterprise workflow.
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Docker Image
+
+↓
+
+Deploy to Amazon EKS
+
+↓
+
+Verify Falco
+
+↓
+
+Runtime Monitoring Enabled
+
+↓
+
+Production
+```
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                checkout scm
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Deploy') {
+
+            steps {
+
+                sh './deploy.sh'
+
+            }
+
+        }
+
+        stage('Verify Falco') {
+
+            steps {
+
+                sh '''
+
+                kubectl get pods -n falco
+
+                kubectl get daemonset -n falco
+
+                '''
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Enterprise workflow.
+
+```text
+Git Push
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Deploy
+
+↓
+
+Verify Falco
+
+↓
+
+Runtime Security Enabled
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Verify-Falco
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  falco:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Configure kubectl
+
+      run: |
+
+        kubectl version --client
+
+    - name: Verify Falco
+
+      run: |
+
+        kubectl get pods -n falco
+
+        kubectl get daemonset -n falco
+```
+
+---
+
+# GitLab CI Integration
+
+Example.
+
+```yaml
+stages:
+
+  - deploy
+
+  - runtime
+
+verify-falco:
+
+  stage: runtime
+
+  script:
+
+    - kubectl get pods -n falco
+
+    - kubectl get daemonset -n falco
+```
+
+---
+
+# Prometheus Integration
+
+Falco exposes runtime metrics that can be collected by Prometheus.
+
+Architecture.
+
+```text
+Falco
+
+↓
+
+Metrics Endpoint
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Dashboard
+```
+
+Example metrics.
+
+- Total alerts
+- Rules triggered
+- Events processed
+- Dropped events
+- Rule execution time
+
+---
+
+# Grafana Integration
+
+Falco metrics can be visualized using Grafana dashboards.
+
+```text
+Falco
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Security Dashboard
+```
+
+Typical dashboard panels.
+
+- Alerts per hour
+- Top triggered rules
+- Alert severity
+- Node activity
+- Container activity
+
+---
+
+# SIEM Integration
+
+Falco integrates with enterprise SIEM platforms.
+
+Examples.
+
+- Splunk
+- IBM QRadar
+- Microsoft Sentinel
+- Elastic Security
+- Google Chronicle
+
+Workflow.
+
+```text
+Falco Alert
+
+↓
+
+Webhook
+
+↓
+
+SIEM
+
+↓
+
+Correlation
+
+↓
+
+SOC Team
+
+↓
+
+Incident Response
+```
+
+---
+
+# Slack Integration
+
+Security teams often receive alerts through Slack.
+
+Workflow.
+
+```text
+Falco
+
+↓
+
+Webhook
+
+↓
+
+Slack
+
+↓
+
+Security Channel
+
+↓
+
+Investigation
+```
+
+Example notification.
+
+```text
+WARNING
+
+Shell executed inside container
+
+Namespace : production
+
+Pod : payment-api
+```
+
+---
+
+# Incident Response Workflow
+
+Falco is commonly integrated into enterprise incident response processes.
+
+```text
+Falco Alert
+
+↓
+
+SOC Team
+
+↓
+
+Incident Validation
+
+↓
+
+Pod Investigation
+
+↓
+
+Containment
+
+↓
+
+Recovery
+
+↓
+
+Root Cause Analysis
+```
+
+---
+
+# Runtime Security in Amazon EKS
+
+Architecture.
+
+```text
+Amazon EKS
+
+↓
+
+Worker Nodes
+
+↓
+
+Falco DaemonSet
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Security Alerts
+```
+
+Every EKS worker node should run exactly one Falco pod.
+
+---
+
+# Runtime Security in AKS
+
+Architecture.
+
+```text
+Azure Kubernetes Service
+
+↓
+
+Worker Nodes
+
+↓
+
+Falco
+
+↓
+
+Runtime Events
+
+↓
+
+Alerts
+```
+
+---
+
+# Runtime Security in Google Kubernetes Engine
+
+Architecture.
+
+```text
+Google Kubernetes Engine
+
+↓
+
+Worker Nodes
+
+↓
+
+Falco
+
+↓
+
+Syscalls
+
+↓
+
+Security Alerts
+```
+
+---
+
+# Runtime Security with ArgoCD
+
+GitOps workflow.
+
+```text
+Git Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Running
+
+↓
+
+Runtime Detection
+```
+
+GitOps ensures Falco deployments remain synchronized with Git.
+
+---
+
+# Enterprise Runtime Security Pipeline
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Veracode
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+SIEM
+
+↓
+
+SOC Team
+
+↓
+
+Production
+```
+
+Falco provides continuous runtime protection after workloads have been deployed.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Installing Falco on only one node.
+
+**Impact**
+
+Some workloads remain unmonitored.
+
+**Recommendation**
+
+Deploy Falco as a DaemonSet across every worker node.
+
+---
+
+## Mistake 2
+
+Modifying default rules directly.
+
+**Impact**
+
+Updates overwrite customizations.
+
+**Recommendation**
+
+Store custom rules in `falco_rules.local.yaml`.
+
+---
+
+## Mistake 3
+
+Ignoring Falco alerts.
+
+**Impact**
+
+Runtime attacks may go undetected.
+
+**Recommendation**
+
+Forward alerts to a SIEM or incident management platform.
+
+---
+
+## Mistake 4
+
+Generating too many false positives.
+
+**Impact**
+
+Security teams experience alert fatigue.
+
+**Recommendation**
+
+Tune rules and configure approved exceptions.
+
+---
+
+## Mistake 5
+
+Not monitoring Kubernetes audit events.
+
+**Impact**
+
+Administrative attacks may not be detected.
+
+**Recommendation**
+
+Enable Kubernetes Audit Logs alongside syscall monitoring.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Falco Pods Are Not Running
+
+**Cause**
+
+DaemonSet deployment failed.
+
+**Resolution**
+
+```bash
+kubectl get pods -n falco
+
+kubectl describe daemonset falco -n falco
+```
+
+---
+
+## Scenario 2
+
+### No Alerts Generated
+
+**Cause**
+
+Rules are not matching or test events are missing.
+
+**Resolution**
+
+- Verify Falco is running.
+- Check active rules.
+- Generate a known test event.
+- Review Falco logs.
+
+---
+
+## Scenario 3
+
+### High CPU Usage
+
+**Cause**
+
+Large numbers of syscalls or excessive rule processing.
+
+**Resolution**
+
+- Optimize custom rules.
+- Disable unnecessary plugins.
+- Monitor resource utilization.
+
+---
+
+## Scenario 4
+
+### Excessive False Positives
+
+**Cause**
+
+Rules are too broad.
+
+**Resolution**
+
+- Add rule exceptions.
+- Tune conditions.
+- Validate alerts before suppressing them.
+
+---
+
+## Scenario 5
+
+### Missing Kubernetes Audit Events
+
+**Cause**
+
+Audit logging is not configured.
+
+**Resolution**
+
+- Enable Kubernetes Audit Logs.
+- Configure the Falco audit plugin.
+- Verify audit event collection.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is Falco?
+
+**Answer**
+
+Falco is a CNCF runtime security tool that detects suspicious activity in Linux hosts, containers, and Kubernetes clusters using system call and audit event monitoring.
+
+---
+
+## Question 2
+
+### How is Falco different from Trivy?
+
+**Answer**
+
+Trivy scans images, filesystems, and Infrastructure as Code before deployment, whereas Falco monitors running workloads and detects suspicious runtime behaviour after deployment.
+
+---
+
+## Question 3
+
+### Why is Falco deployed as a DaemonSet?
+
+**Answer**
+
+A DaemonSet ensures one Falco pod runs on every Kubernetes worker node, allowing runtime monitoring across the entire cluster.
+
+---
+
+## Question 4
+
+### What types of events can Falco monitor?
+
+**Answer**
+
+Falco monitors Linux syscalls, Kubernetes audit events, container runtime events, file access, process execution, network activity, and plugin-based event sources.
+
+---
+
+## Question 5
+
+### Can Falco detect container escapes?
+
+**Answer**
+
+Yes. Falco includes built-in rules that detect behaviours associated with container escape attempts and privilege escalation.
+
+---
+
+## Question 6
+
+### Why shouldn't custom rules be added to `falco_rules.yaml`?
+
+**Answer**
+
+The default rule file is replaced during upgrades. Custom rules should be stored in `falco_rules.local.yaml` or separate rule files.
+
+---
+
+## Question 7
+
+### How does Falco integrate with Kubernetes?
+
+**Answer**
+
+Falco runs as a DaemonSet, monitors container runtime events and Kubernetes audit logs, and generates alerts for suspicious activity across the cluster.
+
+---
+
+## Question 8
+
+### How are Falco alerts typically consumed?
+
+**Answer**
+
+Alerts can be sent to files, stdout, syslog, Slack, webhooks, Prometheus, or enterprise SIEM platforms for investigation.
+
+---
+
+## Question 9
+
+### Does Falco prevent attacks?
+
+**Answer**
+
+Falco primarily detects and alerts on suspicious runtime activity. It complements preventive controls by providing real-time visibility into running workloads.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for Falco?
+
+**Answer**
+
+Deploy Falco on every Kubernetes node, maintain custom rules separately, integrate with SIEM and Prometheus, monitor Kubernetes audit events, tune rules to reduce false positives, and investigate Critical alerts immediately.
+
+---
+
+# Key Takeaways
+
+- Falco provides runtime security for Kubernetes, containers, and Linux hosts.
+- It detects suspicious behaviour using Linux syscalls and Kubernetes audit events.
+- Deploy Falco as a DaemonSet to monitor every worker node.
+- Keep custom rules separate from the default rule set.
+- Integrate alerts with Prometheus, Grafana, Slack, and SIEM platforms.
+- Monitor privileged containers, shell execution, secret access, and container escape attempts.
+- Continuously tune rules to reduce false positives.
+- Use Falco alongside SonarQube, OWASP Dependency-Check, Veracode, Gitleaks, Checkov, TFSec, Trivy, OWASP ZAP, GitOps, ArgoCD, and Amazon EKS to build a comprehensive enterprise DevSecOps platform.
