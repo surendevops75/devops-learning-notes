@@ -1401,3 +1401,631 @@ This mapping helps security teams correlate runtime alerts with known attack tec
 
 ---
 
+# Kubernetes Runtime Monitoring
+
+Falco continuously monitors Kubernetes workloads running across the cluster.
+
+Architecture.
+
+```text
+Kubernetes Cluster
+
+↓
+
+Worker Nodes
+
+↓
+
+Falco DaemonSet
+
+↓
+
+Running Pods
+
+↓
+
+Runtime Events
+
+↓
+
+Alerts
+```
+
+Every node is protected by a Falco pod.
+
+---
+
+# Monitoring Pod Creation
+
+Falco detects newly created pods.
+
+Workflow.
+
+```text
+kubectl apply
+
+↓
+
+API Server
+
+↓
+
+Scheduler
+
+↓
+
+Pod Created
+
+↓
+
+Falco
+
+↓
+
+Event Logged
+```
+
+Unexpected pod creation can indicate unauthorized deployments.
+
+---
+
+# Monitoring Pod Deletion
+
+Deleting production workloads unexpectedly may indicate malicious activity.
+
+Workflow.
+
+```text
+Delete Pod
+
+↓
+
+API Server
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Production clusters should audit all pod deletion events.
+
+---
+
+# Monitoring Privileged Containers
+
+Privileged containers have elevated access to the host.
+
+Workflow.
+
+```text
+Pod
+
+↓
+
+privileged=true
+
+↓
+
+Falco
+
+↓
+
+Critical Alert
+```
+
+Example.
+
+```yaml
+securityContext:
+
+  privileged: true
+```
+
+Privileged containers should only be used when absolutely necessary.
+
+---
+
+# Monitoring HostPath Mounts
+
+HostPath volumes provide direct access to the Kubernetes node.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+HostPath Volume
+
+↓
+
+Host Filesystem
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Example.
+
+```yaml
+volumes:
+
+- name: host
+
+  hostPath:
+
+    path: /
+```
+
+HostPath mounts should be carefully reviewed.
+
+---
+
+# Monitoring Host Network Usage
+
+Pods using the host network bypass Kubernetes network isolation.
+
+Example.
+
+```yaml
+hostNetwork: true
+```
+
+Workflow.
+
+```text
+Pod
+
+↓
+
+Host Network
+
+↓
+
+Falco
+
+↓
+
+Warning
+```
+
+---
+
+# Monitoring Host PID Namespace
+
+Sharing the host PID namespace increases security risk.
+
+Example.
+
+```yaml
+hostPID: true
+```
+
+Workflow.
+
+```text
+Pod
+
+↓
+
+Host PID
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+---
+
+# Monitoring Sensitive Volume Mounts
+
+Examples.
+
+```text
+/var/run/docker.sock
+
+/etc
+
+/root
+
+/var/lib/kubelet
+
+/proc
+```
+
+Workflow.
+
+```text
+Sensitive Volume
+
+↓
+
+Container
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+---
+
+# Monitoring Service Account Tokens
+
+Falco detects unexpected access to Kubernetes service account tokens.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Service Account Token
+
+↓
+
+Read
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Unexpected token access should be investigated immediately.
+
+---
+
+# Monitoring Kubernetes Secrets
+
+Example workflow.
+
+```text
+Application
+
+↓
+
+Read Secret
+
+↓
+
+API Server
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Examples.
+
+- Database passwords
+- API tokens
+- TLS certificates
+- Cloud credentials
+
+---
+
+# Monitoring RBAC Changes
+
+Unauthorized RBAC modifications can lead to privilege escalation.
+
+Workflow.
+
+```text
+Role
+
+↓
+
+RoleBinding
+
+↓
+
+ClusterRole
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Monitor all RBAC updates in production clusters.
+
+---
+
+# Monitoring Namespace Changes
+
+Unexpected namespace creation or deletion may indicate unauthorized activity.
+
+Workflow.
+
+```text
+Create Namespace
+
+↓
+
+API Server
+
+↓
+
+Falco
+
+↓
+
+Audit Event
+```
+
+---
+
+# Monitoring Kubernetes Jobs
+
+Jobs execute one-time workloads.
+
+Workflow.
+
+```text
+Job
+
+↓
+
+Pod
+
+↓
+
+Execution
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Unexpected Jobs should be reviewed by platform administrators.
+
+---
+
+# Monitoring CronJobs
+
+CronJobs execute on a schedule.
+
+Workflow.
+
+```text
+CronJob
+
+↓
+
+Scheduled Execution
+
+↓
+
+Pod
+
+↓
+
+Falco
+```
+
+Unexpected CronJobs may indicate persistence mechanisms.
+
+---
+
+# Monitoring Network Connections
+
+Falco observes outbound network connections created by containers.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Network Connection
+
+↓
+
+Destination IP
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Examples include:
+
+- Unknown external IPs
+- Suspicious ports
+- Unexpected destinations
+
+---
+
+# Monitoring DNS Requests
+
+DNS activity can reveal malicious behaviour.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+DNS Query
+
+↓
+
+Unknown Domain
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Unexpected DNS requests should be investigated.
+
+---
+
+# Monitoring File Downloads
+
+Attackers often download additional tools after compromising a container.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+wget
+
+↓
+
+curl
+
+↓
+
+Download
+
+↓
+
+Falco
+```
+
+Common utilities.
+
+- wget
+- curl
+- aria2
+
+---
+
+# Monitoring Package Installation
+
+Production containers should be immutable.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+apt
+
+↓
+
+yum
+
+↓
+
+dnf
+
+↓
+
+apk
+
+↓
+
+Falco Alert
+```
+
+Installing software inside running containers is generally unexpected.
+
+---
+
+# Enterprise Runtime Security Workflow
+
+```text
+Container Starts
+
+↓
+
+Application Executes
+
+↓
+
+Linux Syscalls
+
+↓
+
+Kubernetes Events
+
+↓
+
+Falco Rules
+
+↓
+
+Alert Generated
+
+↓
+
+SIEM
+
+↓
+
+SOC Team
+
+↓
+
+Incident Response
+```
+
+Falco continuously evaluates runtime activity without requiring application changes.
+
+---
+
+# Enterprise Best Practices
+
+- Monitor privileged containers.
+- Alert on HostPath volume usage.
+- Detect host namespace sharing.
+- Monitor Kubernetes Secrets and RBAC changes.
+- Review service account token access.
+- Investigate unexpected outbound network connections.
+- Treat package installation inside containers as suspicious.
+- Forward alerts to a central SIEM.
+- Correlate Falco alerts with Kubernetes audit logs.
+- Continuously tune runtime detection rules to reduce false positives while maintaining security coverage.
+
+---
+
