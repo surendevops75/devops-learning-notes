@@ -1343,3 +1343,612 @@ High and Critical findings should block production deployments.
 
 ---
 
+# Jenkins Integration
+
+TFSec is commonly integrated into Jenkins pipelines to prevent insecure infrastructure from being provisioned.
+
+## Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Checkout
+
+↓
+
+Terraform Format
+
+↓
+
+Terraform Validate
+
+↓
+
+TFSec Scan
+
+↓
+
+PASS / FAIL
+
+↓
+
+Terraform Plan
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS Infrastructure
+```
+
+Only validated Terraform code should be deployed.
+
+---
+
+# Jenkins Prerequisites
+
+Install TFSec on the Jenkins agent.
+
+```bash
+tfsec --version
+```
+
+Install Terraform.
+
+```bash
+terraform version
+```
+
+Store Jenkins credentials.
+
+```text
+AWS Credentials
+
+Terraform Backend Credentials
+
+GitHub Access Token
+```
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                git branch: 'main',
+                    url: 'https://github.com/company/terraform.git'
+
+            }
+
+        }
+
+        stage('Terraform Format') {
+
+            steps {
+
+                sh 'terraform fmt -check'
+
+            }
+
+        }
+
+        stage('Terraform Validate') {
+
+            steps {
+
+                sh 'terraform init'
+
+                sh 'terraform validate'
+
+            }
+
+        }
+
+        stage('TFSec Scan') {
+
+            steps {
+
+                sh 'tfsec terraform/'
+
+            }
+
+        }
+
+        stage('Terraform Plan') {
+
+            steps {
+
+                sh 'terraform plan'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Store repository secrets.
+
+```text
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+```
+
+Workflow.
+
+```text
+GitHub
+
+↓
+
+Workflow Trigger
+
+↓
+
+Checkout
+
+↓
+
+Terraform Validate
+
+↓
+
+TFSec
+
+↓
+
+PASS / FAIL
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Terraform Security
+
+on:
+
+  pull_request:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  tfsec:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Install TFSec
+
+        run: |
+
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+      - name: Terraform Init
+
+        run: terraform init
+
+      - name: Terraform Validate
+
+        run: terraform validate
+
+      - name: Run TFSec
+
+        run: tfsec terraform/
+```
+
+---
+
+# GitLab CI Integration
+
+```yaml
+stages:
+
+  - security
+
+tfsec:
+
+  stage: security
+
+  image: aquasec/tfsec
+
+  script:
+
+    - tfsec terraform/
+
+  allow_failure: false
+```
+
+---
+
+# Pull Request Validation
+
+Every Pull Request should trigger a Terraform security scan.
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Terraform Validation
+
+↓
+
+TFSec
+
+↓
+
+PASS / FAIL
+
+↓
+
+Merge
+```
+
+Infrastructure should never be merged without passing security validation.
+
+---
+
+# Monorepository Scanning
+
+Many enterprise repositories contain multiple Terraform projects.
+
+Example.
+
+```text
+Repository
+
+├── networking/
+
+├── eks/
+
+├── databases/
+
+├── monitoring/
+
+└── security/
+```
+
+Run.
+
+```bash
+tfsec .
+```
+
+Or scan an individual project.
+
+```bash
+tfsec networking/
+```
+
+---
+
+# Scanning Selected Directories
+
+Scan multiple directories.
+
+```bash
+tfsec terraform/networking
+
+tfsec terraform/eks
+
+tfsec terraform/database
+```
+
+Useful when different teams manage separate infrastructure components.
+
+---
+
+# Ignoring Directories
+
+Exclude downloaded providers and temporary files.
+
+```bash
+tfsec \
+--exclude-path .terraform .
+```
+
+Multiple exclusions.
+
+```bash
+tfsec \
+--exclude-path .terraform \
+--exclude-path vendor .
+```
+
+---
+
+# Custom Checks
+
+Organizations can extend TFSec using custom Rego policies.
+
+Example structure.
+
+```text
+custom-policies/
+
+├── s3.rego
+
+├── iam.rego
+
+└── eks.rego
+```
+
+Run.
+
+```bash
+tfsec \
+--rego-policy-dir custom-policies \
+terraform/
+```
+
+Custom policies help enforce internal security standards.
+
+---
+
+# Compliance Validation
+
+TFSec helps organizations align Terraform configurations with security best practices.
+
+Examples.
+
+- CIS Benchmarks
+- PCI DSS
+- SOC 2
+- HIPAA
+- ISO 27001
+- NIST
+
+Workflow.
+
+```text
+Terraform
+
+↓
+
+TFSec
+
+↓
+
+Compliance Rules
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Exit Codes
+
+Exit codes allow CI/CD pipelines to determine success or failure.
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | Scan Passed |
+| 1 | Security Findings Detected |
+| >1 | Execution Error |
+
+Production pipelines should fail when security findings are detected.
+
+---
+
+# Reporting
+
+Generate JSON.
+
+```bash
+tfsec \
+--format json .
+```
+
+Generate SARIF.
+
+```bash
+tfsec \
+--format sarif .
+```
+
+Generate JUnit.
+
+```bash
+tfsec \
+--format junit .
+```
+
+Reports should be archived as CI/CD artifacts.
+
+---
+
+# Report Workflow
+
+```text
+Terraform Code
+
+↓
+
+TFSec
+
+↓
+
+JSON
+
+↓
+
+SARIF
+
+↓
+
+JUnit
+
+↓
+
+Security Dashboard
+```
+
+---
+
+# GitHub Code Scanning Integration
+
+Generate a SARIF report.
+
+```bash
+tfsec \
+--format sarif \
+--out tfsec-results.sarif .
+```
+
+Workflow.
+
+```text
+TFSec
+
+↓
+
+SARIF Report
+
+↓
+
+GitHub Code Scanning
+
+↓
+
+Security Alerts
+
+↓
+
+Developer
+```
+
+Developers can review findings directly in pull requests.
+
+---
+
+# Enterprise DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Terraform Format
+
+↓
+
+Terraform Validate
+
+↓
+
+TFSec Scan
+
+↓
+
+Policy Validation
+
+↓
+
+Terraform Plan
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Deploy Applications
+```
+
+---
+
+# Enterprise Best Practices
+
+- Run TFSec on every pull request.
+- Scan all Terraform modules before publishing.
+- Fail production pipelines on High and Critical findings.
+- Integrate TFSec with Jenkins, GitHub Actions, and GitLab CI.
+- Generate SARIF reports for GitHub Security.
+- Archive reports for compliance audits.
+- Keep custom security policies under version control.
+- Exclude only trusted directories from scanning.
+- Regularly update TFSec to use the latest security rules.
+- Combine TFSec with Terraform validation, Checkov, Trivy, and cloud security reviews for comprehensive Infrastructure as Code security.
+
+---
+
