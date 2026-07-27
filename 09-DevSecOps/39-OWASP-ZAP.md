@@ -404,3 +404,506 @@ The baseline scan performs passive security analysis without attempting to explo
 
 ---
 
+# Configuration
+
+OWASP ZAP can be configured for different environments ranging from local development to enterprise CI/CD pipelines.
+
+Configuration can include:
+
+- Scan policies
+- Authentication
+- Contexts
+- Users
+- API configuration
+- Report generation
+- Proxy settings
+- Exclusions
+
+Proper configuration reduces false positives and improves scan accuracy.
+
+---
+
+# Configuration Components
+
+| Component | Purpose |
+|-----------|----------|
+| Context | Defines application scope |
+| User | Authenticated scanning |
+| Scan Policy | Controls attack rules |
+| Authentication | Login configuration |
+| Exclude Rules | Ignore specific URLs |
+| Reports | Generate security findings |
+| API | Automation support |
+
+---
+
+# Configuration Priority
+
+```text
+Command Line
+
+↓
+
+Automation Framework
+
+↓
+
+Context File
+
+↓
+
+Default Configuration
+```
+
+---
+
+# Context
+
+A Context defines which applications and URLs should be tested.
+
+Example.
+
+```text
+Context
+
+↓
+
+example.com
+
+↓
+
+/api/*
+
+↓
+
+/login
+
+↓
+
+/dashboard
+```
+
+Everything outside the context is ignored.
+
+---
+
+# Creating a Context
+
+Start ZAP.
+
+```bash
+./zap.sh
+```
+
+Navigate.
+
+```text
+File
+
+↓
+
+New Context
+
+↓
+
+Add URLs
+
+↓
+
+Save
+```
+
+Contexts improve scan performance by limiting unnecessary requests.
+
+---
+
+# Authentication
+
+Many enterprise applications require login before testing.
+
+Authentication types include:
+
+- Form-Based Authentication
+- HTTP Authentication
+- OAuth
+- JWT
+- Session Cookies
+
+Workflow.
+
+```text
+User
+
+↓
+
+Login
+
+↓
+
+Authentication
+
+↓
+
+Session
+
+↓
+
+Authenticated Scan
+```
+
+---
+
+# User Management
+
+Applications can have multiple users.
+
+Example.
+
+```text
+Admin
+
+Developer
+
+Operator
+
+ReadOnly
+```
+
+Separate users help validate role-based access control (RBAC).
+
+---
+
+# Scan Policies
+
+Scan policies define which vulnerability checks should be executed.
+
+Common policies.
+
+- SQL Injection
+- Cross-Site Scripting
+- Command Injection
+- Path Traversal
+- Server Misconfiguration
+- Information Disclosure
+
+Example.
+
+```text
+Policy
+
+↓
+
+Attack Rules
+
+↓
+
+Enabled
+
+↓
+
+Run Scan
+```
+
+---
+
+# Passive Scan
+
+Passive scanning observes HTTP traffic without modifying requests.
+
+Workflow.
+
+```text
+Browser
+
+↓
+
+HTTP Request
+
+↓
+
+Proxy
+
+↓
+
+Passive Analysis
+
+↓
+
+Report
+```
+
+Passive scans are safe to run continuously.
+
+---
+
+# Active Scan
+
+Active scanning attempts to exploit vulnerabilities.
+
+Workflow.
+
+```text
+Spider
+
+↓
+
+Attack Rules
+
+↓
+
+Target Application
+
+↓
+
+Response Analysis
+
+↓
+
+Security Report
+```
+
+Active scans should only be executed against non-production environments.
+
+---
+
+# Spider Scan
+
+Spider discovers application pages automatically.
+
+Run.
+
+```bash
+zap.sh -cmd \
+-spider https://example.com
+```
+
+Workflow.
+
+```text
+Home Page
+
+↓
+
+Links
+
+↓
+
+Forms
+
+↓
+
+New Pages
+
+↓
+
+Complete Site Map
+```
+
+---
+
+# AJAX Spider
+
+Modern web applications often rely on JavaScript.
+
+AJAX Spider executes JavaScript before crawling.
+
+Run.
+
+```bash
+zap.sh -cmd \
+-ajaxSpider https://example.com
+```
+
+Useful for:
+
+- React
+- Angular
+- Vue
+- Single Page Applications
+
+---
+
+# API Scanning
+
+OWASP ZAP supports REST API testing.
+
+Example.
+
+```bash
+zap-api-scan.py \
+-f openapi \
+-t openapi.yaml
+```
+
+Supported specifications.
+
+- OpenAPI
+- Swagger
+- GraphQL
+- SOAP
+
+---
+
+# Proxy Configuration
+
+OWASP ZAP operates as an intercepting proxy.
+
+Default proxy.
+
+```text
+Host
+
+↓
+
+localhost
+
+↓
+
+Port
+
+↓
+
+8080
+```
+
+Applications route traffic through ZAP for analysis.
+
+---
+
+# Excluding URLs
+
+Some URLs should not be scanned.
+
+Examples.
+
+```text
+/logout
+
+/health
+
+/metrics
+
+/static
+
+/images
+```
+
+Excluding these paths reduces unnecessary requests and avoids session termination.
+
+---
+
+# API Configuration
+
+Enable API access.
+
+Example.
+
+```bash
+zap.sh \
+-config api.disablekey=true
+```
+
+Production environments should use API keys instead of disabling authentication.
+
+---
+
+# Report Formats
+
+OWASP ZAP supports multiple report formats.
+
+| Format | Purpose |
+|----------|----------|
+| HTML | Human-readable report |
+| JSON | Automation |
+| XML | Integration |
+| Markdown | Documentation |
+| SARIF | GitHub Security |
+
+---
+
+# Generate HTML Report
+
+Example.
+
+```bash
+zap-baseline.py \
+-t https://example.com \
+-r report.html
+```
+
+---
+
+# Generate JSON Report
+
+Example.
+
+```bash
+zap-baseline.py \
+-t https://example.com \
+-J report.json
+```
+
+---
+
+# Generate Markdown Report
+
+Example.
+
+```bash
+zap-baseline.py \
+-t https://example.com \
+-w report.md
+```
+
+---
+
+# Report Directory
+
+```text
+reports/
+
+├── report.html
+
+├── report.json
+
+├── report.xml
+
+├── report.md
+
+└── report.sarif
+```
+
+Reports should be stored as CI/CD artifacts for auditing and compliance.
+
+---
+
+# Exit Codes
+
+OWASP ZAP returns exit codes that pipelines can use to determine success or failure.
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | No Alerts |
+| 1 | At Least One Failure |
+| 2 | Warnings Present |
+| 3 | Execution Error |
+
+Production pipelines should fail when High or Critical vulnerabilities are detected.
+
+---
+
+# Enterprise Best Practices
+
+- Run passive scans on every build.
+- Execute active scans only in isolated test environments.
+- Define contexts for every application.
+- Use authenticated scanning for protected applications.
+- Exclude logout and health-check endpoints.
+- Generate HTML and JSON reports for every pipeline.
+- Archive reports for compliance audits.
+- Integrate ZAP with CI/CD automation.
+- Keep scan policies updated.
+- Review and remediate High-risk findings before deployment.
+
+---
+
