@@ -2035,3 +2035,596 @@ OWASP ZAP provides runtime security validation immediately before production dep
 
 ---
 
+# Common Vulnerabilities Detected
+
+## SQL Injection
+
+Example.
+
+```text
+Login Form
+
+↓
+
+User Input
+
+↓
+
+SQL Query
+
+↓
+
+Database
+```
+
+OWASP ZAP attempts SQL injection payloads to determine whether database queries are vulnerable.
+
+---
+
+## Cross-Site Scripting (XSS)
+
+Example.
+
+```text
+User Input
+
+↓
+
+Application
+
+↓
+
+Browser
+
+↓
+
+JavaScript Executes
+```
+
+ZAP tests whether user input is reflected or stored without proper sanitization.
+
+---
+
+## Cross-Site Request Forgery (CSRF)
+
+Workflow.
+
+```text
+Authenticated User
+
+↓
+
+Malicious Website
+
+↓
+
+Unauthorized Request
+
+↓
+
+Application
+```
+
+ZAP checks whether applications validate CSRF tokens for state-changing requests.
+
+---
+
+## Command Injection
+
+Workflow.
+
+```text
+User Input
+
+↓
+
+Operating System Command
+
+↓
+
+Server
+
+↓
+
+Response
+```
+
+Applications should validate and sanitize user input before executing system commands.
+
+---
+
+## Directory Traversal
+
+Workflow.
+
+```text
+../../etc/passwd
+
+↓
+
+Application
+
+↓
+
+Filesystem
+
+↓
+
+Sensitive Files
+```
+
+ZAP identifies endpoints vulnerable to path traversal attacks.
+
+---
+
+## Missing Security Headers
+
+Example findings.
+
+```text
+Missing
+
+↓
+
+Content-Security-Policy
+
+Strict-Transport-Security
+
+X-Frame-Options
+
+X-Content-Type-Options
+```
+
+Missing headers weaken browser-side security protections.
+
+---
+
+## Cookie Security Issues
+
+OWASP ZAP validates cookie attributes.
+
+Example.
+
+```text
+Cookie
+
+↓
+
+Secure
+
+↓
+
+HttpOnly
+
+↓
+
+SameSite
+```
+
+Cookies should include recommended security attributes.
+
+---
+
+# AWS Production Example
+
+Enterprise deployment.
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS (Testing)
+
+↓
+
+AWS Load Balancer
+
+↓
+
+OWASP ZAP
+
+↓
+
+Security Report
+```
+
+Target.
+
+```text
+https://test.example.com
+```
+
+Only Internet-facing endpoints exposed through the Load Balancer should be scanned.
+
+---
+
+# Azure Production Example
+
+Architecture.
+
+```text
+Developer
+
+↓
+
+Azure DevOps
+
+↓
+
+AKS
+
+↓
+
+Application Gateway
+
+↓
+
+OWASP ZAP
+
+↓
+
+Security Report
+```
+
+ZAP validates runtime security before production approval.
+
+---
+
+# Google Cloud Production Example
+
+Architecture.
+
+```text
+Developer
+
+↓
+
+Cloud Build
+
+↓
+
+Artifact Registry
+
+↓
+
+Google Kubernetes Engine
+
+↓
+
+HTTP Load Balancer
+
+↓
+
+OWASP ZAP
+
+↓
+
+Security Report
+```
+
+Runtime validation is performed before deployment promotion.
+
+---
+
+# Microservices Security Testing
+
+Example architecture.
+
+```text
+Frontend
+
+↓
+
+API Gateway
+
+↓
+
+User Service
+
+↓
+
+Order Service
+
+↓
+
+Inventory Service
+
+↓
+
+Payment Service
+```
+
+Each public endpoint should be tested independently to ensure complete security coverage.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Scanning production systems with Active Scan.
+
+**Impact**
+
+Service disruption or unintended changes to production workloads.
+
+**Recommendation**
+
+Run Active Scans only in dedicated testing or staging environments.
+
+---
+
+## Mistake 2
+
+Running only passive scans.
+
+**Impact**
+
+Exploitable vulnerabilities may remain undetected.
+
+**Recommendation**
+
+Use passive scans for every build and active scans before releases.
+
+---
+
+## Mistake 3
+
+Ignoring authenticated application areas.
+
+**Impact**
+
+Protected functionality remains untested.
+
+**Recommendation**
+
+Configure authenticated users and contexts for enterprise applications.
+
+---
+
+## Mistake 4
+
+Ignoring High-risk findings.
+
+**Impact**
+
+Applications are released with known vulnerabilities.
+
+**Recommendation**
+
+Treat High and Critical findings as deployment blockers.
+
+---
+
+## Mistake 5
+
+Scanning without defining contexts.
+
+**Impact**
+
+Unrelated URLs may be scanned, increasing scan duration and false positives.
+
+**Recommendation**
+
+Create application-specific contexts and exclusion rules.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Unable to Reach Target
+
+**Cause**
+
+Incorrect URL, DNS issue, or application unavailable.
+
+**Resolution**
+
+```bash
+curl https://test.example.com
+```
+
+Verify connectivity before running the scan.
+
+---
+
+## Scenario 2
+
+### Authentication Failed
+
+**Cause**
+
+Incorrect login configuration or expired credentials.
+
+**Resolution**
+
+- Verify authentication settings.
+- Confirm credentials.
+- Check session cookies.
+- Validate login workflow.
+
+---
+
+## Scenario 3
+
+### Spider Finds No Pages
+
+**Cause**
+
+Application requires authentication or relies heavily on JavaScript.
+
+**Resolution**
+
+- Configure authentication.
+- Use AJAX Spider for Single Page Applications.
+- Verify the target URL.
+
+---
+
+## Scenario 4
+
+### Pipeline Fails After Scan
+
+**Cause**
+
+High or Critical vulnerabilities detected.
+
+**Resolution**
+
+- Review the generated report.
+- Fix identified issues.
+- Re-run the scan.
+- Promote only after passing security validation.
+
+---
+
+## Scenario 5
+
+### Scan Duration Is Too Long
+
+**Cause**
+
+Large applications or broad scan scope.
+
+**Resolution**
+
+- Define application contexts.
+- Exclude static content.
+- Separate API and UI scans.
+- Use targeted scan policies.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is OWASP ZAP?
+
+**Answer**
+
+OWASP ZAP is an open-source Dynamic Application Security Testing (DAST) tool that identifies runtime security vulnerabilities in web applications and APIs.
+
+---
+
+## Question 2
+
+### What is the difference between SAST and DAST?
+
+**Answer**
+
+SAST analyzes source code without running the application, while DAST tests a running application by sending HTTP requests and analysing responses.
+
+---
+
+## Question 3
+
+### Why is OWASP ZAP executed after deployment?
+
+**Answer**
+
+DAST requires a running application. Therefore, OWASP ZAP is typically executed after deployment to a testing or staging environment.
+
+---
+
+## Question 4
+
+### What is the difference between a Baseline Scan and an Active Scan?
+
+**Answer**
+
+A Baseline Scan performs passive analysis without attacking the application. An Active Scan sends attack payloads to identify exploitable vulnerabilities.
+
+---
+
+## Question 5
+
+### Can OWASP ZAP test REST APIs?
+
+**Answer**
+
+Yes. OWASP ZAP supports REST APIs using OpenAPI, Swagger, GraphQL, and SOAP specifications.
+
+---
+
+## Question 6
+
+### Why should authenticated scanning be used?
+
+**Answer**
+
+Authenticated scanning validates functionality that is accessible only after login, increasing overall security coverage.
+
+---
+
+## Question 7
+
+### Why should Active Scans not be executed in production?
+
+**Answer**
+
+Active Scans intentionally send attack payloads that may affect application availability or modify application state.
+
+---
+
+## Question 8
+
+### How is OWASP ZAP integrated into CI/CD?
+
+**Answer**
+
+OWASP ZAP is executed after deploying the application to a testing environment. Reports are generated, archived, and used as security gates before production deployment.
+
+---
+
+## Question 9
+
+### What report formats does OWASP ZAP support?
+
+**Answer**
+
+OWASP ZAP supports HTML, JSON, XML, Markdown, and SARIF reports for integration with dashboards and CI/CD systems.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for OWASP ZAP?
+
+**Answer**
+
+Run baseline scans on every build, execute active scans before releases, configure authenticated scans, define application contexts, review High and Critical findings, archive reports, and integrate OWASP ZAP with the broader DevSecOps pipeline.
+
+---
+
+# Key Takeaways
+
+- OWASP ZAP is a leading open-source DAST solution.
+- It validates the security of running web applications and APIs.
+- Execute baseline scans during every CI/CD pipeline.
+- Perform active scans before production releases.
+- Test authenticated application areas and APIs.
+- Define application contexts to improve scan accuracy.
+- Integrate with Jenkins, GitHub Actions, and GitLab CI.
+- Use security reports as deployment quality gates.
+- Never execute active scans directly against production systems.
+- Combine OWASP ZAP with SonarQube, OWASP Dependency-Check, Veracode, Gitleaks, Trivy, Checkov, TFSec, GitOps, ArgoCD, and Amazon EKS to build a complete enterprise DevSecOps platform.
