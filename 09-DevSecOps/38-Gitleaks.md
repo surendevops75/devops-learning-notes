@@ -409,3 +409,476 @@ Every detected secret includes:
 - Remediation guidance
 
 This enables developers to remove or rotate exposed credentials before merging code into the main branch.
+
+---
+
+# Scanning Source Code
+
+Gitleaks scans source code repositories for exposed secrets before code is built or deployed.
+
+Project structure.
+
+```text
+application/
+
+├── src/
+
+├── config/
+
+├── scripts/
+
+├── Dockerfile
+
+├── Jenkinsfile
+
+└── .github/
+```
+
+Run.
+
+```bash
+gitleaks detect \
+--source .
+```
+
+Workflow.
+
+```text
+Repository
+
+↓
+
+Read Files
+
+↓
+
+Apply Detection Rules
+
+↓
+
+Secrets Found
+
+↓
+
+Security Report
+```
+
+---
+
+# Scanning Git History
+
+Secrets removed from the latest code may still exist in previous commits.
+
+Scan complete Git history.
+
+```bash
+gitleaks git
+```
+
+Workflow.
+
+```text
+Repository
+
+↓
+
+Git History
+
+↓
+
+All Commits
+
+↓
+
+Secret Detection
+
+↓
+
+Report
+```
+
+Git history should always be scanned before open-sourcing a repository.
+
+---
+
+# Scanning a Specific Commit
+
+Scan a specific commit range.
+
+```bash
+gitleaks git \
+--log-opts="-1"
+```
+
+Last five commits.
+
+```bash
+gitleaks git \
+--log-opts="-5"
+```
+
+Specific branch.
+
+```bash
+gitleaks git \
+--log-opts="main"
+```
+
+---
+
+# Scanning Pull Requests
+
+Every Pull Request should be scanned before merging.
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Gitleaks
+
+↓
+
+Secret Detection
+
+↓
+
+PASS / FAIL
+
+↓
+
+Merge
+```
+
+This prevents accidental exposure of secrets in the main branch.
+
+---
+
+# Pre-Commit Scanning
+
+Developers can prevent secrets from being committed using Git hooks.
+
+Install pre-commit.
+
+```bash
+pip install pre-commit
+```
+
+Example configuration.
+
+```yaml
+repos:
+
+- repo: https://github.com/gitleaks/gitleaks
+
+  rev: v8.24.0
+
+  hooks:
+
+    - id: gitleaks
+```
+
+Install hooks.
+
+```bash
+pre-commit install
+```
+
+Workflow.
+
+```text
+Developer
+
+↓
+
+Git Commit
+
+↓
+
+Pre-Commit Hook
+
+↓
+
+Gitleaks
+
+↓
+
+PASS
+
+↓
+
+Commit
+```
+
+---
+
+# Scanning Dockerfiles
+
+Secrets are sometimes hardcoded in Dockerfiles.
+
+Example.
+
+```Dockerfile
+ENV AWS_SECRET_ACCESS_KEY=ABC123456789
+```
+
+Run.
+
+```bash
+gitleaks detect \
+--source .
+```
+
+Finding.
+
+```text
+AWS Secret Key
+
+↓
+
+FAILED
+```
+
+Use build-time secrets instead of embedding credentials.
+
+---
+
+# Scanning Kubernetes Manifests
+
+Secrets should never be stored directly in Kubernetes YAML files.
+
+Example.
+
+```yaml
+data:
+
+  password: admin123
+```
+
+Finding.
+
+```text
+Potential Password
+
+↓
+
+FAILED
+```
+
+Use Kubernetes Secrets or an external secret management solution.
+
+---
+
+# Scanning Terraform Projects
+
+Terraform code frequently contains provider credentials.
+
+Project.
+
+```text
+terraform/
+
+├── provider.tf
+
+├── main.tf
+
+├── variables.tf
+
+└── terraform.tfvars
+```
+
+Run.
+
+```bash
+gitleaks detect \
+--source terraform/
+```
+
+Typical findings.
+
+- AWS Access Keys
+- Azure Credentials
+- Google Cloud Keys
+- Terraform Cloud Tokens
+
+---
+
+# Scanning Environment Files
+
+Environment files commonly contain sensitive information.
+
+Example.
+
+```text
+.env
+
+.env.production
+
+.env.development
+```
+
+Run.
+
+```bash
+gitleaks detect \
+--source .
+```
+
+Possible findings.
+
+```text
+DATABASE_PASSWORD
+
+JWT_SECRET
+
+API_KEY
+```
+
+Environment files containing secrets should not be committed.
+
+---
+
+# Scanning Shell Scripts
+
+Example.
+
+```bash
+export AWS_SECRET_ACCESS_KEY=ABC123
+```
+
+Run.
+
+```bash
+gitleaks detect \
+--source scripts/
+```
+
+Finding.
+
+```text
+AWS Secret Key
+
+↓
+
+FAILED
+```
+
+---
+
+# Scanning Configuration Files
+
+Supported examples.
+
+```text
+application.yml
+
+application.properties
+
+config.json
+
+settings.xml
+
+values.yaml
+```
+
+Hardcoded passwords and tokens should be removed before committing configuration files.
+
+---
+
+# Scanning Monorepositories
+
+Enterprise repositories often contain multiple applications.
+
+Example.
+
+```text
+Repository
+
+├── backend/
+
+├── frontend/
+
+├── terraform/
+
+├── kubernetes/
+
+├── scripts/
+
+└── shared/
+```
+
+Run.
+
+```bash
+gitleaks detect \
+--source .
+```
+
+Every project inside the repository is scanned.
+
+---
+
+# Secret Detection Workflow
+
+```text
+Repository
+
+↓
+
+Files
+
+↓
+
+Regular Expressions
+
+↓
+
+Entropy Analysis
+
+↓
+
+Secret Validation
+
+↓
+
+PASS / FAIL
+```
+
+---
+
+# Types of Findings
+
+Examples.
+
+| Secret | Example |
+|----------|----------|
+| AWS Key | AKIA... |
+| GitHub Token | ghp_xxxxx |
+| GitLab Token | glpat_xxxxx |
+| Slack Token | xoxb-xxxxx |
+| JWT | eyJhbGciOi... |
+| SSH Private Key | -----BEGIN OPENSSH PRIVATE KEY----- |
+| RSA Private Key | -----BEGIN RSA PRIVATE KEY----- |
+| API Key | api_xxxxxxxxx |
+
+---
+
+# Enterprise Best Practices
+
+- Scan every commit before merging.
+- Enable pre-commit hooks for all developers.
+- Scan Git history before making repositories public.
+- Never store secrets in Terraform files.
+- Never commit `.env` files containing production credentials.
+- Use secret management solutions instead of hardcoded values.
+- Rotate exposed credentials immediately.
+- Scan monorepositories from the repository root.
+- Include Gitleaks in every CI/CD pipeline.
+- Archive scan reports for compliance and auditing.
+
+---
+
