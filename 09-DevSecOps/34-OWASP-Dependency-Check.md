@@ -1605,3 +1605,621 @@ Using both tools helps detect vulnerabilities before and after containerisation.
 
 ---
 
+# Enterprise DevSecOps Pipeline
+
+OWASP Dependency-Check becomes part of the software supply chain security stage in an enterprise CI/CD pipeline.
+
+```text
+                    Developer
+                         │
+                         ▼
+                  Feature Branch
+                         │
+                         ▼
+                     Git Push
+                         │
+                         ▼
+                  Pull Request
+                         │
+                         ▼
+                  Code Review
+                         │
+                         ▼
+                  Merge to Main
+                         │
+                         ▼
+             Jenkins / GitHub Actions
+                         │
+                         ▼
+               Checkout Source Code
+                         │
+                         ▼
+                 Compile Application
+                         │
+                         ▼
+                    Unit Testing
+                         │
+                         ▼
+                 SonarQube Analysis
+                         │
+                         ▼
+          OWASP Dependency-Check Scan
+                         │
+                  ┌──────┴──────┐
+                  │             │
+                PASS          FAIL
+                  │             │
+                  ▼             ▼
+             Veracode SAST   Stop Pipeline
+                  │
+                  ▼
+            Docker Image Build
+                  │
+                  ▼
+             Trivy Image Scan
+                  │
+                  ▼
+              Generate SBOM
+                  │
+                  ▼
+           Cosign Image Signing
+                  │
+                  ▼
+            Push to Amazon ECR
+                  │
+                  ▼
+        Update GitOps Repository
+                  │
+                  ▼
+              ArgoCD Sync
+                  │
+                  ▼
+          Deploy to Amazon EKS
+                  │
+                  ▼
+             Smoke Testing
+                  │
+                  ▼
+               Production
+```
+
+---
+
+# Understanding the Scan Report
+
+A typical report contains:
+
+- Project information
+- Dependency inventory
+- Vulnerability summary
+- CVE identifiers
+- CVSS scores
+- Vulnerable versions
+- Fixed versions
+- References
+- Report generation time
+
+Example.
+
+```text
+Application
+
+↓
+
+152 Dependencies
+
+↓
+
+8 Vulnerabilities
+
+↓
+
+HTML Report
+
+↓
+
+Developer Review
+```
+
+---
+
+# Understanding CVSS Scores
+
+Dependency-Check uses the Common Vulnerability Scoring System (CVSS) to measure vulnerability severity.
+
+| CVSS | Severity | Recommended Action |
+|------|----------|--------------------|
+| 0.1 – 3.9 | Low | Monitor |
+| 4.0 – 6.9 | Medium | Plan remediation |
+| 7.0 – 8.9 | High | Fix before release |
+| 9.0 – 10.0 | Critical | Immediate remediation |
+
+---
+
+# Sample Vulnerability Report
+
+| Dependency | CVE | Severity | Status |
+|------------|-----|----------|--------|
+| log4j-core | CVE-2021-44228 | Critical | Upgrade Required |
+| jackson-databind | CVE-2022-42003 | High | Upgrade Required |
+| commons-text | CVE-2022-42889 | High | Upgrade Required |
+| spring-core | None | Safe | Continue |
+
+---
+
+# Vulnerability Remediation Workflow
+
+```text
+Dependency Scan
+
+↓
+
+Vulnerability Found
+
+↓
+
+Developer Review
+
+↓
+
+Upgrade Dependency
+
+↓
+
+Rebuild Application
+
+↓
+
+Re-scan
+
+↓
+
+PASS
+```
+
+Dependency upgrades should be tested before deployment to ensure compatibility.
+
+---
+
+# Managing False Positives
+
+Occasionally, a reported vulnerability may not apply to your application.
+
+Recommended workflow.
+
+```text
+Finding
+
+↓
+
+Developer Review
+
+↓
+
+Security Team Validation
+
+↓
+
+Approved
+
+↓
+
+Suppression File
+
+↓
+
+Future Scans
+```
+
+Every suppression should include:
+
+- Business justification
+- Security approval
+- Expiry date
+- Review schedule
+
+---
+
+# Dashboards
+
+## Developer Dashboard
+
+Shows:
+
+- Vulnerable libraries
+- Dependency tree
+- CVSS scores
+- Upgrade recommendations
+
+---
+
+## Security Dashboard
+
+Shows:
+
+- Total vulnerable dependencies
+- Critical vulnerabilities
+- Open remediation tasks
+- Policy compliance
+- Risk trends
+
+---
+
+## Executive Dashboard
+
+Provides:
+
+- Overall software supply chain risk
+- Compliance metrics
+- Application security posture
+- Remediation progress
+- Historical trends
+
+---
+
+# Enterprise Best Practices
+
+## Dependency Management
+
+- Keep dependencies updated.
+- Remove unused libraries.
+- Pin dependency versions.
+- Use trusted package repositories.
+- Review dependency changes during code review.
+
+---
+
+## CI/CD
+
+- Scan every Pull Request.
+- Scan every release build.
+- Fail builds for High and Critical vulnerabilities.
+- Archive reports for auditing.
+- Integrate reports with security dashboards.
+
+---
+
+## Security
+
+- Enable NVD API authentication.
+- Update vulnerability databases daily.
+- Use suppression files only after approval.
+- Protect CI/CD credentials.
+- Monitor newly disclosed CVEs.
+
+---
+
+## Performance
+
+- Share vulnerability databases across build agents.
+- Exclude unnecessary directories.
+- Scan only required modules.
+- Schedule database updates outside build hours.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Running scans only before production releases.
+
+Correct approach.
+
+```text
+Every Pull Request
+
+↓
+
+Dependency Scan
+
+↓
+
+Fix Vulnerabilities
+
+↓
+
+Merge
+```
+
+---
+
+## Mistake 2
+
+Ignoring Medium vulnerabilities.
+
+Medium vulnerabilities can become High or Critical as new exploit techniques emerge.
+
+Regular reviews reduce long-term risk.
+
+---
+
+## Mistake 3
+
+Using outdated vulnerability databases.
+
+```text
+Old Database
+
+↓
+
+Missed CVEs
+
+↓
+
+Insecure Release
+```
+
+Always update the database before relying on scan results.
+
+---
+
+## Mistake 4
+
+Scanning only application code.
+
+Dependency-Check focuses on third-party libraries.
+
+Combine it with:
+
+- SonarQube
+- Veracode
+- Trivy
+- SBOM generation
+
+to achieve comprehensive application security.
+
+---
+
+## Mistake 5
+
+Ignoring transitive dependencies.
+
+Many vulnerabilities originate from indirect dependencies.
+
+```text
+Application
+
+↓
+
+Spring Boot
+
+↓
+
+Library A
+
+↓
+
+Library B
+
+↓
+
+Critical CVE
+```
+
+Review the full dependency tree rather than only direct dependencies.
+
+---
+
+# Common Troubleshooting
+
+## Issue 1
+
+### NVD Update Failed
+
+**Cause**
+
+Internet connectivity or API rate limiting.
+
+**Resolution**
+
+```text
+Verify Network
+
+↓
+
+Verify NVD API Key
+
+↓
+
+Retry Database Update
+```
+
+---
+
+## Issue 2
+
+### Scan Takes Too Long
+
+**Cause**
+
+Large projects or first-time database download.
+
+**Resolution**
+
+- Use a shared database.
+- Update the database daily.
+- Exclude unnecessary directories.
+
+---
+
+## Issue 3
+
+### Build Failed Due to CVSS Threshold
+
+**Cause**
+
+Detected vulnerability exceeds the configured threshold.
+
+**Resolution**
+
+```text
+Review Report
+
+↓
+
+Upgrade Dependency
+
+↓
+
+Rebuild
+
+↓
+
+Re-run Scan
+```
+
+---
+
+## Issue 4
+
+### False Positive Detected
+
+**Cause**
+
+Incorrect vulnerability matching.
+
+**Resolution**
+
+```text
+Security Review
+
+↓
+
+Approve Suppression
+
+↓
+
+Update Suppression File
+```
+
+---
+
+## Issue 5
+
+### Report Not Generated
+
+**Cause**
+
+Invalid output directory or scan failure.
+
+**Resolution**
+
+- Verify output directory permissions.
+- Check Dependency-Check logs.
+- Confirm the scan completed successfully.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is OWASP Dependency-Check?
+
+**Answer**
+
+OWASP Dependency-Check is an open-source Software Composition Analysis (SCA) tool that identifies known vulnerabilities in third-party libraries by comparing project dependencies with public vulnerability databases such as the National Vulnerability Database (NVD).
+
+---
+
+## Question 2
+
+### What is the difference between Dependency-Check and Trivy?
+
+**Answer**
+
+Dependency-Check focuses on application dependencies and open-source libraries, while Trivy scans container images, operating system packages, Kubernetes resources, Infrastructure as Code, secrets, and SBOMs.
+
+---
+
+## Question 3
+
+### Why is an NVD API key recommended?
+
+**Answer**
+
+An NVD API key increases update speed, reduces rate limiting, and improves reliability when downloading vulnerability data during automated scans.
+
+---
+
+## Question 4
+
+### What is a CVSS score?
+
+**Answer**
+
+CVSS (Common Vulnerability Scoring System) is a standardized method for measuring the severity of software vulnerabilities, helping organizations prioritize remediation efforts.
+
+---
+
+## Question 5
+
+### Why should builds fail on High or Critical vulnerabilities?
+
+**Answer**
+
+Blocking builds prevents vulnerable software from progressing through the CI/CD pipeline, reducing the risk of deploying exploitable applications.
+
+---
+
+## Question 6
+
+### What are transitive dependencies?
+
+**Answer**
+
+Transitive dependencies are libraries indirectly included through another dependency. They can introduce vulnerabilities even if they are not explicitly declared by the application.
+
+---
+
+## Question 7
+
+### Why are suppression files used?
+
+**Answer**
+
+Suppression files exclude approved false positives or accepted risks from future scans after review and authorization by the security team.
+
+---
+
+## Question 8
+
+### How does Dependency-Check integrate with CI/CD?
+
+**Answer**
+
+It integrates through Maven, Gradle, CLI, Jenkins, GitHub Actions, GitLab CI, and other automation tools to perform dependency scanning during every build.
+
+---
+
+## Question 9
+
+### Can Dependency-Check replace Veracode or SonarQube?
+
+**Answer**
+
+No. Dependency-Check specializes in Software Composition Analysis. SonarQube focuses on code quality and static analysis, while Veracode provides enterprise application security testing and governance. These tools complement each other.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for Dependency-Check?
+
+**Answer**
+
+Run scans on every Pull Request and release build, maintain an up-to-date vulnerability database, fail builds for High and Critical vulnerabilities, secure API keys, review suppression files regularly, and combine Dependency-Check with SonarQube, Veracode, Trivy, SBOM generation, and image signing.
+
+---
+
+# Key Takeaways
+
+- OWASP Dependency-Check is an enterprise-grade Software Composition Analysis (SCA) tool.
+- It detects vulnerable third-party libraries before software is released.
+- Integrate scans into every CI/CD pipeline to identify risks early.
+- Keep the NVD database updated for accurate vulnerability detection.
+- Use CVSS thresholds to automate security policy enforcement.
+- Combine Dependency-Check with SonarQube, Veracode, Trivy, SBOM generation, and Cosign for layered software supply chain security.
+- Review suppression files regularly and document all accepted risks.
+- Continuously monitor dependency updates to reduce long-term exposure to newly disclosed vulnerabilities.
