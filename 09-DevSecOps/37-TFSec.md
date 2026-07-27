@@ -1952,3 +1952,756 @@ Deploy Applications
 
 ---
 
+# Production Terraform Security Examples
+
+The following examples demonstrate common Terraform security issues identified by TFSec and their recommended remediations.
+
+---
+
+# Example 1 - Public S3 Bucket
+
+## Insecure Configuration
+
+```hcl
+resource "aws_s3_bucket" "logs" {
+
+  bucket = "company-logs"
+
+}
+```
+
+Finding.
+
+```text
+AWS S3 Bucket
+
+↓
+
+Public Access Not Restricted
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_s3_bucket_public_access_block" "logs" {
+
+  bucket = aws_s3_bucket.logs.id
+
+  block_public_acls       = true
+
+  block_public_policy     = true
+
+  ignore_public_acls      = true
+
+  restrict_public_buckets = true
+
+}
+```
+
+---
+
+# Example 2 - Unencrypted S3 Bucket
+
+## Insecure Configuration
+
+```hcl
+resource "aws_s3_bucket" "backup" {
+
+  bucket = "company-backup"
+
+}
+```
+
+Finding.
+
+```text
+Server Side Encryption Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_s3_bucket_server_side_encryption_configuration" "backup" {
+
+  bucket = aws_s3_bucket.backup.id
+
+  rule {
+
+    apply_server_side_encryption_by_default {
+
+      sse_algorithm = "AES256"
+
+    }
+
+  }
+
+}
+```
+
+---
+
+# Example 3 - Open Security Group
+
+## Insecure Configuration
+
+```hcl
+resource "aws_security_group" "web" {
+
+  ingress {
+
+    from_port = 22
+
+    to_port = 22
+
+    protocol = "tcp"
+
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
+
+}
+```
+
+Finding.
+
+```text
+Security Group Allows SSH From Anywhere
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_security_group" "web" {
+
+  ingress {
+
+    from_port = 22
+
+    to_port = 22
+
+    protocol = "tcp"
+
+    cidr_blocks = ["10.0.0.0/16"]
+
+  }
+
+}
+```
+
+---
+
+# Example 4 - Unencrypted RDS Instance
+
+## Insecure Configuration
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  allocated_storage = 100
+
+  engine = "mysql"
+
+}
+```
+
+Finding.
+
+```text
+Database Encryption Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  allocated_storage = 100
+
+  engine = "mysql"
+
+  storage_encrypted = true
+
+}
+```
+
+---
+
+# Example 5 - Public RDS Instance
+
+## Insecure Configuration
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  publicly_accessible = true
+
+}
+```
+
+Finding.
+
+```text
+Database Accessible From Internet
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  publicly_accessible = false
+
+}
+```
+
+---
+
+# Example 6 - IAM Wildcard Policy
+
+## Insecure Configuration
+
+```json
+{
+
+  "Version": "2012-10-17",
+
+  "Statement": [
+
+    {
+
+      "Effect": "Allow",
+
+      "Action": "*",
+
+      "Resource": "*"
+
+    }
+
+  ]
+
+}
+```
+
+Finding.
+
+```text
+IAM Policy Uses Wildcards
+```
+
+---
+
+## Secure Configuration
+
+```json
+{
+
+  "Version": "2012-10-17",
+
+  "Statement": [
+
+    {
+
+      "Effect": "Allow",
+
+      "Action": [
+
+        "s3:GetObject"
+
+      ],
+
+      "Resource": [
+
+        "arn:aws:s3:::company-data/*"
+
+      ]
+
+    }
+
+  ]
+
+}
+```
+
+---
+
+# Example 7 - EKS Cluster Logging Disabled
+
+## Insecure Configuration
+
+```hcl
+resource "aws_eks_cluster" "production" {
+
+  name = "production"
+
+}
+```
+
+Finding.
+
+```text
+Control Plane Logging Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_eks_cluster" "production" {
+
+  enabled_cluster_log_types = [
+
+    "api",
+
+    "audit",
+
+    "authenticator",
+
+    "controllerManager",
+
+    "scheduler"
+
+  ]
+
+}
+```
+
+---
+
+# Example 8 - Unencrypted EBS Volume
+
+## Insecure Configuration
+
+```hcl
+resource "aws_ebs_volume" "data" {
+
+  availability_zone = "us-east-1a"
+
+  size = 200
+
+}
+```
+
+Finding.
+
+```text
+Volume Encryption Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_ebs_volume" "data" {
+
+  availability_zone = "us-east-1a"
+
+  size = 200
+
+  encrypted = true
+
+}
+```
+
+---
+
+# Shift-Left Security
+
+TFSec identifies security issues before infrastructure is provisioned.
+
+```text
+Traditional Model
+
+Terraform Apply
+
+↓
+
+Infrastructure Created
+
+↓
+
+Security Review
+
+↓
+
+Fix Issues
+```
+
+```text
+Shift Left
+
+Terraform Code
+
+↓
+
+TFSec
+
+↓
+
+Fix Issues
+
+↓
+
+Terraform Apply
+
+↓
+
+Secure Infrastructure
+```
+
+Benefits.
+
+- Reduced security risks
+- Lower remediation cost
+- Faster deployments
+- Improved compliance
+
+---
+
+# TFSec with Other DevSecOps Tools
+
+TFSec secures Infrastructure as Code as part of a complete DevSecOps pipeline.
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Veracode
+
+↓
+
+Build
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+TFSec
+
+↓
+
+Terraform Apply
+
+↓
+
+JFrog Artifactory
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Each tool validates a different layer of the software delivery pipeline.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Running TFSec only before production deployments.
+
+**Impact**
+
+Security issues remain undetected during development.
+
+**Recommendation**
+
+Run TFSec during every pull request and CI build.
+
+---
+
+## Mistake 2
+
+Ignoring High and Critical findings.
+
+**Impact**
+
+Cloud infrastructure is deployed with known security risks.
+
+**Recommendation**
+
+Block deployments until High and Critical findings are resolved.
+
+---
+
+## Mistake 3
+
+Using Soft Fail in production.
+
+**Impact**
+
+Pipelines continue despite policy violations.
+
+**Recommendation**
+
+Enable Hard Fail for production environments.
+
+---
+
+## Mistake 4
+
+Skipping Terraform module scanning.
+
+**Impact**
+
+Reusable modules may contain insecure configurations.
+
+**Recommendation**
+
+Scan every reusable module before publishing.
+
+---
+
+## Mistake 5
+
+Excluding too many security rules.
+
+**Impact**
+
+Important vulnerabilities may remain undetected.
+
+**Recommendation**
+
+Review every exclusion during security audits.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### TFSec Command Not Found
+
+**Cause**
+
+TFSec is not installed or not available in the system PATH.
+
+**Resolution**
+
+```bash
+tfsec --version
+
+which tfsec
+```
+
+Reinstall if required.
+
+---
+
+## Scenario 2
+
+### Scan Is Slow
+
+**Cause**
+
+Large Terraform repositories or unnecessary directories are included.
+
+**Resolution**
+
+```bash
+tfsec \
+--exclude-path .terraform \
+--exclude-path vendor .
+```
+
+---
+
+## Scenario 3
+
+### Unexpected Rule Failures
+
+**Cause**
+
+The project uses older Terraform syntax or unsupported providers.
+
+**Resolution**
+
+- Upgrade Terraform modules.
+- Review provider versions.
+- Update TFSec to the latest release.
+
+---
+
+## Scenario 4
+
+### Pipeline Fails After TFSec Scan
+
+**Cause**
+
+Security findings return a non-zero exit code.
+
+**Resolution**
+
+- Review the reported findings.
+- Fix the Terraform configuration.
+- Re-run the pipeline.
+- Avoid using `--soft-fail` in production.
+
+---
+
+## Scenario 5
+
+### False Positive Finding
+
+**Cause**
+
+A security rule does not apply to the specific infrastructure design.
+
+**Resolution**
+
+- Validate the finding with the security team.
+- Document the business justification.
+- Use an inline ignore only after approval.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is TFSec?
+
+**Answer**
+
+TFSec is a static security scanner that analyses Terraform code for security misconfigurations before infrastructure is provisioned.
+
+---
+
+## Question 2
+
+### Why is TFSec important?
+
+**Answer**
+
+It shifts security left by detecting infrastructure vulnerabilities during development and CI/CD, reducing the risk of insecure cloud deployments.
+
+---
+
+## Question 3
+
+### What does TFSec scan?
+
+**Answer**
+
+TFSec primarily scans Terraform configurations for AWS, Azure, Google Cloud, and other supported cloud providers.
+
+---
+
+## Question 4
+
+### How is TFSec different from Checkov?
+
+**Answer**
+
+TFSec focuses on Terraform security, while Checkov supports multiple Infrastructure as Code frameworks such as Terraform, Kubernetes, Helm, Dockerfiles, GitHub Actions, and CloudFormation.
+
+---
+
+## Question 5
+
+### Can TFSec be integrated into CI/CD?
+
+**Answer**
+
+Yes. It integrates with Jenkins, GitHub Actions, GitLab CI, Azure DevOps, and other CI/CD platforms to automatically validate Terraform code before deployment.
+
+---
+
+## Question 6
+
+### Why should production pipelines fail on TFSec findings?
+
+**Answer**
+
+Failing the pipeline prevents insecure infrastructure from being provisioned, reducing security risks and ensuring compliance.
+
+---
+
+## Question 7
+
+### What report formats does TFSec support?
+
+**Answer**
+
+TFSec supports console output, JSON, CSV, JUnit, SARIF, and Checkstyle formats for integration with CI/CD systems and security dashboards.
+
+---
+
+## Question 8
+
+### Why should Terraform modules be scanned?
+
+**Answer**
+
+Terraform modules are reused across multiple projects. Scanning them prevents insecure configurations from propagating throughout the organisation.
+
+---
+
+## Question 9
+
+### What is the purpose of SARIF output?
+
+**Answer**
+
+SARIF enables TFSec findings to be imported into GitHub Code Scanning and other compatible security platforms for centralised visibility.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for TFSec?
+
+**Answer**
+
+Run TFSec on every pull request, fail production builds on High and Critical findings, scan reusable modules, generate SARIF reports, review ignored rules regularly, and integrate TFSec with other DevSecOps security tools.
+
+---
+
+# Key Takeaways
+
+- TFSec specialises in Terraform Infrastructure as Code security scanning.
+- Detect security misconfigurations before cloud infrastructure is provisioned.
+- Integrate TFSec into Jenkins, GitHub Actions, and GitLab CI pipelines.
+- Fail production deployments on High and Critical findings.
+- Scan reusable Terraform modules before publishing.
+- Generate SARIF reports for GitHub Code Scanning.
+- Combine TFSec with Checkov, SonarQube, OWASP Dependency-Check, Veracode, Trivy, JFrog Artifactory, GitOps, ArgoCD, and Amazon EKS to implement a comprehensive DevSecOps pipeline.
