@@ -527,3 +527,443 @@ Low : 1
 ```
 
 The generated report helps developers identify vulnerable libraries before the application proceeds to the next stages of the DevSecOps pipeline.
+
+---
+
+# Configuration
+
+OWASP Dependency-Check can be configured using:
+
+- Command-line arguments
+- Configuration properties
+- Maven plugin
+- Gradle plugin
+- Environment variables
+
+Using a centralized configuration ensures consistent dependency scanning across all CI/CD pipelines.
+
+---
+
+# Configuration Priority
+
+When multiple configuration methods are used, Dependency-Check follows this order.
+
+```text
+Command Line Arguments
+
+↓
+
+Plugin Configuration
+
+↓
+
+dependency-check.properties
+
+↓
+
+Default Configuration
+```
+
+---
+
+# dependency-check.properties
+
+Create a configuration file.
+
+```bash
+mkdir -p ~/.dependency-check
+
+vi ~/.dependency-check/dependency-check.properties
+```
+
+Example configuration.
+
+```properties
+autoUpdate=true
+
+format=HTML,JSON
+
+failBuildOnCVSS=7
+
+nvd.api.key=YOUR_NVD_API_KEY
+
+data.directory=/opt/dependency-check/data
+
+suppression.file=dependency-check-suppressions.xml
+```
+
+---
+
+# Common Configuration Options
+
+| Property | Purpose |
+|----------|----------|
+| autoUpdate | Automatically update vulnerability database |
+| format | Output report format |
+| failBuildOnCVSS | Pipeline failure threshold |
+| nvd.api.key | NVD API authentication |
+| data.directory | Local vulnerability database |
+| suppression.file | Ignore approved false positives |
+
+---
+
+# NVD API Key
+
+The National Vulnerability Database (NVD) provides API access for downloading vulnerability information.
+
+Without an API key:
+
+- Slower updates
+- Rate limiting
+- Longer CI/CD execution
+
+Generate an API key from the NVD website and configure it securely.
+
+Example.
+
+```properties
+nvd.api.key=xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+---
+
+# Store API Keys Securely
+
+Never store API keys inside:
+
+- Git repositories
+- Source code
+- Jenkinsfiles
+- Dockerfiles
+- Terraform files
+
+Use secure secret management.
+
+Examples:
+
+- Jenkins Credentials
+- GitHub Secrets
+- GitLab CI Variables
+- AWS Secrets Manager
+- Azure Key Vault
+- HashiCorp Vault
+
+Architecture.
+
+```text
+Developer
+
+↓
+
+Secret Manager
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Dependency-Check
+
+↓
+
+NVD API
+```
+
+---
+
+# Database Configuration
+
+Dependency-Check downloads vulnerability data locally.
+
+Default structure.
+
+```text
+dependency-check-data/
+
+├── cache/
+
+├── nvdcve/
+
+├── jsrepository/
+
+└── reports/
+```
+
+Use a shared database location on dedicated build agents to reduce repeated downloads.
+
+Example.
+
+```properties
+data.directory=/opt/dependency-check/data
+```
+
+---
+
+# Database Update Workflow
+
+```text
+NVD
+
+↓
+
+Download Updates
+
+↓
+
+Local Database
+
+↓
+
+Dependency Scan
+
+↓
+
+Generate Report
+```
+
+Production recommendation:
+
+Update the database once daily rather than during every pipeline execution.
+
+---
+
+# Proxy Configuration
+
+Organizations using outbound proxy servers should configure proxy settings.
+
+Example.
+
+```bash
+export HTTP_PROXY=http://proxy.company.com:8080
+
+export HTTPS_PROXY=http://proxy.company.com:8080
+
+export NO_PROXY=localhost,127.0.0.1
+```
+
+Verify.
+
+```bash
+env | grep PROXY
+```
+
+---
+
+# Suppression Files
+
+Some findings may be accepted temporarily after security review.
+
+Create a suppression file.
+
+```bash
+vi dependency-check-suppressions.xml
+```
+
+Example.
+
+```xml
+<?xml version="1.0"?>
+
+<suppressions>
+
+    <suppress>
+
+        <cve>CVE-2024-12345</cve>
+
+    </suppress>
+
+</suppressions>
+```
+
+Run.
+
+```bash
+dependency-check.sh \
+--suppression dependency-check-suppressions.xml \
+--scan .
+```
+
+Suppress vulnerabilities only after formal approval from the security team.
+
+---
+
+# False Positives
+
+Occasionally a dependency may be incorrectly matched with a CVE.
+
+Workflow.
+
+```text
+Security Finding
+
+↓
+
+Developer Review
+
+↓
+
+Security Validation
+
+↓
+
+Approved Suppression
+
+↓
+
+Future Scans Ignore Finding
+```
+
+All suppressions should be documented and reviewed periodically.
+
+---
+
+# CVSS Severity Threshold
+
+Dependency-Check uses CVSS scores to measure vulnerability severity.
+
+| CVSS Score | Severity |
+|------------|----------|
+| 0.1–3.9 | Low |
+| 4.0–6.9 | Medium |
+| 7.0–8.9 | High |
+| 9.0–10.0 | Critical |
+
+Example.
+
+```bash
+dependency-check.sh \
+--failOnCVSS 7
+```
+
+Pipeline behavior.
+
+```text
+CVSS < 7
+
+↓
+
+Pipeline Continues
+```
+
+```text
+CVSS ≥ 7
+
+↓
+
+Pipeline Fails
+```
+
+---
+
+# Report Formats
+
+Dependency-Check supports multiple output formats.
+
+| Format | Purpose |
+|---------|----------|
+| HTML | Human-readable reports |
+| JSON | Automation |
+| XML | Tool integration |
+| CSV | Reporting |
+| SARIF | GitHub Security |
+| JUNIT | CI/CD testing |
+
+Generate an HTML report.
+
+```bash
+dependency-check.sh \
+--format HTML \
+--scan .
+```
+
+Generate multiple reports.
+
+```bash
+dependency-check.sh \
+--format ALL \
+--scan .
+```
+
+---
+
+# Report Directory
+
+Specify an output directory.
+
+```bash
+dependency-check.sh \
+--out reports \
+--scan .
+```
+
+Example structure.
+
+```text
+reports/
+
+├── dependency-check-report.html
+
+├── dependency-check-report.json
+
+├── dependency-check-report.xml
+
+└── dependency-check-report.sarif
+```
+
+---
+
+# Cache Management
+
+Dependency-Check stores downloaded vulnerability data locally.
+
+View cache size.
+
+```bash
+du -sh /opt/dependency-check/data
+```
+
+Clean old cache.
+
+```bash
+rm -rf /opt/dependency-check/data/*
+```
+
+Rebuild the database.
+
+```bash
+dependency-check.sh --updateonly
+```
+
+Avoid deleting the cache before every pipeline execution, as this significantly increases scan time.
+
+---
+
+# Scan Performance
+
+Large enterprise applications may contain thousands of dependencies.
+
+Improve performance by:
+
+- Sharing the vulnerability database across build agents.
+- Updating the NVD database outside CI/CD.
+- Scanning only the required project directory.
+- Excluding build artifacts and temporary files.
+
+---
+
+# Enterprise Best Practices
+
+- Use a centralized `dependency-check.properties` file.
+- Configure an NVD API key to avoid rate limiting.
+- Update the vulnerability database daily.
+- Fail builds for High and Critical CVSS scores.
+- Store API keys in an enterprise secrets manager.
+- Use suppression files only after security approval.
+- Review suppressed CVEs regularly.
+- Generate SARIF reports for GitHub Security integration.
+- Archive reports for compliance and auditing.
+- Keep Dependency-Check updated to the latest stable release.
+
+---
+
