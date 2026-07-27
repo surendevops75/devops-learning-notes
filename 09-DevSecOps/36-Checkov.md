@@ -1969,3 +1969,709 @@ Application Deployment
 
 ---
 
+# Production Terraform Security Examples
+
+The following examples demonstrate common Terraform security issues detected by Checkov and their recommended remediations.
+
+---
+
+# Example 1 - Public S3 Bucket
+
+## Insecure Configuration
+
+```hcl
+resource "aws_s3_bucket" "logs" {
+
+  bucket = "company-logs"
+
+}
+
+resource "aws_s3_bucket_public_access_block" "logs" {
+
+  bucket = aws_s3_bucket.logs.id
+
+  block_public_acls       = false
+
+  block_public_policy     = false
+
+  ignore_public_acls      = false
+
+  restrict_public_buckets = false
+
+}
+```
+
+Possible findings.
+
+```text
+CKV_AWS_53
+
+CKV_AWS_54
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_s3_bucket_public_access_block" "logs" {
+
+  bucket = aws_s3_bucket.logs.id
+
+  block_public_acls       = true
+
+  block_public_policy     = true
+
+  ignore_public_acls      = true
+
+  restrict_public_buckets = true
+
+}
+```
+
+---
+
+# Example 2 - Unencrypted EBS Volume
+
+## Insecure Configuration
+
+```hcl
+resource "aws_ebs_volume" "db" {
+
+  availability_zone = "us-east-1a"
+
+  size = 100
+
+}
+```
+
+Finding.
+
+```text
+Volume Encryption Disabled
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_ebs_volume" "db" {
+
+  availability_zone = "us-east-1a"
+
+  size = 100
+
+  encrypted = true
+
+}
+```
+
+---
+
+# Example 3 - Security Group Open to the Internet
+
+## Insecure Configuration
+
+```hcl
+resource "aws_security_group" "ssh" {
+
+  ingress {
+
+    from_port = 22
+
+    to_port = 22
+
+    protocol = "tcp"
+
+    cidr_blocks = ["0.0.0.0/0"]
+
+  }
+
+}
+```
+
+Finding.
+
+```text
+SSH Open to Internet
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_security_group" "ssh" {
+
+  ingress {
+
+    from_port = 22
+
+    to_port = 22
+
+    protocol = "tcp"
+
+    cidr_blocks = ["10.0.0.0/16"]
+
+  }
+
+}
+```
+
+---
+
+# Example 4 - IAM Policy Wildcards
+
+## Insecure Configuration
+
+```json
+{
+
+  "Version": "2012-10-17",
+
+  "Statement": [
+
+    {
+
+      "Effect": "Allow",
+
+      "Action": "*",
+
+      "Resource": "*"
+
+    }
+
+  ]
+
+}
+```
+
+Finding.
+
+```text
+IAM Wildcard Permissions
+```
+
+---
+
+## Secure Configuration
+
+```json
+{
+
+  "Version": "2012-10-17",
+
+  "Statement": [
+
+    {
+
+      "Effect": "Allow",
+
+      "Action": [
+
+        "s3:GetObject"
+
+      ],
+
+      "Resource": [
+
+        "arn:aws:s3:::company-data/*"
+
+      ]
+
+    }
+
+  ]
+
+}
+```
+
+---
+
+# Example 5 - Public RDS Database
+
+## Insecure Configuration
+
+```hcl
+resource "aws_db_instance" "database" {
+
+  publicly_accessible = true
+
+}
+```
+
+Finding.
+
+```text
+Database Publicly Accessible
+```
+
+---
+
+## Secure Configuration
+
+```hcl
+resource "aws_db_instance" "database" {
+
+  publicly_accessible = false
+
+}
+```
+
+---
+
+# Production Pipeline with Checkov
+
+The infrastructure pipeline should stop immediately when security policy violations are detected.
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Pipeline
+
+↓
+
+Checkout
+
+↓
+
+Terraform Format
+
+↓
+
+Terraform Validate
+
+↓
+
+Terraform Plan
+
+↓
+
+Checkov Scan
+
+↓
+
+PASS
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Deploy Application
+```
+
+If Checkov reports policy violations, the pipeline should terminate before infrastructure provisioning.
+
+---
+
+# Shift-Left Security
+
+Checkov enables security validation early in the software development lifecycle.
+
+```text
+Traditional Approach
+
+Infrastructure
+
+↓
+
+Deploy
+
+↓
+
+Security Issues Found
+
+↓
+
+Rework
+```
+
+```text
+Shift Left
+
+Infrastructure Code
+
+↓
+
+Checkov
+
+↓
+
+Fix Issues
+
+↓
+
+Deploy Secure Infrastructure
+```
+
+Benefits.
+
+- Lower remediation costs
+- Faster deployments
+- Improved compliance
+- Reduced production risk
+
+---
+
+# Checkov with Other DevSecOps Tools
+
+Checkov is one component of a comprehensive DevSecOps strategy.
+
+```text
+Git Repository
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Veracode
+
+↓
+
+Build Application
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Checkov
+
+↓
+
+Terraform Apply
+
+↓
+
+JFrog Artifactory
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Each tool validates a different layer of the software supply chain.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Skipping Checkov scans in development.
+
+**Impact**
+
+Security issues reach production.
+
+**Recommendation**
+
+Run Checkov locally and in every CI pipeline.
+
+---
+
+## Mistake 2
+
+Ignoring High and Critical findings.
+
+**Impact**
+
+Cloud resources remain vulnerable.
+
+**Recommendation**
+
+Treat High and Critical findings as deployment blockers.
+
+---
+
+## Mistake 3
+
+Using Soft Fail in production.
+
+**Impact**
+
+Pipelines continue despite policy violations.
+
+**Recommendation**
+
+Use Hard Fail for production deployments.
+
+---
+
+## Mistake 4
+
+Skipping external module scanning.
+
+**Impact**
+
+Third-party Terraform modules may introduce vulnerabilities.
+
+**Recommendation**
+
+Enable external module downloads and scanning.
+
+---
+
+## Mistake 5
+
+Suppressing findings without review.
+
+**Impact**
+
+Legitimate security issues may be hidden.
+
+**Recommendation**
+
+Document and approve every skipped policy.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Checkov Command Not Found
+
+**Cause**
+
+Checkov is not installed or not available in the system PATH.
+
+**Resolution**
+
+```bash
+pip install checkov
+
+checkov --version
+```
+
+---
+
+## Scenario 2
+
+### External Modules Not Downloaded
+
+**Cause**
+
+External module downloads are disabled.
+
+**Resolution**
+
+```bash
+checkov \
+-d . \
+--download-external-modules true
+```
+
+---
+
+## Scenario 3
+
+### Terraform Plan Scan Fails
+
+**Cause**
+
+The binary plan file is provided instead of the JSON representation.
+
+**Resolution**
+
+```bash
+terraform show \
+-json tfplan.binary \
+> tfplan.json
+
+checkov -f tfplan.json
+```
+
+---
+
+## Scenario 4
+
+### Pipeline Stops Unexpectedly
+
+**Cause**
+
+Policy violations return a non-zero exit code.
+
+**Resolution**
+
+- Review the failed policies.
+- Remediate the infrastructure code.
+- Re-run the pipeline.
+- Use `--soft-fail` only in development environments if approved.
+
+---
+
+## Scenario 5
+
+### Large Repository Scan Is Slow
+
+**Cause**
+
+The repository contains unnecessary directories or downloaded dependencies.
+
+**Resolution**
+
+```bash
+checkov \
+-d . \
+--skip-path .terraform \
+--skip-path vendor
+```
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is Checkov?
+
+**Answer**
+
+Checkov is an Infrastructure as Code security scanner that identifies security and compliance issues in Terraform, Kubernetes, Dockerfiles, Helm charts, GitHub Actions workflows, CloudFormation templates, and other supported frameworks before deployment.
+
+---
+
+## Question 2
+
+### Why is Checkov important in DevSecOps?
+
+**Answer**
+
+It shifts security left by detecting infrastructure misconfigurations during development and CI/CD, reducing the risk of deploying insecure cloud resources.
+
+---
+
+## Question 3
+
+### What types of files can Checkov scan?
+
+**Answer**
+
+Terraform, Terraform Plans, Kubernetes manifests, Helm charts, Dockerfiles, CloudFormation, Azure ARM templates, Azure Bicep templates, GitHub Actions workflows, GitLab CI pipelines, and Serverless Framework configurations.
+
+---
+
+## Question 4
+
+### What is the difference between scanning Terraform code and a Terraform Plan?
+
+**Answer**
+
+Terraform code analysis checks the source configuration, while Terraform Plan scanning evaluates the resolved execution plan with variables and computed values, providing more accurate security analysis.
+
+---
+
+## Question 5
+
+### What is the purpose of the `--soft-fail` option?
+
+**Answer**
+
+It allows the pipeline to continue even when policy violations are detected. It is generally suitable for development environments but not recommended for production.
+
+---
+
+## Question 6
+
+### How can Checkov be integrated into CI/CD?
+
+**Answer**
+
+It can be integrated into Jenkins, GitHub Actions, GitLab CI, Azure DevOps, and other CI/CD platforms to automatically scan Infrastructure as Code before deployment.
+
+---
+
+## Question 7
+
+### Why should external Terraform modules be scanned?
+
+**Answer**
+
+External modules may contain insecure configurations or policy violations. Scanning them ensures that third-party code meets the organization's security standards.
+
+---
+
+## Question 8
+
+### What report formats does Checkov support?
+
+**Answer**
+
+CLI, JSON, SARIF, JUnit XML, CycloneDX, and GitLab SAST, enabling integration with security dashboards and CI/CD reporting tools.
+
+---
+
+## Question 9
+
+### What happens when Checkov finds policy violations?
+
+**Answer**
+
+By default, it returns a non-zero exit code, allowing CI/CD pipelines to fail and prevent insecure infrastructure from being provisioned.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for using Checkov?
+
+**Answer**
+
+Scan every pull request, enforce Hard Fail in production, scan Terraform Plans, review skipped policies, generate SARIF reports for code scanning, maintain custom policies in version control, and integrate Checkov with other DevSecOps tools for layered security.
+
+---
+
+# Key Takeaways
+
+- Checkov secures Infrastructure as Code before cloud resources are provisioned.
+- It supports Terraform, Kubernetes, Dockerfiles, Helm, CloudFormation, GitHub Actions, GitLab CI, Azure ARM, and Bicep.
+- Integrate Checkov into every pull request and CI/CD pipeline.
+- Scan Terraform Plans for more accurate security analysis.
+- Fail production pipelines on policy violations.
+- Use custom policies to enforce organizational standards.
+- Combine Checkov with SonarQube, OWASP Dependency-Check, Veracode, Trivy, JFrog Artifactory, GitOps, ArgoCD, and Amazon EKS to build a secure end-to-end DevSecOps pipeline.
