@@ -852,3 +852,552 @@ Metrics help monitor Falco health and alert volumes.
 - Version-control all custom configurations.
 
 ---
+
+# Understanding Falco Rules
+
+Falco detects threats by evaluating runtime events against predefined rules.
+
+Rule evaluation flow.
+
+```text
+Linux Syscall
+
+↓
+
+Falco Engine
+
+↓
+
+Rule Evaluation
+
+↓
+
+Condition Matched?
+
+      │
+
+ ┌────┴────┐
+
+ ▼         ▼
+
+Yes        No
+
+ │          │
+
+Alert    Continue
+```
+
+---
+
+# Anatomy of a Falco Rule
+
+A Falco rule contains several components.
+
+| Component | Purpose |
+|-----------|----------|
+| Rule | Rule name |
+| Description | Rule explanation |
+| Condition | Detection logic |
+| Output | Alert message |
+| Priority | Alert severity |
+| Tags | Classification |
+
+Example.
+
+```yaml
+- rule: Write Below Binary Directory
+
+  desc: Detect writes to system binaries
+
+  condition: write_binary_dirs
+
+  output: >
+
+    Binary modified
+
+  priority: ERROR
+
+  tags:
+
+    - filesystem
+
+    - mitre_persistence
+```
+
+---
+
+# Rule Conditions
+
+Conditions define when a rule should trigger.
+
+Example.
+
+```text
+Container
+
+AND
+
+Shell Process
+
+AND
+
+Root User
+
+↓
+
+Generate Alert
+```
+
+Example.
+
+```yaml
+condition:
+
+container and
+
+user.uid=0 and
+
+shell_procs
+```
+
+---
+
+# Monitoring Linux Processes
+
+Falco continuously monitors process execution.
+
+Workflow.
+
+```text
+Linux Process
+
+↓
+
+Execve Syscall
+
+↓
+
+Falco
+
+↓
+
+Rule Match
+
+↓
+
+Alert
+```
+
+Example detection.
+
+- Reverse shell
+- Bash execution
+- Unexpected binaries
+- Privilege escalation
+
+---
+
+# Monitoring File Access
+
+Falco detects unauthorized access to sensitive files.
+
+Examples.
+
+```text
+/etc/shadow
+
+/etc/passwd
+
+/root/.ssh
+
+/etc/kubernetes
+
+/var/lib/kubelet
+```
+
+Workflow.
+
+```text
+Sensitive File
+
+↓
+
+Read
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+---
+
+# Monitoring Container Activity
+
+Container runtime events are continuously monitored.
+
+Examples.
+
+```text
+Container Start
+
+Container Stop
+
+Container Exec
+
+Container Delete
+
+Container Escape Attempt
+```
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Runtime Event
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+---
+
+# Detecting Shell Access
+
+Unexpected shell access inside containers is a common attack indicator.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+/bin/bash
+
+↓
+
+Falco Rule
+
+↓
+
+Warning
+```
+
+Example.
+
+```bash
+kubectl exec -it nginx -- bash
+```
+
+An alert is generated when the rule conditions are satisfied.
+
+---
+
+# Detecting Privilege Escalation
+
+Falco identifies attempts to gain elevated privileges.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+sudo
+
+↓
+
+Root Access
+
+↓
+
+Alert
+```
+
+Examples.
+
+- sudo execution
+- setuid binaries
+- privilege escalation tools
+
+---
+
+# Detecting Container Escape
+
+Container escape attempts represent critical security events.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Host Namespace
+
+↓
+
+Kernel Access
+
+↓
+
+Falco
+
+↓
+
+Critical Alert
+```
+
+These alerts require immediate investigation.
+
+---
+
+# Detecting Reverse Shells
+
+Reverse shells allow attackers to remotely control compromised containers.
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Bash
+
+↓
+
+Remote Connection
+
+↓
+
+Attacker
+
+↓
+
+Alert
+```
+
+Common processes.
+
+- bash
+- sh
+- nc
+- socat
+- python
+- perl
+
+---
+
+# Detecting Cryptocurrency Mining
+
+Falco can detect suspicious mining processes.
+
+Examples.
+
+```text
+xmrig
+
+minerd
+
+cpuminer
+```
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Mining Process
+
+↓
+
+High CPU
+
+↓
+
+Falco Alert
+```
+
+---
+
+# Detecting Kubernetes Exec
+
+Unexpected `kubectl exec` operations may indicate unauthorized access.
+
+Workflow.
+
+```text
+Administrator
+
+↓
+
+kubectl exec
+
+↓
+
+Running Pod
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+Production environments should monitor all interactive shell access.
+
+---
+
+# Detecting Secret Access
+
+Falco monitors access to sensitive Kubernetes resources.
+
+Examples.
+
+```text
+Secrets
+
+ConfigMaps
+
+Certificates
+
+Service Account Tokens
+```
+
+Workflow.
+
+```text
+Application
+
+↓
+
+Secret Read
+
+↓
+
+Falco
+
+↓
+
+Alert
+```
+
+---
+
+# Detecting Sensitive File Modification
+
+Critical system files should rarely change during normal application execution.
+
+Examples.
+
+```text
+/etc/passwd
+
+/etc/group
+
+/etc/shadow
+
+/etc/sudoers
+```
+
+Workflow.
+
+```text
+File Modification
+
+↓
+
+Falco Rule
+
+↓
+
+Critical Alert
+```
+
+---
+
+# Runtime Threat Detection Workflow
+
+```text
+Application
+
+↓
+
+Container
+
+↓
+
+Linux Kernel
+
+↓
+
+Syscalls
+
+↓
+
+Falco Rules
+
+↓
+
+Alert
+
+↓
+
+Security Team
+```
+
+---
+
+# MITRE ATT&CK Mapping
+
+Many built-in Falco rules align with MITRE ATT&CK techniques.
+
+| MITRE Technique | Example |
+|-----------------|----------|
+| Initial Access | Suspicious Remote Connection |
+| Execution | Shell Inside Container |
+| Persistence | Binary Modification |
+| Privilege Escalation | sudo Execution |
+| Defense Evasion | Hidden Process |
+| Credential Access | Secret File Access |
+| Discovery | Network Enumeration |
+| Lateral Movement | Remote Shell |
+| Exfiltration | Suspicious File Copy |
+
+This mapping helps security teams correlate runtime alerts with known attack techniques.
+
+---
+
+# Enterprise Best Practices
+
+- Monitor all container execution events.
+- Alert on interactive shell access.
+- Detect privilege escalation attempts immediately.
+- Monitor Kubernetes Secret access.
+- Review file modification alerts.
+- Enable Kubernetes audit monitoring.
+- Map alerts to MITRE ATT&CK techniques.
+- Tune rules to reduce false positives.
+- Investigate all Critical alerts immediately.
+- Regularly review and update custom detection rules.
+
+---
+
