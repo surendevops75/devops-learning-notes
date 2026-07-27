@@ -967,3 +967,641 @@ Improve performance by:
 
 ---
 
+# Maven Integration
+
+OWASP Dependency-Check provides an official Maven plugin that scans project dependencies during the Maven build lifecycle.
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Jenkins
+
+↓
+
+Maven Build
+
+↓
+
+Dependency-Check Plugin
+
+↓
+
+NVD Database
+
+↓
+
+Security Report
+
+↓
+
+PASS / FAIL
+```
+
+---
+
+# Configure Maven Plugin
+
+Add the plugin to your `pom.xml`.
+
+```xml
+<build>
+
+    <plugins>
+
+        <plugin>
+
+            <groupId>org.owasp</groupId>
+
+            <artifactId>dependency-check-maven</artifactId>
+
+            <version>12.x.x</version>
+
+            <configuration>
+
+                <failBuildOnCVSS>7</failBuildOnCVSS>
+
+                <formats>
+
+                    <format>HTML</format>
+
+                    <format>JSON</format>
+
+                </formats>
+
+            </configuration>
+
+            <executions>
+
+                <execution>
+
+                    <goals>
+
+                        <goal>check</goal>
+
+                    </goals>
+
+                </execution>
+
+            </executions>
+
+        </plugin>
+
+    </plugins>
+
+</build>
+```
+
+---
+
+# Execute Maven Scan
+
+```bash
+mvn clean verify
+```
+
+Or execute only Dependency-Check.
+
+```bash
+mvn org.owasp:dependency-check-maven:check
+```
+
+---
+
+# Gradle Integration
+
+Dependency-Check also provides an official Gradle plugin.
+
+Example configuration.
+
+```groovy
+plugins {
+
+    id "org.owasp.dependencycheck" version "12.x.x"
+
+}
+```
+
+Configure.
+
+```groovy
+dependencyCheck {
+
+    failBuildOnCVSS = 7
+
+    formats = ['HTML','JSON']
+
+}
+```
+
+Run.
+
+```bash
+gradle dependencyCheckAnalyze
+```
+
+---
+
+# Ant Integration
+
+Dependency-Check supports Apache Ant builds.
+
+Example.
+
+```xml
+<taskdef
+
+resource="dependencycheck.properties"
+
+classpath="dependency-check-ant.jar"
+
+/>
+
+<dependency-check
+
+scanSet="."
+
+format="HTML"
+
+/>
+```
+
+Execute.
+
+```bash
+ant dependency-check
+```
+
+---
+
+# Standalone CLI Scanning
+
+CLI mode is useful for projects that do not use Maven or Gradle.
+
+Example.
+
+```bash
+dependency-check.sh \
+--project payment-service \
+--scan .
+```
+
+Specify report location.
+
+```bash
+dependency-check.sh \
+--scan . \
+--out reports
+```
+
+Generate all report formats.
+
+```bash
+dependency-check.sh \
+--scan . \
+--format ALL
+```
+
+---
+
+# Scanning Multiple Projects
+
+Enterprise repositories often contain multiple services.
+
+Example.
+
+```text
+microservices/
+
+├── user-service
+
+├── payment-service
+
+├── cart-service
+
+├── order-service
+
+└── notification-service
+```
+
+Scan the entire repository.
+
+```bash
+dependency-check.sh \
+--scan microservices
+```
+
+Each dependency is analysed independently before generating a consolidated report.
+
+---
+
+# Excluding Directories
+
+Exclude unnecessary directories to improve scan speed.
+
+Example.
+
+```bash
+dependency-check.sh \
+--scan . \
+--exclude "**/node_modules/**" \
+--exclude "**/target/**"
+```
+
+Common exclusions:
+
+- node_modules
+- build
+- target
+- dist
+- vendor
+- .git
+
+---
+
+# Docker Image Dependency Scan
+
+Dependency-Check primarily scans application dependencies rather than operating system packages.
+
+Typical workflow.
+
+```text
+Application Source
+
+↓
+
+Dependency-Check
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Image Scan
+
+↓
+
+Deploy
+```
+
+Recommendation:
+
+- Dependency-Check → Application dependencies
+- Trivy → Container operating system and application packages
+
+Using both tools provides broader coverage.
+
+---
+
+# SBOM Integration
+
+Dependency-Check complements Software Bill of Materials (SBOM) generation.
+
+Workflow.
+
+```text
+Application
+
+↓
+
+Dependency Analysis
+
+↓
+
+Generate SBOM
+
+↓
+
+Verify Components
+
+↓
+
+Compliance
+```
+
+SBOMs improve:
+
+- Software supply chain visibility
+- Compliance
+- Vulnerability management
+- License tracking
+
+---
+
+# Jenkins Integration
+
+## Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Dependency-Check
+
+↓
+
+HTML Report
+
+↓
+
+PASS / FAIL
+```
+
+Install the **OWASP Dependency-Check** plugin in Jenkins.
+
+Configure:
+
+- Installation path
+- Report directory
+- Publisher
+- Build failure threshold
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                git branch: 'main',
+                    url: 'https://github.com/company/payment-service.git'
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Dependency Scan') {
+
+            steps {
+
+                sh '''
+
+                dependency-check.sh \
+                --scan . \
+                --format HTML \
+                --format JSON \
+                --failOnCVSS 7 \
+                --out reports
+
+                '''
+
+            }
+
+        }
+
+    }
+
+    post {
+
+        always {
+
+            archiveArtifacts 'reports/*'
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Store any required secrets (such as an NVD API key) in GitHub Secrets.
+
+Example:
+
+```text
+NVD_API_KEY
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Dependency Check
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  dependency-check:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+
+        run: mvn clean package
+
+      - name: Dependency Scan
+
+        env:
+
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+        run: |
+
+          dependency-check.sh \
+          --scan . \
+          --failOnCVSS 7 \
+          --format HTML \
+          --format JSON \
+          --out reports
+
+      - name: Upload Reports
+
+        uses: actions/upload-artifact@v4
+
+        with:
+
+          name: dependency-check-report
+
+          path: reports
+```
+
+---
+
+# GitLab CI Integration
+
+```yaml
+dependency_check:
+
+  image: eclipse-temurin:17
+
+  script:
+
+    - mvn clean package
+
+    - dependency-check.sh \
+      --scan . \
+      --failOnCVSS 7 \
+      --format HTML \
+      --format JSON \
+      --out reports
+
+  artifacts:
+
+    paths:
+
+      - reports/
+```
+
+---
+
+# Integrating with SonarQube
+
+A common enterprise workflow combines SonarQube and Dependency-Check.
+
+```text
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Code Quality Gate
+
+↓
+
+Dependency-Check
+
+↓
+
+Open Source Vulnerabilities
+
+↓
+
+Veracode
+
+↓
+
+Container Build
+```
+
+SonarQube analyses source code quality, while Dependency-Check focuses on third-party dependency vulnerabilities.
+
+---
+
+# Integrating with Veracode
+
+Many organisations run both tools together.
+
+```text
+Dependency-Check
+
+↓
+
+Known CVEs
+
+↓
+
+Veracode SAST
+
+↓
+
+Application Vulnerabilities
+
+↓
+
+Security Policy
+
+↓
+
+Deploy
+```
+
+This combination provides broader application security coverage.
+
+---
+
+# Integrating with Trivy
+
+```text
+Dependency-Check
+
+↓
+
+Application Libraries
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Operating System Packages
+
+↓
+
+Container Security
+```
+
+Using both tools helps detect vulnerabilities before and after containerisation.
+
+---
+
