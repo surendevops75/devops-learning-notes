@@ -442,3 +442,579 @@ Container images should be scanned before being pushed to the registry to preven
 
 ---
 
+# Configuration
+
+Prisma Cloud provides centralized security policy management across cloud infrastructure, containers, Kubernetes, identities, and runtime workloads.
+
+Configuration typically includes:
+
+- Image Scanning Policies
+- Runtime Policies
+- Cloud Security Policies
+- Compliance Policies
+- Admission Control
+- Registry Integration
+- Kubernetes Integration
+- Identity Policies
+- Notifications
+
+A centralized configuration ensures consistent security across all cloud environments.
+
+---
+
+# Prisma Cloud Architecture
+
+```text
+Prisma Console
+
+↓
+
+Security Policies
+
+├── Image Policies
+
+├── Runtime Policies
+
+├── Cloud Policies
+
+├── Compliance Policies
+
+├── IAM Policies
+
+└── Notifications
+```
+
+All policies are managed from the Prisma Console.
+
+---
+
+# Configuration Files
+
+Example deployment.
+
+```text
+values.yaml
+
+console-values.yaml
+
+defender-values.yaml
+
+scanner-values.yaml
+```
+
+Store configuration files in Git and manage them through GitOps.
+
+---
+
+# Configure Prisma Console
+
+Example.
+
+```bash
+helm upgrade prisma-console prisma/console \
+-f console-values.yaml \
+-n prisma
+```
+
+Verify.
+
+```bash
+kubectl get pods -n prisma
+```
+
+---
+
+# Configure Prisma Defender
+
+Example.
+
+```bash
+helm upgrade prisma-defender prisma/defender \
+-f defender-values.yaml \
+-n prisma
+```
+
+The Defender automatically protects workloads after deployment.
+
+---
+
+# Container Image Policies
+
+Image policies determine which images are allowed into production.
+
+Example.
+
+```text
+Critical Vulnerabilities
+
+↓
+
+Reject
+
+High Vulnerabilities
+
+↓
+
+Reject
+
+Medium Vulnerabilities
+
+↓
+
+Warning
+
+Low Vulnerabilities
+
+↓
+
+Allow
+```
+
+Production environments should reject images containing Critical vulnerabilities.
+
+---
+
+# Runtime Policies
+
+Runtime policies monitor application behaviour after deployment.
+
+Examples.
+
+- Process Execution
+- Network Connections
+- File Access
+- Package Installation
+- Privilege Escalation
+- Container Escape
+- Reverse Shell
+
+Workflow.
+
+```text
+Runtime Event
+
+↓
+
+Policy Evaluation
+
+↓
+
+Allow
+
+or
+
+Alert
+
+or
+
+Block
+```
+
+---
+
+# Admission Controller
+
+Prisma Cloud validates Kubernetes workloads before deployment.
+
+```text
+kubectl apply
+
+↓
+
+API Server
+
+↓
+
+Admission Controller
+
+↓
+
+Security Validation
+
+↓
+
+Approved?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Deploy     Reject
+```
+
+Only compliant workloads should enter the Kubernetes cluster.
+
+---
+
+# Registry Integration
+
+Prisma Cloud continuously scans enterprise container registries.
+
+Supported registries.
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- Harbor
+- Docker Hub
+- JFrog Artifactory
+
+Workflow.
+
+```text
+Container Registry
+
+↓
+
+New Image
+
+↓
+
+Automatic Scan
+
+↓
+
+Security Report
+```
+
+---
+
+# Kubernetes Integration
+
+Prisma integrates directly with Kubernetes clusters.
+
+```text
+Kubernetes API
+
+↓
+
+Prisma Console
+
+↓
+
+Prisma Defender
+
+↓
+
+Runtime Protection
+```
+
+All nodes remain continuously protected.
+
+---
+
+# Cloud Account Integration
+
+Prisma Cloud connects directly to cloud providers.
+
+Supported platforms.
+
+- AWS
+- Azure
+- Google Cloud Platform
+
+Architecture.
+
+```text
+Cloud Account
+
+↓
+
+Prisma Cloud
+
+↓
+
+Inventory
+
+↓
+
+Risk Analysis
+
+↓
+
+Security Dashboard
+```
+
+Cloud resources are continuously evaluated for security risks.
+
+---
+
+# Identity Security
+
+Prisma Cloud analyses cloud identities and permissions.
+
+Examples.
+
+- IAM Users
+- IAM Roles
+- Service Accounts
+- Azure AD Roles
+- Google IAM Roles
+
+Workflow.
+
+```text
+Cloud Identity
+
+↓
+
+Permission Analysis
+
+↓
+
+Risk Detection
+
+↓
+
+Recommendation
+```
+
+Excessive permissions are identified automatically.
+
+---
+
+# Compliance Policies
+
+Compliance policies validate cloud resources against industry standards.
+
+Supported frameworks.
+
+- CIS AWS Benchmark
+- CIS Azure Benchmark
+- CIS Kubernetes Benchmark
+- PCI DSS
+- HIPAA
+- NIST
+- SOC 2
+- ISO 27001
+
+Workflow.
+
+```text
+Cloud Resources
+
+↓
+
+Compliance Scan
+
+↓
+
+Violations
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Vulnerability Management
+
+Prisma continuously tracks vulnerabilities.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+Operating System Packages
+
+↓
+
+Application Dependencies
+
+↓
+
+Vulnerability Database
+
+↓
+
+Risk Assessment
+
+↓
+
+Security Report
+```
+
+Risk scores help prioritize remediation.
+
+---
+
+# Secret Detection
+
+Prisma scans workloads for exposed credentials.
+
+Examples.
+
+```text
+AWS Keys
+
+Azure Keys
+
+Private Keys
+
+JWT Secrets
+
+Database Passwords
+
+GitHub Tokens
+```
+
+Secrets should never be stored inside container images or source repositories.
+
+---
+
+# Malware Detection
+
+Container images are analysed for malicious software.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+Malware Scan
+
+↓
+
+Threat Intelligence
+
+↓
+
+Detection
+
+↓
+
+Alert
+```
+
+Images containing malware should be blocked immediately.
+
+---
+
+# Notifications
+
+Prisma Cloud supports enterprise notification platforms.
+
+```text
+Prisma Console
+
+↓
+
+Alert
+
+├── Email
+
+├── Slack
+
+├── Microsoft Teams
+
+├── Webhook
+
+└── SIEM
+```
+
+Critical alerts should be delivered immediately.
+
+---
+
+# Role-Based Access Control (RBAC)
+
+Enterprise environments should separate responsibilities.
+
+| Role | Permissions |
+|------|-------------|
+| Administrator | Full Access |
+| Security Team | Policy Management |
+| DevOps Engineer | Image Scans |
+| Developer | View Findings |
+| Auditor | Read Only |
+
+Apply the principle of least privilege.
+
+---
+
+# Authentication
+
+Prisma Cloud supports enterprise identity providers.
+
+Examples.
+
+- LDAP
+- Active Directory
+- SAML
+- OAuth
+- OpenID Connect
+
+Workflow.
+
+```text
+User
+
+↓
+
+Identity Provider
+
+↓
+
+Authentication
+
+↓
+
+Prisma Console
+```
+
+Centralized authentication improves governance and auditing.
+
+---
+
+# Audit Logging
+
+Every administrative activity is recorded.
+
+Examples.
+
+```text
+User Login
+
+Policy Update
+
+Image Scan
+
+Compliance Scan
+
+Deployment Decision
+
+Runtime Alert
+```
+
+Audit logs should be retained according to organizational compliance requirements.
+
+---
+
+# Enterprise Best Practices
+
+- Store Helm values files in Git repositories.
+- Block deployments containing Critical vulnerabilities.
+- Enable Admission Controller for production clusters.
+- Continuously scan connected registries.
+- Enable runtime protection on every Kubernetes node.
+- Connect all cloud accounts for posture management.
+- Monitor IAM risks continuously.
+- Enable compliance monitoring for every cloud environment.
+- Forward alerts to SIEM platforms.
+- Review RBAC permissions regularly.
+- Audit administrative actions and policy changes.
+
+---
+
