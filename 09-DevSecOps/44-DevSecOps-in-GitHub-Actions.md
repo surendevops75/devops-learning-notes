@@ -478,3 +478,413 @@ This workflow automatically builds the application whenever code is pushed to th
 
 ---
 
+# Repository Structure
+
+A well-organized repository simplifies workflow management.
+
+```text
+project/
+
+├── .github/
+
+│   └── workflows/
+
+│       ├── ci.yml
+
+│       ├── security.yml
+
+│       ├── deploy.yml
+
+│       └── release.yml
+
+├── src/
+
+├── Dockerfile
+
+├── pom.xml
+
+├── terraform/
+
+└── kubernetes/
+```
+
+Separate workflows based on responsibility.
+
+---
+
+# GitHub Secrets
+
+Sensitive information should never be stored inside workflow files.
+
+Examples.
+
+```text
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+
+DOCKER_USERNAME
+
+DOCKER_PASSWORD
+
+SONAR_TOKEN
+
+COSIGN_PRIVATE_KEY
+
+KUBECONFIG
+
+GITHUB_TOKEN
+```
+
+Secrets are encrypted and securely injected into workflows.
+
+---
+
+# Environment Variables
+
+Example.
+
+```yaml
+env:
+
+  IMAGE_NAME: payment-service
+
+  REGISTRY: 123456789012.dkr.ecr.us-east-1.amazonaws.com
+```
+
+Environment variables reduce duplication across workflow steps.
+
+---
+
+# Using Secrets
+
+Example.
+
+```yaml
+steps:
+
+  - name: Login
+
+    run: |
+
+      echo "${{ secrets.DOCKER_PASSWORD }}" | \
+      docker login \
+      --username "${{ secrets.DOCKER_USERNAME }}" \
+      --password-stdin
+```
+
+Never print secret values in workflow logs.
+
+---
+
+# Self-Hosted Runners
+
+Large organizations commonly use self-hosted runners.
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Self-Hosted Runner
+
+↓
+
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Deployment
+```
+
+Benefits.
+
+- Internal network access
+- Faster builds
+- Custom tooling
+- Enterprise security
+
+---
+
+# Kubernetes Runners
+
+GitHub Actions can execute jobs on Kubernetes.
+
+```text
+GitHub Actions
+
+↓
+
+Actions Runner Controller (ARC)
+
+↓
+
+Runner Pod
+
+↓
+
+Workflow
+
+↓
+
+Pod Deleted
+```
+
+Ephemeral runners improve isolation and scalability.
+
+---
+
+# Branch Protection
+
+Production branches should always be protected.
+
+Recommended settings.
+
+- Require Pull Requests
+- Require Code Reviews
+- Require Status Checks
+- Require Successful Security Workflows
+- Restrict Direct Pushes
+
+Workflow.
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Security Checks
+
+↓
+
+Approved
+
+↓
+
+Merge
+```
+
+---
+
+# Required Status Checks
+
+Critical security workflows should be mandatory.
+
+Examples.
+
+```text
+Build
+
+SonarQube
+
+Dependency Check
+
+Gitleaks
+
+Checkov
+
+TFSec
+
+Trivy
+```
+
+Merge should be blocked until all required checks pass.
+
+---
+
+# Build Stage
+
+Example.
+
+```yaml
+- name: Build
+
+  run: |
+
+    mvn clean package
+```
+
+Application compilation should stop immediately on errors.
+
+---
+
+# Unit Testing
+
+Example.
+
+```yaml
+- name: Unit Tests
+
+  run: |
+
+    mvn test
+```
+
+Run tests before any deployment or container build.
+
+---
+
+# Code Coverage
+
+Example.
+
+```yaml
+- name: Coverage
+
+  run: |
+
+    mvn jacoco:report
+```
+
+Coverage reports help identify untested application logic.
+
+---
+
+# SonarQube Integration
+
+Example.
+
+```yaml
+- name: SonarQube Scan
+
+  run: |
+
+    mvn sonar:sonar \
+    -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+```
+
+SonarQube performs static code analysis and quality validation.
+
+---
+
+# Sonar Quality Gate
+
+Every production workflow should validate the Quality Gate.
+
+```text
+Source Code
+
+↓
+
+SonarQube
+
+↓
+
+Quality Gate
+
+↓
+
+Passed?
+
+     │
+
+┌────┴─────┐
+
+▼          ▼
+
+Yes         No
+
+│            │
+
+Continue   Stop Workflow
+```
+
+Do not deploy applications that fail Quality Gates.
+
+---
+
+# Workflow Permissions
+
+Grant only the permissions required by each workflow.
+
+Example.
+
+```yaml
+permissions:
+
+  contents: read
+
+  packages: write
+
+  security-events: write
+
+  id-token: write
+```
+
+Avoid using broad write permissions unless absolutely necessary.
+
+---
+
+# Reusable Workflows
+
+Large organizations reuse common workflows.
+
+```text
+Repository
+
+↓
+
+Main Workflow
+
+↓
+
+Reusable Workflow
+
+↓
+
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Deployment
+```
+
+Reusable workflows standardize CI/CD across repositories.
+
+---
+
+# Workflow Example
+
+```yaml
+jobs:
+
+  build:
+
+    uses: company/devsecops/.github/workflows/build.yml@main
+```
+
+Centralized workflows simplify maintenance and governance.
+
+---
+
+# Enterprise Best Practices
+
+- Protect production branches.
+- Store all secrets in GitHub Secrets.
+- Use self-hosted or Kubernetes runners for enterprise workloads.
+- Require security checks before merging.
+- Enforce SonarQube Quality Gates.
+- Grant least-privilege workflow permissions.
+- Reuse workflows across repositories.
+- Keep runners updated.
+- Review workflow changes through Pull Requests.
+- Monitor workflow execution regularly.
+
+---
+
