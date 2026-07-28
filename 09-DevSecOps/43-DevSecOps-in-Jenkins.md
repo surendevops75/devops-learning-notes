@@ -1359,3 +1359,591 @@ Parallel execution significantly reduces pipeline duration.
 
 ===
 
+# Complete Production Jenkinsfile
+
+The following Jenkinsfile demonstrates an enterprise DevSecOps pipeline with multiple security gates.
+
+```groovy
+pipeline {
+
+    agent any
+
+    environment {
+
+        IMAGE = "company/payment-service:${BUILD_NUMBER}"
+
+    }
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                checkout scm
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Unit Tests') {
+
+            steps {
+
+                sh 'mvn test'
+
+            }
+
+        }
+
+        stage('Coverage') {
+
+            steps {
+
+                sh 'mvn jacoco:report'
+
+            }
+
+        }
+
+        stage('Security Scans') {
+
+            parallel {
+
+                stage('SonarQube') {
+
+                    steps {
+
+                        sh 'mvn sonar:sonar'
+
+                    }
+
+                }
+
+                stage('Dependency Check') {
+
+                    steps {
+
+                        sh 'dependency-check.sh --scan .'
+
+                    }
+
+                }
+
+                stage('Gitleaks') {
+
+                    steps {
+
+                        sh 'gitleaks detect --source .'
+
+                    }
+
+                }
+
+                stage('Checkov') {
+
+                    steps {
+
+                        sh 'checkov -d .'
+
+                    }
+
+                }
+
+                stage('TFSec') {
+
+                    steps {
+
+                        sh 'tfsec .'
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        stage('Docker Build') {
+
+            steps {
+
+                sh 'docker build -t $IMAGE .'
+
+            }
+
+        }
+
+        stage('Trivy Scan') {
+
+            steps {
+
+                sh 'trivy image --exit-code 1 $IMAGE'
+
+            }
+
+        }
+
+        stage('Generate SBOM') {
+
+            steps {
+
+                sh 'trivy image --format cyclonedx --output sbom.json $IMAGE'
+
+            }
+
+        }
+
+        stage('Image Signing') {
+
+            steps {
+
+                sh 'cosign sign $IMAGE'
+
+            }
+
+        }
+
+        stage('Push Image') {
+
+            steps {
+
+                sh 'docker push $IMAGE'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# Security Gate Workflow
+
+Every stage validates the application before allowing the pipeline to continue.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Tests
+
+↓
+
+Security Scans
+
+↓
+
+Passed?
+
+     │
+
+┌────┴─────┐
+
+▼          ▼
+
+Yes         No
+
+│            │
+
+Continue   Stop Pipeline
+```
+
+Each security gate reduces the likelihood of vulnerabilities reaching production.
+
+---
+
+# Security Decision Flow
+
+```text
+Source Code
+
+↓
+
+SonarQube
+
+↓
+
+Dependencies
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Secrets
+
+↓
+
+Gitleaks
+
+↓
+
+Terraform
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Container
+
+↓
+
+Trivy
+
+↓
+
+Passed?
+
+     │
+
+┌────┴─────┐
+
+▼          ▼
+
+Yes         No
+
+│            │
+
+Deploy      Stop
+```
+
+---
+
+# Build Reports
+
+Every execution should generate reports.
+
+```text
+reports/
+
+├── sonar/
+
+├── dependency-check/
+
+├── gitleaks/
+
+├── checkov/
+
+├── tfsec/
+
+├── trivy/
+
+├── sbom/
+
+└── build.log
+```
+
+Reports should be archived and retained for compliance.
+
+---
+
+# Report Publishing
+
+Example.
+
+```groovy
+post {
+
+    always {
+
+        publishHTML(target: [
+
+            reportDir: 'reports',
+
+            reportFiles: 'index.html',
+
+            reportName: 'Security Report'
+
+        ])
+
+    }
+
+}
+```
+
+Security reports should be easily accessible from Jenkins.
+
+---
+
+# Notifications
+
+Notify development and security teams after pipeline completion.
+
+Supported platforms.
+
+- Email
+- Slack
+- Microsoft Teams
+- Webhooks
+
+Workflow.
+
+```text
+Pipeline
+
+↓
+
+Completed
+
+↓
+
+Notification
+
+↓
+
+Development Team
+
+↓
+
+Security Team
+```
+
+Critical failures should trigger immediate notifications.
+
+---
+
+# Slack Notification Example
+
+```groovy
+post {
+
+    failure {
+
+        slackSend(
+
+            channel: '#devsecops',
+
+            message: 'Build Failed'
+
+        )
+
+    }
+
+}
+```
+
+Security failures should be communicated immediately.
+
+---
+
+# Build Retention
+
+Old builds consume storage.
+
+Example.
+
+```groovy
+options {
+
+    buildDiscarder(
+
+        logRotator(
+
+            numToKeepStr: '30'
+
+        )
+
+    )
+
+}
+```
+
+Retention policies help manage Jenkins storage efficiently.
+
+---
+
+# Backup Strategy
+
+Back up Jenkins regularly.
+
+Critical data.
+
+```text
+Jenkins Home
+
+↓
+
+Jobs
+
+↓
+
+Credentials
+
+↓
+
+Plugins
+
+↓
+
+Shared Libraries
+
+↓
+
+Configuration
+
+↓
+
+Pipeline History
+```
+
+Backups should be automated and tested periodically.
+
+---
+
+# High Availability Architecture
+
+Enterprise Jenkins deployments should avoid a single point of failure.
+
+```text
+GitHub
+
+↓
+
+Load Balancer
+
+↓
+
+Jenkins Controller
+
+↓
+
+Kubernetes Agents
+
+↓
+
+Amazon EKS
+```
+
+Use external storage and automated backups for resilience.
+
+---
+
+# Monitoring Jenkins
+
+Monitor the Jenkins platform continuously.
+
+Recommended metrics.
+
+- CPU Usage
+- Memory Usage
+- Disk Space
+- Queue Length
+- Build Duration
+- Failed Builds
+- Active Agents
+- Plugin Health
+
+---
+
+# Monitoring Architecture
+
+```text
+Jenkins
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Operations Dashboard
+```
+
+Operations teams can monitor build performance and system health in real time.
+
+---
+
+# Logging
+
+Centralize Jenkins logs for troubleshooting.
+
+```text
+Jenkins
+
+↓
+
+Log Collection
+
+↓
+
+Elastic Stack
+
+↓
+
+Search
+
+↓
+
+Analysis
+```
+
+Centralized logging simplifies incident investigation.
+
+---
+
+# Security Hardening
+
+Secure Jenkins before onboarding development teams.
+
+Recommendations.
+
+- Enable HTTPS.
+- Disable anonymous access.
+- Enable CSRF protection.
+- Enable RBAC.
+- Use least-privilege permissions.
+- Rotate credentials regularly.
+- Keep plugins updated.
+- Restrict Script Console access.
+- Enable audit logging.
+- Use dedicated build agents.
+
+---
+
+# Enterprise Best Practices
+
+- Separate Jenkins Controllers from build agents.
+- Use ephemeral Kubernetes agents.
+- Store credentials in Jenkins Credentials Store.
+- Execute security scans in parallel.
+- Fail builds on Critical vulnerabilities.
+- Sign every production container image.
+- Store SBOMs with build artifacts.
+- Archive all security reports.
+- Monitor Jenkins using Prometheus and Grafana.
+- Centralize logs using the ELK Stack.
+- Back up Jenkins automatically.
+- Review plugin updates regularly.
+
+---
+
