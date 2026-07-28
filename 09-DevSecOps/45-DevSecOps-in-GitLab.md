@@ -1392,3 +1392,571 @@ Parallel execution reduces total pipeline duration.
 
 ---
 
+# Complete Production GitLab CI/CD Pipeline
+
+The following `.gitlab-ci.yml` demonstrates an enterprise DevSecOps pipeline integrating build, testing, security validation, containerization, image signing, and GitOps.
+
+```yaml
+stages:
+
+  - build
+
+  - test
+
+  - security
+
+  - package
+
+  - deploy
+
+variables:
+
+  IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+
+build:
+
+  stage: build
+
+  script:
+
+    - mvn clean package
+
+unit-test:
+
+  stage: test
+
+  script:
+
+    - mvn test
+
+coverage:
+
+  stage: test
+
+  script:
+
+    - mvn jacoco:report
+
+sonarqube:
+
+  stage: security
+
+  script:
+
+    - mvn sonar:sonar
+
+dependency-check:
+
+  stage: security
+
+  script:
+
+    - dependency-check.sh --scan .
+
+gitleaks:
+
+  stage: security
+
+  script:
+
+    - gitleaks detect --source .
+
+checkov:
+
+  stage: security
+
+  script:
+
+    - checkov -d .
+
+tfsec:
+
+  stage: security
+
+  script:
+
+    - tfsec .
+
+docker-build:
+
+  stage: package
+
+  script:
+
+    - docker build -t $IMAGE .
+
+trivy:
+
+  stage: security
+
+  script:
+
+    - trivy image --exit-code 1 $IMAGE
+
+sbom:
+
+  stage: security
+
+  script:
+
+    - trivy image --format cyclonedx --output sbom.json $IMAGE
+
+cosign:
+
+  stage: package
+
+  script:
+
+    - cosign sign $IMAGE
+
+push-image:
+
+  stage: package
+
+  script:
+
+    - docker push $IMAGE
+```
+
+---
+
+# Enterprise Pipeline Flow
+
+```text
+Developer
+
+↓
+
+Commit
+
+↓
+
+Merge Request
+
+↓
+
+GitLab Pipeline
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Tests
+
+↓
+
+Security Validation
+
+↓
+
+Container Build
+
+↓
+
+Container Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Image Signing
+
+↓
+
+GitLab Container Registry
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Every stage contributes to secure software delivery.
+
+---
+
+# Parallel Security Jobs
+
+GitLab allows multiple jobs to execute simultaneously.
+
+Example.
+
+```yaml
+sonarqube:
+
+  stage: security
+
+dependency-check:
+
+  stage: security
+
+gitleaks:
+
+  stage: security
+
+checkov:
+
+  stage: security
+
+tfsec:
+
+  stage: security
+```
+
+All jobs inside the same stage execute in parallel whenever possible.
+
+---
+
+# Parallel Execution Architecture
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Parallel Security Jobs
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+↓
+
+Merge Results
+
+↓
+
+Docker Build
+```
+
+Running independent scans together significantly reduces pipeline duration.
+
+---
+
+# Upload Build Artifacts
+
+Store generated reports and binaries.
+
+Example.
+
+```yaml
+artifacts:
+
+  paths:
+
+    - target/
+
+    - reports/
+
+    - sbom.json
+```
+
+Artifacts are retained after pipeline completion.
+
+---
+
+# Dependency Cache
+
+Caching reduces repeated downloads.
+
+Example.
+
+```yaml
+cache:
+
+  key: maven-cache
+
+  paths:
+
+    - .m2/repository
+```
+
+Dependency caching speeds up subsequent pipeline executions.
+
+---
+
+# Pipeline Rules
+
+Control when jobs execute.
+
+Example.
+
+```yaml
+rules:
+
+  - if: '$CI_COMMIT_BRANCH == "main"'
+```
+
+Rules reduce unnecessary pipeline executions.
+
+---
+
+# Environment Configuration
+
+Define deployment environments.
+
+Example.
+
+```yaml
+environment:
+
+  name: Production
+```
+
+GitLab tracks deployment history for every environment.
+
+---
+
+# Protected Environments
+
+Production deployments can require approvals.
+
+```text
+Pipeline
+
+↓
+
+Security Passed
+
+↓
+
+Production Environment
+
+↓
+
+Approval
+
+↓
+
+Deployment
+```
+
+Protected environments reduce deployment risk.
+
+---
+
+# Manual Deployment
+
+Production deployments are often manual.
+
+Example.
+
+```yaml
+deploy-production:
+
+  stage: deploy
+
+  when: manual
+```
+
+Manual approval provides an additional security checkpoint.
+
+---
+
+# GitLab Container Registry
+
+Store verified container images.
+
+```text
+Pipeline
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Cosign
+
+↓
+
+Container Registry
+```
+
+Only scanned and signed images should be published.
+
+---
+
+# Pipeline Notifications
+
+Notify teams after pipeline execution.
+
+Supported integrations.
+
+- Email
+- Slack
+- Microsoft Teams
+- Webhooks
+
+Workflow.
+
+```text
+Pipeline
+
+↓
+
+Completed
+
+↓
+
+Notification
+
+↓
+
+Development Team
+
+↓
+
+Security Team
+```
+
+Immediate notifications improve operational awareness.
+
+---
+
+# Failure Strategy
+
+Critical findings should immediately stop deployments.
+
+```text
+Pipeline
+
+↓
+
+Security Tool
+
+↓
+
+Critical Findings?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Stop      Continue
+```
+
+Failing early reduces security risk.
+
+---
+
+# Monitoring GitLab Pipelines
+
+Monitor pipeline health continuously.
+
+Recommended metrics.
+
+- Pipeline Duration
+- Success Rate
+- Failure Rate
+- Queue Time
+- Runner Utilization
+- Security Scan Duration
+- Deployment Frequency
+- Artifact Size
+
+---
+
+# Logging Architecture
+
+```text
+GitLab Pipeline
+
+↓
+
+Job Logs
+
+↓
+
+Log Collection
+
+↓
+
+Elastic Stack
+
+↓
+
+Search
+
+↓
+
+Analysis
+```
+
+Centralized logging simplifies troubleshooting and compliance.
+
+---
+
+# Security Hardening
+
+Secure GitLab before onboarding development teams.
+
+Recommendations.
+
+- Enable Multi-Factor Authentication.
+- Protect production branches.
+- Protect production environments.
+- Require Merge Requests.
+- Enforce Code Reviews.
+- Use protected CI/CD variables.
+- Restrict Runner access.
+- Keep GitLab Runners updated.
+- Review pipeline changes through Merge Requests.
+- Enable audit logging.
+
+---
+
+# Enterprise Best Practices
+
+- Separate build, test, security, package, and deployment stages.
+- Execute security jobs in parallel.
+- Generate an SBOM for every production build.
+- Sign every production container image.
+- Push only verified images to the Container Registry.
+- Protect production environments with approvals.
+- Archive reports and SBOMs.
+- Monitor pipeline performance.
+- Centralize logs for auditing.
+- Continuously update GitLab and GitLab Runners.
+
+---
+
