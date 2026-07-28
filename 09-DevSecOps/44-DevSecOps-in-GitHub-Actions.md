@@ -1334,3 +1334,568 @@ Parallel execution significantly reduces workflow duration.
 
 ---
 
+# Complete Production GitHub Actions Workflow
+
+The following workflow demonstrates an enterprise DevSecOps pipeline integrating build, testing, security validation, containerization, image signing, and GitOps.
+
+```yaml
+name: Enterprise DevSecOps Pipeline
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+  pull_request:
+
+    branches:
+
+      - main
+
+jobs:
+
+  security-pipeline:
+
+    runs-on: ubuntu-latest
+
+    env:
+
+      IMAGE: payment-service:${{ github.run_number }}
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+
+        run: mvn clean package
+
+      - name: Unit Tests
+
+        run: mvn test
+
+      - name: Coverage
+
+        run: mvn jacoco:report
+
+      - name: SonarQube
+
+        run: mvn sonar:sonar
+
+      - name: Dependency Check
+
+        run: dependency-check.sh --scan .
+
+      - name: Gitleaks
+
+        run: gitleaks detect --source .
+
+      - name: Checkov
+
+        run: checkov -d .
+
+      - name: TFSec
+
+        run: tfsec .
+
+      - name: Docker Build
+
+        run: docker build -t $IMAGE .
+
+      - name: Trivy
+
+        run: trivy image --exit-code 1 $IMAGE
+
+      - name: Generate SBOM
+
+        run: trivy image --format cyclonedx --output sbom.json $IMAGE
+
+      - name: Cosign
+
+        run: cosign sign $IMAGE
+
+      - name: Push Image
+
+        run: docker push $IMAGE
+```
+
+---
+
+# Enterprise Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+GitHub
+
+↓
+
+Workflow Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Tests
+
+↓
+
+Security Validation
+
+↓
+
+Container Build
+
+↓
+
+Container Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Every stage contributes to software supply chain security.
+
+---
+
+# Parallel Jobs
+
+GitHub Actions supports parallel execution.
+
+```yaml
+jobs:
+
+  build:
+
+    ...
+
+  security:
+
+    ...
+
+  infrastructure:
+
+    ...
+```
+
+Parallel jobs reduce overall workflow duration.
+
+---
+
+# Parallel Security Architecture
+
+```text
+Checkout
+
+↓
+
+Parallel Jobs
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+↓
+
+Results
+
+↓
+
+Docker Build
+```
+
+Independent security checks should execute simultaneously.
+
+---
+
+# Upload Build Artifacts
+
+Store reports for future reference.
+
+Example.
+
+```yaml
+- name: Upload Reports
+
+  uses: actions/upload-artifact@v4
+
+  with:
+
+    name: build-reports
+
+    path: reports/
+```
+
+Artifacts simplify troubleshooting and compliance audits.
+
+---
+
+# Cache Dependencies
+
+Caching speeds up workflow execution.
+
+Example.
+
+```yaml
+- name: Cache Maven
+
+  uses: actions/cache@v4
+
+  with:
+
+    path: ~/.m2
+
+    key: maven-${{ hashFiles('pom.xml') }}
+```
+
+Cached dependencies significantly reduce build times.
+
+---
+
+# Matrix Builds
+
+Matrix builds execute the same workflow across multiple environments.
+
+Example.
+
+```yaml
+strategy:
+
+  matrix:
+
+    java:
+
+      - 17
+
+      - 21
+```
+
+Useful for validating compatibility across supported versions.
+
+---
+
+# Environment Protection
+
+Production deployments should require approval.
+
+```text
+Build
+
+↓
+
+Security Validation
+
+↓
+
+Production Environment
+
+↓
+
+Approval
+
+↓
+
+Deploy
+```
+
+Environment protection reduces deployment risk.
+
+---
+
+# Protected Environments
+
+Example.
+
+```yaml
+environment:
+
+  name: Production
+```
+
+Production environments can require reviewers before deployment.
+
+---
+
+# Manual Approval
+
+Enterprise deployment workflow.
+
+```text
+Workflow
+
+↓
+
+Security Passed
+
+↓
+
+Manager Approval
+
+↓
+
+Deploy
+
+↓
+
+Production
+```
+
+Critical releases often require manual approval.
+
+---
+
+# Workflow Permissions
+
+Grant only the permissions required.
+
+Example.
+
+```yaml
+permissions:
+
+  contents: read
+
+  packages: write
+
+  id-token: write
+
+  security-events: write
+```
+
+Avoid granting unnecessary repository access.
+
+---
+
+# OpenID Connect (OIDC)
+
+OIDC allows GitHub Actions to authenticate with cloud providers without storing long-lived credentials.
+
+```text
+GitHub Actions
+
+↓
+
+OIDC Token
+
+↓
+
+AWS IAM Role
+
+↓
+
+Temporary Credentials
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Benefits.
+
+- No long-lived access keys
+- Short-lived credentials
+- Improved security
+- Simplified credential management
+
+---
+
+# Workflow Notifications
+
+Notify teams after workflow completion.
+
+Supported integrations.
+
+- Slack
+- Microsoft Teams
+- Email
+- Webhooks
+
+Workflow.
+
+```text
+Workflow
+
+↓
+
+Completed
+
+↓
+
+Notification
+
+↓
+
+Development Team
+
+↓
+
+Security Team
+```
+
+Immediate notifications improve incident response.
+
+---
+
+# Failure Strategy
+
+Every Critical security issue should stop deployment.
+
+```text
+Workflow
+
+↓
+
+Security Tool
+
+↓
+
+Critical Findings?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Stop      Continue
+```
+
+Fail fast to prevent vulnerable software from reaching production.
+
+---
+
+# Monitoring Workflow Executions
+
+Track workflow performance continuously.
+
+Recommended metrics.
+
+- Workflow Duration
+- Queue Time
+- Success Rate
+- Failure Rate
+- Security Scan Duration
+- Deployment Time
+- Runner Utilization
+- Artifact Size
+
+---
+
+# Logging Architecture
+
+```text
+GitHub Actions
+
+↓
+
+Workflow Logs
+
+↓
+
+Log Collection
+
+↓
+
+Elastic Stack
+
+↓
+
+Search
+
+↓
+
+Analysis
+```
+
+Centralized logging simplifies debugging and auditing.
+
+---
+
+# Security Hardening
+
+Secure GitHub Actions before enabling production deployments.
+
+Recommendations.
+
+- Protect production branches.
+- Require Pull Requests.
+- Use GitHub Secrets.
+- Use OIDC instead of long-lived cloud credentials.
+- Pin third-party actions to trusted versions.
+- Enable Dependabot.
+- Review workflow changes through Pull Requests.
+- Restrict workflow permissions.
+- Use self-hosted runners only when necessary.
+- Regularly update GitHub Actions and reusable workflows.
+
+---
+
+# Enterprise Best Practices
+
+- Keep workflows modular and reusable.
+- Execute security scans before Docker image creation.
+- Run independent jobs in parallel.
+- Generate an SBOM for every production build.
+- Sign every production image with Cosign.
+- Upload security reports as artifacts.
+- Use GitOps for deployments.
+- Protect production environments with approvals.
+- Authenticate to cloud platforms using OIDC.
+- Continuously monitor workflow performance and security.
+
+---
+
