@@ -925,3 +925,470 @@ Package caches significantly reduce build duration.
 
 ---
 
+# OWASP Dependency-Check Integration
+
+OWASP Dependency-Check scans application dependencies for known vulnerabilities.
+
+Example.
+
+```yaml
+dependency-check:
+
+  stage: security
+
+  script:
+
+    - dependency-check.sh \
+      --scan . \
+      --format HTML \
+      --out reports
+```
+
+Fail the pipeline if High or Critical vulnerabilities are detected.
+
+---
+
+# Gitleaks Integration
+
+Gitleaks scans the repository for exposed secrets.
+
+Example.
+
+```yaml
+gitleaks:
+
+  stage: security
+
+  script:
+
+    - gitleaks detect \
+      --source . \
+      --report-format json \
+      --report-path gitleaks-report.json
+```
+
+Typical secrets detected.
+
+- AWS Access Keys
+- GitHub Tokens
+- Azure Credentials
+- SSH Private Keys
+- API Keys
+- Database Passwords
+
+---
+
+# Checkov Integration
+
+Checkov validates Infrastructure as Code security.
+
+Example.
+
+```yaml
+checkov:
+
+  stage: security
+
+  script:
+
+    - checkov -d .
+```
+
+Checkov scans Terraform, Kubernetes manifests, Dockerfiles, and cloud configurations.
+
+---
+
+# TFSec Integration
+
+TFSec scans Terraform code for security misconfigurations.
+
+Example.
+
+```yaml
+tfsec:
+
+  stage: security
+
+  script:
+
+    - tfsec .
+```
+
+Terraform resources should be validated before infrastructure deployment.
+
+---
+
+# Docker Build
+
+Build the container image only after source code passes security validation.
+
+Example.
+
+```yaml
+docker-build:
+
+  stage: package
+
+  script:
+
+    - docker build \
+      -t payment-service:$CI_PIPELINE_ID .
+```
+
+---
+
+# Trivy Integration
+
+Trivy scans container images for vulnerabilities.
+
+Example.
+
+```yaml
+trivy:
+
+  stage: security
+
+  script:
+
+    - trivy image \
+      --exit-code 1 \
+      payment-service:$CI_PIPELINE_ID
+```
+
+Stop the pipeline when High or Critical vulnerabilities are found.
+
+---
+
+# SBOM Generation
+
+Generate a Software Bill of Materials after the container scan.
+
+Example.
+
+```yaml
+sbom:
+
+  stage: security
+
+  script:
+
+    - trivy image \
+      --format cyclonedx \
+      --output sbom.json \
+      payment-service:$CI_PIPELINE_ID
+```
+
+Archive the SBOM for compliance and auditing.
+
+---
+
+# Cosign Image Signing
+
+Digitally sign container images before publishing.
+
+Example.
+
+```yaml
+cosign:
+
+  stage: package
+
+  script:
+
+    - cosign sign \
+      payment-service:$CI_PIPELINE_ID
+```
+
+Only signed images should be released.
+
+---
+
+# Login to GitLab Container Registry
+
+Authenticate before pushing images.
+
+Example.
+
+```yaml
+registry-login:
+
+  stage: package
+
+  script:
+
+    - docker login \
+      -u $CI_REGISTRY_USER \
+      -p $CI_REGISTRY_PASSWORD \
+      $CI_REGISTRY
+```
+
+GitLab automatically provides registry authentication variables.
+
+---
+
+# Push Container Image
+
+Push verified container images to the GitLab Container Registry.
+
+Example.
+
+```yaml
+push-image:
+
+  stage: package
+
+  script:
+
+    - docker push \
+      $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+```
+
+Publish only scanned and signed images.
+
+---
+
+# Update GitOps Repository
+
+GitLab CI updates deployment manifests instead of deploying directly.
+
+```text
+GitLab Pipeline
+
+↓
+
+Build Success
+
+↓
+
+Update Image Tag
+
+↓
+
+Commit Changes
+
+↓
+
+Push
+
+↓
+
+GitOps Repository
+```
+
+Git remains the deployment source of truth.
+
+---
+
+# Update Deployment Manifest
+
+Example.
+
+```yaml
+update-gitops:
+
+  stage: deploy
+
+  script:
+
+    - sed -i "s/tag:.*/tag: $CI_PIPELINE_ID/" deployment.yaml
+
+    - git add .
+
+    - git commit -m "Update image"
+
+    - git push
+```
+
+ArgoCD automatically detects the new image version.
+
+---
+
+# ArgoCD Deployment
+
+Deployment flow.
+
+```text
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Compare Desired State
+
+↓
+
+Synchronize
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+GitLab CI should update Git only, not deploy directly to Kubernetes.
+
+---
+
+# Deployment Validation
+
+Validate the deployment after synchronization.
+
+Example.
+
+```yaml
+validation:
+
+  stage: deploy
+
+  script:
+
+    - kubectl get deployments
+
+    - kubectl get pods
+```
+
+Production pipelines should also execute smoke tests.
+
+---
+
+# Security Reports
+
+Generate reports from every security tool.
+
+```text
+Security Reports
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+├── Trivy
+
+├── SBOM
+
+└── Pipeline Logs
+```
+
+Store reports for compliance and future investigations.
+
+---
+
+# Upload Security Reports
+
+Example.
+
+```yaml
+artifacts:
+
+  paths:
+
+    - reports/
+
+    - sbom.json
+```
+
+Artifacts remain available after the pipeline completes.
+
+---
+
+# Security Gate Workflow
+
+Every security stage validates the application before deployment.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Security Scans
+
+↓
+
+Passed?
+
+     │
+
+┌────┴─────┐
+
+▼          ▼
+
+Yes         No
+
+│            │
+
+Continue   Stop Pipeline
+```
+
+Critical vulnerabilities should immediately stop the pipeline.
+
+---
+
+# Parallel Security Jobs
+
+GitLab CI supports running independent security jobs simultaneously.
+
+```text
+Build
+
+↓
+
+Parallel Jobs
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+↓
+
+Results
+
+↓
+
+Docker Build
+```
+
+Parallel execution reduces total pipeline duration.
+
+---
+
+# Enterprise Best Practices
+
+- Run source code scans before building container images.
+- Execute security jobs in parallel whenever possible.
+- Stop pipelines on High and Critical vulnerabilities.
+- Generate an SBOM for every production image.
+- Sign all production images using Cosign.
+- Push only verified images to the registry.
+- Archive security reports and SBOMs.
+- Use GitOps instead of direct Kubernetes deployments.
+- Validate deployments after ArgoCD synchronization.
+- Keep security tools and GitLab Runners up to date.
+
+---
+
