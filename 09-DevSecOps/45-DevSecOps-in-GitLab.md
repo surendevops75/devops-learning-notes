@@ -463,3 +463,465 @@ The pipeline automatically builds the application after every commit.
 
 ---
 
+# Repository Structure
+
+A well-structured repository simplifies CI/CD and security workflow management.
+
+```text
+project/
+
+├── .gitlab-ci.yml
+
+├── src/
+
+├── terraform/
+
+├── kubernetes/
+
+├── Dockerfile
+
+├── pom.xml
+
+└── README.md
+```
+
+Keep infrastructure, application, and deployment manifests organized.
+
+---
+
+# GitLab Variables
+
+Sensitive information should never be stored inside the pipeline file.
+
+Examples.
+
+```text
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+
+SONAR_TOKEN
+
+DOCKER_USERNAME
+
+DOCKER_PASSWORD
+
+COSIGN_PRIVATE_KEY
+
+KUBECONFIG
+
+ARGOCD_TOKEN
+```
+
+GitLab encrypts CI/CD variables and injects them securely into jobs.
+
+---
+
+# Environment Variables
+
+Example.
+
+```yaml
+variables:
+
+  IMAGE_NAME: payment-service
+
+  REGISTRY: registry.gitlab.com/company/project
+```
+
+Variables simplify pipeline maintenance and reduce duplication.
+
+---
+
+# Protected Variables
+
+Protected variables are only available to protected branches and tags.
+
+Examples.
+
+```text
+main
+
+release/*
+
+production
+```
+
+Production credentials should always be configured as protected variables.
+
+---
+
+# GitLab Environments
+
+GitLab environments represent deployment targets.
+
+Examples.
+
+```text
+Development
+
+Testing
+
+Staging
+
+Production
+```
+
+Each deployment updates the corresponding environment.
+
+---
+
+# GitLab Environment Workflow
+
+```text
+Commit
+
+↓
+
+Pipeline
+
+↓
+
+Deploy
+
+↓
+
+Environment
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+Environments provide deployment visibility and history.
+
+---
+
+# GitLab Runners
+
+GitLab Runners execute pipeline jobs.
+
+```text
+Developer
+
+↓
+
+GitLab
+
+↓
+
+GitLab Runner
+
+↓
+
+Build
+
+↓
+
+Security
+
+↓
+
+Deploy
+```
+
+Self-hosted runners are recommended for enterprise workloads.
+
+---
+
+# Docker Executor
+
+The Docker executor creates isolated build environments.
+
+```text
+GitLab Runner
+
+↓
+
+Docker Container
+
+↓
+
+Pipeline Job
+
+↓
+
+Container Removed
+```
+
+Every job starts with a clean execution environment.
+
+---
+
+# Kubernetes Executor
+
+GitLab Runner can launch temporary Kubernetes Pods.
+
+```text
+GitLab Runner
+
+↓
+
+Kubernetes
+
+↓
+
+Runner Pod
+
+↓
+
+Pipeline
+
+↓
+
+Pod Deleted
+```
+
+Ephemeral Pods improve scalability and security.
+
+---
+
+# Merge Request Validation
+
+Security validation should occur before merging code.
+
+```text
+Developer
+
+↓
+
+Merge Request
+
+↓
+
+Pipeline
+
+↓
+
+Security Validation
+
+↓
+
+Approval
+
+↓
+
+Merge
+```
+
+Only validated code should reach the default branch.
+
+---
+
+# Required Pipeline Checks
+
+Typical mandatory jobs.
+
+```text
+Build
+
+Unit Tests
+
+SonarQube
+
+Dependency Check
+
+Gitleaks
+
+Checkov
+
+TFSec
+
+Trivy
+```
+
+Merge Requests should be blocked if any required job fails.
+
+---
+
+# Build Stage
+
+Example.
+
+```yaml
+build:
+
+  stage: build
+
+  script:
+
+    - mvn clean package
+```
+
+Compilation errors should immediately stop the pipeline.
+
+---
+
+# Unit Testing
+
+Example.
+
+```yaml
+unit-test:
+
+  stage: test
+
+  script:
+
+    - mvn test
+```
+
+Execute unit tests before packaging or deployment.
+
+---
+
+# Code Coverage
+
+Example.
+
+```yaml
+coverage:
+
+  stage: test
+
+  script:
+
+    - mvn jacoco:report
+```
+
+Coverage reports help identify untested application code.
+
+---
+
+# SonarQube Integration
+
+Example.
+
+```yaml
+sonarqube:
+
+  stage: security
+
+  script:
+
+    - mvn sonar:sonar \
+      -Dsonar.login=$SONAR_TOKEN
+```
+
+SonarQube performs static application security testing and code quality analysis.
+
+---
+
+# SonarQube Quality Gate
+
+Every production pipeline should enforce the Quality Gate.
+
+```text
+Source Code
+
+↓
+
+SonarQube
+
+↓
+
+Quality Gate
+
+↓
+
+Passed?
+
+     │
+
+┌────┴─────┐
+
+▼          ▼
+
+Yes         No
+
+│            │
+
+Continue   Stop Pipeline
+```
+
+Applications failing the Quality Gate should not proceed.
+
+---
+
+# Pipeline Artifacts
+
+Artifacts allow jobs to share generated files.
+
+Example.
+
+```yaml
+artifacts:
+
+  paths:
+
+    - target/
+
+    - reports/
+```
+
+Artifacts preserve build outputs and security reports.
+
+---
+
+# Pipeline Dependencies
+
+Jobs can consume artifacts from earlier stages.
+
+Example.
+
+```yaml
+dependencies:
+
+  - build
+```
+
+Dependencies reduce unnecessary rebuilding.
+
+---
+
+# Pipeline Cache
+
+Caching speeds up repeated executions.
+
+Example.
+
+```yaml
+cache:
+
+  paths:
+
+    - .m2/repository
+```
+
+Package caches significantly reduce build duration.
+
+---
+
+# Enterprise Best Practices
+
+- Store all sensitive values as protected CI/CD variables.
+- Use dedicated self-hosted runners for production workloads.
+- Execute pipelines for every Merge Request.
+- Enforce SonarQube Quality Gates.
+- Cache dependencies to improve pipeline speed.
+- Use pipeline artifacts for reports and build outputs.
+- Deploy using Kubernetes-based runners when possible.
+- Protect production branches and environments.
+- Separate build, test, security, and deployment stages.
+- Continuously update GitLab Runner versions.
+
+---
+
