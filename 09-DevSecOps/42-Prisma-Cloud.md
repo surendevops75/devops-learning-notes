@@ -1668,3 +1668,651 @@ Examples.
 
 ---
 
+# Jenkins Integration
+
+Prisma Cloud integrates with Jenkins to scan container images before they are published to the container registry.
+
+Enterprise workflow.
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Jenkins
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Docker Build
+
+↓
+
+Prisma Image Scan
+
+↓
+
+Policy Validation
+
+↓
+
+Amazon ECR
+
+↓
+
+Deploy
+```
+
+Only images that comply with enterprise security policies should be promoted.
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    environment {
+
+        IMAGE = "company/payment-service:${BUILD_NUMBER}"
+
+    }
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                checkout scm
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Docker Build') {
+
+            steps {
+
+                sh 'docker build -t $IMAGE .'
+
+            }
+
+        }
+
+        stage('Prisma Scan') {
+
+            steps {
+
+                sh '''
+
+                twistcli images scan \
+                --address https://console.company.com \
+                --user admin \
+                --password $PASSWORD \
+                $IMAGE
+
+                '''
+
+            }
+
+        }
+
+        stage('Push Image') {
+
+            steps {
+
+                sh 'docker push $IMAGE'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Enterprise workflow.
+
+```text
+Git Push
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Docker Build
+
+↓
+
+Prisma Scan
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Prisma-Cloud-Scan
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  security:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Build Image
+
+        run: |
+
+          docker build -t payment-service:${{ github.sha }} .
+
+      - name: Prisma Scan
+
+        run: |
+
+          twistcli images scan \
+          --address https://console.company.com \
+          --user admin \
+          --password $PASSWORD \
+          payment-service:${{ github.sha }}
+```
+
+---
+
+# GitLab CI Integration
+
+Example.
+
+```yaml
+stages:
+
+  - build
+
+  - security
+
+build:
+
+  stage: build
+
+  script:
+
+    - docker build -t payment-service:$CI_COMMIT_SHA .
+
+prisma-scan:
+
+  stage: security
+
+  script:
+
+    - twistcli images scan \
+      --address https://console.company.com \
+      --user admin \
+      --password $PASSWORD \
+      payment-service:$CI_COMMIT_SHA
+```
+
+---
+
+# Amazon ECR Integration
+
+Prisma continuously monitors Amazon ECR repositories.
+
+Workflow.
+
+```text
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Automatic Prisma Scan
+
+↓
+
+Policy Validation
+
+↓
+
+Security Report
+```
+
+Images are rescanned whenever vulnerability intelligence is updated.
+
+---
+
+# Azure Container Registry Integration
+
+```text
+Docker Build
+
+↓
+
+Azure Container Registry
+
+↓
+
+Automatic Scan
+
+↓
+
+Compliance Report
+```
+
+Container images remain continuously monitored after publication.
+
+---
+
+# Google Artifact Registry Integration
+
+```text
+Docker Build
+
+↓
+
+Google Artifact Registry
+
+↓
+
+Automatic Scan
+
+↓
+
+Risk Assessment
+```
+
+Every newly published image is evaluated automatically.
+
+---
+
+# JFrog Artifactory Integration
+
+Prisma Cloud integrates with enterprise artifact repositories.
+
+Workflow.
+
+```text
+Docker Build
+
+↓
+
+JFrog Artifactory
+
+↓
+
+Automatic Scan
+
+↓
+
+Policy Validation
+
+↓
+
+Security Report
+```
+
+Registries remain under continuous monitoring.
+
+---
+
+# Kubernetes Admission Controller
+
+The Admission Controller prevents non-compliant workloads from entering Kubernetes.
+
+Workflow.
+
+```text
+kubectl apply
+
+↓
+
+API Server
+
+↓
+
+Prisma Admission Controller
+
+↓
+
+Image Verified?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Deploy     Reject
+```
+
+Admission control reduces deployment risk.
+
+---
+
+# Runtime Protection
+
+Prisma Defender continuously protects running workloads.
+
+```text
+Container
+
+↓
+
+Runtime Event
+
+↓
+
+Prisma Defender
+
+↓
+
+Policy Evaluation
+
+↓
+
+Allow
+
+or
+
+Alert
+
+or
+
+Block
+```
+
+Examples.
+
+- Shell execution
+- Privilege escalation
+- Container escape
+- Sensitive file access
+- Reverse shell
+- Suspicious network activity
+
+---
+
+# Software Bill of Materials (SBOM)
+
+Prisma Cloud generates Software Bill of Materials (SBOM) data.
+
+```text
+Container Image
+
+↓
+
+Dependency Discovery
+
+↓
+
+Package Inventory
+
+↓
+
+SBOM
+
+↓
+
+Compliance Report
+```
+
+SBOMs improve software supply chain visibility and audit readiness.
+
+---
+
+# Image Signing Verification
+
+Digitally signed images improve software supply chain integrity.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+Digital Signature
+
+↓
+
+Signature Verification
+
+↓
+
+Approved
+
+↓
+
+Deploy
+```
+
+Unsigned or modified images should be rejected.
+
+---
+
+# Compliance Reporting
+
+Prisma Cloud generates enterprise compliance reports.
+
+Typical report.
+
+```text
+Compliance Report
+
+├── CIS
+
+├── PCI DSS
+
+├── HIPAA
+
+├── NIST
+
+├── ISO 27001
+
+├── SOC 2
+
+└── Recommendations
+```
+
+Reports support regulatory audits and governance.
+
+---
+
+# Security Dashboard
+
+The Prisma Console provides centralized visibility across cloud environments.
+
+Typical dashboard sections.
+
+- Vulnerability Summary
+- Runtime Threats
+- Cloud Misconfigurations
+- Compliance Status
+- Container Inventory
+- Kubernetes Risks
+- Identity Risks
+- Malware Detection
+- Secret Exposure
+- Policy Violations
+
+---
+
+# Enterprise DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Docker Build
+
+↓
+
+Prisma Image Scan
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+Admission Controller
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Prisma Defender
+
+↓
+
+Runtime Protection
+
+↓
+
+Production
+```
+
+Prisma Cloud provides security from source code through runtime.
+
+---
+
+# Enterprise Best Practices
+
+- Scan every image before publishing.
+- Continuously monitor container registries.
+- Block deployments containing Critical vulnerabilities.
+- Enable Admission Controller in production.
+- Generate SBOMs for production images.
+- Verify image signatures before deployment.
+- Enable runtime protection on every Kubernetes node.
+- Integrate alerts with SIEM platforms.
+- Archive compliance reports for audits.
+- Keep Prisma policies and Defender components updated.
