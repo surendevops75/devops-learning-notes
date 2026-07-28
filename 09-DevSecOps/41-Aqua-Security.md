@@ -1584,3 +1584,634 @@ Risk prioritization helps teams focus on the most significant issues first.
 
 ---
 
+# Jenkins Integration
+
+Aqua Security integrates with Jenkins to scan container images before they are pushed to the container registry.
+
+Enterprise workflow.
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Jenkins
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Docker Build
+
+↓
+
+Aqua Image Scan
+
+↓
+
+Policy Validation
+
+↓
+
+Amazon ECR
+
+↓
+
+Deploy
+```
+
+Only images that satisfy enterprise security policies should be published.
+
+---
+
+# Production Jenkins Pipeline
+
+```groovy
+pipeline {
+
+    agent any
+
+    environment {
+
+        IMAGE = "company/payment-service:${BUILD_NUMBER}"
+
+    }
+
+    stages {
+
+        stage('Checkout') {
+
+            steps {
+
+                checkout scm
+
+            }
+
+        }
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean package'
+
+            }
+
+        }
+
+        stage('Docker Build') {
+
+            steps {
+
+                sh 'docker build -t $IMAGE .'
+
+            }
+
+        }
+
+        stage('Aqua Scan') {
+
+            steps {
+
+                sh '''
+
+                aqua scan \
+                --image $IMAGE
+
+                '''
+
+            }
+
+        }
+
+        stage('Push Image') {
+
+            steps {
+
+                sh 'docker push $IMAGE'
+
+            }
+
+        }
+
+    }
+
+}
+```
+
+---
+
+# GitHub Actions Integration
+
+Enterprise workflow.
+
+```text
+Git Push
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Docker Build
+
+↓
+
+Aqua Scan
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+```
+
+---
+
+# Production GitHub Actions Workflow
+
+```yaml
+name: Aqua-Scan
+
+on:
+
+  push:
+
+    branches:
+
+      - main
+
+jobs:
+
+  security:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Build Image
+
+      run: |
+
+        docker build -t payment-service:${{ github.sha }} .
+
+    - name: Aqua Scan
+
+      run: |
+
+        aqua scan \
+        --image payment-service:${{ github.sha }}
+```
+
+---
+
+# GitLab CI Integration
+
+Example.
+
+```yaml
+stages:
+
+  - build
+
+  - security
+
+build:
+
+  stage: build
+
+  script:
+
+    - docker build -t payment-service:$CI_COMMIT_SHA .
+
+aqua-scan:
+
+  stage: security
+
+  script:
+
+    - aqua scan \
+      --image payment-service:$CI_COMMIT_SHA
+```
+
+---
+
+# Amazon ECR Integration
+
+Aqua continuously monitors Amazon ECR repositories.
+
+Workflow.
+
+```text
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Automatic Aqua Scan
+
+↓
+
+Policy Evaluation
+
+↓
+
+Security Report
+```
+
+New images are scanned automatically after being pushed.
+
+---
+
+# Azure Container Registry Integration
+
+```text
+Docker Build
+
+↓
+
+Azure Container Registry
+
+↓
+
+Automatic Scan
+
+↓
+
+Report
+```
+
+Registry integration enables continuous monitoring of newly published images.
+
+---
+
+# Google Artifact Registry Integration
+
+```text
+Docker Build
+
+↓
+
+Google Artifact Registry
+
+↓
+
+Image Scan
+
+↓
+
+Compliance Validation
+```
+
+Images remain under continuous security monitoring after publication.
+
+---
+
+# JFrog Artifactory Integration
+
+Aqua can monitor container images stored in JFrog Artifactory.
+
+Workflow.
+
+```text
+Docker Build
+
+↓
+
+JFrog Artifactory
+
+↓
+
+Image Scan
+
+↓
+
+Policy Check
+
+↓
+
+Report
+```
+
+Every newly published image is evaluated against enterprise security policies.
+
+---
+
+# Kubernetes Admission Controller
+
+The Admission Controller validates Kubernetes workloads before they are scheduled.
+
+Workflow.
+
+```text
+kubectl apply
+
+↓
+
+API Server
+
+↓
+
+Admission Controller
+
+↓
+
+Image Verified?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Deploy     Reject
+```
+
+This prevents vulnerable workloads from entering the cluster.
+
+---
+
+# Runtime Policy Enforcement
+
+Runtime policies remain active after deployment.
+
+```text
+Container
+
+↓
+
+Runtime Event
+
+↓
+
+Aqua Enforcer
+
+↓
+
+Policy Check
+
+↓
+
+Allow
+
+or
+
+Block
+
+or
+
+Alert
+```
+
+Examples include:
+
+- Shell execution
+- Privilege escalation
+- Sensitive file access
+- Unexpected network traffic
+
+---
+
+# Image Signing Verification
+
+Trusted images should be digitally signed before deployment.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+Digital Signature
+
+↓
+
+Signature Validation
+
+↓
+
+Deployment Approved
+```
+
+Unsigned or tampered images should be rejected.
+
+---
+
+# Software Bill of Materials (SBOM)
+
+Aqua generates SBOM data for container images.
+
+```text
+Container Image
+
+↓
+
+Package Discovery
+
+↓
+
+Dependency Inventory
+
+↓
+
+SBOM
+
+↓
+
+Compliance Report
+```
+
+SBOMs improve software supply chain visibility.
+
+---
+
+# Compliance Reporting
+
+Compliance reports summarize policy violations.
+
+Typical report.
+
+```text
+Compliance Report
+
+├── CIS Controls
+
+├── PCI DSS
+
+├── HIPAA
+
+├── NIST
+
+├── SOC 2
+
+└── Recommendations
+```
+
+Reports should be archived for audits.
+
+---
+
+# Security Dashboard
+
+The Aqua Console provides centralized visibility.
+
+Dashboard widgets typically include:
+
+- Vulnerabilities by Severity
+- Runtime Alerts
+- Compliance Status
+- Registry Scan Results
+- Policy Violations
+- Malware Findings
+- Secret Detection
+- Image Drift
+- Kubernetes Risks
+- Active Enforcers
+
+---
+
+# Enterprise DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Veracode
+
+↓
+
+Docker Build
+
+↓
+
+Aqua Image Scan
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+Admission Controller
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Aqua Runtime Protection
+
+↓
+
+Production
+```
+
+Aqua Security provides protection across both build-time and runtime stages.
+
+---
+
+# Enterprise Best Practices
+
+- Scan every container image before pushing it to a registry.
+- Enable continuous registry scanning.
+- Integrate image scanning into every CI/CD pipeline.
+- Enforce Admission Controller policies in production clusters.
+- Verify image signatures before deployment.
+- Generate SBOMs for all production images.
+- Enable runtime protection on every Kubernetes node.
+- Archive compliance and vulnerability reports.
+- Integrate alerts with enterprise SIEM platforms.
+- Keep Aqua Security components and policies updated regularly.
