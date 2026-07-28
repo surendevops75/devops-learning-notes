@@ -1899,3 +1899,500 @@ Recommendations.
 
 ---
 
+# Common Mistakes
+
+## Mistake 1
+
+### Storing Secrets in Workflow Files
+
+**Problem**
+
+Secrets are hardcoded inside the workflow.
+
+```yaml
+env:
+
+  AWS_ACCESS_KEY_ID: AKIAxxxxxxxx
+
+  AWS_SECRET_ACCESS_KEY: xxxxxxxxxxxxxxxxx
+```
+
+**Impact**
+
+- Credential leakage
+- Repository compromise
+- Compliance violations
+
+**Recommendation**
+
+Store all sensitive information in GitHub Secrets or use OIDC for cloud authentication.
+
+---
+
+## Mistake 2
+
+### Running Deployments Without Security Checks
+
+**Problem**
+
+The workflow builds and deploys immediately.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+**Impact**
+
+- Vulnerable applications
+- Security policy violations
+- Increased production risk
+
+**Recommendation**
+
+Run all security scans before deployment.
+
+---
+
+## Mistake 3
+
+### Deploying Directly from GitHub Actions
+
+**Problem**
+
+The workflow executes Kubernetes deployments directly.
+
+```text
+GitHub Actions
+
+↓
+
+kubectl apply
+
+↓
+
+Production
+```
+
+**Impact**
+
+- Configuration drift
+- Limited audit history
+- Difficult rollback process
+
+**Recommendation**
+
+Update a GitOps repository and allow ArgoCD to perform deployments.
+
+---
+
+## Mistake 4
+
+### Ignoring Failed Security Checks
+
+**Problem**
+
+The workflow continues after SonarQube or Trivy reports Critical findings.
+
+**Impact**
+
+- Vulnerable code reaches production
+- Increased attack surface
+- Compliance failures
+
+**Recommendation**
+
+Configure workflows to fail immediately when security gates fail.
+
+---
+
+## Mistake 5
+
+### Using Broad Workflow Permissions
+
+**Problem**
+
+The workflow requests unnecessary repository permissions.
+
+```yaml
+permissions:
+
+  contents: write
+
+  packages: write
+
+  actions: write
+
+  deployments: write
+```
+
+**Impact**
+
+- Larger attack surface
+- Increased privilege abuse risk
+
+**Recommendation**
+
+Grant only the minimum permissions required for each workflow.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Workflow Does Not Start
+
+**Cause**
+
+Workflow trigger is incorrect.
+
+**Resolution**
+
+Verify:
+
+- Workflow exists in `.github/workflows`
+- YAML syntax is valid
+- Trigger events are configured correctly
+- Workflow is committed to the repository
+
+Example.
+
+```yaml
+on:
+
+  push:
+
+    branches:
+
+      - main
+```
+
+---
+
+## Scenario 2
+
+### SonarQube Scan Fails
+
+**Cause**
+
+Authentication or project configuration issues.
+
+**Resolution**
+
+Verify:
+
+- SONAR_TOKEN exists in GitHub Secrets
+- SonarQube server is reachable
+- Project key is correct
+- Maven configuration is valid
+
+---
+
+## Scenario 3
+
+### Docker Push Fails
+
+**Cause**
+
+Authentication to Amazon ECR fails.
+
+**Resolution**
+
+Verify:
+
+```bash
+aws ecr get-login-password
+```
+
+Check:
+
+- AWS IAM permissions
+- ECR repository
+- Region configuration
+- OIDC or credentials
+
+---
+
+## Scenario 4
+
+### Trivy Reports Critical Vulnerabilities
+
+**Cause**
+
+The container image contains vulnerable packages.
+
+**Resolution**
+
+```bash
+trivy image payment-service:latest
+```
+
+Update:
+
+- Base image
+- Operating system packages
+- Application dependencies
+
+Rebuild and rescan the image.
+
+---
+
+## Scenario 5
+
+### ArgoCD Does Not Synchronize
+
+**Cause**
+
+GitOps repository changes are not detected.
+
+**Resolution**
+
+Verify:
+
+```bash
+argocd app sync payment-service
+
+kubectl get applications -n argocd
+```
+
+Check:
+
+- Repository updates
+- Image tag changes
+- Repository access
+- ArgoCD synchronization status
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is GitHub Actions?
+
+**Answer**
+
+GitHub Actions is GitHub's native CI/CD platform that automates software build, testing, security validation, deployment, and release workflows using YAML-based workflow files.
+
+---
+
+## Question 2
+
+### Why is GitHub Actions widely used for DevSecOps?
+
+**Answer**
+
+It integrates directly with GitHub repositories, supports automated security scanning, GitHub Secrets, OIDC authentication, reusable workflows, and GitOps deployment strategies.
+
+---
+
+## Question 3
+
+### What is the purpose of GitHub Secrets?
+
+**Answer**
+
+GitHub Secrets securely store sensitive information such as cloud credentials, API keys, tokens, passwords, and certificates, preventing exposure in repositories.
+
+---
+
+## Question 4
+
+### Why use OIDC instead of AWS Access Keys?
+
+**Answer**
+
+OIDC provides temporary credentials through IAM roles, eliminating long-lived access keys and reducing credential management risks.
+
+---
+
+## Question 5
+
+### Which security tools are commonly integrated into GitHub Actions?
+
+**Answer**
+
+Common tools include SonarQube, OWASP Dependency-Check, Gitleaks, Checkov, TFSec, Trivy, Cosign, Falco, Aqua Security, Prisma Cloud, and ArgoCD.
+
+---
+
+## Question 6
+
+### Why generate an SBOM?
+
+**Answer**
+
+An SBOM documents all software components and dependencies, helping organizations identify vulnerable libraries, improve supply chain visibility, and meet compliance requirements.
+
+---
+
+## Question 7
+
+### Why should container images be signed?
+
+**Answer**
+
+Image signing verifies image integrity and authenticity, ensuring that only trusted images are deployed to production.
+
+---
+
+## Question 8
+
+### Why is GitOps preferred over direct deployment?
+
+**Answer**
+
+GitOps provides version-controlled deployments, automated reconciliation, consistent environments, simplified rollbacks, and improved auditability.
+
+---
+
+## Question 9
+
+### How do you optimize GitHub Actions workflows?
+
+**Answer**
+
+Use dependency caching, parallel jobs, reusable workflows, matrix builds, self-hosted or Kubernetes runners, and modular workflow design.
+
+---
+
+## Question 10
+
+### What are enterprise best practices for GitHub Actions DevSecOps pipelines?
+
+**Answer**
+
+Use protected branches, GitHub Secrets, OIDC authentication, reusable workflows, security gates, image signing, SBOM generation, GitOps deployment, least-privilege permissions, and continuous monitoring.
+
+---
+
+# Key Takeaways
+
+- GitHub Actions provides native CI/CD integration for GitHub repositories.
+- Security should be integrated into every workflow stage.
+- Execute SonarQube, OWASP Dependency-Check, Gitleaks, Checkov, TFSec, and Trivy before deployment.
+- Generate an SBOM for every production image.
+- Sign container images using Cosign.
+- Authenticate with cloud providers using OIDC whenever possible.
+- Store secrets securely in GitHub Secrets.
+- Use GitOps with ArgoCD instead of direct Kubernetes deployments.
+- Protect production branches and environments.
+- Continuously monitor workflow execution and security posture.
+
+---
+
+# Enterprise DevSecOps Workflow Summary
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+GitHub Actions
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Code Coverage
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+Update GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco / Aqua / Prisma Runtime Protection
+
+↓
+
+Production
+```
+
+This workflow demonstrates a complete enterprise DevSecOps pipeline using GitHub Actions, integrating secure software development, automated security validation, GitOps-based deployment, and runtime protection to deliver secure and auditable applications.
