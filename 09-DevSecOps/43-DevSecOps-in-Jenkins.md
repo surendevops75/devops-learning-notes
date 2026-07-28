@@ -1947,3 +1947,479 @@ Recommendations.
 
 ---
 
+# Common Mistakes
+
+## Mistake 1
+
+### Hardcoding Credentials in Jenkinsfile
+
+**Problem**
+
+Credentials are stored directly in the pipeline.
+
+```groovy
+environment {
+
+    AWS_ACCESS_KEY="AKIAxxxxxxxx"
+
+}
+```
+
+**Impact**
+
+- Secret leakage
+- Credential compromise
+- Compliance violations
+
+**Recommendation**
+
+Store all credentials in Jenkins Credentials Store.
+
+---
+
+## Mistake 2
+
+### Skipping Security Scans
+
+**Problem**
+
+Only compiling the application before deployment.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+**Impact**
+
+- Vulnerable dependencies
+- Insecure container images
+- Secrets deployed to production
+
+**Recommendation**
+
+Run every required security scan before deployment.
+
+---
+
+## Mistake 3
+
+### Deploying Directly From Jenkins
+
+**Problem**
+
+Jenkins executes Kubernetes deployments directly.
+
+```text
+Jenkins
+
+↓
+
+kubectl apply
+
+↓
+
+Production
+```
+
+**Impact**
+
+- No deployment history
+- Configuration drift
+- Difficult rollbacks
+
+**Recommendation**
+
+Use GitOps with ArgoCD instead of direct deployments.
+
+---
+
+## Mistake 4
+
+### Ignoring Quality Gates
+
+**Problem**
+
+The pipeline continues even after SonarQube fails.
+
+**Impact**
+
+- Poor code quality
+- Security vulnerabilities
+- Technical debt
+
+**Recommendation**
+
+Fail the pipeline whenever Quality Gates fail.
+
+---
+
+## Mistake 5
+
+### Running Everything on the Jenkins Controller
+
+**Problem**
+
+The controller performs every build.
+
+**Impact**
+
+- Performance bottlenecks
+- Reduced scalability
+- Single point of failure
+
+**Recommendation**
+
+Use distributed or Kubernetes-based build agents.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Jenkins Cannot Clone Git Repository
+
+**Cause**
+
+Git credentials or SSH configuration is incorrect.
+
+**Resolution**
+
+```bash
+git ls-remote https://github.com/company/repository.git
+```
+
+Verify:
+
+- GitHub token
+- SSH key
+- Repository permissions
+- Network connectivity
+
+---
+
+## Scenario 2
+
+### SonarQube Quality Gate Fails
+
+**Cause**
+
+Code quality or security issues exceed configured thresholds.
+
+**Resolution**
+
+- Review SonarQube report.
+- Fix Bugs and Vulnerabilities.
+- Reduce Code Smells.
+- Improve test coverage.
+- Re-run the pipeline.
+
+---
+
+## Scenario 3
+
+### Trivy Detects Critical Vulnerabilities
+
+**Cause**
+
+Container image contains vulnerable packages.
+
+**Resolution**
+
+```bash
+trivy image payment-service:latest
+```
+
+Update:
+
+- Base image
+- Application dependencies
+- Operating system packages
+
+Rebuild the image before deployment.
+
+---
+
+## Scenario 4
+
+### Docker Build Fails
+
+**Cause**
+
+Dockerfile or build environment issues.
+
+**Resolution**
+
+```bash
+docker build .
+```
+
+Verify:
+
+- Dockerfile syntax
+- Build context
+- Network connectivity
+- Base image availability
+
+---
+
+## Scenario 5
+
+### ArgoCD Does Not Deploy
+
+**Cause**
+
+GitOps repository was not updated or synchronization failed.
+
+**Resolution**
+
+```bash
+kubectl get applications -n argocd
+
+argocd app sync payment-service
+```
+
+Verify:
+
+- Repository changes
+- ArgoCD synchronization
+- Kubernetes cluster connectivity
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is DevSecOps in Jenkins?
+
+**Answer**
+
+DevSecOps in Jenkins integrates automated security checks such as SAST, dependency scanning, secret detection, Infrastructure as Code scanning, container scanning, and image signing into CI/CD pipelines before software is deployed.
+
+---
+
+## Question 2
+
+### Why should SonarQube run before Docker Build?
+
+**Answer**
+
+Scanning source code before building the container identifies code quality and security issues early, reducing unnecessary image builds and speeding up feedback.
+
+---
+
+## Question 3
+
+### Why use Gitleaks?
+
+**Answer**
+
+Gitleaks detects exposed secrets such as API keys, passwords, and tokens before they reach production or version control history.
+
+---
+
+## Question 4
+
+### Why use Checkov and TFSec together?
+
+**Answer**
+
+Both tools analyse Infrastructure as Code but have different rule sets and detection capabilities. Running both increases Terraform security coverage.
+
+---
+
+## Question 5
+
+### Why generate an SBOM?
+
+**Answer**
+
+An SBOM provides an inventory of software components and dependencies, supporting vulnerability management, compliance, and software supply chain security.
+
+---
+
+## Question 6
+
+### Why sign container images?
+
+**Answer**
+
+Image signing verifies authenticity and integrity, ensuring that only trusted and untampered images are deployed.
+
+---
+
+## Question 7
+
+### Why is GitOps preferred over direct deployment?
+
+**Answer**
+
+GitOps provides version-controlled deployments, automated reconciliation, auditability, easier rollbacks, and reduces configuration drift.
+
+---
+
+## Question 8
+
+### Which security tools are typically integrated into Jenkins?
+
+**Answer**
+
+Common tools include SonarQube, OWASP Dependency-Check, Gitleaks, Checkov, TFSec, Trivy, Cosign, Falco, Aqua Security, Prisma Cloud, and ArgoCD.
+
+---
+
+## Question 9
+
+### How do you reduce Jenkins pipeline execution time?
+
+**Answer**
+
+Use parallel stages, distributed build agents, Kubernetes-based ephemeral agents, dependency caching, reusable Shared Libraries, and incremental builds.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for Jenkins DevSecOps pipelines?
+
+**Answer**
+
+Use Jenkins LTS, secure credentials, enforce Quality Gates, run security scans in parallel, sign images, generate SBOMs, use GitOps for deployments, monitor Jenkins, centralize logs, and regularly update plugins and security tools.
+
+---
+
+# Key Takeaways
+
+- Jenkins is the orchestration engine for enterprise DevSecOps pipelines.
+- Integrate security into every stage of the CI/CD workflow.
+- Execute SonarQube, OWASP Dependency-Check, Gitleaks, Checkov, TFSec, and Trivy before deployment.
+- Generate an SBOM and sign every production container image.
+- Use GitOps with ArgoCD instead of direct Kubernetes deployments.
+- Store all secrets in Jenkins Credentials Store.
+- Use Kubernetes-based ephemeral agents for scalable builds.
+- Execute independent security scans in parallel.
+- Archive reports for auditing and compliance.
+- Continuously monitor Jenkins using Prometheus, Grafana, and the ELK Stack.
+
+---
+
+# Enterprise DevSecOps Pipeline Summary
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+GitHub Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Code Coverage
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+Update GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco / Aqua / Prisma Runtime Protection
+
+↓
+
+Production
+```
+
+This pipeline demonstrates a complete enterprise DevSecOps workflow, integrating security controls from source code analysis through runtime protection to achieve secure, automated, and auditable software delivery.
