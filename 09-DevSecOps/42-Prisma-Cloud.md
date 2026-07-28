@@ -1018,3 +1018,653 @@ Audit logs should be retained according to organizational compliance requirement
 
 ---
 
+# Container Image Scanning
+
+Prisma Cloud scans container images before deployment to identify vulnerabilities, malware, secrets, and compliance violations.
+
+Workflow.
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Container Image
+
+↓
+
+Prisma Scanner
+
+↓
+
+Security Analysis
+
+↓
+
+Policy Evaluation
+
+↓
+
+PASS / FAIL
+```
+
+Only compliant images should be promoted to production.
+
+---
+
+# Image Assurance Policies
+
+Image Assurance validates container images against enterprise security policies.
+
+Example.
+
+```text
+Critical Vulnerabilities
+
+↓
+
+Reject
+
+High Vulnerabilities
+
+↓
+
+Reject
+
+Medium Vulnerabilities
+
+↓
+
+Warning
+
+Low Vulnerabilities
+
+↓
+
+Allow
+```
+
+Policy enforcement prevents insecure images from reaching Kubernetes.
+
+---
+
+# Image Scan Workflow
+
+```text
+Container Image
+
+↓
+
+Operating System Packages
+
+↓
+
+Application Dependencies
+
+↓
+
+Secrets
+
+↓
+
+Malware
+
+↓
+
+Compliance Checks
+
+↓
+
+Risk Score
+
+↓
+
+Security Report
+```
+
+Prisma Cloud performs multiple security checks in a single scan.
+
+---
+
+# Registry Scanning
+
+Container registries are monitored continuously.
+
+```text
+Developer
+
+↓
+
+Push Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Automatic Prisma Scan
+
+↓
+
+Security Report
+```
+
+Supported registries.
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- Harbor
+- Docker Hub
+- JFrog Artifactory
+
+---
+
+# Vulnerability Detection
+
+Prisma Cloud detects vulnerabilities across operating systems and application packages.
+
+Examples.
+
+```text
+Ubuntu
+
+↓
+
+OpenSSL
+
+↓
+
+glibc
+
+↓
+
+curl
+```
+
+```text
+Java
+
+↓
+
+Spring Boot
+
+↓
+
+Node.js
+
+↓
+
+Python
+
+↓
+
+Go
+
+↓
+
+.NET
+```
+
+All packages are compared against continuously updated vulnerability databases.
+
+---
+
+# Malware Detection
+
+Container images are scanned for malicious software before deployment.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+Malware Scan
+
+↓
+
+Threat Intelligence
+
+↓
+
+Detection
+
+↓
+
+Alert
+```
+
+Known malware signatures are identified automatically.
+
+---
+
+# Secret Detection
+
+Prisma detects secrets embedded inside images.
+
+Examples.
+
+```text
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+
+DATABASE_PASSWORD
+
+JWT_SECRET
+
+SSH_PRIVATE_KEY
+
+GITHUB_TOKEN
+```
+
+Secrets should always be managed through secure secret management solutions.
+
+---
+
+# Software Supply Chain Security
+
+Prisma Cloud protects the software supply chain from development through deployment.
+
+```text
+Source Code
+
+↓
+
+Dependencies
+
+↓
+
+Container Build
+
+↓
+
+Image Scan
+
+↓
+
+Policy Validation
+
+↓
+
+Container Registry
+
+↓
+
+Deployment
+```
+
+Supply chain security reduces the risk of compromised software entering production.
+
+---
+
+# Runtime Protection
+
+Prisma Defender continuously monitors running workloads.
+
+Workflow.
+
+```text
+Running Container
+
+↓
+
+Process Activity
+
+↓
+
+Network Activity
+
+↓
+
+File Activity
+
+↓
+
+Runtime Policy
+
+↓
+
+Alert
+```
+
+Runtime monitoring continues throughout the application's lifecycle.
+
+---
+
+# Runtime Behaviour Monitoring
+
+Prisma Cloud observes workload behaviour in real time.
+
+Examples.
+
+- Shell execution
+- Privilege escalation
+- File modifications
+- Unexpected processes
+- Suspicious network traffic
+
+Workflow.
+
+```text
+Runtime Event
+
+↓
+
+Policy Engine
+
+↓
+
+Allow
+
+or
+
+Alert
+
+or
+
+Block
+```
+
+---
+
+# Container Drift Detection
+
+Production containers should remain identical to the approved image.
+
+Workflow.
+
+```text
+Approved Image
+
+↓
+
+Running Container
+
+↓
+
+Unexpected Change
+
+↓
+
+Drift Detected
+
+↓
+
+Alert
+```
+
+Examples.
+
+- New binaries
+- Installed packages
+- Modified configuration
+- Permission changes
+
+---
+
+# File Integrity Monitoring
+
+Critical system and application files are monitored continuously.
+
+Examples.
+
+```text
+/etc/passwd
+
+/etc/shadow
+
+/root/.ssh
+
+/etc/kubernetes
+
+/app/config
+```
+
+Workflow.
+
+```text
+File Change
+
+↓
+
+Integrity Check
+
+↓
+
+Alert
+```
+
+---
+
+# Process Monitoring
+
+Prisma Defender monitors processes executed inside containers.
+
+Expected processes.
+
+```text
+java
+
+node
+
+python
+
+nginx
+
+dotnet
+```
+
+Unexpected or unauthorized processes generate alerts.
+
+---
+
+# Network Protection
+
+Prisma Cloud monitors container network activity.
+
+Examples.
+
+```text
+Container
+
+↓
+
+Outbound Connection
+
+↓
+
+Unknown Destination
+
+↓
+
+Policy Evaluation
+
+↓
+
+Alert
+```
+
+Typical detections.
+
+- Suspicious outbound traffic
+- Communication with malicious IPs
+- Lateral movement
+- Unauthorized ports
+- Unexpected DNS requests
+
+---
+
+# Kubernetes Workload Protection
+
+Prisma Cloud protects Kubernetes resources throughout their lifecycle.
+
+Supported resources.
+
+- Pods
+- Deployments
+- StatefulSets
+- DaemonSets
+- Jobs
+- CronJobs
+
+Workflow.
+
+```text
+Kubernetes Resource
+
+↓
+
+Admission Controller
+
+↓
+
+Security Validation
+
+↓
+
+Deploy
+
+or
+
+Reject
+```
+
+---
+
+# Admission Controller Workflow
+
+```text
+kubectl apply
+
+↓
+
+Kubernetes API Server
+
+↓
+
+Prisma Admission Controller
+
+↓
+
+Image Verification
+
+↓
+
+Policy Validation
+
+↓
+
+Approved?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Deploy     Reject
+```
+
+Only verified workloads are admitted into the cluster.
+
+---
+
+# Cloud Security Posture Management (CSPM)
+
+Prisma Cloud continuously evaluates cloud resources for security risks.
+
+Workflow.
+
+```text
+AWS
+
+Azure
+
+Google Cloud
+
+↓
+
+Cloud Resource Discovery
+
+↓
+
+Configuration Analysis
+
+↓
+
+Risk Detection
+
+↓
+
+Recommendations
+```
+
+Typical findings.
+
+- Public S3 buckets
+- Open security groups
+- Unencrypted storage
+- Public databases
+- Weak IAM policies
+
+---
+
+# Identity Security
+
+Cloud identities are analysed for excessive permissions.
+
+Workflow.
+
+```text
+IAM User
+
+↓
+
+Permission Analysis
+
+↓
+
+Risk Score
+
+↓
+
+Recommendation
+```
+
+Examples.
+
+- Administrator permissions
+- Unused credentials
+- Excessive privileges
+- Cross-account access
+- Dormant accounts
+
+---
+
+# Enterprise Best Practices
+
+- Scan every image before publishing.
+- Enable automatic registry scanning.
+- Reject images containing Critical vulnerabilities.
+- Detect malware and secrets before deployment.
+- Enable runtime protection on every Kubernetes node.
+- Monitor container drift continuously.
+- Enforce Admission Controller policies.
+- Continuously monitor cloud posture across AWS, Azure, and GCP.
+- Review IAM risks regularly.
+- Prioritize remediation based on risk score and business impact.
+
+---
+
