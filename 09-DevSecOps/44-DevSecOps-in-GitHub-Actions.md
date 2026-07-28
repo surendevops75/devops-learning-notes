@@ -888,3 +888,449 @@ Centralized workflows simplify maintenance and governance.
 
 ---
 
+# OWASP Dependency-Check Integration
+
+OWASP Dependency-Check identifies vulnerable third-party libraries before deployment.
+
+Example.
+
+```yaml
+- name: OWASP Dependency Check
+
+  run: |
+
+    dependency-check.sh \
+      --scan . \
+      --format HTML \
+      --out reports
+```
+
+The workflow should fail if Critical vulnerabilities are detected.
+
+---
+
+# Gitleaks Integration
+
+Gitleaks detects secrets committed to the repository.
+
+Example.
+
+```yaml
+- name: Secret Scan
+
+  run: |
+
+    gitleaks detect \
+      --source . \
+      --report-format json \
+      --report-path gitleaks-report.json
+```
+
+Common secrets.
+
+- AWS Access Keys
+- GitHub Personal Access Tokens
+- Azure Credentials
+- SSH Private Keys
+- Database Passwords
+- API Keys
+
+---
+
+# Checkov Integration
+
+Checkov validates Infrastructure as Code security.
+
+Example.
+
+```yaml
+- name: Checkov Scan
+
+  run: |
+
+    checkov \
+      -d .
+```
+
+Checkov scans Terraform, Kubernetes, Dockerfiles and other IaC resources.
+
+---
+
+# TFSec Integration
+
+TFSec focuses on Terraform security.
+
+Example.
+
+```yaml
+- name: TFSec Scan
+
+  run: |
+
+    tfsec .
+```
+
+Misconfigured cloud infrastructure is detected before provisioning.
+
+---
+
+# Docker Build
+
+Container images should only be built after source code passes security validation.
+
+Example.
+
+```yaml
+- name: Docker Build
+
+  run: |
+
+    docker build \
+      -t payment-service:${{ github.run_number }} .
+```
+
+---
+
+# Trivy Integration
+
+Trivy scans container images for operating system and application vulnerabilities.
+
+Example.
+
+```yaml
+- name: Trivy Scan
+
+  run: |
+
+    trivy image \
+      --exit-code 1 \
+      payment-service:${{ github.run_number }}
+```
+
+The workflow should stop if High or Critical vulnerabilities are detected.
+
+---
+
+# SBOM Generation
+
+Generate a Software Bill of Materials for every production image.
+
+Example.
+
+```yaml
+- name: Generate SBOM
+
+  run: |
+
+    trivy image \
+      --format cyclonedx \
+      --output sbom.json \
+      payment-service:${{ github.run_number }}
+```
+
+SBOMs improve software supply chain visibility.
+
+---
+
+# Cosign Image Signing
+
+Sign container images before publishing.
+
+Example.
+
+```yaml
+- name: Sign Image
+
+  run: |
+
+    cosign sign \
+      payment-service:${{ github.run_number }}
+```
+
+Only trusted images should be deployed to production.
+
+---
+
+# Authenticate to Amazon ECR
+
+Login before pushing images.
+
+Example.
+
+```yaml
+- name: Login to Amazon ECR
+
+  run: |
+
+    aws ecr get-login-password |
+
+    docker login \
+      --username AWS \
+      --password-stdin \
+      ${{ env.REGISTRY }}
+```
+
+---
+
+# Push Container Image
+
+Publish approved images to Amazon ECR.
+
+Example.
+
+```yaml
+- name: Push Image
+
+  run: |
+
+    docker push \
+      ${{ env.REGISTRY }}/payment-service:${{ github.run_number }}
+```
+
+Only scanned and signed images should be published.
+
+---
+
+# GitOps Repository Update
+
+GitHub Actions updates the deployment repository instead of deploying directly.
+
+```text
+GitHub Actions
+
+↓
+
+Build Success
+
+↓
+
+Update Image Tag
+
+↓
+
+Commit Changes
+
+↓
+
+Push
+
+↓
+
+GitOps Repository
+```
+
+Git remains the single source of truth.
+
+---
+
+# Update Deployment Manifest
+
+Example.
+
+```yaml
+- name: Update Manifest
+
+  run: |
+
+    sed -i "s/tag:.*/tag: ${{ github.run_number }}/" deployment.yaml
+
+    git add .
+
+    git commit -m "Update image"
+
+    git push
+```
+
+ArgoCD automatically detects the updated image version.
+
+---
+
+# ArgoCD Deployment
+
+Deployment flow.
+
+```text
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Compare Desired State
+
+↓
+
+Synchronize
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+GitHub Actions never deploys directly to Kubernetes.
+
+---
+
+# Deployment Validation
+
+Verify the deployment after synchronization.
+
+Example.
+
+```yaml
+- name: Verify Deployment
+
+  run: |
+
+    kubectl get deployments
+
+    kubectl get pods
+```
+
+Production workflows should also execute smoke tests.
+
+---
+
+# Security Reports
+
+Generate reports from every security tool.
+
+```text
+Security Reports
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+├── Trivy
+
+├── SBOM
+
+└── Workflow Logs
+```
+
+Store reports for auditing and compliance.
+
+---
+
+# Upload Security Reports
+
+Example.
+
+```yaml
+- name: Upload Reports
+
+  uses: actions/upload-artifact@v4
+
+  with:
+
+    name: security-reports
+
+    path: reports/
+```
+
+Artifacts remain available after workflow completion.
+
+---
+
+# Security Gate Workflow
+
+Every stage validates the application before allowing deployment.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Security Scans
+
+↓
+
+Passed?
+
+     │
+
+┌────┴─────┐
+
+▼          ▼
+
+Yes         No
+
+│            │
+
+Continue   Stop Workflow
+```
+
+Security gates prevent vulnerable software from reaching production.
+
+---
+
+# Parallel Security Scans
+
+Independent scans should execute simultaneously.
+
+```text
+Build
+
+↓
+
+Parallel Jobs
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+↓
+
+Merge Results
+
+↓
+
+Docker Build
+```
+
+Parallel execution significantly reduces workflow duration.
+
+---
+
+# Enterprise Best Practices
+
+- Execute source code scans before building container images.
+- Run security tools in parallel whenever possible.
+- Fail workflows on Critical vulnerabilities.
+- Generate an SBOM for every production image.
+- Sign every production image using Cosign.
+- Publish only verified container images.
+- Store security reports as workflow artifacts.
+- Use GitOps instead of direct Kubernetes deployments.
+- Validate deployments after ArgoCD synchronization.
+- Continuously update security tools and GitHub Actions.
+
+---
+
