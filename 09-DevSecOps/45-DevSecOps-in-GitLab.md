@@ -1960,3 +1960,499 @@ Recommendations.
 
 ---
 
+# Common Mistakes
+
+## Mistake 1
+
+### Storing Secrets in .gitlab-ci.yml
+
+**Problem**
+
+Sensitive credentials are hardcoded inside the pipeline.
+
+```yaml
+variables:
+
+  AWS_ACCESS_KEY_ID: AKIAxxxxxxxx
+
+  AWS_SECRET_ACCESS_KEY: xxxxxxxxxxxxxxxxx
+```
+
+**Impact**
+
+- Credential leakage
+- Security incidents
+- Compliance violations
+
+**Recommendation**
+
+Store secrets as GitLab Protected CI/CD Variables or use cloud identity federation where supported.
+
+---
+
+## Mistake 2
+
+### Deploying Without Security Validation
+
+**Problem**
+
+The application is deployed immediately after the build.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+**Impact**
+
+- Vulnerable applications
+- Policy violations
+- Increased production risk
+
+**Recommendation**
+
+Execute security scans before packaging and deployment.
+
+---
+
+## Mistake 3
+
+### Deploying Directly to Kubernetes
+
+**Problem**
+
+GitLab CI executes Kubernetes deployments directly.
+
+```text
+GitLab Pipeline
+
+↓
+
+kubectl apply
+
+↓
+
+Production
+```
+
+**Impact**
+
+- Configuration drift
+- Difficult rollback
+- No GitOps audit trail
+
+**Recommendation**
+
+Update the GitOps repository and allow ArgoCD to synchronize changes.
+
+---
+
+## Mistake 4
+
+### Ignoring Failed Security Jobs
+
+**Problem**
+
+The pipeline continues after Critical vulnerabilities are detected.
+
+**Impact**
+
+- Vulnerable software reaches production
+- Security policy violations
+- Increased attack surface
+
+**Recommendation**
+
+Fail the pipeline whenever security jobs report High or Critical findings.
+
+---
+
+## Mistake 5
+
+### Sharing Production Runners
+
+**Problem**
+
+Development and production workloads execute on the same runner.
+
+**Impact**
+
+- Security isolation issues
+- Resource contention
+- Increased operational risk
+
+**Recommendation**
+
+Use dedicated runners for production workloads.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Pipeline Does Not Start
+
+**Cause**
+
+The pipeline configuration is invalid.
+
+**Resolution**
+
+Verify:
+
+- `.gitlab-ci.yml` exists in the repository root.
+- YAML syntax is correct.
+- Pipeline rules allow execution.
+- GitLab Runner is online.
+
+Example.
+
+```yaml
+stages:
+
+  - build
+
+build:
+
+  stage: build
+
+  script:
+
+    - echo "Pipeline Started"
+```
+
+---
+
+## Scenario 2
+
+### SonarQube Scan Fails
+
+**Cause**
+
+Authentication or connectivity issues.
+
+**Resolution**
+
+Verify:
+
+- SONAR_TOKEN variable
+- SonarQube URL
+- Project Key
+- Network connectivity
+- Runner access
+
+---
+
+## Scenario 3
+
+### Container Push Fails
+
+**Cause**
+
+Authentication to the GitLab Container Registry fails.
+
+**Resolution**
+
+Verify:
+
+```bash
+docker login \
+$CI_REGISTRY
+```
+
+Check:
+
+- Registry credentials
+- Repository permissions
+- Image name
+- Runner network access
+
+---
+
+## Scenario 4
+
+### Trivy Reports Critical Vulnerabilities
+
+**Cause**
+
+The container image contains vulnerable packages.
+
+**Resolution**
+
+```bash
+trivy image payment-service:latest
+```
+
+Update:
+
+- Base image
+- Operating system packages
+- Application dependencies
+
+Rebuild and rescan before deployment.
+
+---
+
+## Scenario 5
+
+### ArgoCD Does Not Deploy
+
+**Cause**
+
+The GitOps repository was not updated correctly.
+
+**Resolution**
+
+Verify:
+
+```bash
+argocd app sync payment-service
+
+kubectl get applications -n argocd
+```
+
+Check:
+
+- Repository updates
+- Image tag changes
+- Repository permissions
+- ArgoCD synchronization status
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is GitLab CI/CD?
+
+**Answer**
+
+GitLab CI/CD is GitLab's built-in Continuous Integration and Continuous Delivery platform that automates application building, testing, security scanning, packaging, and deployment using `.gitlab-ci.yml`.
+
+---
+
+## Question 2
+
+### Why is GitLab suitable for DevSecOps?
+
+**Answer**
+
+GitLab combines source control, CI/CD, security testing, package management, container registry, and deployment capabilities into a single platform, simplifying DevSecOps implementation.
+
+---
+
+## Question 3
+
+### What is a GitLab Runner?
+
+**Answer**
+
+A GitLab Runner is an agent that executes pipeline jobs. It can run on virtual machines, physical servers, Docker containers, or Kubernetes clusters.
+
+---
+
+## Question 4
+
+### Why use Protected Variables?
+
+**Answer**
+
+Protected Variables ensure sensitive credentials are only available to protected branches and tags, reducing the risk of credential exposure.
+
+---
+
+## Question 5
+
+### Which security tools are commonly integrated into GitLab CI?
+
+**Answer**
+
+Common integrations include SonarQube, OWASP Dependency-Check, Gitleaks, Checkov, TFSec, Trivy, Cosign, Falco, Aqua Security, Prisma Cloud, and ArgoCD.
+
+---
+
+## Question 6
+
+### Why generate an SBOM?
+
+**Answer**
+
+An SBOM provides a complete inventory of software components, helping organizations identify vulnerable dependencies, improve supply chain visibility, and support compliance requirements.
+
+---
+
+## Question 7
+
+### Why should container images be signed?
+
+**Answer**
+
+Image signing verifies authenticity and integrity, ensuring that only trusted and untampered container images are deployed.
+
+---
+
+## Question 8
+
+### Why is GitOps preferred over direct deployment?
+
+**Answer**
+
+GitOps provides version-controlled deployments, automated reconciliation, easier rollbacks, auditability, and consistent cluster state management.
+
+---
+
+## Question 9
+
+### How can GitLab pipelines be optimized?
+
+**Answer**
+
+Use dependency caching, parallel stages, dedicated runners, reusable templates, pipeline rules, and artifacts to improve performance and scalability.
+
+---
+
+## Question 10
+
+### What are enterprise best practices for GitLab DevSecOps?
+
+**Answer**
+
+Use protected branches, protected variables, dedicated runners, security gates, image signing, SBOM generation, GitOps deployment, centralized logging, and continuous monitoring.
+
+---
+
+# Key Takeaways
+
+- GitLab provides an integrated platform for enterprise DevSecOps.
+- Execute security scans throughout the CI/CD pipeline.
+- Run SonarQube, OWASP Dependency-Check, Gitleaks, Checkov, TFSec, and Trivy before deployment.
+- Generate an SBOM for every production image.
+- Sign container images using Cosign.
+- Store credentials securely using Protected CI/CD Variables.
+- Use GitOps with ArgoCD instead of direct Kubernetes deployments.
+- Protect production branches, environments, and runners.
+- Archive reports for auditing and compliance.
+- Continuously monitor pipeline health and security.
+
+---
+
+# Enterprise DevSecOps Pipeline Summary
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Commit
+
+↓
+
+Push
+
+↓
+
+Merge Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+GitLab Pipeline
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Code Coverage
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Image Signing
+
+↓
+
+GitLab Container Registry
+
+↓
+
+Update GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco / Aqua / Prisma Runtime Protection
+
+↓
+
+Production
+```
+
+This pipeline represents a complete enterprise DevSecOps implementation using GitLab, integrating secure software development, automated security validation, GitOps-based deployments, and runtime security to deliver scalable, secure, and auditable applications.
