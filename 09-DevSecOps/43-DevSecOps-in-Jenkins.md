@@ -496,3 +496,866 @@ Core plugins for enterprise DevSecOps.
 - Job DSL
 
 These plugins provide the foundation for secure and scalable CI/CD pipelines.
+
+---
+
+# Required Jenkins Plugins
+
+Enterprise DevSecOps pipelines require additional plugins beyond the default installation.
+
+| Plugin | Purpose |
+|---------|----------|
+| Git | Source Code Management |
+| GitHub | GitHub Integration |
+| Pipeline | Jenkins Pipelines |
+| Docker Pipeline | Docker Build Support |
+| Credentials Binding | Secure Credential Management |
+| Kubernetes | Kubernetes Integration |
+| Blue Ocean | Pipeline Visualization |
+| SSH Agent | SSH Authentication |
+| Configuration as Code | Jenkins Automation |
+| Role Strategy | RBAC |
+| Matrix Authorization | Permission Management |
+
+---
+
+# Install Security Tools
+
+Install the required security tools on the Jenkins server.
+
+```text
+SonarQube
+
+OWASP Dependency-Check
+
+Gitleaks
+
+Checkov
+
+TFSec
+
+Trivy
+
+Cosign
+
+Docker
+
+kubectl
+
+Helm
+```
+
+All tools should be available in the Jenkins agent PATH.
+
+---
+
+# Jenkins Credentials Management
+
+Never store passwords inside Jenkinsfiles.
+
+Store credentials securely in Jenkins Credentials Store.
+
+Examples.
+
+```text
+GitHub Token
+
+Docker Registry Credentials
+
+AWS Access Keys
+
+SonarQube Token
+
+Cosign Private Key
+
+SSH Private Key
+
+Kubeconfig
+
+GitHub PAT
+```
+
+---
+
+# Credential Types
+
+| Type | Example |
+|------|----------|
+| Username & Password | Docker Registry |
+| Secret Text | API Token |
+| Secret File | kubeconfig |
+| SSH Username with Key | Git Access |
+| Certificate | TLS Authentication |
+
+Use the minimum required credential type.
+
+---
+
+# Folder Structure
+
+Enterprise Jenkins organization.
+
+```text
+Jenkins
+
+├── Platform
+
+├── Applications
+
+├── Infrastructure
+
+├── Security
+
+├── Shared Libraries
+
+└── Templates
+```
+
+Folders simplify permission management.
+
+---
+
+# Shared Libraries
+
+Shared Libraries eliminate duplicate pipeline code.
+
+```text
+shared-library
+
+├── vars
+
+├── src
+
+├── resources
+
+└── README.md
+```
+
+Examples.
+
+- Docker Build
+- Trivy Scan
+- Sonar Scan
+- Terraform Apply
+- Kubernetes Deploy
+
+---
+
+# Jenkins Agent Architecture
+
+Large organizations use distributed build agents.
+
+```text
+Developer
+
+↓
+
+Jenkins Controller
+
+↓
+
+Linux Agent
+
+↓
+
+Docker Build
+
+↓
+
+Security Scan
+
+↓
+
+Publish Artifact
+```
+
+Agents improve scalability and workload isolation.
+
+---
+
+# Kubernetes-Based Jenkins Agents
+
+Modern Jenkins environments dynamically provision agents.
+
+```text
+Jenkins Controller
+
+↓
+
+Kubernetes Plugin
+
+↓
+
+Temporary Build Pod
+
+↓
+
+Pipeline Execution
+
+↓
+
+Pod Deleted
+```
+
+Benefits.
+
+- Auto Scaling
+- Isolation
+- Faster Builds
+- Lower Infrastructure Cost
+
+---
+
+# Recommended Agent Images
+
+Separate agents for different workloads.
+
+| Agent | Purpose |
+|---------|----------|
+| Maven | Java Builds |
+| Node.js | Frontend Builds |
+| Python | Python Projects |
+| Docker | Image Builds |
+| Terraform | Infrastructure |
+| Security | DevSecOps Tools |
+
+Specialized agents reduce build complexity.
+
+---
+
+# Source Code Checkout
+
+Example.
+
+```groovy
+stage('Checkout') {
+
+    steps {
+
+        git branch: 'main',
+
+        url: 'https://github.com/company/payment-service.git'
+
+    }
+
+}
+```
+
+This stage retrieves the latest application source code.
+
+---
+
+# Build Stage
+
+Java example.
+
+```groovy
+stage('Build') {
+
+    steps {
+
+        sh 'mvn clean package'
+
+    }
+
+}
+```
+
+Build failures should stop the pipeline immediately.
+
+---
+
+# Unit Testing
+
+Example.
+
+```groovy
+stage('Unit Tests') {
+
+    steps {
+
+        sh 'mvn test'
+
+    }
+
+}
+```
+
+Unit tests validate application functionality before security scanning.
+
+---
+
+# Code Coverage
+
+Example.
+
+```groovy
+stage('Coverage') {
+
+    steps {
+
+        sh 'mvn jacoco:report'
+
+    }
+
+}
+```
+
+Coverage reports identify untested code.
+
+---
+
+# SonarQube Integration
+
+Pipeline stage.
+
+```groovy
+stage('SonarQube Scan') {
+
+    steps {
+
+        sh 'mvn sonar:sonar'
+
+    }
+
+}
+```
+
+Static code analysis detects quality issues and security vulnerabilities.
+
+---
+
+# Sonar Quality Gate
+
+Quality Gate blocks insecure builds.
+
+```text
+Code Analysis
+
+↓
+
+Quality Gate
+
+↓
+
+Pass?
+
+    │
+
+┌───┴────┐
+
+▼        ▼
+
+Yes      No
+
+│         │
+
+Continue  Fail Pipeline
+```
+
+Quality Gates should be mandatory for production branches.
+
+---
+
+# Enterprise Best Practices
+
+- Use Jenkins LTS releases.
+- Install only required plugins.
+- Keep plugins updated.
+- Store credentials in Jenkins Credentials Store.
+- Use Kubernetes-based build agents.
+- Create reusable Shared Libraries.
+- Separate Controller and Agents.
+- Use Role-Based Access Control.
+- Restrict administrator access.
+- Back up Jenkins configuration regularly.
+
+===
+
+# OWASP Dependency-Check Integration
+
+OWASP Dependency-Check identifies vulnerable third-party libraries used by the application.
+
+Pipeline stage.
+
+```groovy
+stage('Dependency Scan') {
+
+    steps {
+
+        sh '''
+
+        dependency-check.sh \
+        --scan . \
+        --format HTML \
+        --out reports
+
+        '''
+
+    }
+
+}
+```
+
+Builds should fail if Critical vulnerabilities are detected.
+
+---
+
+# Gitleaks Integration
+
+Gitleaks detects secrets before code is deployed.
+
+Pipeline stage.
+
+```groovy
+stage('Secret Scan') {
+
+    steps {
+
+        sh '''
+
+        gitleaks detect \
+        --source . \
+        --report-format json \
+        --report-path gitleaks-report.json
+
+        '''
+
+    }
+
+}
+```
+
+Typical secrets.
+
+- AWS Keys
+- Azure Keys
+- GitHub Tokens
+- Database Passwords
+- Private Keys
+
+---
+
+# Checkov Integration
+
+Checkov scans Infrastructure as Code.
+
+Pipeline stage.
+
+```groovy
+stage('Checkov Scan') {
+
+    steps {
+
+        sh '''
+
+        checkov \
+        -d . \
+        -o cli
+
+        '''
+
+    }
+
+}
+```
+
+Resources are validated before infrastructure deployment.
+
+---
+
+# TFSec Integration
+
+TFSec validates Terraform security.
+
+Pipeline stage.
+
+```groovy
+stage('TFSec Scan') {
+
+    steps {
+
+        sh '''
+
+        tfsec .
+
+        '''
+
+    }
+
+}
+```
+
+Terraform misconfigurations are detected before deployment.
+
+---
+
+# Docker Build Stage
+
+Container images are built only after source code passes security validation.
+
+```groovy
+stage('Docker Build') {
+
+    steps {
+
+        sh '''
+
+        docker build \
+        -t payment-service:${BUILD_NUMBER} .
+
+        '''
+
+    }
+
+}
+```
+
+---
+
+# Trivy Integration
+
+Trivy scans container images for vulnerabilities.
+
+Pipeline stage.
+
+```groovy
+stage('Trivy Scan') {
+
+    steps {
+
+        sh '''
+
+        trivy image \
+        --exit-code 1 \
+        payment-service:${BUILD_NUMBER}
+
+        '''
+
+    }
+
+}
+```
+
+The pipeline should stop if High or Critical vulnerabilities are detected.
+
+---
+
+# SBOM Generation
+
+Generate a Software Bill of Materials after the image scan.
+
+```groovy
+stage('Generate SBOM') {
+
+    steps {
+
+        sh '''
+
+        trivy image \
+        --format cyclonedx \
+        --output sbom.json \
+        payment-service:${BUILD_NUMBER}
+
+        '''
+
+    }
+
+}
+```
+
+The SBOM should be archived with the build artifacts.
+
+---
+
+# Image Signing
+
+Digitally sign container images before publishing.
+
+```groovy
+stage('Image Signing') {
+
+    steps {
+
+        sh '''
+
+        cosign sign \
+        payment-service:${BUILD_NUMBER}
+
+        '''
+
+    }
+
+}
+```
+
+Signed images help protect the software supply chain.
+
+---
+
+# Push Image to Amazon ECR
+
+Publish approved images.
+
+```groovy
+stage('Push Image') {
+
+    steps {
+
+        sh '''
+
+        docker push \
+        payment-service:${BUILD_NUMBER}
+
+        '''
+
+    }
+
+}
+```
+
+Only signed and approved images should be pushed.
+
+---
+
+# Update GitOps Repository
+
+Instead of deploying directly, update the GitOps repository.
+
+```text
+Jenkins
+
+↓
+
+Update Image Tag
+
+↓
+
+Git Commit
+
+↓
+
+Push
+
+↓
+
+GitOps Repository
+```
+
+Git becomes the deployment source of truth.
+
+---
+
+# GitOps Commit
+
+Example.
+
+```bash
+git clone https://github.com/company/gitops.git
+
+cd gitops
+
+sed -i "s/tag:.*/tag: ${BUILD_NUMBER}/" deployment.yaml
+
+git add .
+
+git commit -m "Update image"
+
+git push
+```
+
+ArgoCD automatically detects the change.
+
+---
+
+# ArgoCD Deployment
+
+Deployment workflow.
+
+```text
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Compare Desired State
+
+↓
+
+Sync
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+No direct deployment from Jenkins is required.
+
+---
+
+# Post Deployment Validation
+
+Validate the deployment.
+
+Pipeline stage.
+
+```groovy
+stage('Validation') {
+
+    steps {
+
+        sh '''
+
+        kubectl get pods
+
+        kubectl get deployments
+
+        '''
+
+    }
+
+}
+```
+
+Smoke tests should execute before pipeline completion.
+
+---
+
+# Security Reports
+
+Generate reports from every security tool.
+
+```text
+Build Reports
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+├── TFSec
+
+├── Trivy
+
+├── SBOM
+
+└── Build Logs
+```
+
+Reports should be archived for auditing.
+
+---
+
+# Artifact Archiving
+
+Archive reports after every build.
+
+Example.
+
+```groovy
+post {
+
+    always {
+
+        archiveArtifacts artifacts: 'reports/**'
+
+    }
+
+}
+```
+
+Historical reports assist with audits and investigations.
+
+---
+
+# Pipeline Failure Strategy
+
+Every security stage should stop the pipeline when Critical findings exist.
+
+```text
+Pipeline
+
+↓
+
+Security Stage
+
+↓
+
+Critical Found?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Stop      Continue
+```
+
+Early failure reduces deployment risk.
+
+---
+
+# Parallel Security Scanning
+
+Independent security checks can execute simultaneously.
+
+```text
+Build
+
+↓
+
+Parallel Stage
+
+├── SonarQube
+
+├── Dependency Check
+
+├── Gitleaks
+
+├── Checkov
+
+└── TFSec
+
+↓
+
+Results
+
+↓
+
+Continue
+```
+
+Parallel execution significantly reduces pipeline duration.
+
+---
+
+# Enterprise Best Practices
+
+- Execute security scans before Docker image creation whenever possible.
+- Run independent scans in parallel to reduce build time.
+- Fail builds on Critical vulnerabilities.
+- Generate an SBOM for every production image.
+- Sign every production container image.
+- Store reports for compliance and audits.
+- Use GitOps instead of direct deployments.
+- Never bypass security gates.
+- Automate deployment validation after every release.
+- Continuously update security scanning tools.
+
+===
+
