@@ -926,3 +926,661 @@ Audit logs should be retained according to organizational compliance requirement
 
 ===
 
+# Container Image Scanning
+
+Aqua Security scans container images before they are deployed.
+
+Workflow.
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Container Image
+
+↓
+
+Aqua Scanner
+
+↓
+
+Vulnerability Analysis
+
+↓
+
+Policy Evaluation
+
+↓
+
+PASS / FAIL
+```
+
+Image scanning prevents vulnerable containers from reaching production.
+
+---
+
+# Image Assurance Policies
+
+Image Assurance enforces security policies before deployment.
+
+Example policy.
+
+```text
+Critical Vulnerabilities
+
+↓
+
+Block
+
+High Vulnerabilities
+
+↓
+
+Block
+
+Medium Vulnerabilities
+
+↓
+
+Warn
+
+Low Vulnerabilities
+
+↓
+
+Allow
+```
+
+Only compliant images should be promoted.
+
+---
+
+# Image Scan Workflow
+
+```text
+Docker Image
+
+↓
+
+Operating System Packages
+
+↓
+
+Application Libraries
+
+↓
+
+Language Dependencies
+
+↓
+
+Secrets
+
+↓
+
+Malware
+
+↓
+
+Compliance Checks
+
+↓
+
+Security Report
+```
+
+Aqua performs multiple security checks in a single scan.
+
+---
+
+# Registry Scanning
+
+Container registries are continuously monitored.
+
+```text
+Developer
+
+↓
+
+Push Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Automatic Aqua Scan
+
+↓
+
+Security Report
+```
+
+Supported registries.
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- Harbor
+- JFrog Artifactory
+- Docker Hub
+
+---
+
+# Vulnerability Detection
+
+Aqua identifies vulnerabilities across multiple layers.
+
+Examples.
+
+```text
+Operating System Packages
+
+↓
+
+Ubuntu
+
+↓
+
+OpenSSL
+
+↓
+
+glibc
+
+↓
+
+curl
+```
+
+```text
+Application Packages
+
+↓
+
+Java
+
+↓
+
+Node.js
+
+↓
+
+Python
+
+↓
+
+Go
+
+↓
+
+.NET
+```
+
+Every package is compared against vulnerability databases.
+
+---
+
+# Malware Detection
+
+Container images are inspected for malware before deployment.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+File Analysis
+
+↓
+
+Threat Intelligence
+
+↓
+
+Malware Detection
+
+↓
+
+Alert
+```
+
+Known malware signatures and suspicious binaries are identified automatically.
+
+---
+
+# Secret Scanning
+
+Images are scanned for embedded credentials.
+
+Examples.
+
+```text
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+
+DATABASE_PASSWORD
+
+JWT_SECRET
+
+PRIVATE_KEY
+
+GITHUB_TOKEN
+```
+
+Embedded secrets should be removed before publishing the image.
+
+---
+
+# Software Supply Chain Security
+
+Aqua validates software supply chain integrity.
+
+```text
+Source Code
+
+↓
+
+Dependencies
+
+↓
+
+Container Build
+
+↓
+
+Image Scan
+
+↓
+
+Image Assurance
+
+↓
+
+Registry
+
+↓
+
+Deployment
+```
+
+Supply chain validation reduces the risk of compromised software reaching production.
+
+---
+
+# Runtime Protection
+
+Runtime protection continues after deployment.
+
+Workflow.
+
+```text
+Container Running
+
+↓
+
+Process Execution
+
+↓
+
+Network Activity
+
+↓
+
+File Access
+
+↓
+
+Runtime Policy
+
+↓
+
+Alert
+```
+
+Runtime monitoring complements image scanning.
+
+---
+
+# Runtime Behaviour Monitoring
+
+Aqua observes container activity continuously.
+
+Examples.
+
+- New processes
+- Shell execution
+- File modifications
+- Privilege escalation
+- Unexpected network connections
+
+Workflow.
+
+```text
+Container
+
+↓
+
+Runtime Event
+
+↓
+
+Policy Engine
+
+↓
+
+Allow
+
+or
+
+Alert
+
+or
+
+Block
+```
+
+---
+
+# Container Drift Detection
+
+Production containers should remain immutable.
+
+Drift detection identifies changes after deployment.
+
+```text
+Approved Image
+
+↓
+
+Running Container
+
+↓
+
+Unexpected Package
+
+↓
+
+Drift Detected
+
+↓
+
+Alert
+```
+
+Examples.
+
+- New binaries
+- Modified configuration
+- Installed packages
+- Changed permissions
+
+---
+
+# Process Whitelisting
+
+Runtime policies define approved processes.
+
+Example.
+
+```text
+Approved
+
+↓
+
+java
+
+↓
+
+nginx
+
+↓
+
+node
+
+↓
+
+python
+```
+
+Unexpected processes generate alerts.
+
+---
+
+# File Integrity Monitoring
+
+Critical files are continuously monitored.
+
+Examples.
+
+```text
+/etc/passwd
+
+/etc/shadow
+
+/etc/ssl
+
+/app/config
+
+/root/.ssh
+```
+
+Workflow.
+
+```text
+File Change
+
+↓
+
+Policy Evaluation
+
+↓
+
+Alert
+```
+
+---
+
+# Network Protection
+
+Aqua monitors container network activity.
+
+Examples.
+
+```text
+Outbound Connection
+
+↓
+
+Unknown IP
+
+↓
+
+Policy Check
+
+↓
+
+Alert
+```
+
+Typical events.
+
+- Unexpected Internet access
+- Communication with blocked IPs
+- Suspicious ports
+- Lateral movement
+
+---
+
+# Kubernetes Workload Protection
+
+Aqua secures Kubernetes resources.
+
+Examples.
+
+- Pods
+- Deployments
+- StatefulSets
+- DaemonSets
+- Jobs
+- CronJobs
+
+Workflow.
+
+```text
+Kubernetes Resource
+
+↓
+
+Admission Controller
+
+↓
+
+Policy Validation
+
+↓
+
+Deploy
+
+or
+
+Reject
+```
+
+---
+
+# Admission Controller Workflow
+
+```text
+kubectl apply
+
+↓
+
+API Server
+
+↓
+
+Aqua Admission Controller
+
+↓
+
+Image Assurance
+
+↓
+
+Security Policy
+
+↓
+
+Approved?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Deploy     Reject
+```
+
+Only approved workloads enter the cluster.
+
+---
+
+# Compliance Monitoring
+
+Aqua continuously evaluates Kubernetes environments against compliance frameworks.
+
+Examples.
+
+- CIS Kubernetes Benchmark
+- CIS Docker Benchmark
+- PCI DSS
+- HIPAA
+- NIST
+- SOC 2
+
+Workflow.
+
+```text
+Cluster
+
+↓
+
+Compliance Scan
+
+↓
+
+Violations
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Risk-Based Prioritization
+
+Not all vulnerabilities present the same level of risk.
+
+Priority model.
+
+```text
+Critical
+
+↓
+
+Immediate Remediation
+
+High
+
+↓
+
+Next Release
+
+Medium
+
+↓
+
+Planned Fix
+
+Low
+
+↓
+
+Monitor
+```
+
+Risk prioritization helps teams focus on the most significant issues first.
+
+---
+
+# Enterprise Best Practices
+
+- Scan every container image before publishing.
+- Enable automatic registry scanning.
+- Block images containing Critical vulnerabilities.
+- Detect malware and embedded secrets before deployment.
+- Enable runtime protection on every Kubernetes node.
+- Monitor container drift continuously.
+- Enforce Admission Controller policies.
+- Maintain immutable container images.
+- Enable continuous compliance monitoring.
+- Prioritize remediation based on business risk and vulnerability severity.
+
+---
+
