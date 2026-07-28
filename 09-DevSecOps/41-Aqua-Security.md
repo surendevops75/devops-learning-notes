@@ -437,3 +437,492 @@ The image is evaluated against enterprise security policies before it is pushed 
 
 ---
 
+# Configuration
+
+Aqua Security provides centralized policy management for securing containers, Kubernetes clusters, registries, and cloud-native workloads.
+
+Configuration typically includes:
+
+- Image Scanning Policies
+- Runtime Policies
+- Admission Control
+- Compliance Policies
+- Registry Integration
+- Kubernetes Integration
+- Notifications
+- Role-Based Access Control (RBAC)
+
+A centralized configuration ensures consistent security across all environments.
+
+---
+
+# Aqua Components Configuration
+
+```text
+Aqua Console
+
+↓
+
+Security Policies
+
+├── Image Policies
+
+├── Runtime Policies
+
+├── Compliance Policies
+
+├── Admission Policies
+
+└── Notifications
+```
+
+All security policies are managed through the Aqua Console.
+
+---
+
+# Configuration Files
+
+Example deployment.
+
+```text
+values.yaml
+
+console-values.yaml
+
+enforcer-values.yaml
+
+scanner-values.yaml
+```
+
+Helm values files should be stored in version control.
+
+---
+
+# Configure Aqua Console
+
+Example.
+
+```bash
+helm upgrade aqua-console aqua/console \
+-f console-values.yaml \
+-n aqua
+```
+
+Verify.
+
+```bash
+kubectl get pods -n aqua
+```
+
+---
+
+# Configure Aqua Enforcer
+
+Example.
+
+```bash
+helm upgrade aqua-enforcer aqua/enforcer \
+-f enforcer-values.yaml \
+-n aqua
+```
+
+The Enforcer automatically begins monitoring workloads after deployment.
+
+---
+
+# Image Scanning Policies
+
+Image scanning policies determine which vulnerabilities block deployments.
+
+Typical policy.
+
+```text
+Critical
+
+↓
+
+Block Deployment
+
+High
+
+↓
+
+Block Deployment
+
+Medium
+
+↓
+
+Warning
+
+Low
+
+↓
+
+Informational
+```
+
+Production environments should fail deployments containing Critical vulnerabilities.
+
+---
+
+# Runtime Policies
+
+Runtime policies define the expected behaviour of running containers.
+
+Examples.
+
+- Allowed Processes
+- Allowed Network Connections
+- File Access
+- Package Installation
+- Privilege Escalation
+- Shell Execution
+
+Workflow.
+
+```text
+Running Container
+
+↓
+
+Runtime Event
+
+↓
+
+Policy Evaluation
+
+↓
+
+Allow / Alert / Block
+```
+
+---
+
+# Admission Control
+
+Admission Control validates Kubernetes workloads before they are created.
+
+```text
+kubectl apply
+
+↓
+
+Admission Controller
+
+↓
+
+Policy Validation
+
+↓
+
+Approved?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Deploy     Reject
+```
+
+Admission policies help prevent insecure workloads from entering the cluster.
+
+---
+
+# Registry Integration
+
+Aqua can continuously monitor container registries.
+
+Supported registries include:
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- Docker Hub
+- JFrog Artifactory
+- Harbor
+
+Workflow.
+
+```text
+Container Registry
+
+↓
+
+New Image
+
+↓
+
+Automatic Scan
+
+↓
+
+Policy Evaluation
+
+↓
+
+Report
+```
+
+---
+
+# Kubernetes Integration
+
+Aqua integrates directly with Kubernetes.
+
+```text
+Kubernetes API
+
+↓
+
+Aqua Console
+
+↓
+
+Enforcer
+
+↓
+
+Runtime Protection
+```
+
+The Console manages policies while Enforcers enforce them on every node.
+
+---
+
+# Compliance Policies
+
+Compliance policies verify adherence to industry standards.
+
+Examples.
+
+- CIS Kubernetes Benchmark
+- CIS Docker Benchmark
+- PCI DSS
+- HIPAA
+- NIST
+- SOC 2
+
+Workflow.
+
+```text
+Cluster
+
+↓
+
+Compliance Scan
+
+↓
+
+Violations
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Runtime Profiles
+
+Runtime Profiles learn normal container behaviour.
+
+```text
+Container
+
+↓
+
+Learning Mode
+
+↓
+
+Observed Processes
+
+↓
+
+Runtime Profile
+
+↓
+
+Enforcement
+```
+
+Profiles reduce false positives by defining expected behaviour.
+
+---
+
+# Malware Protection
+
+Aqua scans workloads for malware.
+
+Workflow.
+
+```text
+Container Image
+
+↓
+
+Malware Scan
+
+↓
+
+Threat Intelligence
+
+↓
+
+Detection
+
+↓
+
+Alert
+```
+
+Known malware signatures are identified before deployment.
+
+---
+
+# Secret Detection
+
+Aqua detects secrets stored inside container images.
+
+Examples.
+
+```text
+AWS Keys
+
+Azure Keys
+
+Database Passwords
+
+GitHub Tokens
+
+Private Keys
+
+JWT Secrets
+```
+
+Secrets should never be included in production container images.
+
+---
+
+# Notifications
+
+Aqua supports multiple notification channels.
+
+```text
+Aqua Console
+
+↓
+
+Alert
+
+├── Email
+
+├── Slack
+
+├── Webhook
+
+├── SIEM
+
+└── Microsoft Teams
+```
+
+Security teams should receive Critical alerts immediately.
+
+---
+
+# Role-Based Access Control (RBAC)
+
+Enterprise deployments should restrict access based on job responsibilities.
+
+| Role | Permissions |
+|------|-------------|
+| Administrator | Full Access |
+| Security Team | Policy Management |
+| DevOps Engineer | Image Scans |
+| Developer | View Reports |
+| Auditor | Read Only |
+
+Apply the principle of least privilege to every role.
+
+---
+
+# Authentication
+
+Aqua supports enterprise authentication providers.
+
+Examples.
+
+- LDAP
+- Active Directory
+- SAML
+- OAuth
+- OpenID Connect
+
+Workflow.
+
+```text
+User
+
+↓
+
+Identity Provider
+
+↓
+
+Authentication
+
+↓
+
+Aqua Console
+```
+
+Enterprise authentication simplifies user management and auditing.
+
+---
+
+# Audit Logging
+
+Every important action is recorded.
+
+Examples.
+
+```text
+User Login
+
+Policy Change
+
+Image Scan
+
+Deployment Decision
+
+Runtime Alert
+
+Compliance Scan
+```
+
+Audit logs should be retained according to organizational compliance requirements.
+
+---
+
+# Enterprise Best Practices
+
+- Store Helm values files in version control.
+- Block deployments with Critical vulnerabilities.
+- Enable Admission Control for production clusters.
+- Scan all connected container registries automatically.
+- Create Runtime Profiles for production workloads.
+- Enable compliance scanning for Kubernetes clusters.
+- Integrate enterprise authentication providers.
+- Forward alerts to SIEM and collaboration platforms.
+- Review RBAC permissions regularly.
+- Audit policy changes and administrative activities.
+
+===
+
