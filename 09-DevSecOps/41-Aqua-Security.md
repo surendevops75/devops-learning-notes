@@ -2215,3 +2215,595 @@ Aqua Security provides protection across both build-time and runtime stages.
 - Archive compliance and vulnerability reports.
 - Integrate alerts with enterprise SIEM platforms.
 - Keep Aqua Security components and policies updated regularly.
+
+===
+
+# AWS Production Architecture
+
+Aqua Security integrates with Amazon EKS to provide image assurance, admission control, runtime protection, and compliance monitoring.
+
+Architecture.
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Docker Build
+
+↓
+
+Aqua Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Admission Controller
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Aqua Enforcer
+
+↓
+
+Security Dashboard
+```
+
+---
+
+# Azure Production Architecture
+
+Example deployment.
+
+```text
+Developer
+
+↓
+
+Azure DevOps
+
+↓
+
+Docker Build
+
+↓
+
+Azure Container Registry
+
+↓
+
+AKS
+
+↓
+
+Aqua Runtime Protection
+
+↓
+
+Security Console
+```
+
+Aqua continuously protects workloads throughout the deployment lifecycle.
+
+---
+
+# Google Cloud Production Architecture
+
+Example deployment.
+
+```text
+Developer
+
+↓
+
+Cloud Build
+
+↓
+
+Artifact Registry
+
+↓
+
+Google Kubernetes Engine
+
+↓
+
+Aqua Enforcer
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Security Dashboard
+```
+
+Every workload is continuously monitored after deployment.
+
+---
+
+# Runtime Threat Detection
+
+Aqua monitors workloads for suspicious runtime activity.
+
+Examples.
+
+```text
+Container Escape
+
+Privilege Escalation
+
+Reverse Shell
+
+Unexpected Process
+
+Sensitive File Access
+
+Network Anomalies
+```
+
+Workflow.
+
+```text
+Running Container
+
+↓
+
+Runtime Event
+
+↓
+
+Aqua Enforcer
+
+↓
+
+Policy Match
+
+↓
+
+Alert
+
+↓
+
+SOC Team
+```
+
+---
+
+# Container Drift Detection
+
+Containers should remain immutable after deployment.
+
+Workflow.
+
+```text
+Approved Image
+
+↓
+
+Running Container
+
+↓
+
+Configuration Changed
+
+↓
+
+Drift Detected
+
+↓
+
+Alert
+```
+
+Examples.
+
+- Installed software
+- Modified binaries
+- Configuration changes
+- New users
+- Changed permissions
+
+---
+
+# Compliance Monitoring
+
+Aqua continuously evaluates workloads against security standards.
+
+Supported frameworks.
+
+- CIS Kubernetes Benchmark
+- CIS Docker Benchmark
+- PCI DSS
+- HIPAA
+- NIST
+- SOC 2
+- ISO 27001
+
+Workflow.
+
+```text
+Kubernetes Cluster
+
+↓
+
+Compliance Scan
+
+↓
+
+Violations
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Security Dashboard
+
+The Aqua Console provides a centralized view of the security posture.
+
+```text
+Dashboard
+
+├── Vulnerabilities
+
+├── Runtime Alerts
+
+├── Malware
+
+├── Secrets
+
+├── Compliance
+
+├── Registry Status
+
+├── Kubernetes Risks
+
+├── Image Assurance
+
+└── Runtime Events
+```
+
+The dashboard enables security teams to prioritize remediation efforts.
+
+---
+
+# Incident Response Workflow
+
+Runtime alerts should follow a structured response process.
+
+```text
+Runtime Alert
+
+↓
+
+SOC Team
+
+↓
+
+Validate Alert
+
+↓
+
+Contain Threat
+
+↓
+
+Collect Evidence
+
+↓
+
+Remediate
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Close Incident
+```
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Scanning images only during release builds.
+
+**Impact**
+
+Vulnerabilities remain undetected during feature development.
+
+**Recommendation**
+
+Scan every image built by the CI pipeline.
+
+---
+
+## Mistake 2
+
+Allowing deployments with Critical vulnerabilities.
+
+**Impact**
+
+Known security risks reach production.
+
+**Recommendation**
+
+Block deployments until Critical findings are resolved.
+
+---
+
+## Mistake 3
+
+Disabling Admission Controller.
+
+**Impact**
+
+Unverified workloads can enter the Kubernetes cluster.
+
+**Recommendation**
+
+Keep Admission Controller enabled in production.
+
+---
+
+## Mistake 4
+
+Ignoring runtime alerts.
+
+**Impact**
+
+Compromised workloads remain active.
+
+**Recommendation**
+
+Forward alerts to SIEM and incident response platforms.
+
+---
+
+## Mistake 5
+
+Granting excessive Console permissions.
+
+**Impact**
+
+Unauthorized users can modify security policies.
+
+**Recommendation**
+
+Implement Role-Based Access Control using the principle of least privilege.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Aqua Console Is Not Accessible
+
+**Cause**
+
+Console pod is unavailable or the Service is misconfigured.
+
+**Resolution**
+
+```bash
+kubectl get pods -n aqua
+
+kubectl get svc -n aqua
+
+kubectl describe pod <console-pod> -n aqua
+```
+
+---
+
+## Scenario 2
+
+### Image Scan Failed
+
+**Cause**
+
+Registry authentication failed or the image could not be pulled.
+
+**Resolution**
+
+- Verify registry credentials.
+- Confirm image availability.
+- Check network connectivity.
+- Review scanner logs.
+
+---
+
+## Scenario 3
+
+### Enforcer Pods Not Running
+
+**Cause**
+
+DaemonSet deployment failed.
+
+**Resolution**
+
+```bash
+kubectl get daemonset -n aqua
+
+kubectl describe daemonset aqua-enforcer -n aqua
+```
+
+Verify that every worker node schedules an Enforcer pod.
+
+---
+
+## Scenario 4
+
+### Admission Controller Rejects All Deployments
+
+**Cause**
+
+Admission policies are overly restrictive or image verification failed.
+
+**Resolution**
+
+- Review Admission Controller logs.
+- Validate security policies.
+- Verify image signatures.
+- Confirm registry connectivity.
+
+---
+
+## Scenario 5
+
+### Excessive Runtime Alerts
+
+**Cause**
+
+Policies are not tuned for the application workload.
+
+**Resolution**
+
+- Review Runtime Profiles.
+- Tune runtime policies.
+- Add approved exceptions.
+- Validate alerts before suppressing them.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is Aqua Security?
+
+**Answer**
+
+Aqua Security is an enterprise Cloud Native Application Protection Platform (CNAPP) that secures containers, Kubernetes, cloud workloads, software supply chains, Infrastructure as Code, and runtime environments.
+
+---
+
+## Question 2
+
+### How is Aqua Security different from Trivy?
+
+**Answer**
+
+Trivy primarily performs vulnerability scanning for images, filesystems, repositories, and Infrastructure as Code, while Aqua Security combines image scanning, runtime protection, compliance monitoring, admission control, malware detection, and centralized policy management into a single enterprise platform.
+
+---
+
+## Question 3
+
+### What is Aqua Enforcer?
+
+**Answer**
+
+Aqua Enforcer is the runtime component that monitors and protects Kubernetes workloads by enforcing security policies and detecting suspicious activity on every worker node.
+
+---
+
+## Question 4
+
+### Why is Admission Controller important?
+
+**Answer**
+
+Admission Controller validates Kubernetes workloads before deployment, preventing vulnerable or non-compliant images from entering the cluster.
+
+---
+
+## Question 5
+
+### What is Image Assurance?
+
+**Answer**
+
+Image Assurance verifies that container images comply with enterprise security policies before they are deployed.
+
+---
+
+## Question 6
+
+### What is Container Drift?
+
+**Answer**
+
+Container Drift occurs when a running container changes from its approved image by installing packages, modifying files, or altering configurations after deployment.
+
+---
+
+## Question 7
+
+### Can Aqua Security generate an SBOM?
+
+**Answer**
+
+Yes. Aqua Security can generate a Software Bill of Materials (SBOM) to provide visibility into packages and dependencies within container images.
+
+---
+
+## Question 8
+
+### How does Aqua integrate with Kubernetes?
+
+**Answer**
+
+Aqua integrates through components such as the Admission Controller, Aqua Enforcer, and the Aqua Console to secure Kubernetes deployments throughout their lifecycle.
+
+---
+
+## Question 9
+
+### Which cloud platforms are supported?
+
+**Answer**
+
+Aqua Security supports Amazon EKS, Azure Kubernetes Service (AKS), Google Kubernetes Engine (GKE), OpenShift, and other CNCF-compliant Kubernetes distributions.
+
+---
+
+## Question 10
+
+### What are the enterprise best practices for Aqua Security?
+
+**Answer**
+
+Scan every image, enforce Admission Controller policies, protect workloads with Aqua Enforcer, generate SBOMs, monitor runtime behaviour, integrate with SIEM platforms, enforce RBAC, maintain compliance reporting, and continuously update security policies.
+
+---
+
+# Key Takeaways
+
+- Aqua Security is an enterprise CNAPP platform for cloud-native security.
+- Scan every container image before publishing.
+- Enforce Image Assurance and Admission Controller policies.
+- Protect Kubernetes workloads using Aqua Enforcer.
+- Monitor runtime threats, container drift, and compliance continuously.
+- Generate SBOMs to improve software supply chain visibility.
+- Integrate Aqua with Jenkins, GitHub Actions, GitLab CI, Amazon EKS, AKS, GKE, ArgoCD, and enterprise registries.
+- Forward runtime alerts to SIEM and incident response platforms.
+- Apply RBAC and enterprise authentication to protect the Aqua Console.
+- Combine Aqua Security with SonarQube, OWASP Dependency-Check, Veracode, Gitleaks, Checkov, TFSec, Trivy, OWASP ZAP, Falco, GitOps, and ArgoCD to implement a comprehensive enterprise DevSecOps platform.
