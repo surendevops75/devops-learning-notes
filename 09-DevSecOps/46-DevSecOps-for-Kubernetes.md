@@ -1760,3 +1760,466 @@ Runtime monitoring detects suspicious container activity.
 
 ---
 
+# Container Image Security
+
+Container image security begins before the image is deployed.
+
+Every image should be:
+
+- Scanned
+- Signed
+- Verified
+- Stored in a trusted registry
+
+---
+
+# Secure Image Pipeline
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+Amazon ECR
+
+↓
+
+Admission Verification
+
+↓
+
+Deploy
+```
+
+Every image must pass security validation before deployment.
+
+---
+
+# Trusted Image Registries
+
+Use only approved image registries.
+
+Examples.
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- JFrog Artifactory
+
+Avoid deploying directly from public registries in production.
+
+---
+
+# Image Scanning
+
+Container images should be scanned before deployment.
+
+Common vulnerabilities detected.
+
+- Operating System CVEs
+- Application CVEs
+- Weak Packages
+- Outdated Libraries
+- Misconfigurations
+
+---
+
+# Trivy Scan Example
+
+```bash
+trivy image payment-service:v1
+```
+
+Scan every image before pushing it to the registry.
+
+---
+
+# Image Signing
+
+Cosign verifies image authenticity.
+
+Workflow.
+
+```text
+Docker Build
+
+↓
+
+Cosign Sign
+
+↓
+
+Container Registry
+
+↓
+
+Deploy
+
+↓
+
+Cosign Verify
+```
+
+Only verified images should be deployed.
+
+---
+
+# Verify Signed Images
+
+Example.
+
+```bash
+cosign verify payment-service:v1
+```
+
+Unsigned or tampered images should be rejected.
+
+---
+
+# Software Bill of Materials (SBOM)
+
+An SBOM provides a complete inventory of software components inside a container image.
+
+Example.
+
+```text
+Image
+
+├── Ubuntu
+
+├── Java
+
+├── Spring Boot
+
+├── OpenSSL
+
+└── Log4j
+```
+
+SBOMs improve software supply chain visibility.
+
+---
+
+# Generate SBOM
+
+Example.
+
+```bash
+trivy image \
+--format cyclonedx \
+payment-service:v1
+```
+
+Archive the generated SBOM for future audits.
+
+---
+
+# Supply Chain Security
+
+Secure every stage of the software supply chain.
+
+```text
+Source Code
+
+↓
+
+Build
+
+↓
+
+Security Scan
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Registry
+
+↓
+
+Verification
+
+↓
+
+Deployment
+```
+
+Supply chain protection reduces the risk of compromised artifacts.
+
+---
+
+# Kubernetes Audit Logging
+
+Audit Logs record every request made to the Kubernetes API Server.
+
+Events include.
+
+- Authentication
+- Authorization
+- Resource Creation
+- Resource Updates
+- Resource Deletion
+
+Audit Logs support security investigations and compliance.
+
+---
+
+# Audit Logging Flow
+
+```text
+User
+
+↓
+
+API Server
+
+↓
+
+Audit Log
+
+↓
+
+Log Storage
+
+↓
+
+Elastic Stack
+
+↓
+
+Security Analysis
+```
+
+Audit Logs should be retained according to organizational policies.
+
+---
+
+# Enable Audit Logging
+
+Example.
+
+```text
+API Server
+
+↓
+
+Audit Policy
+
+↓
+
+audit.log
+
+↓
+
+Central Log Server
+```
+
+Store audit logs outside the cluster whenever possible.
+
+---
+
+# Audit Policy Levels
+
+| Level | Description |
+|---------|-------------|
+| None | No Logging |
+| Metadata | Metadata Only |
+| Request | Request Information |
+| RequestResponse | Full Request and Response |
+
+Metadata logging is commonly used for production environments.
+
+---
+
+# Monitoring Kubernetes
+
+Continuous monitoring detects operational and security issues.
+
+Recommended tools.
+
+- Prometheus
+- Grafana
+- Alertmanager
+- ELK Stack
+
+---
+
+# Monitoring Architecture
+
+```text
+Kubernetes Cluster
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Operations Dashboard
+```
+
+Monitoring improves cluster reliability and availability.
+
+---
+
+# Logging Architecture
+
+```text
+Pods
+
+↓
+
+Container Logs
+
+↓
+
+Fluent Bit
+
+↓
+
+Elastic Stack
+
+↓
+
+Search
+
+↓
+
+Analysis
+```
+
+Centralized logging simplifies troubleshooting and auditing.
+
+---
+
+# Runtime Threat Detection
+
+Runtime monitoring identifies suspicious container activity.
+
+Examples.
+
+- Reverse Shell
+- Privilege Escalation
+- Crypto Mining
+- File Tampering
+- Unexpected Process Execution
+
+Falco is commonly used for runtime threat detection.
+
+---
+
+# Runtime Monitoring Flow
+
+```text
+Application
+
+↓
+
+Container
+
+↓
+
+Falco
+
+↓
+
+Security Event
+
+↓
+
+Alert
+
+↓
+
+SOC Team
+```
+
+Runtime protection complements preventive security controls.
+
+---
+
+# Incident Response Workflow
+
+```text
+Falco Alert
+
+↓
+
+Security Team
+
+↓
+
+Investigate
+
+↓
+
+Contain
+
+↓
+
+Recover
+
+↓
+
+Post-Incident Review
+```
+
+Incident response should be documented and regularly tested.
+
+---
+
+# Compliance Standards
+
+Enterprise Kubernetes environments commonly align with:
+
+- CIS Kubernetes Benchmark
+- NIST Cybersecurity Framework
+- PCI DSS
+- ISO 27001
+- SOC 2
+
+Regular compliance assessments improve overall security posture.
+
+---
+
+# Enterprise Best Practices
+
+- Scan every container image before deployment.
+- Sign every production image using Cosign.
+- Verify image signatures during admission.
+- Generate and archive an SBOM for every release.
+- Store images only in trusted registries.
+- Enable Kubernetes Audit Logging.
+- Centralize logs using Fluent Bit and the ELK Stack.
+- Monitor clusters using Prometheus and Grafana.
+- Deploy Falco for runtime threat detection.
+- Perform regular compliance and security reviews.
+
+---
+
