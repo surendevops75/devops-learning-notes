@@ -1322,3 +1322,441 @@ Ingress should terminate TLS using trusted certificates.
 
 ---
 
+# Admission Controllers
+
+Admission Controllers validate and modify Kubernetes objects before they are stored in etcd.
+
+They enforce security, governance, and compliance policies.
+
+---
+
+# Admission Controller Flow
+
+```text
+Developer
+
+↓
+
+kubectl apply
+
+↓
+
+API Server
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Admission Controller
+
+↓
+
+Validation
+
+↓
+
+Store in etcd
+
+↓
+
+Scheduler
+```
+
+Every deployment passes through admission validation.
+
+---
+
+# Common Admission Controllers
+
+| Admission Controller | Purpose |
+|----------------------|----------|
+| NamespaceLifecycle | Namespace validation |
+| LimitRanger | Default resource limits |
+| ResourceQuota | Resource control |
+| ServiceAccount | Service Account injection |
+| PodSecurity | Pod security enforcement |
+| ValidatingAdmissionWebhook | Validate requests |
+| MutatingAdmissionWebhook | Modify requests |
+
+---
+
+# Validating Admission Webhook
+
+A Validating Admission Webhook evaluates Kubernetes objects before they are accepted.
+
+```text
+Deployment
+
+↓
+
+Validation Webhook
+
+↓
+
+Policy Check
+
+↓
+
+Allowed?
+
+     │
+
+┌────┴────┐
+
+▼         ▼
+
+Yes        No
+
+│          │
+
+Deploy   Reject
+```
+
+Validation webhooks do not modify resources.
+
+---
+
+# Mutating Admission Webhook
+
+A Mutating Admission Webhook automatically updates Kubernetes objects before they are created.
+
+Example modifications.
+
+- Add labels
+- Add annotations
+- Inject sidecars
+- Apply default values
+
+---
+
+# Admission Webhook Flow
+
+```text
+Deployment
+
+↓
+
+Mutating Webhook
+
+↓
+
+Modify Resource
+
+↓
+
+Validating Webhook
+
+↓
+
+Approve
+
+↓
+
+Deploy
+```
+
+Mutation occurs before validation.
+
+---
+
+# Policy as Code
+
+Policy as Code automates security policy enforcement.
+
+Benefits.
+
+- Consistency
+- Automation
+- Compliance
+- Auditing
+- Reduced human error
+
+Policies become version-controlled like application code.
+
+---
+
+# Open Policy Agent (OPA)
+
+OPA evaluates Kubernetes resources against defined policies.
+
+```text
+Deployment
+
+↓
+
+OPA
+
+↓
+
+Policy Evaluation
+
+↓
+
+Allowed?
+
+     │
+
+┌────┴────┐
+
+▼         ▼
+
+Yes        No
+
+│          │
+
+Deploy   Reject
+```
+
+OPA enables centralized policy enforcement.
+
+---
+
+# OPA Example Policy
+
+Example.
+
+```rego
+package kubernetes
+
+deny[msg] {
+
+    input.spec.securityContext.runAsNonRoot == false
+
+    msg := "Container must run as non-root"
+
+}
+```
+
+This policy blocks containers running as the root user.
+
+---
+
+# Gatekeeper
+
+Gatekeeper extends OPA for Kubernetes admission control.
+
+Architecture.
+
+```text
+Deployment
+
+↓
+
+Gatekeeper
+
+↓
+
+OPA Engine
+
+↓
+
+Constraint Validation
+
+↓
+
+API Server
+```
+
+Gatekeeper validates every deployment against organizational policies.
+
+---
+
+# Kyverno
+
+Kyverno is a Kubernetes-native policy engine.
+
+Capabilities.
+
+- Validate resources
+- Mutate resources
+- Generate resources
+- Verify images
+
+Policies are written in YAML instead of Rego.
+
+---
+
+# Kyverno Architecture
+
+```text
+Deployment
+
+↓
+
+Kyverno
+
+↓
+
+Policy Validation
+
+↓
+
+Mutation
+
+↓
+
+API Server
+
+↓
+
+Cluster
+```
+
+Kyverno integrates directly with Kubernetes resources.
+
+---
+
+# Kyverno Validation Policy
+
+Example.
+
+```yaml
+apiVersion: kyverno.io/v1
+
+kind: ClusterPolicy
+
+metadata:
+
+  name: require-labels
+
+spec:
+
+  validationFailureAction: Enforce
+```
+
+ClusterPolicies apply security rules across the entire cluster.
+
+---
+
+# Image Verification
+
+Only trusted images should be deployed.
+
+```text
+Developer
+
+↓
+
+Container Image
+
+↓
+
+Cosign Signature
+
+↓
+
+Admission Policy
+
+↓
+
+Verified?
+
+     │
+
+┌────┴────┐
+
+▼         ▼
+
+Yes        No
+
+│          │
+
+Deploy   Reject
+```
+
+Unsigned images should be rejected.
+
+---
+
+# Image Registry Policy
+
+Production clusters should only allow approved registries.
+
+Approved examples.
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- JFrog Artifactory
+
+Reject images from unknown public registries.
+
+---
+
+# Image Pull Policy
+
+Recommended configuration.
+
+```yaml
+imagePullPolicy: Always
+```
+
+This ensures Kubernetes always checks for the latest available image.
+
+---
+
+# RuntimeClass
+
+RuntimeClass allows workloads to use different container runtimes.
+
+Example.
+
+```yaml
+runtimeClassName: gvisor
+```
+
+Sandboxed runtimes provide stronger workload isolation.
+
+---
+
+# Runtime Security Architecture
+
+```text
+Container
+
+↓
+
+Runtime
+
+↓
+
+Falco
+
+↓
+
+Threat Detection
+
+↓
+
+Alert
+
+↓
+
+SOC Team
+```
+
+Runtime monitoring detects suspicious container activity.
+
+---
+
+# Enterprise Best Practices
+
+- Enable Admission Controllers on every cluster.
+- Use OPA or Kyverno for Policy as Code.
+- Validate every deployment before scheduling.
+- Reject privileged containers automatically.
+- Reject containers running as root.
+- Verify container signatures before deployment.
+- Allow images only from approved registries.
+- Enforce organization-wide security policies.
+- Monitor admission failures regularly.
+- Keep policy definitions under version control.
+
+---
+
