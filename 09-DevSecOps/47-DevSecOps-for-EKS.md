@@ -796,3 +796,468 @@ Access is centrally managed while permissions remain granular.
 - Use AWS Secrets Manager for sensitive data.
 - Audit IAM and RBAC permissions periodically.
 - Review unused roles and bindings regularly.
+
+---
+
+# Amazon VPC Integration
+
+Amazon EKS runs inside an Amazon Virtual Private Cloud (VPC), providing network isolation for Kubernetes clusters.
+
+The VPC forms the network foundation for worker nodes and applications.
+
+---
+
+# Amazon EKS Networking Architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon VPC
+
+├── Public Subnets
+
+│      │
+
+│      └── NAT Gateway
+
+│
+
+└── Private Subnets
+
+       │
+
+       ├── Worker Nodes
+
+       │      │
+
+       │      └── Pods
+
+       │
+
+       └── Worker Nodes
+
+              │
+
+              └── Pods
+```
+
+Production workloads should run in private subnets.
+
+---
+
+# Private and Public Subnets
+
+| Subnet | Purpose |
+|---------|----------|
+| Public Subnet | Load Balancers, NAT Gateway |
+| Private Subnet | Worker Nodes and Pods |
+
+Worker Nodes should not have public IP addresses in production.
+
+---
+
+# Security Groups
+
+Security Groups act as virtual firewalls for EKS resources.
+
+They control inbound and outbound traffic.
+
+Examples.
+
+- Control Plane Security Group
+- Worker Node Security Group
+- Load Balancer Security Group
+
+---
+
+# Security Group Architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Security Group
+
+↓
+
+Worker Nodes
+
+↓
+
+Pods
+```
+
+Only required ports should be opened.
+
+---
+
+# Network ACLs
+
+Network ACLs provide subnet-level firewall protection.
+
+```text
+Amazon VPC
+
+↓
+
+Subnet
+
+↓
+
+Network ACL
+
+↓
+
+Worker Nodes
+```
+
+Security Groups and Network ACLs provide layered network security.
+
+---
+
+# Kubernetes Network Policies
+
+Network Policies control communication between Pods.
+
+Without Network Policies, Pods can communicate freely.
+
+---
+
+# Network Policy Flow
+
+```text
+Frontend Pod
+
+↓
+
+Allowed
+
+↓
+
+Backend Pod
+
+↓
+
+Allowed
+
+↓
+
+Database
+
+✖
+
+Other Pods
+```
+
+Only approved communication paths should be allowed.
+
+---
+
+# Default Deny Strategy
+
+Begin with a default-deny policy.
+
+```text
+All Traffic
+
+↓
+
+Blocked
+
+↓
+
+Explicit Rules
+
+↓
+
+Allowed Traffic
+```
+
+This follows the principle of least privilege.
+
+---
+
+# Ingress Security
+
+Ingress Controllers expose applications securely.
+
+Recommended controls.
+
+- HTTPS Only
+- TLS Certificates
+- AWS WAF
+- Rate Limiting
+- Authentication
+- Access Logging
+
+---
+
+# TLS Architecture
+
+```text
+Client
+
+↓
+
+HTTPS
+
+↓
+
+Application Load Balancer
+
+↓
+
+TLS Termination
+
+↓
+
+Ingress
+
+↓
+
+Application
+```
+
+Encrypt all traffic entering the cluster.
+
+---
+
+# AWS WAF Integration
+
+AWS WAF protects internet-facing applications.
+
+Common protections.
+
+- SQL Injection
+- Cross-Site Scripting
+- IP Reputation
+- Rate Limiting
+- Bot Protection
+
+AWS WAF should be associated with the Application Load Balancer.
+
+---
+
+# Secrets Management
+
+Sensitive information should never be stored in container images or Git repositories.
+
+Examples.
+
+- Database Passwords
+- API Keys
+- Tokens
+- Certificates
+- Encryption Keys
+
+---
+
+# AWS Secrets Manager Architecture
+
+```text
+Application
+
+↓
+
+Pod
+
+↓
+
+IRSA
+
+↓
+
+AWS Secrets Manager
+
+↓
+
+Retrieve Secret
+
+↓
+
+Application
+```
+
+Secrets are retrieved securely during application runtime.
+
+---
+
+# AWS Parameter Store
+
+AWS Systems Manager Parameter Store is suitable for storing application configuration and non-sensitive parameters.
+
+Examples.
+
+- Configuration Values
+- URLs
+- Feature Flags
+- Environment Variables
+
+Sensitive values can also be encrypted using AWS KMS.
+
+---
+
+# Encryption at Rest
+
+Secrets stored in Kubernetes should be encrypted using AWS Key Management Service (KMS).
+
+```text
+Secret
+
+↓
+
+AWS KMS
+
+↓
+
+Encrypted Secret
+
+↓
+
+etcd
+```
+
+Encryption protects sensitive data stored in the cluster.
+
+---
+
+# Pod Security Admission
+
+Pod Security Admission enforces security standards before Pods are created.
+
+Recommended profile.
+
+```text
+Restricted
+```
+
+Restricted provides the strongest default security for production workloads.
+
+---
+
+# Secure Security Context
+
+Production Pods should include a SecurityContext.
+
+Example.
+
+```yaml
+securityContext:
+
+  runAsNonRoot: true
+
+  allowPrivilegeEscalation: false
+
+  readOnlyRootFilesystem: true
+
+  capabilities:
+
+    drop:
+
+    - ALL
+```
+
+Containers should operate with the minimum required privileges.
+
+---
+
+# Image Security
+
+Deploy only trusted container images.
+
+Production pipeline.
+
+```text
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+Amazon ECR
+
+↓
+
+Admission Verification
+
+↓
+
+Deploy
+```
+
+Unsigned or vulnerable images should never reach production.
+
+---
+
+# Runtime Security
+
+Runtime security detects suspicious behaviour after workloads are deployed.
+
+Common tools.
+
+- Falco
+- Amazon GuardDuty for EKS
+
+Runtime monitoring complements preventive security controls.
+
+---
+
+# Runtime Monitoring Flow
+
+```text
+Application
+
+↓
+
+Container
+
+↓
+
+Falco
+
+↓
+
+Security Alert
+
+↓
+
+SOC Team
+```
+
+Runtime events should be integrated with enterprise alerting platforms.
+
+---
+
+# Enterprise Best Practices
+
+- Deploy worker nodes only in private subnets.
+- Restrict Security Group rules to required ports.
+- Apply default-deny Network Policies.
+- Encrypt all traffic using TLS.
+- Protect internet-facing applications with AWS WAF.
+- Store secrets in AWS Secrets Manager.
+- Encrypt Kubernetes Secrets using AWS KMS.
+- Enforce the Restricted Pod Security profile.
+- Scan, sign, and verify every container image.
+- Enable runtime monitoring using Falco and GuardDuty for EKS.
