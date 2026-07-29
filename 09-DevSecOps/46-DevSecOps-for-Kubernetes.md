@@ -920,3 +920,402 @@ Every container should have resource requests and limits.
 
 ---
 
+# Pod Security Admission
+
+Pod Security Admission (PSA) enforces security standards before Pods are created.
+
+Security levels.
+
+- Privileged
+- Baseline
+- Restricted
+
+Restricted is recommended for production workloads.
+
+---
+
+# Pod Security Admission Flow
+
+```text
+Deployment
+
+↓
+
+API Server
+
+↓
+
+Pod Security Admission
+
+↓
+
+Policy Validation
+
+↓
+
+Allowed?
+
+      │
+
+ ┌────┴─────┐
+
+ ▼          ▼
+
+Yes         No
+
+ │           │
+
+Create     Reject
+```
+
+Every Pod is validated before scheduling.
+
+---
+
+# Namespace Security Labels
+
+Enable Pod Security Admission using namespace labels.
+
+Example.
+
+```yaml
+apiVersion: v1
+
+kind: Namespace
+
+metadata:
+
+  name: production
+
+  labels:
+
+    pod-security.kubernetes.io/enforce: restricted
+```
+
+The restricted profile enforces strong security defaults.
+
+---
+
+# Secure Security Context
+
+Every production container should define a SecurityContext.
+
+Example.
+
+```yaml
+securityContext:
+
+  runAsNonRoot: true
+
+  runAsUser: 1000
+
+  allowPrivilegeEscalation: false
+
+  readOnlyRootFilesystem: true
+
+  capabilities:
+
+    drop:
+
+      - ALL
+```
+
+These settings significantly reduce container privileges.
+
+---
+
+# Secure Pod Example
+
+```yaml
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: payment
+
+spec:
+
+  securityContext:
+
+    runAsNonRoot: true
+
+  containers:
+
+  - name: payment
+
+    image: company/payment:v1
+
+    securityContext:
+
+      allowPrivilegeEscalation: false
+
+      readOnlyRootFilesystem: true
+
+      capabilities:
+
+        drop:
+
+        - ALL
+```
+
+Secure defaults should be applied to every workload.
+
+---
+
+# Linux Capabilities
+
+Containers should only receive the capabilities they require.
+
+```text
+Default Linux
+
+↓
+
+Many Capabilities
+
+↓
+
+Container
+
+↓
+
+Drop Unused Capabilities
+
+↓
+
+Minimal Privileges
+```
+
+Dropping unnecessary capabilities limits attack opportunities.
+
+---
+
+# Privileged Containers
+
+Avoid running privileged containers.
+
+```yaml
+securityContext:
+
+  privileged: false
+```
+
+Privileged containers can access host resources and should only be used when absolutely necessary.
+
+---
+
+# Running as Root
+
+Avoid running applications as the root user.
+
+```yaml
+securityContext:
+
+  runAsNonRoot: true
+
+  runAsUser: 1000
+```
+
+Running as a non-root user limits the impact of container compromise.
+
+---
+
+# Read-Only Root Filesystem
+
+Production containers should use read-only root filesystems whenever possible.
+
+Example.
+
+```yaml
+securityContext:
+
+  readOnlyRootFilesystem: true
+```
+
+Attackers cannot easily modify application files.
+
+---
+
+# Seccomp Profiles
+
+Seccomp restricts Linux system calls.
+
+```yaml
+securityContext:
+
+  seccompProfile:
+
+    type: RuntimeDefault
+```
+
+The RuntimeDefault profile is recommended for production.
+
+---
+
+# AppArmor
+
+AppArmor limits application capabilities at the operating system level.
+
+```text
+Application
+
+↓
+
+AppArmor Profile
+
+↓
+
+Allowed Operations
+
+↓
+
+Linux Kernel
+```
+
+Use AppArmor where supported by the Kubernetes distribution.
+
+---
+
+# SELinux
+
+SELinux provides mandatory access control for containers.
+
+```text
+Container
+
+↓
+
+SELinux Policy
+
+↓
+
+Kernel
+
+↓
+
+Protected Resources
+```
+
+SELinux improves workload isolation on supported Linux distributions.
+
+---
+
+# Network Policies
+
+Network Policies control Pod-to-Pod communication.
+
+Without policies, every Pod can communicate with every other Pod.
+
+---
+
+# Default Communication
+
+```text
+Pod A
+
+↔
+
+Pod B
+
+↔
+
+Pod C
+
+↔
+
+Database
+```
+
+This unrestricted communication increases the attack surface.
+
+---
+
+# Network Policy Architecture
+
+```text
+Frontend Pod
+
+↓
+
+Allowed
+
+↓
+
+Backend Pod
+
+↓
+
+Allowed
+
+↓
+
+Database
+
+✖
+
+All Other Pods
+```
+
+Only approved communication paths should be allowed.
+
+---
+
+# Network Policy Example
+
+```yaml
+apiVersion: networking.k8s.io/v1
+
+kind: NetworkPolicy
+
+metadata:
+
+  name: backend-policy
+
+spec:
+
+  podSelector:
+
+    matchLabels:
+
+      app: backend
+
+  policyTypes:
+
+  - Ingress
+```
+
+Start with a default-deny policy and explicitly allow required traffic.
+
+---
+
+# Ingress Security
+
+Secure external traffic entering the cluster.
+
+Recommendations.
+
+- HTTPS Only
+- TLS Certificates
+- WAF Integration
+- Rate Limiting
+- Authentication
+- Authorization
+
+Ingress should terminate TLS using trusted certificates.
+
+---
+
+# Enterprise Best Practices
+
+- Enforce the Restricted Pod Security Admission profile.
+- Never run privileged containers unless required.
+- Always run containers as non-root users.
+- Disable privilege escalation.
+- Drop unnecessary Linux capabilities.
+- Enable read-only root filesystems.
+- Use RuntimeDefault Seccomp profiles.
+- Implement Network Policies for every namespace.
+- Encrypt all external communication using TLS.
+- Review security policies during every deployment.
