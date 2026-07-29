@@ -378,3 +378,421 @@ Amazon EKS security should follow these principles.
 - Continuous Monitoring
 
 These principles form the foundation of enterprise-grade Amazon EKS security.
+
+---
+
+# Authentication in Amazon EKS
+
+Amazon EKS uses AWS Identity and Access Management (IAM) for authentication and Kubernetes RBAC for authorization.
+
+Authentication verifies who the user is before granting access to the cluster.
+
+---
+
+# Authentication Flow
+
+```text
+Developer
+
+↓
+
+AWS IAM User / IAM Role
+
+↓
+
+AWS STS Token
+
+↓
+
+Amazon EKS API Server
+
+↓
+
+Authentication
+
+↓
+
+RBAC Authorization
+
+↓
+
+Kubernetes Resources
+```
+
+Authentication and authorization work together to secure cluster access.
+
+---
+
+# Authentication Methods
+
+| Method | Purpose |
+|---------|----------|
+| IAM User | Individual administrator access |
+| IAM Role | Production workloads |
+| AWS SSO | Enterprise user authentication |
+| IAM Roles for Service Accounts (IRSA) | Pod authentication |
+| kubeconfig | Cluster access configuration |
+
+IAM Roles are recommended over IAM Users for production.
+
+---
+
+# Amazon EKS IAM Architecture
+
+```text
+AWS IAM
+
+↓
+
+IAM User / Role
+
+↓
+
+STS Token
+
+↓
+
+Amazon EKS
+
+↓
+
+Kubernetes API
+
+↓
+
+RBAC
+```
+
+IAM controls authentication while RBAC controls permissions.
+
+---
+
+# Authorization using RBAC
+
+After authentication, Kubernetes RBAC determines what actions the user or application can perform.
+
+RBAC implements the principle of least privilege.
+
+---
+
+# RBAC Components
+
+```text
+User / Service Account
+
+↓
+
+Role
+
+↓
+
+RoleBinding
+
+↓
+
+Namespace Resources
+```
+
+Cluster-wide permissions use ClusterRole and ClusterRoleBinding.
+
+---
+
+# RBAC Objects
+
+| Object | Purpose |
+|---------|----------|
+| Role | Namespace permissions |
+| ClusterRole | Cluster-wide permissions |
+| RoleBinding | Assign Role |
+| ClusterRoleBinding | Assign ClusterRole |
+| Service Account | Identity for Pods |
+
+---
+
+# Example Role
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+
+kind: Role
+
+metadata:
+
+  name: pod-reader
+
+rules:
+
+- apiGroups: [""]
+
+  resources: ["pods"]
+
+  verbs:
+
+  - get
+
+  - list
+
+  - watch
+```
+
+The Role grants read-only access to Pods within a namespace.
+
+---
+
+# Example RoleBinding
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+
+kind: RoleBinding
+
+metadata:
+
+  name: developer-binding
+
+subjects:
+
+- kind: User
+
+  name: developer
+
+roleRef:
+
+  kind: Role
+
+  name: pod-reader
+
+  apiGroup: rbac.authorization.k8s.io
+```
+
+The RoleBinding associates the Role with a user.
+
+---
+
+# IAM Roles for Service Accounts (IRSA)
+
+IRSA allows Kubernetes Pods to securely access AWS services using IAM Roles.
+
+Pods no longer require long-lived AWS credentials.
+
+---
+
+# IRSA Architecture
+
+```text
+Pod
+
+↓
+
+Service Account
+
+↓
+
+OIDC Provider
+
+↓
+
+IAM Role
+
+↓
+
+Temporary AWS Credentials
+
+↓
+
+AWS Service
+```
+
+IRSA is the recommended authentication mechanism for AWS services.
+
+---
+
+# Services Commonly Accessed Using IRSA
+
+- Amazon S3
+- Amazon DynamoDB
+- Amazon SQS
+- Amazon SNS
+- AWS Secrets Manager
+- AWS Systems Manager Parameter Store
+- Amazon CloudWatch
+
+Each application should use its own IAM Role.
+
+---
+
+# Service Account Example
+
+```yaml
+apiVersion: v1
+
+kind: ServiceAccount
+
+metadata:
+
+  name: payment-sa
+
+  annotations:
+
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/payment-role
+```
+
+The annotation links the Service Account to an IAM Role.
+
+---
+
+# Secure Access to AWS Services
+
+```text
+Application
+
+↓
+
+Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+Temporary Credentials
+
+↓
+
+Amazon S3
+```
+
+Temporary credentials eliminate the need for embedded AWS keys.
+
+---
+
+# AWS Secrets Manager Integration
+
+Sensitive information should be stored outside Kubernetes whenever possible.
+
+Examples include:
+
+- Database Passwords
+- API Keys
+- Tokens
+- Certificates
+- Encryption Keys
+
+AWS Secrets Manager provides secure storage and automatic rotation.
+
+---
+
+# Secret Retrieval Flow
+
+```text
+Application
+
+↓
+
+Pod
+
+↓
+
+IRSA
+
+↓
+
+AWS Secrets Manager
+
+↓
+
+Retrieve Secret
+
+↓
+
+Application
+```
+
+Applications retrieve secrets at runtime instead of storing them in container images.
+
+---
+
+# Secure kubeconfig
+
+The kubeconfig file contains cluster access information.
+
+Protect it by:
+
+- Restricting file permissions
+- Avoiding source control
+- Using short-lived credentials
+- Rotating credentials regularly
+
+---
+
+# Multi-Account Access
+
+Large enterprises commonly separate environments across AWS accounts.
+
+```text
+AWS Organization
+
+├── Development Account
+
+├── Testing Account
+
+├── Staging Account
+
+└── Production Account
+```
+
+This reduces the blast radius of security incidents.
+
+---
+
+# Enterprise Access Architecture
+
+```text
+Developer
+
+↓
+
+AWS IAM Identity Center
+
+↓
+
+IAM Role
+
+↓
+
+Amazon EKS
+
+↓
+
+RBAC
+
+↓
+
+Namespace
+
+↓
+
+Application
+```
+
+Access is centrally managed while permissions remain granular.
+
+---
+
+# Enterprise Best Practices
+
+- Use IAM Roles instead of IAM Users whenever possible.
+- Implement IAM Roles for Service Accounts (IRSA).
+- Never store AWS Access Keys inside Pods.
+- Grant least-privilege IAM permissions.
+- Separate development, staging, and production accounts.
+- Protect kubeconfig files from unauthorized access.
+- Rotate IAM credentials regularly.
+- Use AWS Secrets Manager for sensitive data.
+- Audit IAM and RBAC permissions periodically.
+- Review unused roles and bindings regularly.
