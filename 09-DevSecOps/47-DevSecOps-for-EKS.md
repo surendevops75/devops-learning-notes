@@ -1714,3 +1714,509 @@ Distributing workloads across multiple Availability Zones improves resilience.
 
 ---
 
+# Common Mistakes
+
+## Mistake 1
+
+### Running Worker Nodes in Public Subnets
+
+**Problem**
+
+Worker Nodes are deployed with public IP addresses.
+
+```text
+Internet
+
+↓
+
+Worker Node
+```
+
+**Impact**
+
+- Increased attack surface
+- Direct internet exposure
+- Higher security risk
+
+**Recommendation**
+
+Deploy Worker Nodes only in private subnets.
+
+---
+
+## Mistake 2
+
+### Using AWS Access Keys Inside Pods
+
+**Problem**
+
+Applications use static AWS credentials.
+
+```text
+Pod
+
+↓
+
+AWS Access Key
+
+↓
+
+AWS Service
+```
+
+**Impact**
+
+- Credential leakage
+- Long-lived secrets
+- Difficult credential rotation
+
+**Recommendation**
+
+Use IAM Roles for Service Accounts (IRSA).
+
+---
+
+## Mistake 3
+
+### Granting Excessive IAM Permissions
+
+**Problem**
+
+IAM Roles use wildcard permissions.
+
+```json
+{
+  "Action": "*",
+  "Resource": "*"
+}
+```
+
+**Impact**
+
+- Privilege escalation
+- Larger blast radius
+- Compliance violations
+
+**Recommendation**
+
+Follow the Principle of Least Privilege.
+
+---
+
+## Mistake 4
+
+### Storing Secrets in Kubernetes Manifests
+
+**Problem**
+
+Database passwords and API keys are stored directly in YAML files.
+
+**Impact**
+
+- Secret exposure
+- Git repository leaks
+- Compliance failures
+
+**Recommendation**
+
+Store secrets in AWS Secrets Manager and access them using IRSA.
+
+---
+
+## Mistake 5
+
+### No Runtime Monitoring
+
+**Problem**
+
+The cluster has no runtime threat detection.
+
+**Impact**
+
+- Delayed attack detection
+- Limited incident visibility
+- Increased recovery time
+
+**Recommendation**
+
+Deploy Falco and enable Amazon GuardDuty for EKS.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Pods Cannot Pull Images from Amazon ECR
+
+**Symptoms**
+
+```text
+ImagePullBackOff
+```
+
+**Possible Causes**
+
+- Incorrect image name
+- Missing IAM permissions
+- ECR authentication issue
+- Repository does not exist
+
+**Resolution**
+
+```bash
+kubectl describe pod payment
+
+kubectl get events
+```
+
+Verify:
+
+- ECR repository
+- Node IAM Role
+- Image tag
+- Network connectivity
+
+---
+
+## Scenario 2
+
+### Pod Cannot Access Amazon S3
+
+**Symptoms**
+
+Application receives Access Denied errors.
+
+**Possible Causes**
+
+- Missing IRSA configuration
+- Incorrect IAM Role
+- Missing S3 permissions
+
+**Resolution**
+
+```bash
+kubectl describe serviceaccount payment-sa
+```
+
+Verify:
+
+- IAM Role annotation
+- OIDC provider
+- IAM Policy
+- Trust relationship
+
+---
+
+## Scenario 3
+
+### Application Load Balancer Not Created
+
+**Symptoms**
+
+Ingress remains pending.
+
+**Possible Causes**
+
+- AWS Load Balancer Controller not installed
+- Missing IAM permissions
+- Incorrect IngressClass
+
+**Resolution**
+
+```bash
+kubectl get ingress
+
+kubectl describe ingress
+```
+
+Review controller logs and IAM configuration.
+
+---
+
+## Scenario 4
+
+### Worker Nodes Fail to Join the Cluster
+
+**Symptoms**
+
+Nodes remain in the NotReady state.
+
+**Possible Causes**
+
+- Security Group configuration
+- IAM Role issues
+- Bootstrap failure
+- Network connectivity
+
+**Resolution**
+
+```bash
+kubectl get nodes
+
+kubectl describe node <node-name>
+```
+
+Check:
+
+- Worker Node IAM Role
+- Security Groups
+- Private subnet routing
+- Bootstrap logs
+
+---
+
+## Scenario 5
+
+### Pods Cannot Retrieve Secrets
+
+**Symptoms**
+
+Application startup fails because secrets cannot be loaded.
+
+**Possible Causes**
+
+- Missing IAM permissions
+- Incorrect Secret name
+- IRSA configuration issue
+- AWS Secrets Manager access denied
+
+**Resolution**
+
+Verify:
+
+- Service Account annotation
+- IAM Policy
+- Secret ARN
+- Application configuration
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### Why is Amazon EKS preferred over self-managed Kubernetes?
+
+**Answer**
+
+Amazon EKS provides a managed control plane, high availability, automatic upgrades, AWS service integration, and reduced operational overhead.
+
+---
+
+## Question 2
+
+### What is IRSA?
+
+**Answer**
+
+IAM Roles for Service Accounts (IRSA) allows Kubernetes Pods to securely access AWS services using temporary IAM credentials instead of static AWS Access Keys.
+
+---
+
+## Question 3
+
+### Why should Worker Nodes be deployed in private subnets?
+
+**Answer**
+
+Private subnets reduce internet exposure, improve network isolation, and strengthen overall cluster security.
+
+---
+
+## Question 4
+
+### What is the purpose of Amazon ECR?
+
+**Answer**
+
+Amazon ECR is a managed container image registry used to securely store, scan, and distribute container images.
+
+---
+
+## Question 5
+
+### How do you secure secrets in Amazon EKS?
+
+**Answer**
+
+Store secrets in AWS Secrets Manager, encrypt them using AWS KMS, and retrieve them securely through IRSA.
+
+---
+
+## Question 6
+
+### How is external traffic secured in Amazon EKS?
+
+**Answer**
+
+External traffic is protected using Application Load Balancers, TLS, AWS WAF, Security Groups, and Kubernetes Ingress resources.
+
+---
+
+## Question 7
+
+### What runtime security tools are commonly used with Amazon EKS?
+
+**Answer**
+
+Falco provides runtime threat detection, while Amazon GuardDuty for EKS analyzes audit logs to detect suspicious cluster activity.
+
+---
+
+## Question 8
+
+### What monitoring stack is commonly used with Amazon EKS?
+
+**Answer**
+
+Prometheus collects metrics, Grafana visualizes dashboards, Alertmanager sends alerts, and CloudWatch provides AWS-native monitoring and logging.
+
+---
+
+## Question 9
+
+### Why is GitOps recommended for Amazon EKS?
+
+**Answer**
+
+GitOps provides version-controlled deployments, automatic reconciliation, easier rollbacks, and improved auditability using tools such as ArgoCD.
+
+---
+
+## Question 10
+
+### What are the core security best practices for Amazon EKS?
+
+**Answer**
+
+Use private subnets, IAM Roles for Service Accounts, least-privilege IAM policies, AWS Secrets Manager, Pod Security Admission, Network Policies, image scanning, runtime monitoring, centralized logging, and continuous compliance validation.
+
+---
+
+# Key Takeaways
+
+- Use Amazon EKS for managed Kubernetes operations.
+- Authenticate users with AWS IAM.
+- Authorize access using Kubernetes RBAC.
+- Use IRSA instead of static AWS credentials.
+- Deploy Worker Nodes in private subnets.
+- Secure external traffic using ALB, TLS, and AWS WAF.
+- Store secrets in AWS Secrets Manager.
+- Encrypt sensitive data using AWS KMS.
+- Scan, sign, and verify every container image.
+- Deploy workloads using GitOps with ArgoCD.
+- Monitor clusters using Prometheus, Grafana, and CloudWatch.
+- Enable Falco and Amazon GuardDuty for runtime security.
+- Centralize logs for auditing and incident response.
+- Continuously validate compliance against enterprise standards.
+
+---
+
+# Enterprise Amazon EKS DevSecOps Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Jenkins / GitHub Actions / GitLab
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Pod Security Admission
+
+↓
+
+Network Policies
+
+↓
+
+Falco Runtime Security
+
+↓
+
+Amazon GuardDuty
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+CloudWatch Logs
+
+↓
+
+Production
+```
+
+This workflow demonstrates a complete enterprise DevSecOps implementation for Amazon EKS, integrating AWS-native security services, Kubernetes security controls, secure CI/CD, GitOps, runtime protection, observability, and continuous compliance.
