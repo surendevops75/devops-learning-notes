@@ -1261,3 +1261,456 @@ Runtime events should be integrated with enterprise alerting platforms.
 - Enforce the Restricted Pod Security profile.
 - Scan, sign, and verify every container image.
 - Enable runtime monitoring using Falco and GuardDuty for EKS.
+
+---
+
+# Logging in Amazon EKS
+
+Centralized logging enables operations and security teams to troubleshoot applications and investigate incidents.
+
+Production clusters should never rely on local container logs.
+
+---
+
+# Enterprise Logging Architecture
+
+```text
+Pods
+
+↓
+
+Container Logs
+
+↓
+
+Fluent Bit
+
+↓
+
+Amazon CloudWatch Logs
+
+↓
+
+Amazon OpenSearch / ELK
+
+↓
+
+Operations Team
+```
+
+Logs should be retained according to organizational compliance requirements.
+
+---
+
+# Components of Logging
+
+| Component | Purpose |
+|-----------|----------|
+| Fluent Bit | Log Collection |
+| Amazon CloudWatch Logs | Central Log Storage |
+| Amazon OpenSearch / ELK | Log Analysis |
+| Kibana | Visualization |
+| Alerting | Incident Notification |
+
+---
+
+# Fluent Bit
+
+Fluent Bit is deployed as a DaemonSet to collect logs from every worker node.
+
+```text
+Node
+
+├── Pod A Logs
+
+├── Pod B Logs
+
+├── Pod C Logs
+
+↓
+
+Fluent Bit
+
+↓
+
+CloudWatch Logs
+```
+
+It forwards container logs to centralized logging platforms.
+
+---
+
+# Kubernetes Audit Logging
+
+Audit Logs capture every request made to the Kubernetes API Server.
+
+Events include:
+
+- Authentication
+- Authorization
+- Resource Creation
+- Resource Updates
+- Resource Deletion
+- RBAC Changes
+
+Audit Logs are essential for security investigations.
+
+---
+
+# Audit Log Flow
+
+```text
+User
+
+↓
+
+Amazon EKS API Server
+
+↓
+
+Audit Logs
+
+↓
+
+CloudWatch Logs
+
+↓
+
+SIEM
+
+↓
+
+Security Team
+```
+
+Audit logs should be protected from unauthorized modification.
+
+---
+
+# Monitoring Amazon EKS
+
+Continuous monitoring improves availability, reliability, and security.
+
+Recommended monitoring stack:
+
+- Prometheus
+- Grafana
+- Alertmanager
+
+---
+
+# Monitoring Architecture
+
+```text
+Pods
+
+↓
+
+Metrics
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Grafana
+
+↓
+
+Operations Team
+```
+
+Monitoring provides visibility into cluster health and workload performance.
+
+---
+
+# Important Metrics
+
+Infrastructure Metrics
+
+- CPU Utilization
+- Memory Usage
+- Disk Usage
+- Node Availability
+
+Application Metrics
+
+- Request Rate
+- Response Time
+- Error Rate
+- Active Sessions
+
+Kubernetes Metrics
+
+- Pod Restarts
+- Pending Pods
+- Failed Pods
+- Deployment Status
+
+---
+
+# Alerting Workflow
+
+```text
+Metric Threshold
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Email / Slack / PagerDuty
+
+↓
+
+Operations Team
+```
+
+Alerts should prioritize actionable production issues.
+
+---
+
+# Runtime Security
+
+Runtime security detects malicious activity after workloads are deployed.
+
+Common runtime threats include:
+
+- Reverse Shell
+- Privilege Escalation
+- Crypto Mining
+- Unexpected Process Execution
+- File Tampering
+
+---
+
+# Runtime Security Architecture
+
+```text
+Application
+
+↓
+
+Container
+
+↓
+
+Falco
+
+↓
+
+Security Events
+
+↓
+
+SOC Team
+```
+
+Runtime monitoring complements preventive security controls.
+
+---
+
+# Amazon GuardDuty for EKS
+
+Amazon GuardDuty continuously analyzes EKS audit logs to identify suspicious activities.
+
+Examples.
+
+- Anonymous API Calls
+- Credential Misuse
+- Privilege Escalation
+- Suspicious Cluster Activity
+- Malware Indicators
+
+GuardDuty provides managed threat detection for AWS environments.
+
+---
+
+# Runtime Detection Flow
+
+```text
+Amazon EKS
+
+↓
+
+Audit Logs
+
+↓
+
+Amazon GuardDuty
+
+↓
+
+Threat Detection
+
+↓
+
+Security Alert
+
+↓
+
+Security Team
+```
+
+GuardDuty helps identify threats across AWS and Kubernetes.
+
+---
+
+# Compliance
+
+Enterprise EKS environments should align with industry security frameworks.
+
+Common standards include:
+
+- CIS Kubernetes Benchmark
+- CIS AWS Foundations Benchmark
+- NIST Cybersecurity Framework
+- PCI DSS
+- ISO 27001
+- SOC 2
+
+Compliance should be continuously validated.
+
+---
+
+# Compliance Architecture
+
+```text
+Infrastructure
+
+↓
+
+Security Controls
+
+↓
+
+Continuous Assessment
+
+↓
+
+Compliance Reports
+
+↓
+
+Audit
+```
+
+Automated compliance reduces operational overhead.
+
+---
+
+# Vulnerability Management
+
+Security should be validated throughout the software lifecycle.
+
+```text
+Source Code
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Gitleaks
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Every release should pass vulnerability assessment before deployment.
+
+---
+
+# Disaster Recovery
+
+Production clusters should include disaster recovery planning.
+
+Recommendations:
+
+- Multi-AZ Deployment
+- Automated Backups
+- Infrastructure as Code
+- GitOps Recovery
+- Restore Testing
+
+Recovery procedures should be tested regularly.
+
+---
+
+# High Availability Architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS Control Plane
+
+↓
+
+Node Group (AZ-1)
+
+↓
+
+Node Group (AZ-2)
+
+↓
+
+Node Group (AZ-3)
+
+↓
+
+Applications
+```
+
+Distributing workloads across multiple Availability Zones improves resilience.
+
+---
+
+# Enterprise Best Practices
+
+- Centralize logs using Fluent Bit and CloudWatch Logs.
+- Enable Kubernetes Audit Logging.
+- Monitor workloads with Prometheus and Grafana.
+- Configure Alertmanager for production alerts.
+- Enable Amazon GuardDuty for EKS threat detection.
+- Scan every release before deployment.
+- Continuously monitor compliance status.
+- Deploy clusters across multiple Availability Zones.
+- Test backup and disaster recovery procedures regularly.
+- Integrate monitoring and security alerts with the organization's incident response process.
+
+---
+
