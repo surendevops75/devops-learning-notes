@@ -1319,3 +1319,6 @@ Ingress should terminate TLS using trusted certificates.
 - Implement Network Policies for every namespace.
 - Encrypt all external communication using TLS.
 - Review security policies during every deployment.
+
+---
+
