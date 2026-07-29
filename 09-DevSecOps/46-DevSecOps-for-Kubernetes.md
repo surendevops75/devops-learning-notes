@@ -2223,3 +2223,463 @@ Regular compliance assessments improve overall security posture.
 
 ---
 
+# Common Mistakes
+
+## Mistake 1
+
+### Running Containers as Root
+
+**Problem**
+
+Containers execute with root privileges.
+
+```yaml
+securityContext:
+
+  runAsNonRoot: false
+```
+
+**Impact**
+
+- Privilege escalation
+- Host compromise
+- Increased attack surface
+
+**Recommendation**
+
+Always run containers as non-root users.
+
+---
+
+## Mistake 2
+
+### Using the Default Service Account
+
+**Problem**
+
+Pods use the default Service Account.
+
+```text
+Pod
+
+↓
+
+Default Service Account
+
+↓
+
+Cluster Resources
+```
+
+**Impact**
+
+- Excessive permissions
+- Difficult access control
+- Security risks
+
+**Recommendation**
+
+Create dedicated Service Accounts for every workload.
+
+---
+
+## Mistake 3
+
+### No Network Policies
+
+**Problem**
+
+Pods can communicate freely.
+
+```text
+Pod A
+
+↔
+
+Pod B
+
+↔
+
+Database
+```
+
+**Impact**
+
+- Lateral movement
+- Data exposure
+- Larger attack surface
+
+**Recommendation**
+
+Apply default-deny Network Policies and explicitly allow required traffic.
+
+---
+
+## Mistake 4
+
+### Deploying Unsigned Images
+
+**Problem**
+
+Images are deployed without verification.
+
+**Impact**
+
+- Supply chain attacks
+- Tampered images
+- Untrusted software
+
+**Recommendation**
+
+Sign images with Cosign and verify them during admission.
+
+---
+
+## Mistake 5
+
+### Skipping Runtime Monitoring
+
+**Problem**
+
+No runtime threat detection exists.
+
+**Impact**
+
+- Delayed incident detection
+- Undetected malicious activity
+- Compliance issues
+
+**Recommendation**
+
+Deploy Falco or an equivalent runtime security platform.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Pod Security Admission Rejects Deployment
+
+**Cause**
+
+The Pod violates the enforced security profile.
+
+**Resolution**
+
+```bash
+kubectl describe pod payment
+```
+
+Verify:
+
+- runAsNonRoot
+- allowPrivilegeEscalation
+- Capabilities
+- Privileged mode
+
+---
+
+## Scenario 2
+
+### ImagePullBackOff
+
+**Cause**
+
+The image cannot be pulled.
+
+**Resolution**
+
+```bash
+kubectl describe pod payment
+```
+
+Check:
+
+- Image name
+- Image tag
+- Registry authentication
+- ImagePullSecrets
+
+---
+
+## Scenario 3
+
+### Network Policy Blocks Traffic
+
+**Cause**
+
+Traffic is denied by Network Policies.
+
+**Resolution**
+
+```bash
+kubectl get networkpolicy
+
+kubectl describe networkpolicy
+```
+
+Verify ingress and egress rules.
+
+---
+
+## Scenario 4
+
+### RBAC Permission Denied
+
+**Cause**
+
+User or Service Account lacks required permissions.
+
+**Resolution**
+
+```bash
+kubectl auth can-i create pods
+
+kubectl get rolebindings
+
+kubectl get clusterrolebindings
+```
+
+Review Role and RoleBinding assignments.
+
+---
+
+## Scenario 5
+
+### Falco Generates Unexpected Alerts
+
+**Cause**
+
+Application behavior differs from Falco rules.
+
+**Resolution**
+
+Review:
+
+- Falco event logs
+- Pod logs
+- Application changes
+- Custom Falco rules
+
+Tune policies where appropriate without reducing security unnecessarily.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is Kubernetes DevSecOps?
+
+**Answer**
+
+Kubernetes DevSecOps integrates security into application development, container image creation, Kubernetes deployment, runtime monitoring, and continuous compliance throughout the software lifecycle.
+
+---
+
+## Question 2
+
+### Why is RBAC important?
+
+**Answer**
+
+RBAC restricts user and application permissions based on least privilege, reducing unauthorized access to Kubernetes resources.
+
+---
+
+## Question 3
+
+### Why should Pods run as non-root?
+
+**Answer**
+
+Running as non-root limits the impact of container compromise and reduces the possibility of privilege escalation.
+
+---
+
+## Question 4
+
+### What is Pod Security Admission?
+
+**Answer**
+
+Pod Security Admission validates Pods against predefined security standards such as Privileged, Baseline, and Restricted before they are created.
+
+---
+
+## Question 5
+
+### Why are Network Policies required?
+
+**Answer**
+
+Network Policies restrict Pod-to-Pod communication, preventing unauthorized network access and limiting lateral movement.
+
+---
+
+## Question 6
+
+### What is the purpose of OPA or Kyverno?
+
+**Answer**
+
+OPA and Kyverno enforce Policy as Code by validating and controlling Kubernetes resource creation based on organizational security policies.
+
+---
+
+## Question 7
+
+### Why should container images be signed?
+
+**Answer**
+
+Image signing ensures authenticity and integrity, allowing only trusted images to be deployed.
+
+---
+
+## Question 8
+
+### Why generate an SBOM?
+
+**Answer**
+
+An SBOM provides a complete inventory of software components, improving vulnerability management, compliance, and software supply chain visibility.
+
+---
+
+## Question 9
+
+### What is Falco used for?
+
+**Answer**
+
+Falco provides runtime threat detection by monitoring Kubernetes and container activity for suspicious behaviour such as privilege escalation, shell execution, and file modifications.
+
+---
+
+## Question 10
+
+### What are enterprise Kubernetes security best practices?
+
+**Answer**
+
+Use RBAC, dedicated Service Accounts, Pod Security Admission, Network Policies, signed container images, Policy as Code, runtime monitoring, centralized logging, continuous compliance, and GitOps deployments.
+
+---
+
+# Key Takeaways
+
+- Secure Kubernetes from build to runtime.
+- Enforce least-privilege access using RBAC.
+- Use dedicated Service Accounts for workloads.
+- Protect workloads with Pod Security Admission.
+- Run containers as non-root users.
+- Implement Network Policies for every namespace.
+- Scan and sign every container image.
+- Verify images during admission.
+- Use OPA or Kyverno for Policy as Code.
+- Deploy Falco for runtime threat detection.
+- Enable Kubernetes Audit Logging.
+- Monitor clusters using Prometheus and Grafana.
+- Centralize logs using Fluent Bit and the ELK Stack.
+- Use GitOps with ArgoCD for secure deployments.
+- Continuously assess cluster security against CIS Kubernetes Benchmark and other compliance frameworks.
+
+---
+
+# Enterprise Kubernetes DevSecOps Summary
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+CI Pipeline
+
+↓
+
+SonarQube
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Image Signing
+
+↓
+
+Amazon ECR
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Pod Security Admission
+
+↓
+
+OPA / Kyverno
+
+↓
+
+Amazon EKS / Kubernetes
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK Stack
+
+↓
+
+Production
+```
+
+This workflow represents a complete enterprise Kubernetes DevSecOps implementation, combining secure software development, policy enforcement, secure deployments, runtime protection, observability, and continuous compliance.
