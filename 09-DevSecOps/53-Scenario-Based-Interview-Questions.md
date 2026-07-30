@@ -2611,3 +2611,264 @@ Post-Incident Review
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 101
+
+## Your Jenkins pipeline succeeds, Docker image is pushed to Amazon ECR, ArgoCD syncs successfully, but Kubernetes still runs the previous image. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Deployment image tag
+- Image digest
+- ImagePullPolicy
+- ReplicaSet version
+- Running Pod image
+- ArgoCD revision
+- Git commit
+- Deployment rollout history
+
+---
+
+# Scenario 102
+
+## During a production deployment, one microservice cannot connect to Amazon RDS while all other services work correctly. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Database credentials
+- Kubernetes Secret
+- Security Groups
+- Network Policies
+- Connection string
+- IAM authentication
+- Application logs
+- Database user permissions
+
+---
+
+# Scenario 103
+
+## After upgrading Amazon EKS, several applications fail because Kubernetes APIs are no longer available. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Kubernetes version compatibility
+- Deprecated APIs
+- Helm chart compatibility
+- CRDs
+- Admission Controllers
+- Application manifests
+- Cluster upgrade logs
+- API Server events
+
+---
+
+# Scenario 104
+
+## Your organization enables Branch Protection, but developers still manage to merge code without reviews. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Branch protection rules
+- Repository administrators
+- Bypass permissions
+- Merge policies
+- Repository settings
+- Team permissions
+- Audit logs
+- CI requirements
+
+---
+
+# Scenario 105
+
+## A production Pod continuously fails with "Permission Denied" while trying to write to a mounted Persistent Volume. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Persistent Volume permissions
+- Security Context
+- RunAsUser
+- RunAsGroup
+- fsGroup
+- StorageClass
+- Volume mounts
+- Container logs
+
+---
+
+# Scenario 106
+
+## Trivy suddenly reports hundreds of new vulnerabilities across all container images after its vulnerability database update. What would you do?
+
+### Expected Approach
+
+Review:
+
+- Newly published CVEs
+- Base images
+- Vulnerability severity
+- Available patches
+- False positives
+- Business impact
+- Image rebuild plan
+- Patch prioritisation
+
+---
+
+# Scenario 107
+
+## Prometheus reports that API latency has doubled, but application logs show no errors. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Database latency
+- External APIs
+- DNS resolution
+- Network latency
+- Thread pool usage
+- Connection pools
+- Storage latency
+- Distributed tracing
+
+---
+
+# Scenario 108
+
+## A developer accidentally applies manual changes directly to the Kubernetes cluster instead of updating Git. A few hours later, ArgoCD overwrites those changes. Why did this happen?
+
+### Expected Approach
+
+Check:
+
+- GitOps workflow
+- Desired state in Git
+- ArgoCD reconciliation
+- Manual kubectl changes
+- Sync history
+- Drift detection
+- Repository commits
+- Change management process
+
+---
+
+# Scenario 109
+
+## Your security team discovers that production containers are running as the root user. How would you remediate this?
+
+### Expected Approach
+
+Review:
+
+- Dockerfile
+- Kubernetes Security Context
+- Pod Security Standards
+- Base image
+- File permissions
+- Application compatibility
+- CI/CD security checks
+- Runtime policies
+
+---
+
+# Scenario 110
+
+## During a Blue-Green deployment, users report inconsistent behaviour. Some requests reach the new version while others continue reaching the old version. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Load Balancer routing
+- Traffic switching
+- Target Groups
+- DNS caching
+- Session persistence
+- Deployment strategy
+- Replica versions
+- Health checks
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Incident Report
+
+↓
+
+Review Deployment
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Services
+
+↓
+
+Kubernetes
+
+↓
+
+Networking
+
+↓
+
+Application
+
+↓
+
+Security
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Use immutable image tags and verify image digests before deployment.
+- Validate application compatibility before Kubernetes version upgrades.
+- Protect repositories with mandatory reviews and restricted bypass permissions.
+- Configure Kubernetes workloads with appropriate Security Contexts and non-root users.
+- Prioritise vulnerability remediation based on exploitability and business impact.
+- Use distributed tracing alongside logs and metrics for performance investigations.
+- Never make manual changes in GitOps-managed clusters.
+- Implement Pod Security Standards and admission policies to enforce secure workloads.
+- Test Blue-Green deployments thoroughly before shifting production traffic.
+- Conduct post-incident reviews and update operational runbooks to prevent recurrence.
+
+---
+
