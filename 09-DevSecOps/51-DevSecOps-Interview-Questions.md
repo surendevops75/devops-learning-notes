@@ -1581,4 +1581,563 @@ False positives can be minimized by:
 - Continuously reduce technical debt rather than allowing it to accumulate.
 - Monitor Quality Gate trends across all repositories.
 
-----
+---
+
+# Software Composition Analysis (SCA) Interview Questions
+
+---
+
+# Question 56
+
+## What is Software Composition Analysis (SCA)?
+
+### Answer
+
+Software Composition Analysis (SCA) is the process of identifying, analyzing, and managing third-party libraries, open-source dependencies, and their associated security vulnerabilities, license risks, and outdated versions.
+
+---
+
+# SCA Workflow
+
+```text
+Developer
+
+↓
+
+Build
+
+↓
+
+Dependency Resolution
+
+↓
+
+SCA Scan
+
+↓
+
+Vulnerability Database
+
+↓
+
+Risk Report
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 57
+
+## Why is SCA important?
+
+### Answer
+
+Modern applications rely heavily on open-source components. A vulnerability in any dependency can compromise the entire application.
+
+SCA helps organizations:
+
+- Detect vulnerable libraries
+- Reduce supply chain risks
+- Ensure license compliance
+- Maintain secure software
+- Meet regulatory requirements
+
+---
+
+# Question 58
+
+## What types of issues does SCA detect?
+
+### Answer
+
+SCA identifies:
+
+- Known CVEs
+- Vulnerable dependencies
+- Outdated libraries
+- License violations
+- Transitive dependencies
+- End-of-life packages
+- Dependency conflicts
+
+---
+
+# Question 59
+
+## What is a dependency?
+
+### Answer
+
+A dependency is an external library or package that an application requires to function.
+
+Examples include:
+
+- Maven packages
+- npm packages
+- Python pip modules
+- Go modules
+- NuGet packages
+
+---
+
+# Question 60
+
+## What are direct and transitive dependencies?
+
+### Answer
+
+**Direct Dependency**
+
+A library explicitly added by the developer.
+
+**Transitive Dependency**
+
+A library automatically installed because another dependency requires it.
+
+---
+
+# Dependency Example
+
+```text
+Application
+
+↓
+
+Spring Boot
+
+↓
+
+Logback
+
+↓
+
+SLF4J
+```
+
+In this example:
+
+- Spring Boot → Direct Dependency
+- Logback → Transitive Dependency
+- SLF4J → Transitive Dependency
+
+---
+
+# Question 61
+
+## What is a CVE?
+
+### Answer
+
+CVE (Common Vulnerabilities and Exposures) is a publicly assigned identifier for a known security vulnerability.
+
+Example:
+
+```text
+CVE-2021-44228
+
+(Log4Shell)
+```
+
+Every CVE has a unique identifier that enables consistent tracking across security tools and databases.
+
+---
+
+# Question 62
+
+## What is CVSS?
+
+### Answer
+
+CVSS (Common Vulnerability Scoring System) is a standardized method for measuring the severity of security vulnerabilities.
+
+---
+
+# CVSS Severity Levels
+
+| Score | Severity |
+|--------|----------|
+| 0.0 | None |
+| 0.1–3.9 | Low |
+| 4.0–6.9 | Medium |
+| 7.0–8.9 | High |
+| 9.0–10.0 | Critical |
+
+---
+
+# Question 63
+
+## What is the National Vulnerability Database (NVD)?
+
+### Answer
+
+The National Vulnerability Database (NVD) is a publicly maintained repository of vulnerability information that includes CVEs, CVSS scores, affected products, and remediation guidance.
+
+Many SCA tools use NVD data during analysis.
+
+---
+
+# Question 64
+
+## What is a Vulnerability Database?
+
+### Answer
+
+A vulnerability database stores information about known software vulnerabilities.
+
+Common sources include:
+
+- NVD
+- GitHub Security Advisories
+- Vendor Security Advisories
+- OS package repositories
+
+SCA tools compare project dependencies against these databases.
+
+---
+
+# Question 65
+
+## How does an SCA tool work?
+
+### Answer
+
+An SCA tool:
+
+1. Detects project dependencies.
+2. Builds the dependency tree.
+3. Identifies versions.
+4. Compares them with vulnerability databases.
+5. Generates a vulnerability report.
+6. Suggests remediation.
+
+---
+
+# SCA Detection Process
+
+```text
+Source Code
+
+↓
+
+Dependency Files
+
+↓
+
+Dependency Tree
+
+↓
+
+Version Detection
+
+↓
+
+Vulnerability Database
+
+↓
+
+Security Report
+```
+
+---
+
+# Question 66
+
+## What files are commonly scanned by SCA tools?
+
+### Answer
+
+Examples include:
+
+| Technology | Dependency File |
+|------------|-----------------|
+| Maven | pom.xml |
+| Gradle | build.gradle |
+| npm | package.json |
+| Python | requirements.txt |
+| Go | go.mod |
+| .NET | *.csproj |
+
+---
+
+# Question 67
+
+## What is Dependency Confusion?
+
+### Answer
+
+Dependency Confusion is a supply chain attack where attackers publish malicious packages with the same name as internal packages to public repositories.
+
+Build systems may accidentally download the malicious package.
+
+---
+
+# Dependency Confusion Attack
+
+```text
+Company
+
+↓
+
+Internal Package
+
+↓
+
+Build Server
+
+↓
+
+Public Repository
+
+↓
+
+Malicious Package
+
+↓
+
+Compromised Build
+```
+
+---
+
+# Question 68
+
+## How can Dependency Confusion be prevented?
+
+### Answer
+
+Organizations should:
+
+- Use private package repositories.
+- Configure repository priority.
+- Reserve internal package names.
+- Verify package sources.
+- Review dependencies regularly.
+
+---
+
+# Question 69
+
+## What are License Risks?
+
+### Answer
+
+Open-source software is distributed under different licenses.
+
+Some licenses may impose restrictions on commercial distribution, modification, or redistribution.
+
+SCA tools identify incompatible or restricted licenses.
+
+---
+
+# Common Open Source Licenses
+
+| License | Characteristics |
+|----------|-----------------|
+| MIT | Permissive |
+| Apache 2.0 | Permissive with patent protection |
+| BSD | Permissive |
+| GPL | Strong copyleft |
+| LGPL | Limited copyleft |
+| MPL | File-level copyleft |
+
+---
+
+# Question 70
+
+## What is a False Positive in SCA?
+
+### Answer
+
+A false positive occurs when a tool reports a vulnerability that is not actually exploitable in the application's context.
+
+False positives should be reviewed, documented, and approved before being ignored.
+
+---
+
+# Question 71
+
+## What is Vulnerability Prioritization?
+
+### Answer
+
+Not every vulnerability requires immediate remediation.
+
+Organizations prioritize based on:
+
+- CVSS score
+- Exploitability
+- Internet exposure
+- Business impact
+- Availability of fixes
+- Active exploitation
+
+---
+
+# Question 72
+
+## What remediation options exist for vulnerable dependencies?
+
+### Answer
+
+Possible remediation approaches include:
+
+- Upgrade the dependency.
+- Replace the library.
+- Apply vendor patches.
+- Remove unused packages.
+- Use temporary mitigations.
+- Accept risk through documented approval.
+
+---
+
+# Question 73
+
+## What is an SBOM?
+
+### Answer
+
+A Software Bill of Materials (SBOM) is a complete inventory of all software components, libraries, versions, and dependencies used to build an application.
+
+SBOMs improve software supply chain visibility and support vulnerability management.
+
+---
+
+# SBOM Generation Workflow
+
+```text
+Application
+
+↓
+
+Dependencies
+
+↓
+
+SCA Tool
+
+↓
+
+SBOM
+
+↓
+
+Vulnerability Analysis
+
+↓
+
+Compliance Review
+```
+
+---
+
+# Question 74
+
+## How is SCA integrated into a DevSecOps pipeline?
+
+### Answer
+
+SCA is typically executed immediately after the build process and before container image creation.
+
+Critical vulnerabilities should fail the pipeline according to organizational policy.
+
+---
+
+# Enterprise DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+SCA
+
+↓
+
+Secret Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Container Scan
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 75
+
+## What are the best practices for Software Composition Analysis?
+
+### Answer
+
+Enterprise best practices include:
+
+- Scan every build.
+- Continuously monitor dependencies.
+- Remove unused libraries.
+- Upgrade dependencies regularly.
+- Generate SBOMs for every release.
+- Enforce vulnerability policies in CI/CD.
+- Monitor transitive dependencies.
+- Review license compliance.
+- Prioritize remediation based on risk.
+- Integrate SCA with vulnerability management and incident response processes.
+
+---
+
+# Enterprise Best Practices
+
+- Never deploy applications with known critical vulnerabilities unless an approved exception exists.
+- Maintain an inventory of all third-party components.
+- Use trusted package repositories.
+- Continuously monitor for newly disclosed CVEs affecting existing deployments.
+- Combine SCA with SAST, DAST, IaC scanning, and container security.
+- Regularly review dependency health and update strategies.
+- Include SBOM generation as part of every production release.
+- Implement automated policy gates based on vulnerability severity.
+- Audit dependency licenses before introducing new libraries.
+- Treat software supply chain security as a continuous process, not a one-time scan.
+
+---
+
