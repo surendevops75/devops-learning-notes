@@ -826,3 +826,441 @@ Organizations should define RTO and RPO targets for every critical application.
 
 ---
 
+# Observability
+
+Observability provides complete visibility into application behavior, infrastructure health, and user experience.
+
+It enables teams to detect, diagnose, and resolve issues quickly.
+
+---
+
+# Three Pillars of Observability
+
+```text
+Metrics
+
+↓
+
+Logs
+
+↓
+
+Traces
+
+↓
+
+Complete System Visibility
+```
+
+Together, these pillars provide a comprehensive understanding of production systems.
+
+---
+
+# Enterprise Observability Architecture
+
+```text
+Applications
+
+↓
+
+Metrics
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+──────────────
+
+Applications
+
+↓
+
+Logs
+
+↓
+
+Fluent Bit
+
+↓
+
+ELK Stack
+
+──────────────
+
+Applications
+
+↓
+
+Alerts
+
+↓
+
+Alertmanager
+
+↓
+
+Operations Team
+```
+
+Production environments should centralize metrics, logs, and alerts.
+
+---
+
+# Metrics
+
+Metrics measure the health and performance of systems over time.
+
+Common metrics include:
+
+- CPU Utilization
+- Memory Usage
+- Disk Usage
+- Network Traffic
+- Request Rate
+- Error Rate
+- Response Time
+- Pod Restarts
+
+Metrics support proactive monitoring.
+
+---
+
+# Logging
+
+Centralized logging enables troubleshooting and security investigations.
+
+Recommended logging pipeline:
+
+```text
+Application
+
+↓
+
+Container Logs
+
+↓
+
+Fluent Bit
+
+↓
+
+ELK Stack
+
+↓
+
+Search
+
+↓
+
+Analysis
+```
+
+Logs should be retained according to organizational compliance requirements.
+
+---
+
+# Monitoring
+
+Monitoring continuously evaluates infrastructure and application health.
+
+Recommended monitoring tools:
+
+- Prometheus
+- Grafana
+- Alertmanager
+
+Monitoring should include infrastructure, applications, Kubernetes, and cloud resources.
+
+---
+
+# Alerting
+
+Alerts notify teams when predefined thresholds are exceeded.
+
+Common alert conditions:
+
+- High CPU Usage
+- Memory Exhaustion
+- Pod CrashLoopBackOff
+- Disk Space Exhaustion
+- API Failures
+- High Error Rate
+- Database Latency
+
+Alerts should be actionable and prioritized.
+
+---
+
+# Alert Workflow
+
+```text
+Metric
+
+↓
+
+Threshold
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Email / Slack / PagerDuty
+
+↓
+
+Operations Team
+```
+
+Alert fatigue should be minimized by tuning thresholds appropriately.
+
+---
+
+# Production Security
+
+Security continues after deployment.
+
+Operational security includes:
+
+- Continuous Vulnerability Scanning
+- Runtime Monitoring
+- Access Reviews
+- Patch Management
+- Compliance Monitoring
+
+Security should be integrated into daily operations.
+
+---
+
+# Runtime Security
+
+Production workloads should be continuously monitored for suspicious behavior.
+
+Common runtime threats:
+
+- Privilege Escalation
+- Reverse Shell
+- Crypto Mining
+- Unauthorized Process Execution
+- File Tampering
+
+Falco is widely used for Kubernetes runtime threat detection.
+
+---
+
+# Vulnerability Management
+
+Security vulnerabilities should be managed continuously.
+
+Workflow:
+
+```text
+Discovery
+
+↓
+
+Risk Assessment
+
+↓
+
+Prioritization
+
+↓
+
+Remediation
+
+↓
+
+Verification
+
+↓
+
+Closure
+```
+
+Critical vulnerabilities should be remediated as quickly as possible.
+
+---
+
+# Patch Management
+
+Infrastructure and applications should receive regular security updates.
+
+Patch the following components:
+
+- Operating Systems
+- Kubernetes
+- Container Images
+- Libraries
+- Runtime Dependencies
+- CI/CD Tools
+
+Maintain a regular patching schedule.
+
+---
+
+# Incident Management
+
+Incident management minimizes service disruption during production failures.
+
+Typical phases:
+
+- Detection
+- Analysis
+- Containment
+- Recovery
+- Post-Incident Review
+
+Every incident should be documented.
+
+---
+
+# Incident Response Workflow
+
+```text
+Alert
+
+↓
+
+Incident Created
+
+↓
+
+Investigation
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Mitigation
+
+↓
+
+Recovery
+
+↓
+
+Postmortem
+
+↓
+
+Improvement
+```
+
+Continuous improvement should follow every incident.
+
+---
+
+# Root Cause Analysis (RCA)
+
+Every major production issue should undergo Root Cause Analysis.
+
+An RCA should identify:
+
+- Root Cause
+- Impact
+- Timeline
+- Resolution
+- Preventive Actions
+
+The focus should be on improving systems and processes.
+
+---
+
+# Service Level Objectives (SLOs)
+
+SLOs define measurable reliability targets.
+
+Examples:
+
+- Availability ≥ 99.9%
+- API Response Time < 300 ms
+- Error Rate < 1%
+
+SLOs help teams measure service reliability.
+
+---
+
+# Service Level Indicators (SLIs)
+
+SLIs are the metrics used to evaluate SLOs.
+
+Examples:
+
+- Request Success Rate
+- Latency
+- Throughput
+- Availability
+- Error Percentage
+
+SLIs should be continuously monitored.
+
+---
+
+# Error Budgets
+
+Error Budgets define the acceptable level of service unreliability.
+
+```text
+100% Availability
+
+↓
+
+99.9% SLO
+
+↓
+
+0.1% Error Budget
+
+↓
+
+Deployments Continue
+```
+
+If the error budget is exhausted, teams should prioritize reliability improvements over new feature releases.
+
+---
+
+# Operational Excellence
+
+Operational excellence focuses on maintaining reliable and efficient production systems.
+
+Core practices:
+
+- Automation
+- Documentation
+- Standardization
+- Continuous Improvement
+- Capacity Planning
+- Performance Optimization
+
+Operations should become more predictable over time.
+
+---
+
+# Enterprise Best Practices
+
+- Monitor infrastructure and applications continuously.
+- Centralize logs using Fluent Bit and the ELK Stack.
+- Use Prometheus and Grafana for metrics and dashboards.
+- Configure actionable alerts with Alertmanager.
+- Deploy runtime security monitoring.
+- Patch systems regularly.
+- Perform Root Cause Analysis for major incidents.
+- Define and monitor SLIs and SLOs.
+- Track error budgets to balance reliability and feature delivery.
+- Continuously improve operational processes using post-incident learnings.
+
+----
+
