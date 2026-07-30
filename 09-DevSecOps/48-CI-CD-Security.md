@@ -910,3 +910,412 @@ Avoid sharing administrator credentials across multiple pipelines.
 
 ---
 
+# Shift Left Security
+
+Shift Left Security integrates security checks early in the software development lifecycle.
+
+Security issues are identified during development instead of after deployment.
+
+---
+
+# Shift Left Workflow
+
+```text
+Developer
+
+↓
+
+Write Code
+
+↓
+
+Git Push
+
+↓
+
+CI Pipeline
+
+↓
+
+Security Scans
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+Early detection reduces remediation cost and deployment risk.
+
+---
+
+# Static Application Security Testing (SAST)
+
+SAST analyzes source code without executing the application.
+
+It identifies coding issues before the application is built.
+
+Common findings include:
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Hardcoded Credentials
+- Insecure Functions
+- Weak Cryptography
+
+---
+
+# SAST Workflow
+
+```text
+Source Code
+
+↓
+
+SonarQube
+
+↓
+
+Static Analysis
+
+↓
+
+Security Report
+
+↓
+
+Quality Gate
+
+↓
+
+Pipeline Decision
+```
+
+The pipeline should stop if critical vulnerabilities are detected.
+
+---
+
+# SonarQube Integration
+
+Example Jenkins Stage
+
+```groovy
+stage('SonarQube') {
+
+    steps {
+
+        sh 'mvn sonar:sonar'
+
+    }
+
+}
+```
+
+Every code commit should undergo static analysis.
+
+---
+
+# Software Composition Analysis (SCA)
+
+SCA identifies vulnerabilities in third-party libraries and open-source dependencies.
+
+Modern applications depend heavily on external packages, making dependency security essential.
+
+---
+
+# Dependency Security Workflow
+
+```text
+Application
+
+↓
+
+Dependency Manifest
+
+↓
+
+OWASP Dependency-Check
+
+↓
+
+CVE Database
+
+↓
+
+Risk Assessment
+
+↓
+
+Security Report
+```
+
+Dependency scanning should execute during every build.
+
+---
+
+# OWASP Dependency-Check
+
+OWASP Dependency-Check compares project dependencies against known Common Vulnerabilities and Exposures (CVEs).
+
+Example Jenkins Stage
+
+```groovy
+stage('Dependency Scan') {
+
+    steps {
+
+        sh 'dependency-check.sh'
+
+    }
+
+}
+```
+
+Critical vulnerabilities should fail the pipeline.
+
+---
+
+# Dependency Confusion
+
+Dependency Confusion occurs when an attacker publishes a malicious package with the same name as an internal package.
+
+```text
+Internal Package
+
+↓
+
+Package Manager
+
+↓
+
+Public Repository
+
+↓
+
+Malicious Package
+
+↓
+
+Application
+```
+
+Use private repositories and explicit package sources to reduce this risk.
+
+---
+
+# Secret Management
+
+Secrets should never be stored in source code.
+
+Examples include:
+
+- Passwords
+- API Keys
+- Tokens
+- Certificates
+- Encryption Keys
+
+Secrets must be securely injected during pipeline execution.
+
+---
+
+# Secret Detection
+
+Secret scanning identifies exposed credentials before deployment.
+
+Common tools:
+
+- Gitleaks
+- GitHub Secret Scanning
+- GitLab Secret Detection
+
+Every commit should be scanned automatically.
+
+---
+
+# Secret Scanning Workflow
+
+```text
+Developer
+
+↓
+
+Git Commit
+
+↓
+
+Gitleaks
+
+↓
+
+Secret Found?
+
+      │
+
+ ┌────┴────┐
+
+ ▼         ▼
+
+No        Yes
+
+ │          │
+
+Build     Fail Pipeline
+```
+
+Pipelines should fail immediately if secrets are detected.
+
+---
+
+# Gitleaks Integration
+
+Example Jenkins Stage
+
+```groovy
+stage('Secret Scan') {
+
+    steps {
+
+        sh 'gitleaks detect --source .'
+
+    }
+
+}
+```
+
+Secret scanning should occur before the build stage.
+
+---
+
+# Secure Secret Storage
+
+Secrets should be stored in dedicated secret management platforms.
+
+Recommended solutions:
+
+- AWS Secrets Manager
+- HashiCorp Vault
+- Azure Key Vault
+- Google Secret Manager
+- Kubernetes Secrets (encrypted)
+
+Avoid storing secrets in:
+
+- Git repositories
+- Dockerfiles
+- Source code
+- Environment files committed to version control
+
+---
+
+# Secret Injection Flow
+
+```text
+Pipeline
+
+↓
+
+Authentication
+
+↓
+
+Secrets Manager
+
+↓
+
+Retrieve Secret
+
+↓
+
+Temporary Environment Variable
+
+↓
+
+Pipeline Stage
+```
+
+Secrets should exist only for the duration of the pipeline.
+
+---
+
+# Secret Rotation
+
+Production secrets should be rotated regularly.
+
+Benefits:
+
+- Limits credential exposure
+- Reduces insider threats
+- Improves compliance
+- Minimizes long-term risk
+
+Automated rotation is recommended whenever supported.
+
+---
+
+# Security Gates
+
+Security Gates automatically determine whether the pipeline can continue.
+
+Common validation points:
+
+- SAST
+- Secret Detection
+- Dependency Scanning
+- Test Coverage
+- Quality Gate
+
+---
+
+# Security Gate Workflow
+
+```text
+Pipeline
+
+↓
+
+Security Scan
+
+↓
+
+Quality Gate
+
+↓
+
+Pass?
+
+     │
+
+┌────┴────┐
+
+▼         ▼
+
+Yes       No
+
+│          │
+
+Deploy    Stop Pipeline
+```
+
+Only secure builds should proceed to packaging.
+
+---
+
+# Enterprise Best Practices
+
+- Integrate SAST into every pull request.
+- Scan all dependencies using OWASP Dependency-Check.
+- Detect secrets using Gitleaks before every build.
+- Never store secrets in source code or repositories.
+- Retrieve secrets from centralized secret management platforms.
+- Rotate credentials regularly.
+- Configure security gates to block critical vulnerabilities.
+- Fail builds when high-risk findings are detected.
+- Keep dependency versions updated.
+- Continuously monitor newly disclosed CVEs affecting production applications.
+
+---
+
