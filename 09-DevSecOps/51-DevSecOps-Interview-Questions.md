@@ -4331,3 +4331,622 @@ Production
 
 ---
 
+# Gitleaks Interview Questions
+
+---
+
+# Question 176
+
+## What is Gitleaks?
+
+### Answer
+
+Gitleaks is an open-source secrets detection tool that scans Git repositories, commits, branches, and files to identify sensitive information accidentally committed into source code.
+
+---
+
+# Gitleaks Workflow
+
+```text
+Developer
+
+↓
+
+Git Commit
+
+↓
+
+Gitleaks Scan
+
+↓
+
+Secret Detection
+
+↓
+
+Security Report
+
+↓
+
+Developer Fix
+
+↓
+
+Commit Again
+```
+
+---
+
+# Question 177
+
+## Why is Gitleaks important in DevSecOps?
+
+### Answer
+
+Hardcoded secrets are one of the most common causes of security breaches.
+
+Gitleaks prevents sensitive credentials from entering Git repositories by detecting them during development and CI/CD.
+
+---
+
+# Question 178
+
+## What types of secrets can Gitleaks detect?
+
+### Answer
+
+Gitleaks detects various sensitive credentials, including:
+
+- AWS Access Keys
+- AWS Secret Keys
+- Azure Credentials
+- GCP Service Keys
+- GitHub Personal Access Tokens
+- GitLab Tokens
+- SSH Private Keys
+- API Keys
+- JWT Tokens
+- Database Passwords
+- OAuth Tokens
+- Slack Tokens
+- Kubernetes Secrets
+
+---
+
+# Question 179
+
+## How does Gitleaks work?
+
+### Answer
+
+Gitleaks scans files and Git history using predefined and custom detection rules based on regular expressions and entropy analysis.
+
+When a secret matches a rule, it is reported for remediation.
+
+---
+
+# Secret Detection Workflow
+
+```text
+Repository
+
+↓
+
+Files
+
+↓
+
+Git History
+
+↓
+
+Detection Rules
+
+↓
+
+Secret Found
+
+↓
+
+Security Report
+```
+
+---
+
+# Question 180
+
+## What is entropy in Gitleaks?
+
+### Answer
+
+Entropy measures the randomness of a string.
+
+High-entropy strings often indicate secrets such as passwords, tokens, or cryptographic keys.
+
+Gitleaks combines entropy analysis with pattern matching to improve detection accuracy.
+
+---
+
+# Question 181
+
+## Can Gitleaks scan Git history?
+
+### Answer
+
+Yes.
+
+Gitleaks can scan:
+
+- Current repository
+- Entire Git history
+- Individual commits
+- Branches
+- Pull Requests
+
+Scanning Git history helps identify secrets committed months or even years earlier.
+
+---
+
+# Git History Scan
+
+```text
+Repository
+
+↓
+
+Commit 1
+
+↓
+
+Commit 2
+
+↓
+
+Commit 3
+
+↓
+
+Current Branch
+
+↓
+
+Secret Detection
+```
+
+---
+
+# Question 182
+
+## Why should Git history be scanned?
+
+### Answer
+
+Deleting a secret from the latest version of the code does not remove it from previous commits.
+
+Attackers who clone the repository can still access historical secrets unless the Git history is rewritten.
+
+---
+
+# Question 183
+
+## What should you do if Gitleaks finds an AWS Access Key in a repository?
+
+### Answer
+
+The recommended response is:
+
+1. Revoke the exposed key immediately.
+2. Generate new credentials.
+3. Remove the secret from the repository.
+4. Rewrite Git history if necessary.
+5. Investigate for unauthorized usage.
+6. Re-scan the repository.
+7. Monitor cloud activity for suspicious access.
+
+---
+
+# Incident Response Workflow
+
+```text
+Secret Found
+
+↓
+
+Revoke Credential
+
+↓
+
+Generate New Secret
+
+↓
+
+Remove Secret
+
+↓
+
+Rewrite Git History
+
+↓
+
+Re-Scan
+
+↓
+
+Monitor Logs
+```
+
+---
+
+# Question 184
+
+## Can Gitleaks fail a CI/CD pipeline?
+
+### Answer
+
+Yes.
+
+Organizations commonly configure CI/CD pipelines to fail automatically whenever secrets are detected.
+
+Example:
+
+```text
+Secret Found
+
+↓
+
+Pipeline Failed
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Continue Pipeline
+```
+
+---
+
+# Question 185
+
+## Where should Gitleaks be placed in a DevSecOps pipeline?
+
+### Answer
+
+Gitleaks should run immediately after source code checkout and before the build stage.
+
+This prevents secret leakage before any artifacts are created.
+
+---
+
+# Enterprise Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Checkout
+
+↓
+
+Gitleaks
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+Trivy
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 186
+
+## Can Gitleaks scan Pull Requests?
+
+### Answer
+
+Yes.
+
+Gitleaks can scan Pull Requests before code is merged into the main branch, preventing secrets from entering production repositories.
+
+---
+
+# Question 187
+
+## What is a custom rule in Gitleaks?
+
+### Answer
+
+Custom rules allow organizations to detect secrets unique to their environment, such as:
+
+- Internal API Keys
+- Organization Tokens
+- Proprietary Credentials
+- Custom Authentication Formats
+
+---
+
+# Question 188
+
+## What are false positives in Gitleaks?
+
+### Answer
+
+False positives occur when non-sensitive strings match detection patterns.
+
+Examples include:
+
+- Sample values
+- Test credentials
+- Documentation examples
+- Random strings
+
+Organizations should review findings before suppression.
+
+---
+
+# Question 189
+
+## How can false positives be reduced?
+
+### Answer
+
+False positives can be minimized by:
+
+- Updating detection rules
+- Using allowlists
+- Refining custom rules
+- Reviewing entropy thresholds
+- Validating findings during code review
+
+---
+
+# Question 190
+
+## How does Gitleaks integrate with Jenkins?
+
+### Answer
+
+A typical Jenkins workflow is:
+
+```text
+Checkout
+
+↓
+
+Gitleaks Scan
+
+↓
+
+Secret Report
+
+├── No Secrets
+
+│      ↓
+
+│ Continue Build
+
+└── Secrets Found
+
+       ↓
+
+Pipeline Failed
+```
+
+---
+
+# Question 191
+
+## How does Gitleaks integrate with GitHub Actions and GitLab CI?
+
+### Answer
+
+Gitleaks runs as an early pipeline stage after repository checkout.
+
+If secrets are detected, the pipeline can stop immediately before build, testing, or deployment stages.
+
+---
+
+# Question 192
+
+## What output formats does Gitleaks support?
+
+### Answer
+
+Common output formats include:
+
+- JSON
+- CSV
+- SARIF
+- JUnit
+- CLI Output
+
+These reports integrate with CI/CD systems, dashboards, and security platforms.
+
+---
+
+# Question 193
+
+## What is secret rotation?
+
+### Answer
+
+Secret rotation is the process of replacing exposed or aging credentials with newly generated ones.
+
+Regular rotation reduces the impact of credential compromise and supports security compliance.
+
+---
+
+# Secret Rotation Process
+
+```text
+Old Credential
+
+↓
+
+Generate New Secret
+
+↓
+
+Update Applications
+
+↓
+
+Deploy
+
+↓
+
+Revoke Old Credential
+```
+
+---
+
+# Question 194
+
+## What are the limitations of Gitleaks?
+
+### Answer
+
+Gitleaks cannot:
+
+- Detect runtime attacks
+- Identify infrastructure misconfigurations
+- Perform vulnerability scanning
+- Replace SAST or DAST tools
+- Guarantee detection of every possible secret
+
+It should be used alongside other DevSecOps security tools.
+
+---
+
+# Question 195
+
+## What are enterprise best practices for Gitleaks?
+
+### Answer
+
+Organizations should:
+
+- Scan every commit and Pull Request.
+- Scan the entire Git history regularly.
+- Rotate exposed credentials immediately.
+- Fail pipelines when secrets are detected.
+- Use custom detection rules for internal secrets.
+- Maintain allowlists carefully.
+- Integrate Gitleaks with Jenkins, GitHub Actions, and GitLab CI.
+- Train developers to avoid committing secrets.
+- Store secrets in secure secret management systems.
+- Continuously improve detection rules.
+
+---
+
+# Enterprise DevSecOps Pipeline with Gitleaks
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Checkout
+
+↓
+
+Gitleaks
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency-Check
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Scan repositories before every build.
+- Protect all branches with automated secret scanning.
+- Scan Git history periodically for legacy secrets.
+- Revoke and rotate exposed credentials immediately.
+- Store secrets in dedicated secret management solutions instead of source code.
+- Use custom detection rules for organization-specific credentials.
+- Fail CI/CD pipelines when valid secrets are detected.
+- Audit all secret-related incidents and maintain remediation records.
+- Integrate Gitleaks findings with enterprise SIEM and vulnerability management platforms.
+- Use Gitleaks together with SonarQube, Trivy, Checkov, TFSec, OWASP Dependency-Check, and runtime security tools for comprehensive DevSecOps protection.
+
+---
