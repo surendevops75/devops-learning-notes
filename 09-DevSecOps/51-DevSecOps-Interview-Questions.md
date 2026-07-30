@@ -7921,3 +7921,568 @@ Production
 
 ---
 
+# Software Bill of Materials (SBOM) Interview Questions
+
+---
+
+# Question 296
+
+## What is an SBOM?
+
+### Answer
+
+A Software Bill of Materials (SBOM) is a machine-readable inventory of all software components, libraries, dependencies, versions, and licenses included in an application.
+
+It provides complete visibility into the software supply chain.
+
+---
+
+# SBOM Architecture
+
+```text
+Application
+
+↓
+
+Source Code
+
+↓
+
+Dependencies
+
+↓
+
+SBOM Generation
+
+↓
+
+Security Analysis
+
+↓
+
+Compliance
+
+↓
+
+Production
+```
+
+---
+
+# Question 297
+
+## Why is an SBOM important?
+
+### Answer
+
+An SBOM enables organizations to:
+
+- Identify vulnerable dependencies
+- Improve supply chain visibility
+- Accelerate incident response
+- Support compliance
+- Simplify vulnerability management
+- Track software components throughout their lifecycle
+
+---
+
+# Question 298
+
+## What information does an SBOM contain?
+
+### Answer
+
+An SBOM typically includes:
+
+- Package name
+- Package version
+- Supplier
+- License
+- Dependency relationships
+- Checksums
+- Component identifiers
+- Metadata
+
+---
+
+# Question 299
+
+## Why is SBOM important after a new CVE is announced?
+
+### Answer
+
+When a new CVE is published, security teams can quickly search existing SBOMs to determine which applications contain the affected component.
+
+This significantly reduces investigation time.
+
+---
+
+# CVE Response Workflow
+
+```text
+New CVE Published
+
+↓
+
+Search SBOM
+
+↓
+
+Affected Applications
+
+↓
+
+Patch
+
+↓
+
+Rebuild
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 300
+
+## Which components are included in an SBOM?
+
+### Answer
+
+An SBOM may include:
+
+- Operating system packages
+- Third-party libraries
+- Open-source dependencies
+- Frameworks
+- Runtime packages
+- Container image components
+- Application metadata
+
+---
+
+# Question 301
+
+## What are the common SBOM formats?
+
+### Answer
+
+The two most widely adopted formats are:
+
+- SPDX (Software Package Data Exchange)
+- CycloneDX
+
+Both are machine-readable and widely supported by enterprise security tools.
+
+---
+
+# Question 302
+
+## What is SPDX?
+
+### Answer
+
+SPDX (Software Package Data Exchange) is an open standard for exchanging software component, license, and copyright information.
+
+It is commonly used for compliance and license management.
+
+---
+
+# Question 303
+
+## What is CycloneDX?
+
+### Answer
+
+CycloneDX is an SBOM standard focused on application security and software supply chain management.
+
+It provides detailed information about components, vulnerabilities, services, and dependencies.
+
+---
+
+# SPDX vs CycloneDX
+
+| SPDX | CycloneDX |
+|-------|------------|
+| Strong license management | Strong security focus |
+| Software inventory | Supply chain security |
+| Compliance oriented | Vulnerability management |
+| Open standard | Open standard |
+
+---
+
+# Question 304
+
+## Which tools can generate SBOMs?
+
+### Answer
+
+Common SBOM generation tools include:
+
+- Trivy
+- Syft
+- Anchore
+- CycloneDX CLI
+- OWASP Dependency-Track
+- Docker Buildx (with supported workflows)
+
+---
+
+# Question 305
+
+## At which stage should an SBOM be generated?
+
+### Answer
+
+An SBOM should be generated immediately after the application or container image is built and before deployment.
+
+This ensures the inventory accurately represents the released software.
+
+---
+
+# SBOM Generation Pipeline
+
+```text
+Source Code
+
+↓
+
+Build
+
+↓
+
+Container Image
+
+↓
+
+SBOM Generation
+
+↓
+
+Security Scan
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+```
+
+---
+
+# Question 306
+
+## Can SBOMs be generated for container images?
+
+### Answer
+
+Yes.
+
+Modern tools generate SBOMs for container images by analyzing:
+
+- Operating system packages
+- Application dependencies
+- Installed software
+- Image metadata
+
+---
+
+# Question 307
+
+## How does an SBOM improve incident response?
+
+### Answer
+
+During a security incident, an SBOM allows teams to immediately identify:
+
+- Affected applications
+- Vulnerable components
+- Dependency versions
+- Required remediation
+
+This accelerates vulnerability assessment and patch planning.
+
+---
+
+# Question 308
+
+## How does an SBOM support compliance?
+
+### Answer
+
+Many security frameworks recommend or require organizations to maintain a software inventory.
+
+SBOMs help demonstrate visibility into software components during audits.
+
+Examples include:
+
+- NIST SSDF
+- Executive Order 14028 guidance
+- SLSA recommendations
+- Enterprise software governance programs
+
+---
+
+# Question 309
+
+## Can an SBOM detect vulnerabilities?
+
+### Answer
+
+No.
+
+An SBOM is an inventory of software components.
+
+Security tools compare the SBOM against vulnerability databases to identify affected components.
+
+---
+
+# SBOM Analysis
+
+```text
+SBOM
+
+↓
+
+Vulnerability Database
+
+↓
+
+Component Match
+
+↓
+
+Security Report
+```
+
+---
+
+# Question 310
+
+## How often should an SBOM be generated?
+
+### Answer
+
+Organizations should generate an SBOM:
+
+- For every release
+- After dependency updates
+- After major application changes
+- During production image creation
+
+This ensures the inventory remains accurate.
+
+---
+
+# Question 311
+
+## Where should SBOMs be stored?
+
+### Answer
+
+SBOMs should be stored alongside release artifacts in secure repositories.
+
+They should be versioned, protected from unauthorized modification, and retained for future audits and incident investigations.
+
+---
+
+# Question 312
+
+## How does SBOM integrate with DevSecOps?
+
+### Answer
+
+SBOM generation is integrated into the CI/CD pipeline after security scanning and before image signing or deployment.
+
+This provides visibility into every released application.
+
+---
+
+# Enterprise DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM Generation
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Production
+```
+
+---
+
+# Question 313
+
+## What are the limitations of SBOM?
+
+### Answer
+
+An SBOM cannot:
+
+- Prevent vulnerabilities
+- Detect runtime attacks
+- Replace vulnerability scanners
+- Replace SAST or DAST
+- Automatically remediate security issues
+
+It provides visibility, which must be combined with other security controls.
+
+---
+
+# Question 314
+
+## How does SBOM support Software Supply Chain Security?
+
+### Answer
+
+SBOMs improve software supply chain security by providing complete visibility into software components, enabling rapid vulnerability assessment, dependency tracking, compliance reporting, and artifact verification.
+
+---
+
+# Question 315
+
+## What are enterprise best practices for SBOM?
+
+### Answer
+
+Organizations should:
+
+- Generate an SBOM for every production release.
+- Store SBOMs securely with release artifacts.
+- Use standard formats such as SPDX or CycloneDX.
+- Continuously compare SBOMs against vulnerability databases.
+- Include SBOMs in incident response workflows.
+- Automate SBOM generation in CI/CD.
+- Protect SBOM integrity.
+- Version SBOMs alongside application releases.
+- Retain historical SBOMs for audits.
+- Combine SBOMs with image signing, SCA, and supply chain security controls.
+
+---
+
+# Enterprise SBOM Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+Trivy
+
+↓
+
+SBOM Generation
+
+↓
+
+Vulnerability Analysis
+
+↓
+
+Cosign Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Treat the SBOM as a mandatory artifact for every production release.
+- Generate SBOMs automatically within CI/CD pipelines.
+- Store SBOMs securely with build artifacts and container images.
+- Use SPDX or CycloneDX to ensure interoperability across security tools.
+- Continuously monitor SBOM components for newly disclosed CVEs.
+- Integrate SBOMs with vulnerability management and incident response platforms.
+- Retain historical SBOMs to support audits and forensic investigations.
+- Validate SBOM integrity and protect them from unauthorized modification.
+- Combine SBOMs with image signing, provenance, and runtime monitoring.
+- Make SBOM management a core component of enterprise software supply chain security.
+
+---
+
