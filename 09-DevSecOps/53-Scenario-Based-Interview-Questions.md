@@ -3691,3 +3691,274 @@ Post-Incident Review
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 141
+
+## During a production deployment, ArgoCD reports the application as Synced, but Kubernetes Deployments still reference the previous ReplicaSet. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Deployment revision
+- ReplicaSet history
+- Rollout status
+- Git commit
+- Sync operation
+- Kubernetes Events
+- Controller logs
+- Resource ownership
+
+---
+
+# Scenario 142
+
+## A Jenkins pipeline fails during the Docker Build stage because the build context exceeds several gigabytes. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Docker build context
+- .dockerignore file
+- Large artifacts
+- Build cache
+- Workspace cleanup
+- Repository structure
+- Generated files
+- Pipeline configuration
+
+---
+
+# Scenario 143
+
+## Users report that file uploads fail after migrating the application to Amazon EKS, while all API requests continue to work normally. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Persistent Volume
+- StorageClass
+- File permissions
+- Upload directory
+- Ingress limits
+- Application logs
+- Object storage integration
+- Network connectivity
+
+---
+
+# Scenario 144
+
+## A production deployment introduces a new Kubernetes NetworkPolicy. Shortly afterward, several microservices become unreachable. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- NetworkPolicy rules
+- Namespace selectors
+- Pod selectors
+- Allowed ports
+- DNS traffic
+- Egress rules
+- Ingress rules
+- Application logs
+
+---
+
+# Scenario 145
+
+## During a security review, you discover that multiple Kubernetes workloads are using the default Service Account. Why is this considered a security risk?
+
+### Expected Approach
+
+Review:
+
+- Service Account usage
+- RBAC permissions
+- Token mounting
+- Namespace policies
+- Least Privilege
+- Workload identity
+- Audit logs
+- Admission policies
+
+---
+
+# Scenario 146
+
+## Amazon EKS worker nodes are healthy, but new Pods cannot be scheduled because the scheduler reports "Insufficient CPU." Existing workloads are underutilised. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Resource requests
+- Resource limits
+- Node allocatable resources
+- Reserved capacity
+- Resource fragmentation
+- Pod priorities
+- Cluster Autoscaler
+- Scheduling events
+
+---
+
+# Scenario 147
+
+## A production API suddenly starts timing out after integrating with a third-party payment service. Internal services remain healthy. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- External API latency
+- Network connectivity
+- DNS resolution
+- TLS handshake
+- Connection timeout
+- Retry policy
+- Circuit breaker
+- Application logs
+
+---
+
+# Scenario 148
+
+## A newly deployed application version consumes twice the expected CPU even though request volume has not changed. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- CPU profile
+- Recent code changes
+- Background processes
+- Thread usage
+- Garbage collection
+- Infinite loops
+- Metrics comparison
+- Performance testing
+
+---
+
+# Scenario 149
+
+## During a routine audit, CloudTrail shows that an IAM Role used by the CI/CD pipeline attempted actions outside its normal behaviour. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- CloudTrail events
+- IAM policy changes
+- Pipeline execution history
+- Jenkins or GitHub Actions logs
+- Temporary credentials
+- Role assumption history
+- Recent deployments
+- Possible credential compromise
+
+---
+
+# Scenario 150
+
+## A Production incident impacts multiple microservices across different Kubernetes namespaces. Teams begin troubleshooting independently, resulting in conflicting changes. How would you manage the situation?
+
+### Expected Approach
+
+Follow a coordinated response:
+
+- Freeze non-essential deployments
+- Appoint incident commander
+- Establish communication channel
+- Track investigation timeline
+- Assign ownership
+- Prevent duplicate changes
+- Validate every fix
+- Perform root cause analysis
+- Restore services methodically
+- Conduct post-incident review
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Alert
+
+↓
+
+Assess Business Impact
+
+↓
+
+Freeze Non-Essential Changes
+
+↓
+
+Assign Incident Commander
+
+↓
+
+Review Recent Deployments
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Application Layer
+
+↓
+
+Security Review
+
+↓
+
+Identify Root Cause
+
+↓
+
+Recover Services
+
+↓
+
+Validate Business Functionality
+
+↓
+
+Document Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate Kubernetes rollout status rather than relying solely on GitOps synchronization.
+- Keep Docker build contexts small by using an effective `.dockerignore` file.
+- Test persistent storage and file upload functionality after platform migrations.
+- Introduce Kubernetes NetworkPolicies gradually and validate service communication.
+- Replace default Service Accounts with dedicated identities following the Principle of Least Privilege.
+- Optimise Kubernetes resource requests to improve scheduler efficiency.
+- Protect external service integrations with retries, timeouts, and circuit breakers.
+- Continuously profile application performance to detect inefficient code early.
+- Monitor CI/CD identities for abnormal cloud activity using audit logs.
+- Use structured incident management with clear ownership and controlled changes during production outages.
+
+---
+
