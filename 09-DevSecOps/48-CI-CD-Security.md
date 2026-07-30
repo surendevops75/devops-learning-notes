@@ -1319,3 +1319,481 @@ Only secure builds should proceed to packaging.
 
 ---
 
+# Infrastructure as Code (IaC) Security
+
+Infrastructure as Code should be validated before infrastructure is provisioned.
+
+Security scanning prevents insecure cloud resources from being deployed.
+
+---
+
+# IaC Security Workflow
+
+```text
+Terraform Code
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Policy Validation
+
+↓
+
+Approved?
+
+      │
+
+ ┌────┴────┐
+
+ ▼         ▼
+
+Yes       No
+
+ │          │
+
+Apply     Fail Pipeline
+```
+
+Infrastructure should never be provisioned without security validation.
+
+---
+
+# Common IaC Security Issues
+
+Infrastructure scanners commonly detect:
+
+- Public S3 Buckets
+- Open Security Groups
+- Unencrypted Storage
+- Weak IAM Policies
+- Missing Logging
+- Public Databases
+- Hardcoded Secrets
+- Disabled Encryption
+
+---
+
+# Checkov Integration
+
+Example Jenkins Stage
+
+```groovy
+stage('Checkov') {
+
+    steps {
+
+        sh 'checkov -d .'
+
+    }
+
+}
+```
+
+Checkov validates infrastructure against security best practices.
+
+---
+
+# TFSec Integration
+
+Example Jenkins Stage
+
+```groovy
+stage('TFSec') {
+
+    steps {
+
+        sh 'tfsec .'
+
+    }
+
+}
+```
+
+TFSec identifies Terraform-specific security issues.
+
+---
+
+# Container Security
+
+Containers should be secured before deployment.
+
+Security validation should include:
+
+- Base Image Validation
+- Vulnerability Scanning
+- Malware Detection
+- Configuration Review
+- License Compliance
+
+---
+
+# Secure Container Workflow
+
+```text
+Dockerfile
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+Container Registry
+```
+
+Only trusted container images should enter the registry.
+
+---
+
+# Container Image Scanning
+
+Trivy scans container images for:
+
+- Operating System CVEs
+- Application CVEs
+- Misconfigurations
+- Secrets
+- License Issues
+
+Critical vulnerabilities should fail the pipeline.
+
+---
+
+# Trivy Integration
+
+Example Jenkins Stage
+
+```groovy
+stage('Trivy Scan') {
+
+    steps {
+
+        sh 'trivy image payment:v1'
+
+    }
+
+}
+```
+
+Container images should be scanned before publishing.
+
+---
+
+# Base Image Security
+
+Use trusted and minimal base images.
+
+Examples:
+
+- Alpine Linux
+- Distroless Images
+- Official Vendor Images
+
+Avoid:
+
+- Outdated Images
+- Unsupported Operating Systems
+- Unknown Public Images
+
+Smaller images reduce the attack surface.
+
+---
+
+# Software Bill of Materials (SBOM)
+
+An SBOM documents every software component inside an application or container image.
+
+Benefits include:
+
+- Vulnerability Tracking
+- Compliance
+- Software Inventory
+- Supply Chain Visibility
+
+---
+
+# SBOM Workflow
+
+```text
+Container Image
+
+↓
+
+Generate SBOM
+
+↓
+
+Archive
+
+↓
+
+Security Review
+
+↓
+
+Compliance Audit
+```
+
+An SBOM should be generated for every production release.
+
+---
+
+# Image Signing
+
+Image signing verifies image integrity and authenticity.
+
+```text
+Docker Build
+
+↓
+
+Cosign Sign
+
+↓
+
+Registry
+
+↓
+
+Verify Signature
+
+↓
+
+Deploy
+```
+
+Unsigned images should never be deployed.
+
+---
+
+# Supply Chain Security
+
+Every stage of the software delivery pipeline should be protected.
+
+```text
+Source Code
+
+↓
+
+Build
+
+↓
+
+Dependency Validation
+
+↓
+
+Container Scan
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+Deployment
+```
+
+Supply chain security prevents unauthorized software from reaching production.
+
+---
+
+# Secure Artifact Repository
+
+Artifacts should be stored in trusted repositories.
+
+Recommended repositories:
+
+- JFrog Artifactory
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+
+Repositories should enforce authentication and access control.
+
+---
+
+# Artifact Security
+
+Every artifact should be:
+
+- Versioned
+- Signed
+- Immutable
+- Scanned
+- Audited
+
+Artifacts should never be modified after publication.
+
+---
+
+# Deployment Security
+
+Only validated artifacts should be deployed.
+
+Deployment validation includes:
+
+- Signature Verification
+- Security Approval
+- Policy Validation
+- Environment Verification
+
+Deployments should be fully automated and auditable.
+
+---
+
+# GitOps Deployment Security
+
+GitOps ensures deployments originate only from approved Git repositories.
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Pull Request
+
+↓
+
+Approval
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Production
+```
+
+Git becomes the single source of truth for deployments.
+
+---
+
+# Policy Enforcement
+
+Admission controllers enforce deployment policies before workloads enter the cluster.
+
+Common policy engines:
+
+- Open Policy Agent (OPA)
+- Kyverno
+
+Example policy checks:
+
+- Containers must run as non-root.
+- Images must be signed.
+- Privileged Pods are not allowed.
+- Approved registries only.
+
+---
+
+# Secure Deployment Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+CI Pipeline
+
+↓
+
+SAST
+
+↓
+
+SCA
+
+↓
+
+Secret Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Container Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Policy Validation
+
+↓
+
+Production
+```
+
+Every deployment should pass all security controls before reaching production.
+
+---
+
+# Enterprise Best Practices
+
+- Scan Infrastructure as Code before provisioning.
+- Use Checkov and TFSec for infrastructure validation.
+- Scan every container image using Trivy.
+- Use minimal, trusted base images.
+- Generate an SBOM for every release.
+- Sign all production images using Cosign.
+- Store artifacts only in trusted repositories.
+- Enforce immutable artifacts.
+- Deploy through GitOps workflows.
+- Validate deployments using OPA or Kyverno before production.
