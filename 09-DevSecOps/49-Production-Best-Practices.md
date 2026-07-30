@@ -386,3 +386,443 @@ Every production deployment should follow a standardized checklist.
 
 ---
 
+# Infrastructure as Code
+
+All production infrastructure should be provisioned using Infrastructure as Code (IaC).
+
+Infrastructure becomes version-controlled, repeatable, and auditable.
+
+---
+
+# Infrastructure Provisioning Workflow
+
+```text
+Terraform Code
+
+↓
+
+Git Repository
+
+↓
+
+Pull Request
+
+↓
+
+Review
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Terraform Plan
+
+↓
+
+Terraform Apply
+
+↓
+
+Production Infrastructure
+```
+
+Infrastructure changes should never be performed manually.
+
+---
+
+# Immutable Infrastructure
+
+Immutable Infrastructure replaces servers instead of modifying them.
+
+```text
+Old Server
+
+↓
+
+New Image
+
+↓
+
+Deploy New Server
+
+↓
+
+Redirect Traffic
+
+↓
+
+Terminate Old Server
+```
+
+Replacing infrastructure reduces configuration drift.
+
+---
+
+# Configuration Management
+
+Production servers should be configured consistently.
+
+Common tools:
+
+- Ansible
+- Terraform
+- Helm
+- Kubernetes Operators
+
+Configuration should always be automated.
+
+---
+
+# Environment Standardization
+
+Every environment should follow the same deployment standards.
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Configuration differences between environments should be minimized.
+
+---
+
+# GitOps
+
+Git should be the single source of truth for deployments.
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Pull Request
+
+↓
+
+Approval
+
+↓
+
+Merge
+
+↓
+
+ArgoCD
+
+↓
+
+Production
+```
+
+Every deployment should originate from Git.
+
+---
+
+# Deployment Strategies
+
+Production deployments should minimize downtime and risk.
+
+Common deployment strategies:
+
+- Rolling Deployment
+- Blue-Green Deployment
+- Canary Deployment
+- Recreate Deployment
+
+Choose the strategy based on application requirements.
+
+---
+
+# Rolling Deployment
+
+Rolling Deployment gradually replaces application instances.
+
+```text
+Version 1
+
+↓↓↓
+
+Version 1 + Version 2
+
+↓↓↓
+
+Version 2
+```
+
+This strategy minimizes service disruption.
+
+---
+
+# Blue-Green Deployment
+
+Blue-Green Deployment maintains two identical production environments.
+
+```text
+Users
+
+↓
+
+Load Balancer
+
+├── Blue (Current)
+
+└── Green (New)
+
+↓
+
+Switch Traffic
+
+↓
+
+Green Production
+```
+
+Rollback is fast because the previous environment remains available.
+
+---
+
+# Canary Deployment
+
+Canary Deployment releases a new version to a small percentage of users.
+
+```text
+Users
+
+↓
+
+90% → Version 1
+
+10% → Version 2
+
+↓
+
+Monitor
+
+↓
+
+100% Rollout
+```
+
+Traffic gradually shifts after successful validation.
+
+---
+
+# Deployment Approval Workflow
+
+```text
+Pipeline
+
+↓
+
+Security Validation
+
+↓
+
+Quality Gate
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+Critical production deployments may require manual approval.
+
+---
+
+# High Availability
+
+Applications should remain available during failures.
+
+Production recommendations:
+
+- Multiple Replicas
+- Multi-AZ Deployment
+- Health Checks
+- Load Balancing
+- Automatic Failover
+
+---
+
+# High Availability Architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+AZ-1
+
+↓
+
+Pods
+
+──────────────
+
+AZ-2
+
+↓
+
+Pods
+
+──────────────
+
+AZ-3
+
+↓
+
+Pods
+```
+
+Traffic automatically routes to healthy application instances.
+
+---
+
+# Auto Scaling
+
+Production workloads should automatically scale.
+
+Types:
+
+- Horizontal Pod Autoscaler (HPA)
+- Vertical Pod Autoscaler (VPA)
+- Cluster Autoscaler
+
+Scaling policies should be based on application metrics.
+
+---
+
+# Health Checks
+
+Every application should expose health endpoints.
+
+Examples:
+
+- Liveness Probe
+- Readiness Probe
+- Startup Probe
+
+Health checks improve reliability and automated recovery.
+
+---
+
+# Backup Strategy
+
+Production data must be backed up regularly.
+
+Backup targets include:
+
+- Databases
+- Object Storage
+- Kubernetes Resources
+- Secrets
+- Configuration Files
+
+Backups should be encrypted and tested.
+
+---
+
+# Disaster Recovery
+
+Disaster Recovery enables applications to recover after major failures.
+
+Recovery planning should include:
+
+- Infrastructure Restoration
+- Database Recovery
+- Configuration Recovery
+- Application Recovery
+- DNS Recovery
+
+Recovery procedures should be documented and tested.
+
+---
+
+# Disaster Recovery Workflow
+
+```text
+Production Failure
+
+↓
+
+Incident Detection
+
+↓
+
+Infrastructure Recovery
+
+↓
+
+Database Restore
+
+↓
+
+Application Deployment
+
+↓
+
+Validation
+
+↓
+
+Traffic Restoration
+```
+
+Recovery should be automated wherever possible.
+
+---
+
+# Recovery Objectives
+
+| Objective | Description |
+|-----------|-------------|
+| RTO | Maximum acceptable recovery time |
+| RPO | Maximum acceptable data loss |
+
+Organizations should define RTO and RPO targets for every critical application.
+
+---
+
+# Enterprise Best Practices
+
+- Manage infrastructure using Terraform.
+- Store infrastructure code in Git.
+- Avoid manual production changes.
+- Use immutable infrastructure whenever possible.
+- Standardize all deployment environments.
+- Adopt GitOps for deployments.
+- Choose deployment strategies based on application risk.
+- Deploy across multiple Availability Zones.
+- Enable automatic scaling.
+- Test backup and disaster recovery procedures regularly.
+
+---
+
