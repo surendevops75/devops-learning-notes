@@ -1293,3 +1293,432 @@ Review the output to identify resources that differ from the desired state.
 
 ---
 
+# AWS Interview Questions
+
+---
+
+# Question 51
+
+## Why is AWS widely used for DevOps?
+
+### Answer
+
+AWS provides scalable, highly available, secure, and managed cloud services that simplify infrastructure management, automation, and application deployment.
+
+---
+
+# AWS Production Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Question 52
+
+## What is Amazon EC2?
+
+### Answer
+
+Amazon EC2 (Elastic Compute Cloud) provides virtual servers in the cloud where applications, databases, and DevOps tools can run.
+
+---
+
+# Question 53
+
+## What is Amazon EKS?
+
+### Answer
+
+Amazon EKS (Elastic Kubernetes Service) is AWS's managed Kubernetes service that eliminates the need to manage the Kubernetes control plane while providing a highly available cluster.
+
+---
+
+# Question 54
+
+## Why do companies use Amazon EKS?
+
+### Answer
+
+Amazon EKS provides:
+
+- Managed Control Plane
+- High Availability
+- Automatic Updates
+- AWS Integration
+- Security
+- Scalability
+- Reduced Operational Overhead
+
+---
+
+# Question 55
+
+## What is IAM?
+
+### Answer
+
+IAM (Identity and Access Management) controls authentication and authorization for AWS resources using users, groups, roles, and policies.
+
+---
+
+# IAM Authentication Flow
+
+```text
+User
+
+↓
+
+IAM User / Role
+
+↓
+
+Policy Evaluation
+
+↓
+
+AWS Service
+
+↓
+
+Access Granted / Denied
+```
+
+---
+
+# Question 56
+
+## What are Security Groups?
+
+### Answer
+
+Security Groups are virtual firewalls that control inbound and outbound traffic for AWS resources at the instance or service level.
+
+---
+
+# Question 57
+
+## Difference between Security Groups and Network ACLs?
+
+| Security Group | Network ACL |
+|----------------|-------------|
+| Instance-level firewall | Subnet-level firewall |
+| Stateful | Stateless |
+| Allow rules only | Allow and Deny rules |
+| Applied to ENIs | Applied to Subnets |
+
+---
+
+# Networking Interview Questions
+
+---
+
+# Question 58
+
+## What happens when a user accesses a website?
+
+### Answer
+
+```text
+Browser
+
+↓
+
+DNS Lookup
+
+↓
+
+Load Balancer
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pod
+
+↓
+
+Application
+
+↓
+
+Response
+```
+
+The request travels through DNS resolution, networking components, Kubernetes services, and finally reaches the application.
+
+---
+
+# Question 59
+
+## What is DNS?
+
+### Answer
+
+DNS (Domain Name System) translates human-readable domain names into IP addresses so clients can locate services on a network.
+
+---
+
+# Question 60
+
+## What is the difference between Layer 4 and Layer 7 Load Balancers?
+
+| Layer 4 | Layer 7 |
+|----------|----------|
+| Operates at Transport Layer | Operates at Application Layer |
+| Routes using IP and Port | Routes using HTTP/HTTPS |
+| Faster | More intelligent routing |
+| No URL-based routing | Supports path and host routing |
+
+---
+
+# Monitoring Interview Questions
+
+---
+
+# Question 61
+
+## Why is monitoring important?
+
+### Answer
+
+Monitoring provides visibility into system health, application performance, infrastructure utilization, and production incidents, enabling proactive issue detection and faster recovery.
+
+---
+
+# Question 62
+
+## What is Prometheus?
+
+### Answer
+
+Prometheus is an open-source monitoring system that collects and stores time-series metrics from applications and infrastructure.
+
+---
+
+# Question 63
+
+## What is Grafana?
+
+### Answer
+
+Grafana is a visualization platform used to create dashboards, graphs, and alerts from monitoring data sources such as Prometheus.
+
+---
+
+# Monitoring Architecture
+
+```text
+Application
+
+↓
+
+Exporters
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Dashboards
+
+↓
+
+Alertmanager
+
+↓
+
+Notifications
+```
+
+---
+
+# Question 64
+
+## What is the ELK Stack?
+
+### Answer
+
+The ELK Stack consists of:
+
+- Elasticsearch
+- Logstash
+- Kibana
+
+It centralizes, indexes, searches, and visualizes application and infrastructure logs.
+
+---
+
+# Question 65
+
+## Why are logs important?
+
+### Answer
+
+Logs provide detailed information about application behavior, errors, security events, and system operations, making them essential for troubleshooting and auditing.
+
+---
+
+# DevSecOps Interview Questions
+
+---
+
+# Question 66
+
+## What is DevSecOps?
+
+### Answer
+
+DevSecOps integrates security into every stage of the software delivery lifecycle, ensuring vulnerabilities are detected and addressed early rather than after deployment.
+
+---
+
+# DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SAST
+
+↓
+
+SCA
+
+↓
+
+Secret Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Container Scan
+
+↓
+
+Policy Check
+
+↓
+
+Deploy
+
+↓
+
+Runtime Security
+
+↓
+
+Production
+```
+
+---
+
+# Question 67
+
+## What is SAST?
+
+### Answer
+
+Static Application Security Testing (SAST) analyzes source code for security vulnerabilities without executing the application.
+
+---
+
+# Question 68
+
+## What is SCA?
+
+### Answer
+
+Software Composition Analysis (SCA) identifies vulnerabilities and license risks in third-party libraries and open-source dependencies.
+
+---
+
+# Question 69
+
+## What is Container Image Scanning?
+
+### Answer
+
+Container image scanning detects operating system packages and application dependencies with known security vulnerabilities before deployment.
+
+---
+
+# Question 70
+
+## Why should security be integrated into CI/CD?
+
+### Answer
+
+Integrating security into CI/CD enables early vulnerability detection, reduces remediation costs, prevents insecure deployments, and supports continuous compliance.
+
+---
+
+# Enterprise Best Practices
+
+- Apply the Principle of Least Privilege using IAM roles and policies.
+- Use Security Groups and Network ACLs together for layered network security.
+- Continuously monitor applications, infrastructure, and Kubernetes clusters.
+- Centralize logs using the ELK Stack for easier troubleshooting.
+- Integrate security scans into every CI/CD pipeline stage.
+- Block deployments when critical vulnerabilities or policy violations are detected.
+- Use managed cloud services where appropriate to reduce operational overhead.
+- Regularly review dashboards, alerts, and security findings.
+
+---
+
