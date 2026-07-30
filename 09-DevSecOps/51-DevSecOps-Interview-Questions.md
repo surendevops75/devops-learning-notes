@@ -12598,3 +12598,578 @@ Production
 
 ---
 
+# Incident Response Interview Questions
+
+---
+
+# Question 476
+
+## What is Incident Response?
+
+### Answer
+
+Incident Response (IR) is a structured process used to identify, contain, investigate, eradicate, and recover from cybersecurity incidents while minimizing business impact.
+
+A well-defined IR process reduces downtime and data loss.
+
+---
+
+# Incident Response Lifecycle
+
+```text
+Preparation
+
+↓
+
+Detection
+
+↓
+
+Analysis
+
+↓
+
+Containment
+
+↓
+
+Eradication
+
+↓
+
+Recovery
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Question 477
+
+## Why is Incident Response important?
+
+### Answer
+
+Incident Response enables organizations to quickly detect and respond to security incidents, reducing financial loss, operational disruption, and reputational damage.
+
+---
+
+# Question 478
+
+## What are common security incidents?
+
+### Answer
+
+Common incidents include:
+
+- Malware infections
+- Ransomware attacks
+- Credential compromise
+- Container compromise
+- Kubernetes attacks
+- Data breaches
+- Insider threats
+- Denial-of-Service (DoS) attacks
+
+---
+
+# Question 479
+
+## What are the phases of Incident Response?
+
+### Answer
+
+The standard Incident Response lifecycle consists of:
+
+- Preparation
+- Detection
+- Analysis
+- Containment
+- Eradication
+- Recovery
+- Lessons Learned
+
+---
+
+# Question 480
+
+## What happens during the Preparation phase?
+
+### Answer
+
+Preparation involves establishing security controls, incident response procedures, monitoring systems, communication plans, backups, and training before an incident occurs.
+
+---
+
+# Question 481
+
+## What is Incident Detection?
+
+### Answer
+
+Detection is the process of identifying suspicious activity through monitoring tools, alerts, logs, or user reports.
+
+Early detection significantly reduces the impact of an attack.
+
+---
+
+# Detection Sources
+
+```text
+Logs
+
+↓
+
+SIEM
+
+↓
+
+Alerts
+
+↓
+
+Security Team
+```
+
+---
+
+# Question 482
+
+## What is Incident Analysis?
+
+### Answer
+
+Analysis determines:
+
+- What happened
+- When it happened
+- Which systems were affected
+- The attack method
+- The business impact
+
+This information guides the response strategy.
+
+---
+
+# Question 483
+
+## What is Containment?
+
+### Answer
+
+Containment limits the spread of an attack.
+
+Examples include:
+
+- Isolating compromised hosts
+- Blocking malicious IP addresses
+- Disabling compromised accounts
+- Restricting network communication
+
+---
+
+# Containment
+
+```text
+Threat
+
+↓
+
+Isolation
+
+↓
+
+Attack Stopped
+
+↓
+
+Investigation
+```
+
+---
+
+# Question 484
+
+## What is Eradication?
+
+### Answer
+
+Eradication removes the root cause of the incident.
+
+This may include deleting malware, patching vulnerabilities, rotating credentials, and removing malicious workloads.
+
+---
+
+# Question 485
+
+## What is Recovery?
+
+### Answer
+
+Recovery restores systems to normal operation after confirming that threats have been removed.
+
+Systems should be monitored closely to ensure the incident does not recur.
+
+---
+
+# Recovery Workflow
+
+```text
+Restore Systems
+
+↓
+
+Validation
+
+↓
+
+Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Question 486
+
+## What is the Lessons Learned phase?
+
+### Answer
+
+After an incident, organizations document:
+
+- Root cause
+- Timeline
+- Impact
+- Response effectiveness
+- Improvement opportunities
+
+This strengthens future security controls.
+
+---
+
+# Question 487
+
+## What is a Security Incident?
+
+### Answer
+
+A Security Incident is any event that threatens the confidentiality, integrity, or availability (CIA) of systems or data.
+
+Not every security event becomes a confirmed incident.
+
+---
+
+# Question 488
+
+## What is the difference between an Event and an Incident?
+
+### Answer
+
+| Event | Incident |
+|--------|----------|
+| Any observable activity | Confirmed security issue |
+| May be harmless | Requires investigation |
+| Logged for monitoring | Requires response actions |
+| Not always malicious | Has security impact |
+
+---
+
+# Question 489
+
+## Which tools are commonly used for Incident Response?
+
+### Answer
+
+Common tools include:
+
+- Falco
+- SIEM platforms
+- Amazon GuardDuty
+- AWS CloudTrail
+- Kubernetes Audit Logs
+- Prometheus
+- Grafana
+- ELK Stack
+
+---
+
+# Question 490
+
+## Why are logs important during Incident Response?
+
+### Answer
+
+Logs provide evidence needed to:
+
+- Identify attackers
+- Determine timelines
+- Trace affected systems
+- Support forensic investigations
+- Verify recovery activities
+
+---
+
+# Log Investigation
+
+```text
+Application Logs
+
+↓
+
+System Logs
+
+↓
+
+Security Logs
+
+↓
+
+Investigation
+```
+
+---
+
+# Question 491
+
+## How does Falco help during Incident Response?
+
+### Answer
+
+Falco detects suspicious runtime behavior such as:
+
+- Shell execution
+- Privilege escalation
+- Sensitive file access
+- Unexpected network connections
+
+These alerts help responders quickly identify compromised workloads.
+
+---
+
+# Question 492
+
+## What is Forensic Analysis?
+
+### Answer
+
+Forensic Analysis is the process of collecting and examining digital evidence to understand how an attack occurred while preserving evidence integrity.
+
+---
+
+# Question 493
+
+## Why should credentials be rotated after an incident?
+
+### Answer
+
+Compromised credentials may still be usable by attackers.
+
+Rotating passwords, API keys, tokens, and certificates helps prevent further unauthorized access.
+
+---
+
+# Question 494
+
+## How does Incident Response integrate with DevSecOps?
+
+### Answer
+
+DevSecOps integrates monitoring, alerting, automated remediation, vulnerability management, and runtime detection into the software delivery lifecycle.
+
+This enables faster detection and recovery.
+
+---
+
+# Enterprise Incident Response Pipeline
+
+```text
+Developer
+
+↓
+
+CI/CD Security
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco
+
+↓
+
+SIEM
+
+↓
+
+Alert
+
+↓
+
+Incident Response
+
+↓
+
+Recovery
+
+↓
+
+Production
+```
+
+---
+
+# Question 495
+
+## What are enterprise best practices for Incident Response?
+
+### Answer
+
+Organizations should:
+
+- Develop and regularly test Incident Response plans.
+- Continuously monitor applications and infrastructure.
+- Centralize logs using SIEM platforms.
+- Automate alerting where appropriate.
+- Preserve evidence during investigations.
+- Rotate credentials after confirmed compromises.
+- Perform root cause analysis.
+- Conduct post-incident reviews.
+- Update security controls based on lessons learned.
+- Practice Incident Response through regular tabletop exercises.
+
+---
+
+# Enterprise DevSecOps Pipeline with Incident Response
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+SIEM
+
+↓
+
+Incident Response
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Maintain a documented Incident Response plan with clearly defined roles and responsibilities.
+- Integrate runtime monitoring, SIEM, and cloud-native security services for continuous threat detection.
+- Preserve logs and digital evidence to support forensic investigations.
+- Automate containment actions where appropriate while ensuring human oversight for critical decisions.
+- Regularly test Incident Response procedures through simulations and tabletop exercises.
+- Rotate credentials and revoke compromised access immediately after confirmed incidents.
+- Perform root cause analysis and implement corrective actions after every incident.
+- Continuously improve detection rules based on newly identified threats and attack techniques.
+- Ensure development, operations, security, and management teams collaborate during incident handling.
+- Treat Incident Response as a continuous capability that evolves alongside the organization's DevSecOps practices.
+
+---
+
