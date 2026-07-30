@@ -7298,3 +7298,626 @@ Incident Response
 
 ---
 
+# Supply Chain Security Interview Questions
+
+---
+
+# Question 276
+
+## What is Software Supply Chain Security?
+
+### Answer
+
+Software Supply Chain Security is the practice of protecting every component involved in building, packaging, signing, storing, and deploying software.
+
+It ensures that applications, dependencies, build systems, and deployment pipelines have not been compromised.
+
+---
+
+# Enterprise Supply Chain
+
+```text
+Developer
+
+↓
+
+Source Code
+
+↓
+
+Dependencies
+
+↓
+
+Build Server
+
+↓
+
+Container Image
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Production
+```
+
+---
+
+# Question 277
+
+## Why is Supply Chain Security important?
+
+### Answer
+
+Modern applications depend on open-source libraries, build tools, container images, and CI/CD pipelines.
+
+If any component in the software supply chain is compromised, attackers can distribute malicious software to production environments.
+
+---
+
+# Question 278
+
+## What are the major components of Software Supply Chain Security?
+
+### Answer
+
+Supply Chain Security includes:
+
+- Source Code Security
+- Dependency Security
+- Build Security
+- CI/CD Security
+- Container Security
+- Artifact Security
+- Image Signing
+- SBOM
+- Provenance
+- Runtime Verification
+
+---
+
+# Question 279
+
+## What is a Software Supply Chain Attack?
+
+### Answer
+
+A Software Supply Chain Attack occurs when an attacker compromises software before it reaches production by targeting development tools, dependencies, build pipelines, or package repositories.
+
+Instead of attacking the application directly, attackers compromise trusted components.
+
+---
+
+# Supply Chain Attack
+
+```text
+Attacker
+
+↓
+
+Dependency
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Application Build
+
+↓
+
+Production
+```
+
+---
+
+# Question 280
+
+## What are some well-known Software Supply Chain attacks?
+
+### Answer
+
+Examples include:
+
+- SolarWinds Attack
+- Log4Shell
+- Codecov Bash Uploader Incident
+- Dependency Confusion Attacks
+- Malicious npm Packages
+- Malicious PyPI Packages
+
+These incidents demonstrate why software integrity must be verified throughout the SDLC.
+
+---
+
+# Question 281
+
+## What is Dependency Confusion?
+
+### Answer
+
+Dependency Confusion is an attack where malicious packages with names matching private internal packages are published to public repositories.
+
+Build systems may mistakenly download the malicious package instead of the trusted internal version.
+
+---
+
+# Dependency Confusion Workflow
+
+```text
+Private Package
+
+↓
+
+Public Repository
+
+↓
+
+Malicious Package
+
+↓
+
+Build Server
+
+↓
+
+Compromised Build
+```
+
+---
+
+# Question 282
+
+## How can Dependency Confusion be prevented?
+
+### Answer
+
+Organizations should:
+
+- Use private package repositories.
+- Configure repository priority.
+- Reserve internal package names.
+- Verify package sources.
+- Continuously monitor dependencies.
+
+---
+
+# Question 283
+
+## What is Artifact Integrity?
+
+### Answer
+
+Artifact Integrity ensures that build artifacts have not been modified after they were created.
+
+This is commonly achieved through cryptographic hashing and digital signatures.
+
+---
+
+# Artifact Integrity
+
+```text
+Build Artifact
+
+↓
+
+Hash
+
+↓
+
+Digital Signature
+
+↓
+
+Verification
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 284
+
+## What is Artifact Provenance?
+
+### Answer
+
+Artifact Provenance records where a software artifact originated, how it was built, who built it, and which source code and dependencies were used.
+
+It improves traceability and supports security audits.
+
+---
+
+# Question 285
+
+## Why is Build Server Security important?
+
+### Answer
+
+The build server compiles source code and generates production artifacts.
+
+If compromised, attackers can inject malicious code into every application produced by the pipeline.
+
+---
+
+# Secure Build Pipeline
+
+```text
+Developer
+
+↓
+
+Source Code
+
+↓
+
+Secure CI Server
+
+↓
+
+Verified Build
+
+↓
+
+Signed Artifact
+
+↓
+
+Registry
+```
+
+---
+
+# Question 286
+
+## How can Build Servers be secured?
+
+### Answer
+
+Organizations should:
+
+- Enforce Multi-Factor Authentication (MFA).
+- Implement Role-Based Access Control (RBAC).
+- Isolate build agents.
+- Patch build servers regularly.
+- Secure build credentials.
+- Monitor build activities.
+
+---
+
+# Question 287
+
+## Why should third-party dependencies be verified?
+
+### Answer
+
+Third-party libraries may contain:
+
+- Known vulnerabilities
+- Malicious code
+- License violations
+- Outdated software
+
+Verification reduces software supply chain risk.
+
+---
+
+# Question 288
+
+## What is a trusted artifact repository?
+
+### Answer
+
+A trusted artifact repository securely stores approved software packages and container images.
+
+Examples include:
+
+- JFrog Artifactory
+- Amazon ECR
+- Azure Container Registry
+- Harbor
+- Nexus Repository
+
+---
+
+# Artifact Repository Workflow
+
+```text
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Image Signing
+
+↓
+
+Trusted Repository
+
+↓
+
+Deployment
+```
+
+---
+
+# Question 289
+
+## Why should only trusted container images be deployed?
+
+### Answer
+
+Trusted images have been:
+
+- Scanned
+- Verified
+- Signed
+- Approved
+
+Deploying unsigned or unverified images increases the risk of introducing malicious software into production.
+
+---
+
+# Question 290
+
+## What is image verification?
+
+### Answer
+
+Image verification ensures that a container image is authentic and has not been modified after it was signed.
+
+Verification typically occurs before deployment using digital signatures.
+
+---
+
+# Question 291
+
+## What is the SLSA Framework?
+
+### Answer
+
+SLSA (Supply-chain Levels for Software Artifacts) is a security framework that defines best practices for protecting software build pipelines against tampering and unauthorized modifications.
+
+Its goals include improving build integrity, provenance, and trust.
+
+---
+
+# Question 292
+
+## What are the core principles of SLSA?
+
+### Answer
+
+Key SLSA principles include:
+
+- Build integrity
+- Provenance generation
+- Trusted build environments
+- Source integrity
+- Artifact verification
+- Progressive security levels
+
+---
+
+# Question 293
+
+## How is Supply Chain Security integrated into DevSecOps?
+
+### Answer
+
+Supply Chain Security is integrated by:
+
+- Scanning dependencies.
+- Generating SBOMs.
+- Signing container images.
+- Verifying image signatures.
+- Securing CI/CD pipelines.
+- Using trusted artifact repositories.
+- Monitoring runtime integrity.
+
+---
+
+# Enterprise Supply Chain Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+Artifact Repository
+
+↓
+
+Signature Verification
+
+↓
+
+GitOps
+
+↓
+
+Production
+```
+
+---
+
+# Question 294
+
+## What are common Supply Chain Security risks?
+
+### Answer
+
+Common risks include:
+
+- Vulnerable dependencies
+- Compromised CI/CD pipelines
+- Unsigned artifacts
+- Malicious container images
+- Dependency confusion
+- Credential theft
+- Artifact tampering
+- Registry compromise
+
+---
+
+# Question 295
+
+## What are enterprise best practices for Supply Chain Security?
+
+### Answer
+
+Organizations should:
+
+- Secure CI/CD pipelines.
+- Scan every dependency.
+- Generate SBOMs for every release.
+- Sign all production artifacts.
+- Verify signatures before deployment.
+- Use trusted repositories.
+- Implement SLSA recommendations.
+- Continuously monitor software integrity.
+- Secure build infrastructure.
+- Perform regular supply chain risk assessments.
+
+---
+
+# Enterprise DevSecOps Pipeline with Supply Chain Security
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM Generation
+
+↓
+
+Cosign Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+Signature Verification
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Build software only in trusted and isolated CI/CD environments.
+- Generate and retain SBOMs for every production release.
+- Use trusted artifact repositories and verified package sources.
+- Sign and verify all production artifacts and container images.
+- Protect build credentials using secret management solutions.
+- Continuously monitor for newly disclosed vulnerabilities affecting released software.
+- Adopt SLSA recommendations to strengthen software integrity.
+- Audit every stage of the software supply chain regularly.
+- Integrate supply chain security with SAST, SCA, DAST, IaC scanning, container security, and runtime monitoring.
+- Treat software integrity as a continuous security process throughout the SDLC.
+
+---
+
