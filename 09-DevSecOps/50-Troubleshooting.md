@@ -911,5 +911,603 @@ kubectl logs -n kube-system deployment/coredns
 
 ---
 
+# Jenkins Troubleshooting
+
+Jenkins is the heart of many CI/CD pipelines.
+
+Pipeline failures should be investigated stage by stage instead of rerunning the job immediately.
+
+---
+
+# Jenkins Troubleshooting Workflow
+
+```text
+Pipeline Failed
+
+↓
+
+Build Logs
+
+↓
+
+Failed Stage
+
+↓
+
+Error Message
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Rebuild
+
+↓
+
+Validate
+```
+
+---
+
+# Scenario 1
+
+# Jenkins Build Failed
+
+## Symptoms
+
+```text
+Build
+
+↓
+
+FAILED
+```
+
+---
+
+## Investigation
+
+```bash
+Check:
+
+Build Console Output
+
+Pipeline Logs
+
+Stage Logs
+```
+
+---
+
+## Possible Causes
+
+- Compilation Failure
+- Test Failure
+- Missing Dependency
+- Invalid Environment Variable
+- Build Script Error
+
+---
+
+## Resolution
+
+- Review console logs.
+- Fix compilation errors.
+- Install missing dependencies.
+- Verify pipeline configuration.
+- Re-run after validation.
+
+---
+
+# Scenario 2
+
+# Jenkins Agent Offline
+
+## Symptoms
+
+```text
+Controller
+
+↓
+
+Agent
+
+↓
+
+Offline
+```
+
+---
+
+## Investigation
+
+```bash
+systemctl status jenkins
+
+systemctl status ssh
+
+journalctl -u jenkins
+```
+
+---
+
+## Possible Causes
+
+- Network Issue
+- SSH Failure
+- Agent Service Down
+- Authentication Failure
+
+---
+
+## Resolution
+
+- Restart the agent.
+- Verify SSH connectivity.
+- Check firewall rules.
+- Validate agent credentials.
+
+---
+
+# Scenario 3
+
+# Jenkins Workspace Issues
+
+## Symptoms
+
+- Old files remain
+- Unexpected build failures
+- Incorrect artifacts
+
+---
+
+## Investigation
+
+```bash
+ls
+
+pwd
+
+du -sh .
+```
+
+---
+
+## Resolution
+
+Clean the workspace before each build.
+
+```groovy
+cleanWs()
+```
+
+---
+
+# Scenario 4
+
+# Pipeline Cannot Access Credentials
+
+## Symptoms
+
+```text
+Access Denied
+
+↓
+
+Credential Not Found
+```
+
+---
+
+## Investigation
+
+Verify:
+
+- Jenkins Credentials
+- Credential ID
+- Folder Permissions
+- Pipeline Configuration
+
+---
+
+## Resolution
+
+Use Jenkins Credentials instead of hardcoded secrets.
+
+---
+
+# Git Troubleshooting
+
+Git issues are common during CI/CD execution.
+
+---
+
+# Scenario 1
+
+# Merge Conflict
+
+## Symptoms
+
+```text
+Git Merge
+
+↓
+
+Conflict
+```
+
+---
+
+## Investigation
+
+```bash
+git status
+
+git diff
+```
+
+---
+
+## Resolution
+
+Resolve conflicts manually.
+
+```bash
+git add .
+
+git commit
+```
+
+---
+
+# Scenario 2
+
+# Authentication Failed
+
+## Symptoms
+
+```text
+fatal:
+
+Authentication failed
+```
+
+---
+
+## Investigation
+
+Verify:
+
+- Personal Access Token
+- SSH Keys
+- Repository Permissions
+
+---
+
+## Resolution
+
+Regenerate credentials and update repository access.
+
+---
+
+# Scenario 3
+
+# Detached HEAD
+
+## Investigation
+
+```bash
+git status
+
+git branch
+```
+
+---
+
+## Resolution
+
+```bash
+git checkout main
+```
+
+Return to the correct branch before making changes.
+
+---
+
+# Docker Registry Troubleshooting
+
+Container images may fail during push or pull operations.
+
+---
+
+# Scenario 1
+
+# Docker Push Failed
+
+## Symptoms
+
+```text
+docker push
+
+↓
+
+Access Denied
+```
+
+---
+
+## Investigation
+
+```bash
+docker login
+
+docker images
+```
+
+---
+
+## Possible Causes
+
+- Authentication Failure
+- Missing Permissions
+- Incorrect Repository
+- Expired Token
+
+---
+
+## Resolution
+
+Authenticate again and verify repository permissions.
+
+---
+
+# Scenario 2
+
+# Image Not Found
+
+## Symptoms
+
+```text
+manifest unknown
+```
+
+---
+
+## Investigation
+
+```bash
+docker images
+```
+
+---
+
+## Resolution
+
+Verify:
+
+- Repository Name
+- Image Tag
+- Registry URL
+
+---
+
+# Terraform Troubleshooting
+
+Infrastructure provisioning problems should be investigated before applying changes.
+
+---
+
+# Scenario 1
+
+# Terraform Init Failed
+
+## Investigation
+
+```bash
+terraform init
+```
+
+---
+
+## Possible Causes
+
+- Backend Configuration
+- Provider Download Failure
+- Network Issue
+
+---
+
+## Resolution
+
+Validate backend configuration and provider versions.
+
+---
+
+# Scenario 2
+
+# Terraform Plan Failed
+
+## Investigation
+
+```bash
+terraform validate
+
+terraform plan
+```
+
+---
+
+## Possible Causes
+
+- Syntax Error
+- Missing Variable
+- Invalid Resource
+- Module Failure
+
+---
+
+## Resolution
+
+Validate the configuration before planning.
+
+---
+
+# Scenario 3
+
+# Terraform Apply Failed
+
+## Investigation
+
+```bash
+terraform apply
+```
+
+Review:
+
+- IAM Permissions
+- Resource Limits
+- Existing Resources
+- Cloud API Errors
+
+---
+
+## Resolution
+
+Correct the reported issue and re-run the deployment.
+
+---
+
+# AWS Troubleshooting
+
+Cloud infrastructure issues require verification of IAM, networking, and service configuration.
+
+---
+
+# Scenario 1
+
+# EC2 Instance Unreachable
+
+## Investigation
+
+```bash
+ping <private-ip>
+
+ssh ec2-user@<private-ip>
+```
+
+---
+
+## Verify
+
+- Security Groups
+- Network ACLs
+- Route Tables
+- SSH Keys
+- EC2 Status
+
+---
+
+## Resolution
+
+Correct network configuration and verify SSH access.
+
+---
+
+# Scenario 2
+
+# Amazon EKS Cluster Unreachable
+
+## Investigation
+
+```bash
+kubectl cluster-info
+
+kubectl get nodes
+```
+
+---
+
+## Verify
+
+- kubeconfig
+- IAM Authentication
+- Cluster Status
+- Network Connectivity
+
+---
+
+## Resolution
+
+Update kubeconfig and verify IAM permissions.
+
+---
+
+# Scenario 3
+
+# Amazon ECR Authentication Failure
+
+## Investigation
+
+```bash
+aws ecr get-login-password
+```
+
+---
+
+## Verify
+
+- IAM Permissions
+- Repository
+- AWS Region
+- Login Token
+
+---
+
+## Resolution
+
+Authenticate again and retry the image push or pull.
+
+---
+
+# Enterprise Troubleshooting Checklist
+
+Before making production changes, verify:
+
+- Application Health
+- Infrastructure Status
+- Kubernetes Events
+- Container Logs
+- Network Connectivity
+- DNS Resolution
+- IAM Permissions
+- Recent Deployments
+- Monitoring Alerts
+- Configuration Changes
+
+Always eliminate possible causes systematically.
+
+---
+
+# Enterprise Best Practices
+
+- Read logs before restarting services.
+- Investigate one layer at a time.
+- Avoid changing multiple components simultaneously.
+- Validate fixes in non-production environments when possible.
+- Preserve logs for post-incident analysis.
+- Maintain Infrastructure as Code for repeatability.
+- Use centralized logging and monitoring.
+- Automate common diagnostic checks.
+- Document recurring production issues.
+- Update operational runbooks after every major incident.
+
+---
+
 
 
