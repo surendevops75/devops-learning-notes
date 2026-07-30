@@ -2,432 +2,218 @@
 
 ---
 
-# Introduction
-
-Scenario-based interviews are designed to evaluate how you think, investigate, troubleshoot, communicate, and make technical decisions under real production conditions.
-
-Unlike theoretical interviews, there is usually **no single correct answer**. Interviewers want to understand your investigation process, technical reasoning, security mindset, and ability to restore production safely.
-
-In enterprise interviews, you are expected to think across the entire DevSecOps platform rather than focusing on a single tool.
-
----
-
-# How to Answer Every Scenario
-
-Always use a structured approach.
-
-```text
-Understand the Problem
-
-↓
-
-Collect Information
-
-↓
-
-Identify the Scope
-
-↓
-
-Analyze Possible Causes
-
-↓
-
-Verify the Root Cause
-
-↓
-
-Implement the Fix
-
-↓
-
-Validate the Solution
-
-↓
-
-Prevent Future Occurrences
-```
-
----
-
-# Enterprise DevSecOps Pipeline
-
-```text
-Developer
-
-↓
-
-Feature Branch
-
-↓
-
-Git Push
-
-↓
-
-Pull Request
-
-↓
-
-Code Review
-
-↓
-
-Merge
-
-↓
-
-CI Trigger
-
-↓
-
-Checkout
-
-↓
-
-Build
-
-↓
-
-Unit Tests
-
-↓
-
-Coverage
-
-↓
-
-SonarQube
-
-↓
-
-Policy / Quality Gate
-
-↓
-
-Docker Build
-
-↓
-
-Container Scan
-
-↓
-
-SBOM
-
-↓
-
-Image Signing
-
-↓
-
-Artifact Repository
-
-↓
-
-GitOps
-
-↓
-
-ArgoCD
-
-↓
-
-Amazon EKS
-
-↓
-
-Smoke Test
-
-↓
-
-Production
-```
-
----
-
 # Scenario 1
 
-## Your company follows GitOps using Jenkins, SonarQube, Trivy, ArgoCD, and Amazon EKS.
+## Jenkins pipeline completed successfully, ArgoCD synced successfully, but users receive HTTP 502 Bad Gateway immediately after deployment. How would you investigate?
 
-A developer reports that the Jenkins pipeline completed successfully.
+### Expected Approach
 
-- SonarQube Quality Gate passed.
-- Trivy found no Critical vulnerabilities.
-- Docker image was pushed successfully.
-- ArgoCD synchronized successfully.
-- Kubernetes deployment completed without errors.
+Investigate from the user entry point:
 
-However, users suddenly receive **HTTP 502 Bad Gateway** after deployment.
+- ALB Target Groups
+- Ingress Controller
+- Kubernetes Service
+- Endpoints
+- Pod Readiness
+- Application Logs
+- Backend Dependencies
 
-As the DevSecOps Engineer, how would you investigate this production issue?
-
----
-
-## Answer
-
-A successful CI/CD pipeline does **not** guarantee a healthy application.
-
-I would troubleshoot from the **user entry point toward the application**, validating every layer before making changes.
+Never assume a successful deployment means a healthy application.
 
 ---
 
-## Step 1 — Confirm the Incident
+# Scenario 2
 
-First, determine whether the issue affects:
+## SonarQube Quality Gate passed, but the application crashes immediately after deployment. What could be the reason?
 
-- One user
-- One application
-- One environment
-- One Availability Zone
-- Entire production
+### Expected Approach
 
-Questions to answer:
+Remember that SonarQube checks code quality, not runtime behaviour.
 
-- Is every request failing?
-- Did the problem begin immediately after deployment?
-- Are previous application versions working?
-- Are all services affected?
+Investigate:
 
----
-
-## Step 2 — Check Recent Changes
-
-Before assuming infrastructure failure, verify what changed.
-
-Review:
-
-- Git commits
-- Pull Request
-- Jenkins build
-- Deployment manifest
-- Helm values
-- ArgoCD sync history
-- Image tag
-- Recent infrastructure changes
+- Application startup logs
+- Environment variables
+- ConfigMaps
+- Secrets
+- Database connectivity
+- JVM/Runtime configuration
+- Resource limits
 
 ---
 
-## Change Timeline
+# Scenario 3
 
-```text
-Git Commit
+## Trivy reports a Critical vulnerability in the Docker image just before production deployment. The business wants an urgent release. What would you do?
 
-↓
+### Expected Approach
 
-Pull Request
-
-↓
-
-Merge
-
-↓
-
-Pipeline
-
-↓
-
-Deployment
-
-↓
-
-502 Errors
-```
+- Validate whether the vulnerability is exploitable.
+- Check whether a fixed image exists.
+- Assess business impact.
+- Block deployment if the risk is unacceptable.
+- Use the organization's risk acceptance process only when justified and approved.
 
 ---
 
-## Step 3 — Verify Load Balancer
+# Scenario 4
 
-Since users receive **502 Bad Gateway**, the first production component to investigate is the Load Balancer.
+## A developer accidentally commits AWS Access Keys into GitHub. The repository has already been pushed. What actions would you take?
+
+### Expected Approach
+
+Immediately:
+
+- Revoke the exposed keys.
+- Generate new credentials.
+- Remove secrets from Git history.
+- Scan repositories using Gitleaks.
+- Review CloudTrail for unauthorized activity.
+- Inform the security team.
+- Replace hardcoded secrets with AWS Secrets Manager.
+
+---
+
+# Scenario 5
+
+## ArgoCD shows "Synced", but the application version running in Kubernetes is still the old version. How would you troubleshoot?
+
+### Expected Approach
 
 Verify:
 
-- Target Group Health
-- Listener Rules
-- Target Registration
-- Health Check Status
-
-Possible issues include:
-
-- Unhealthy targets
-- Failed health checks
-- Incorrect listener configuration
-- Wrong backend port
+- Image tag
+- ImagePullPolicy
+- Deployment rollout
+- ReplicaSet
+- Pod status
+- Git repository revision
+- ArgoCD application history
+- Container image digest
 
 ---
 
-## Step 4 — Verify Kubernetes Ingress
+# Scenario 6
 
-Check whether the Ingress routes traffic correctly.
+## After deploying a new version, Kubernetes Pods remain in Running state, but Readiness probes continue to fail. What would you investigate?
 
-Validate:
+### Expected Approach
 
-- Hostname
-- Paths
-- Backend Service
-- TLS configuration
-- Ingress events
+Check:
 
-An incorrect backend service or port can result in 502 responses even when the deployment succeeds.
+- Readiness endpoint
+- Application startup logs
+- Database availability
+- External API connectivity
+- Configuration
+- Secrets
+- Resource consumption
+- Probe timeout configuration
 
 ---
 
-## Request Flow
+# Scenario 7
+
+## Terraform deployment suddenly fails even though the code hasn't changed. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Terraform state
+- Backend availability
+- Provider version
+- Cloud credentials
+- IAM permissions
+- Resource drift
+- API limits
+- Recently modified infrastructure
+
+---
+
+# Scenario 8
+
+## Your Amazon EKS application suddenly becomes very slow after a successful deployment. CPU usage is normal. Where would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Database latency
+- Redis cache
+- DNS resolution
+- Network latency
+- API dependencies
+- Storage performance
+- Application logs
+- Thread pool utilisation
+
+Performance issues are not always caused by CPU.
+
+---
+
+# Scenario 9
+
+## Falco generates an alert stating that a shell was opened inside a production container. What actions would you take?
+
+### Expected Approach
+
+- Treat the alert as a potential security incident.
+- Identify the affected pod.
+- Verify who accessed the container.
+- Review Kubernetes Audit Logs.
+- Collect container logs.
+- Isolate the workload if required.
+- Investigate for compromise.
+- Rotate affected credentials if necessary.
+
+---
+
+# Scenario 10
+
+## A deployment completed successfully, but only users from one region are reporting application failures. How would you approach the investigation?
+
+### Expected Approach
+
+Investigate:
+
+- Route53 routing
+- Regional ALB health
+- DNS propagation
+- Network connectivity
+- Regional infrastructure
+- Kubernetes cluster health
+- Backend service availability
+- Recent regional changes
+
+Avoid assuming the application itself is the root cause.
+
+---
+
+# Enterprise Investigation Flow
 
 ```text
-User
+Understand Problem
 
 ↓
 
-Route53
+Collect Evidence
 
 ↓
 
-Application Load Balancer
+Check Recent Changes
 
 ↓
 
-Ingress
+Infrastructure
 
 ↓
 
-Kubernetes Service
-
-↓
-
-Pods
+Platform
 
 ↓
 
 Application
-```
-
----
-
-## Step 5 — Verify Kubernetes Service
-
-Check:
-
-- Service type
-- Port
-- TargetPort
-- Selector labels
-- Endpoints
-
-If selectors do not match Pod labels, the Service will have no healthy endpoints.
-
----
-
-## Step 6 — Verify Pod Health
-
-Inspect:
-
-- Running status
-- Restart count
-- Readiness probe
-- Liveness probe
-- Startup probe
-
-A pod may be running but still unavailable because the readiness probe is failing.
-
----
-
-## Step 7 — Check Application Logs
-
-Review:
-
-- Current logs
-- Previous logs
-- Exception stack traces
-- Database connection errors
-- Configuration errors
-- Startup failures
-
-Never assume Kubernetes is the problem before checking the application itself.
-
----
-
-## Step 8 — Verify Configurations
-
-Confirm that:
-
-- ConfigMaps are correct
-- Secrets are mounted
-- Environment variables are available
-- Certificates are valid
-- External endpoints are reachable
-
-Many production failures occur because configuration values differ between environments.
-
----
-
-## Step 9 — Validate Dependencies
-
-Check connectivity to:
-
-- Database
-- Redis
-- Message Queue
-- Third-party APIs
-- Internal microservices
-
-A healthy application may still return 502 errors if required dependencies are unavailable.
-
----
-
-## Step 10 — Roll Back if Necessary
-
-If the new release is confirmed as the root cause:
-
-- Roll back through GitOps.
-- Allow ArgoCD to synchronize the previous version.
-- Validate application health.
-- Continue investigating in a safe environment.
-
-Avoid making manual changes directly in the cluster.
-
----
-
-## Investigation Flow
-
-```text
-User Reports 502
-
-↓
-
-Confirm Incident
-
-↓
-
-Review Recent Changes
-
-↓
-
-ALB Health
-
-↓
-
-Ingress
-
-↓
-
-Service
-
-↓
-
-Endpoints
-
-↓
-
-Pods
-
-↓
-
-Application Logs
-
-↓
-
-Configuration
 
 ↓
 
@@ -439,36 +225,26 @@ Root Cause
 
 ↓
 
-Rollback (if required)
+Fix
 
 ↓
 
-Restore Service
+Validation
+
+↓
+
+Post-Incident Review
 ```
-
----
-
-## What the Interviewer is Evaluating
-
-The interviewer wants to assess whether you:
-
-- Troubleshoot methodically instead of guessing.
-- Understand the complete request flow.
-- Know the relationship between AWS and Kubernetes.
-- Validate infrastructure before changing configurations.
-- Consider application issues as well as platform issues.
-- Use GitOps correctly instead of making manual production fixes.
-- Prioritize service restoration while investigating the root cause.
 
 ---
 
 # Enterprise Best Practices
 
-- Start troubleshooting from the user-facing layer and move inward.
-- Verify recent changes before assuming infrastructure failure.
-- Use logs, events, metrics, and health checks to identify the root cause.
-- Avoid manual production changes in GitOps-managed environments.
-- Roll back safely when customer impact is high.
-- Validate every layer of the request path before concluding the investigation.
-- Document the incident timeline, root cause, resolution, and preventive actions.
-- Treat production incidents as opportunities to improve automation, monitoring, and deployment reliability.
+- Never troubleshoot based on assumptions.
+- Always verify the scope and business impact first.
+- Follow a structured investigation process from infrastructure to application.
+- Correlate logs, metrics, events, and deployment history.
+- Use GitOps for rollbacks instead of manual production changes.
+- Preserve audit logs and evidence during security incidents.
+- Document the root cause and preventive actions after every incident.
+- Continuously improve monitoring, alerting, and automation based on production learnings.
