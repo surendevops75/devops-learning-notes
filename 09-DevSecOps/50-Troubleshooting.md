@@ -390,5 +390,526 @@ Evidence collection should always precede remediation.
 
 ---
 
+# Kubernetes Troubleshooting
+
+Kubernetes problems can occur at the cluster, node, Pod, container, networking, or application level.
+
+Always troubleshoot layer by layer instead of making assumptions.
+
+---
+
+# Kubernetes Troubleshooting Flow
+
+```text
+User Reports Issue
+
+↓
+
+Check Deployment
+
+↓
+
+Check Pods
+
+↓
+
+Check Events
+
+↓
+
+Check Logs
+
+↓
+
+Check Node
+
+↓
+
+Check Network
+
+↓
+
+Identify Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validate
+```
+
+---
+
+# Scenario 1
+
+# Pod Status: CrashLoopBackOff
+
+## Symptoms
+
+```text
+Pod
+
+↓
+
+Starts
+
+↓
+
+Crashes
+
+↓
+
+Restarts
+
+↓
+
+CrashLoopBackOff
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl get pods
+
+kubectl describe pod <pod-name>
+
+kubectl logs <pod-name>
+
+kubectl logs <pod-name> --previous
+```
+
+---
+
+## Possible Causes
+
+- Application Crash
+- Invalid Environment Variables
+- Missing Secrets
+- Missing ConfigMaps
+- Database Connection Failure
+- Resource Limits
+- Startup Failure
+
+---
+
+## Resolution
+
+- Review application logs.
+- Verify Secrets and ConfigMaps.
+- Validate environment variables.
+- Check resource limits.
+- Confirm dependent services are available.
+
+---
+
+# Scenario 2
+
+# Pod Status: ImagePullBackOff
+
+## Symptoms
+
+```text
+Pod
+
+↓
+
+Unable to Pull Image
+
+↓
+
+ImagePullBackOff
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod <pod-name>
+
+kubectl get events
+```
+
+---
+
+## Possible Causes
+
+- Incorrect Image Name
+- Invalid Image Tag
+- Registry Authentication Failure
+- Image Does Not Exist
+- Network Connectivity Issue
+
+---
+
+## Resolution
+
+- Verify repository name.
+- Verify image tag.
+- Check ImagePullSecrets.
+- Confirm registry accessibility.
+- Validate repository permissions.
+
+---
+
+# Scenario 3
+
+# Pod Status: Pending
+
+## Symptoms
+
+```text
+Pod
+
+↓
+
+Scheduler
+
+↓
+
+Pending
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod <pod-name>
+
+kubectl get nodes
+```
+
+---
+
+## Possible Causes
+
+- Insufficient CPU
+- Insufficient Memory
+- Taints
+- Missing Tolerations
+- Node Selector Mismatch
+- PVC Not Available
+
+---
+
+## Resolution
+
+- Review scheduler events.
+- Increase cluster capacity.
+- Verify node labels.
+- Check Persistent Volumes.
+- Review taints and tolerations.
+
+---
+
+# Scenario 4
+
+# Pod Status: OOMKilled
+
+## Symptoms
+
+```text
+Application
+
+↓
+
+Memory Exhausted
+
+↓
+
+OOMKilled
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod <pod-name>
+
+kubectl top pod
+
+kubectl top node
+```
+
+---
+
+## Possible Causes
+
+- Memory Leak
+- Low Memory Limit
+- Large Workload
+- Inefficient Queries
+
+---
+
+## Resolution
+
+- Increase memory limits.
+- Optimize application memory usage.
+- Investigate memory leaks.
+- Review heap configuration.
+
+---
+
+# Scenario 5
+
+# Pod Status: ErrImagePull
+
+## Symptoms
+
+Container fails before startup.
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+---
+
+## Possible Causes
+
+- Repository Not Found
+- Authentication Failure
+- Invalid Registry
+- DNS Failure
+
+---
+
+## Resolution
+
+- Verify registry URL.
+- Check credentials.
+- Validate image path.
+- Test registry connectivity.
+
+---
+
+# Node Troubleshooting
+
+Node failures affect multiple workloads.
+
+---
+
+# Investigation
+
+```bash
+kubectl get nodes
+
+kubectl describe node <node>
+
+kubectl top node
+```
+
+---
+
+# Common Node Problems
+
+- Node NotReady
+- Disk Pressure
+- Memory Pressure
+- PID Pressure
+- Network Failure
+- Kubelet Failure
+
+---
+
+# Node Recovery Workflow
+
+```text
+Node Failure
+
+↓
+
+Check Status
+
+↓
+
+Check Kubelet
+
+↓
+
+Check Resources
+
+↓
+
+Restart Services
+
+↓
+
+Validate Node
+
+↓
+
+Schedule Pods
+```
+
+---
+
+# Docker Troubleshooting
+
+Containers may fail before reaching Kubernetes.
+
+---
+
+# Check Running Containers
+
+```bash
+docker ps
+
+docker ps -a
+```
+
+---
+
+# View Container Logs
+
+```bash
+docker logs <container-id>
+```
+
+---
+
+# Inspect Container
+
+```bash
+docker inspect <container-id>
+```
+
+---
+
+# Check Resource Usage
+
+```bash
+docker stats
+```
+
+---
+
+# Restart Container
+
+```bash
+docker restart <container-id>
+```
+
+---
+
+# Docker Troubleshooting Workflow
+
+```text
+Container
+
+↓
+
+Status
+
+↓
+
+Logs
+
+↓
+
+Inspect
+
+↓
+
+Network
+
+↓
+
+Volumes
+
+↓
+
+Restart
+
+↓
+
+Validate
+```
+
+---
+
+# Container Networking Issues
+
+## Symptoms
+
+- Connection Timeout
+- Connection Refused
+- DNS Failure
+- Service Unreachable
+
+---
+
+## Investigation
+
+```bash
+kubectl get svc
+
+kubectl get endpoints
+
+kubectl describe svc
+```
+
+---
+
+## Resolution
+
+- Verify Service selectors.
+- Confirm Endpoints exist.
+- Check Network Policies.
+- Validate DNS resolution.
+- Test connectivity between Pods.
+
+---
+
+# DNS Troubleshooting
+
+DNS failures prevent service communication.
+
+---
+
+## Investigation
+
+```bash
+kubectl get pods -n kube-system
+
+kubectl logs -n kube-system deployment/coredns
+```
+
+---
+
+## Resolution
+
+- Verify CoreDNS is healthy.
+- Restart CoreDNS if required.
+- Check Service definitions.
+- Validate DNS policies.
+
+---
+
+# Enterprise Best Practices
+
+- Investigate Events before making changes.
+- Use `kubectl describe` before restarting Pods.
+- Always review previous container logs.
+- Monitor node health continuously.
+- Configure resource requests and limits.
+- Use readiness and liveness probes correctly.
+- Verify DNS before investigating applications.
+- Avoid deleting Pods before collecting logs.
+- Document recurring issues.
+- Create runbooks for common Kubernetes failures.
+
+---
+
 
 
