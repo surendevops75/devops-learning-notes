@@ -2039,5 +2039,466 @@ Incident closure should occur only after verification.
 
 ---
 
+# Common Mistakes
+
+## Mistake 1
+
+### Restarting Services Without Investigation
+
+**Problem**
+
+Administrators immediately restart Pods, containers, or servers.
+
+```text
+Issue
+
+↓
+
+Restart
+
+↓
+
+Issue Returns
+```
+
+**Impact**
+
+- Root cause remains unknown
+- Important logs are lost
+- Incident duration increases
+
+**Recommendation**
+
+Always collect logs, events, and metrics before restarting any service.
+
+---
+
+## Mistake 2
+
+### Ignoring Kubernetes Events
+
+**Problem**
+
+Only application logs are checked.
+
+**Impact**
+
+- Scheduler failures are missed
+- Resource issues remain unnoticed
+- Node problems are ignored
+
+**Recommendation**
+
+Always review Kubernetes Events.
+
+```bash
+kubectl get events --sort-by=.lastTimestamp
+```
+
+---
+
+## Mistake 3
+
+### Making Multiple Changes Simultaneously
+
+**Problem**
+
+Several configurations are modified during troubleshooting.
+
+```text
+Problem
+
+↓
+
+Multiple Changes
+
+↓
+
+Unknown Fix
+```
+
+**Impact**
+
+- Difficult Root Cause Analysis
+- Increased production risk
+- Longer recovery
+
+**Recommendation**
+
+Apply one change at a time and validate the outcome.
+
+---
+
+## Mistake 4
+
+### Ignoring Monitoring Alerts
+
+**Problem**
+
+Production alerts are acknowledged without investigation.
+
+**Impact**
+
+- Recurring incidents
+- Hidden failures
+- Reduced system reliability
+
+**Recommendation**
+
+Treat every critical alert as a potential production incident until verified.
+
+---
+
+## Mistake 5
+
+### Closing Incidents Without Root Cause Analysis
+
+**Problem**
+
+The service is restored but no investigation is completed.
+
+**Impact**
+
+- Repeat incidents
+- No preventive measures
+- Poor operational maturity
+
+**Recommendation**
+
+Perform Root Cause Analysis (RCA) for all major incidents.
+
+---
+
+# End-to-End Production Troubleshooting Scenario
+
+## Scenario
+
+Users report that the application is unavailable immediately after a production deployment.
+
+---
+
+## Investigation Workflow
+
+```text
+User Complaint
+
+↓
+
+Monitoring Alert
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pods
+
+↓
+
+Container Logs
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validation
+```
+
+---
+
+## Step 1
+
+### Verify Deployment
+
+```bash
+kubectl get deployments
+
+kubectl rollout status deployment payment
+```
+
+---
+
+## Step 2
+
+### Check Pods
+
+```bash
+kubectl get pods -o wide
+
+kubectl describe pod <pod-name>
+```
+
+---
+
+## Step 3
+
+### Review Logs
+
+```bash
+kubectl logs <pod-name>
+
+kubectl logs <pod-name> --previous
+```
+
+---
+
+## Step 4
+
+### Verify Services
+
+```bash
+kubectl get svc
+
+kubectl get endpoints
+```
+
+---
+
+## Step 5
+
+### Verify Ingress
+
+```bash
+kubectl get ingress
+
+kubectl describe ingress
+```
+
+---
+
+## Step 6
+
+### Check Node Health
+
+```bash
+kubectl get nodes
+
+kubectl describe node <node-name>
+```
+
+---
+
+## Step 7
+
+### Validate Monitoring
+
+Verify:
+
+- Prometheus
+- Grafana
+- Alertmanager
+- ELK Dashboards
+
+Confirm that all application health indicators have returned to normal.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is your troubleshooting methodology?
+
+**Answer**
+
+Identify the issue, collect evidence, isolate the affected layer, determine the root cause, implement the fix, validate the solution, and document the incident.
+
+---
+
+## Question 2
+
+### What should you check first when a Pod enters CrashLoopBackOff?
+
+**Answer**
+
+Review `kubectl describe pod`, Kubernetes Events, current logs, previous logs, Secrets, ConfigMaps, environment variables, and application dependencies.
+
+---
+
+## Question 3
+
+### How do you troubleshoot ImagePullBackOff?
+
+**Answer**
+
+Verify the image name, tag, registry authentication, ImagePullSecrets, network connectivity, and repository permissions.
+
+---
+
+## Question 4
+
+### How do you investigate a failed Jenkins pipeline?
+
+**Answer**
+
+Identify the failed stage, review console logs, inspect pipeline configuration, verify credentials, and resolve the reported error before rerunning the build.
+
+---
+
+## Question 5
+
+### How do you troubleshoot Terraform failures?
+
+**Answer**
+
+Run `terraform validate`, `terraform plan`, review provider configuration, backend configuration, variables, IAM permissions, and cloud provider errors.
+
+---
+
+## Question 6
+
+### What information should be collected before fixing a production issue?
+
+**Answer**
+
+Logs, metrics, Kubernetes Events, monitoring alerts, deployment history, configuration changes, infrastructure status, and user impact.
+
+---
+
+## Question 7
+
+### Why should logs be collected before restarting services?
+
+**Answer**
+
+Restarting services may remove valuable diagnostic information needed to identify the actual root cause of the incident.
+
+---
+
+## Question 8
+
+### How do you perform Root Cause Analysis?
+
+**Answer**
+
+Review the incident timeline, identify triggering changes, analyze logs and metrics, determine the underlying cause, implement preventive actions, and document the findings.
+
+---
+
+## Question 9
+
+### Which tools are commonly used during DevOps troubleshooting?
+
+**Answer**
+
+kubectl, Docker, Terraform, AWS CLI, Helm, Git, curl, Prometheus, Grafana, ELK Stack, Alertmanager, Falco, journalctl, systemctl, and Linux diagnostic utilities.
+
+---
+
+## Question 10
+
+### What are the characteristics of an effective production troubleshooting process?
+
+**Answer**
+
+Structured investigation, evidence collection, layer-by-layer analysis, minimal production impact, validated fixes, documented Root Cause Analysis, and continuous operational improvement.
+
+---
+
+# Key Takeaways
+
+- Follow a structured troubleshooting methodology.
+- Collect evidence before making changes.
+- Investigate one infrastructure layer at a time.
+- Correlate logs, metrics, events, and alerts.
+- Review Kubernetes Events before restarting Pods.
+- Validate infrastructure before modifying applications.
+- Preserve diagnostic information during incidents.
+- Verify application health after implementing fixes.
+- Perform Root Cause Analysis for major incidents.
+- Update operational runbooks using lessons learned.
+- Automate diagnostics where practical.
+- Continuously improve production operations through post-incident reviews.
+
+---
+
+# Enterprise Troubleshooting Workflow
+
+```text
+User Reports Issue
+
+↓
+
+Monitoring Alert
+
+↓
+
+Incident Created
+
+↓
+
+Severity Assessment
+
+↓
+
+Evidence Collection
+
+├── Logs
+
+├── Metrics
+
+├── Events
+
+├── Alerts
+
+└── Recent Changes
+
+↓
+
+Layer-by-Layer Investigation
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Implement Fix
+
+↓
+
+Validation
+
+↓
+
+Production Monitoring
+
+↓
+
+Incident Closure
+
+↓
+
+Postmortem
+
+↓
+
+Runbook Update
+
+↓
+
+Continuous Improvement
+```
+
+This workflow represents an enterprise-grade troubleshooting process that minimizes Mean Time to Detect (MTTD), reduces Mean Time to Recover (MTTR), improves service reliability, and drives continuous operational excellence.
 
 
