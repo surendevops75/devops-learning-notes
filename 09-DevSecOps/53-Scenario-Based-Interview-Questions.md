@@ -2076,3 +2076,265 @@ Documentation
 - Investigate degraded GitOps applications immediately to prevent production impact.
 
 ---
+
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 81
+
+## A Jenkins pipeline succeeds, but the Docker image deployed in Amazon EKS is an older version instead of the latest build. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Docker image tag
+- Image digest
+- Jenkins build artifacts
+- ECR repository
+- Deployment manifest
+- ArgoCD sync revision
+- ImagePullPolicy
+- Running Pod image
+
+---
+
+# Scenario 82
+
+## Your application suddenly starts returning HTTP 403 Forbidden after a successful deployment. Infrastructure appears healthy. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- IAM permissions
+- RBAC changes
+- Security Groups
+- Network Policies
+- Authentication service
+- Authorization logic
+- JWT validation
+- Recent application changes
+
+---
+
+# Scenario 83
+
+## During deployment, Terraform reports "Resource Already Exists" even though it is managed by Terraform. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Terraform state
+- Resource import
+- Workspace
+- Backend configuration
+- Manual infrastructure changes
+- State drift
+- Provider version
+- Duplicate resource definitions
+
+---
+
+# Scenario 84
+
+## A production application suddenly begins restarting after every deployment, even though no application code has changed. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Deployment manifests
+- ConfigMap changes
+- Secret updates
+- Resource limits
+- Probe configuration
+- Node health
+- Base image updates
+- Runtime dependencies
+
+---
+
+# Scenario 85
+
+## Amazon CloudWatch reports increased latency, while Prometheus shows normal Kubernetes metrics. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Application logs
+- AWS service latency
+- RDS performance
+- ALB metrics
+- External API response times
+- Network latency
+- Storage performance
+- Cloud infrastructure events
+
+---
+
+# Scenario 86
+
+## A production deployment introduces a database schema migration that fails halfway through. The application is now unstable. What would you do?
+
+### Expected Approach
+
+Review:
+
+- Migration logs
+- Database backup
+- Failed SQL statements
+- Application compatibility
+- Rollback strategy
+- Data consistency
+- Recovery procedure
+- Deployment timeline
+
+---
+
+# Scenario 87
+
+## A Kubernetes node becomes unreachable, and multiple production Pods are terminated unexpectedly. How would you respond?
+
+### Expected Approach
+
+Check:
+
+- Node health
+- EC2 instance status
+- Auto Scaling Group
+- Pod rescheduling
+- Persistent Volumes
+- Cluster Autoscaler
+- Kubernetes events
+- Application availability
+
+---
+
+# Scenario 88
+
+## During a vulnerability scan, Trivy reports Critical vulnerabilities that were not present in yesterday's scan, even though the application code hasn't changed. Why could this happen?
+
+### Expected Approach
+
+Investigate:
+
+- Updated vulnerability database
+- Base image updates
+- Newly disclosed CVEs
+- Dependency changes
+- Scanner version
+- Image digest
+- SBOM comparison
+- False positives
+
+---
+
+# Scenario 89
+
+## A production API starts returning HTTP 429 Too Many Requests immediately after a marketing campaign begins. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Traffic volume
+- Rate limiting configuration
+- API Gateway or ALB limits
+- Autoscaling behaviour
+- Application capacity
+- Database performance
+- Caching layer
+- Load distribution
+
+---
+
+# Scenario 90
+
+## During an audit, you discover that multiple CI/CD service accounts have permissions to delete production infrastructure. How would you remediate this?
+
+### Expected Approach
+
+Review:
+
+- IAM roles
+- RBAC permissions
+- Least Privilege implementation
+- Service account usage
+- Pipeline permissions
+- Approval process
+- Audit logs
+- Access review schedule
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Alert
+
+↓
+
+Validate Impact
+
+↓
+
+Review Pipeline
+
+↓
+
+Cloud Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Security
+
+↓
+
+Dependencies
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Prevent Future Issues
+```
+
+---
+
+# Enterprise Best Practices
+
+- Verify image tags and digests before every deployment.
+- Separate authentication failures from infrastructure failures during troubleshooting.
+- Regularly reconcile Terraform state with deployed infrastructure.
+- Treat configuration changes with the same rigor as application code changes.
+- Correlate cloud-native monitoring with Kubernetes observability tools.
+- Always back up databases before running schema migrations in Production.
+- Design Kubernetes workloads for high availability and automatic recovery.
+- Keep vulnerability databases updated and monitor newly disclosed CVEs.
+- Prepare applications for traffic spikes using autoscaling, caching, and rate limiting.
+- Apply the Principle of Least Privilege to every CI/CD identity and review permissions periodically.
+
+---
+
