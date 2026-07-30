@@ -4950,3 +4950,626 @@ Production
 - Use Gitleaks together with SonarQube, Trivy, Checkov, TFSec, OWASP Dependency-Check, and runtime security tools for comprehensive DevSecOps protection.
 
 ---
+
+# OWASP ZAP Interview Questions
+
+---
+
+# Question 196
+
+## What is OWASP ZAP?
+
+### Answer
+
+OWASP Zed Attack Proxy (ZAP) is an open-source Dynamic Application Security Testing (DAST) tool used to identify security vulnerabilities in running web applications and APIs.
+
+Unlike SAST, ZAP tests an application while it is executing.
+
+---
+
+# OWASP ZAP Architecture
+
+```text
+Developer
+
+↓
+
+Deploy to Test Environment
+
+↓
+
+OWASP ZAP
+
+↓
+
+Spider
+
+↓
+
+Passive Scan
+
+↓
+
+Active Scan
+
+↓
+
+Security Report
+
+↓
+
+Developer Fix
+```
+
+---
+
+# Question 197
+
+## What is DAST?
+
+### Answer
+
+Dynamic Application Security Testing (DAST) evaluates a running application by simulating attacks from an external perspective.
+
+It identifies vulnerabilities that may not be visible during static code analysis.
+
+---
+
+# SAST vs DAST
+
+```text
+SAST
+
+↓
+
+Source Code
+
+↓
+
+Before Deployment
+
+------------------------
+
+DAST
+
+↓
+
+Running Application
+
+↓
+
+After Deployment to Test Environment
+```
+
+---
+
+# Question 198
+
+## Why is OWASP ZAP used in DevSecOps?
+
+### Answer
+
+OWASP ZAP helps organizations:
+
+- Detect runtime vulnerabilities
+- Validate application security
+- Test APIs
+- Automate security testing
+- Integrate DAST into CI/CD
+- Improve application security before production
+
+---
+
+# Question 199
+
+## What vulnerabilities can OWASP ZAP detect?
+
+### Answer
+
+OWASP ZAP detects:
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Cross-Site Request Forgery (CSRF)
+- Authentication weaknesses
+- Session management issues
+- Missing security headers
+- Directory traversal
+- Information disclosure
+- Insecure cookies
+
+---
+
+# Question 200
+
+## How does OWASP ZAP work?
+
+### Answer
+
+OWASP ZAP intercepts HTTP and HTTPS traffic between the client and the application, analyzes requests and responses, and performs automated security testing to identify vulnerabilities.
+
+---
+
+# ZAP Scan Workflow
+
+```text
+Application
+
+↓
+
+Spider
+
+↓
+
+Passive Scan
+
+↓
+
+Active Scan
+
+↓
+
+Attack Simulation
+
+↓
+
+Security Report
+```
+
+---
+
+# Question 201
+
+## What is Passive Scanning?
+
+### Answer
+
+Passive Scanning analyzes HTTP requests and responses without modifying them.
+
+It identifies issues such as:
+
+- Missing HTTP security headers
+- Information disclosure
+- Cookie configuration
+- TLS configuration observations
+
+Passive scanning is safe because it does not actively attack the application.
+
+---
+
+# Question 202
+
+## What is Active Scanning?
+
+### Answer
+
+Active Scanning actively sends malicious or unexpected requests to identify exploitable vulnerabilities.
+
+Examples include:
+
+- SQL Injection
+- XSS
+- Command Injection
+- Path Traversal
+- Server misconfigurations
+
+Active scans should only be performed in authorized test environments.
+
+---
+
+# Passive vs Active Scan
+
+```text
+Passive Scan
+
+↓
+
+Observe Traffic
+
+↓
+
+No Attack
+
+-----------------------
+
+Active Scan
+
+↓
+
+Attack Simulation
+
+↓
+
+Find Exploitable Issues
+```
+
+---
+
+# Question 203
+
+## What is the Spider in OWASP ZAP?
+
+### Answer
+
+The Spider automatically discovers application pages, URLs, APIs, forms, and links before security testing begins.
+
+This ensures the scanner covers as much of the application as possible.
+
+---
+
+# Spider Workflow
+
+```text
+Application URL
+
+↓
+
+Spider
+
+↓
+
+Discover Pages
+
+↓
+
+Discover APIs
+
+↓
+
+Security Scan
+```
+
+---
+
+# Question 204
+
+## What is AJAX Spider?
+
+### Answer
+
+AJAX Spider is used for modern JavaScript-heavy web applications.
+
+It executes JavaScript and discovers dynamically generated pages that traditional spiders may miss.
+
+---
+
+# Question 205
+
+## Can OWASP ZAP scan REST APIs?
+
+### Answer
+
+Yes.
+
+OWASP ZAP supports security testing of:
+
+- REST APIs
+- GraphQL APIs
+- SOAP Services
+- OpenAPI Specifications
+
+---
+
+# Question 206
+
+## What authentication methods does OWASP ZAP support?
+
+### Answer
+
+OWASP ZAP supports multiple authentication mechanisms including:
+
+- Form-Based Authentication
+- HTTP Authentication
+- OAuth
+- JWT Authentication
+- Session Cookies
+- Script-Based Authentication
+
+---
+
+# Question 207
+
+## Can OWASP ZAP integrate with CI/CD pipelines?
+
+### Answer
+
+Yes.
+
+OWASP ZAP integrates with:
+
+- Jenkins
+- GitHub Actions
+- GitLab CI
+- Azure DevOps
+- Bamboo
+
+Security testing can execute automatically before production deployment.
+
+---
+
+# Enterprise Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+SCA
+
+↓
+
+Container Scan
+
+↓
+
+Deploy to Test
+
+↓
+
+OWASP ZAP
+
+↓
+
+Security Report
+
+↓
+
+Production Approval
+```
+
+---
+
+# Question 208
+
+## Where should OWASP ZAP be placed in a DevSecOps pipeline?
+
+### Answer
+
+OWASP ZAP should run after the application is deployed to a testing or staging environment and before production deployment.
+
+This ensures runtime vulnerabilities are detected before release.
+
+---
+
+# Question 209
+
+## Can OWASP ZAP fail a CI/CD pipeline?
+
+### Answer
+
+Yes.
+
+Organizations commonly configure pipelines to fail when Critical or High vulnerabilities are detected.
+
+Example:
+
+```text
+High Severity Found
+
+↓
+
+Pipeline Failed
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Deploy
+
+↓
+
+Re-Scan
+
+↓
+
+Continue Pipeline
+```
+
+---
+
+# Question 210
+
+## What output formats does OWASP ZAP support?
+
+### Answer
+
+OWASP ZAP can generate reports in:
+
+- HTML
+- JSON
+- XML
+- Markdown
+- SARIF
+
+These reports integrate with CI/CD systems, dashboards, and compliance tools.
+
+---
+
+# Question 211
+
+## What are false positives in OWASP ZAP?
+
+### Answer
+
+False positives occur when the scanner reports a vulnerability that is not actually exploitable.
+
+Security engineers should manually validate important findings before remediation or suppression.
+
+---
+
+# Question 212
+
+## How do you prioritize OWASP ZAP findings?
+
+### Answer
+
+Prioritization should consider:
+
+- Severity
+- Exploitability
+- Internet exposure
+- Business impact
+- Sensitive data involved
+- Compliance requirements
+
+Critical internet-facing vulnerabilities should receive immediate attention.
+
+---
+
+# Question 213
+
+## What are the limitations of OWASP ZAP?
+
+### Answer
+
+OWASP ZAP cannot:
+
+- Analyze source code
+- Detect insecure coding practices
+- Replace SAST tools
+- Detect all business logic flaws
+- Scan Infrastructure as Code
+
+For comprehensive security testing, it should be combined with SAST, SCA, container scanning, and IaC security tools.
+
+---
+
+# Question 214
+
+## What is the difference between OWASP ZAP and Burp Suite?
+
+| OWASP ZAP | Burp Suite |
+|------------|------------|
+| Open-source | Commercial (Professional edition available) |
+| Strong CI/CD automation | Advanced manual testing features |
+| Community-driven | Extensive professional tooling |
+| Ideal for automated DAST | Popular for penetration testing |
+
+---
+
+# Question 215
+
+## What are enterprise best practices for OWASP ZAP?
+
+### Answer
+
+Organizations should:
+
+- Run DAST on every release candidate.
+- Scan staging environments before production.
+- Authenticate scans to test protected functionality.
+- Fail pipelines on Critical vulnerabilities.
+- Review false positives before suppression.
+- Test APIs along with web applications.
+- Combine ZAP with SonarQube, Trivy, Checkov, Gitleaks, and SCA tools.
+- Store reports for compliance audits.
+- Continuously update ZAP and its add-ons.
+- Integrate DAST into the secure SDLC.
+
+---
+
+# Enterprise DevSecOps Pipeline with OWASP ZAP
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+Deploy to Staging
+
+↓
+
+OWASP ZAP
+
+↓
+
+Security Approval
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Execute DAST against staging environments that closely match production.
+- Include authenticated scans to cover protected application functionality.
+- Validate High and Critical findings before approving releases.
+- Combine DAST with SAST, SCA, IaC scanning, container scanning, and runtime security for defence in depth.
+- Maintain version-controlled ZAP scan configurations.
+- Integrate ZAP reports into enterprise vulnerability management platforms.
+- Schedule periodic scans even after production releases to detect regressions.
+- Monitor vulnerability trends across application releases.
+- Keep ZAP updated with the latest rules and add-ons.
+- Treat DAST as a mandatory security gate before production deployment.
+
+---
+
