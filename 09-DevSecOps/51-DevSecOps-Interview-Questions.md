@@ -1025,3 +1025,560 @@ Mitigation:
 
 ---
 
+# SAST (Static Application Security Testing) Interview Questions
+
+---
+
+# Question 36
+
+## What is SAST?
+
+### Answer
+
+Static Application Security Testing (SAST) is a security testing methodology that analyzes source code, bytecode, or binaries without executing the application. It helps identify security vulnerabilities early in the development lifecycle.
+
+---
+
+# SAST Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+CI Pipeline
+
+↓
+
+Source Code
+
+↓
+
+SAST Scan
+
+↓
+
+Security Report
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Build
+```
+
+---
+
+# Question 37
+
+## Why is SAST performed early in the SDLC?
+
+### Answer
+
+SAST is performed during development because vulnerabilities are easier, faster, and less expensive to fix before deployment.
+
+Early detection reduces production risks and prevents insecure code from progressing through the CI/CD pipeline.
+
+---
+
+# Question 38
+
+## What are the advantages of SAST?
+
+### Answer
+
+SAST provides:
+
+- Early vulnerability detection
+- Faster remediation
+- Automated code analysis
+- Integration with CI/CD
+- Improved code quality
+- Compliance support
+- Reduced production risk
+
+---
+
+# Question 39
+
+## What are the limitations of SAST?
+
+### Answer
+
+SAST cannot identify:
+
+- Runtime vulnerabilities
+- Business logic flaws
+- Authentication bypass caused by deployment
+- Server misconfigurations
+- Infrastructure vulnerabilities
+- Runtime attacks
+
+SAST should be combined with DAST, SCA, and runtime security.
+
+---
+
+# Question 40
+
+## What types of vulnerabilities can SAST detect?
+
+### Answer
+
+Common findings include:
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Command Injection
+- Hardcoded Credentials
+- Weak Cryptography
+- Buffer Overflow
+- Null Pointer Issues
+- Resource Leaks
+- Insecure Coding Practices
+
+---
+
+# Question 41
+
+## What is SonarQube?
+
+### Answer
+
+SonarQube is a Static Application Security Testing (SAST) and code quality platform that continuously analyzes source code for bugs, vulnerabilities, code smells, and maintainability issues.
+
+It integrates with CI/CD pipelines to enforce quality and security gates before deployment.
+
+---
+
+# SonarQube Architecture
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+CI Pipeline
+
+↓
+
+Sonar Scanner
+
+↓
+
+SonarQube Server
+
+↓
+
+Analysis Report
+
+↓
+
+Quality Gate
+
+↓
+
+Pipeline Decision
+```
+
+---
+
+# Question 42
+
+## What components make up SonarQube?
+
+### Answer
+
+The primary SonarQube components are:
+
+- Sonar Scanner
+- SonarQube Server
+- Compute Engine
+- Database
+- Web Interface
+- Quality Gates
+- Quality Profiles
+
+---
+
+# SonarQube Architecture
+
+```text
+Developer
+
+↓
+
+Sonar Scanner
+
+↓
+
+Web Server
+
+↓
+
+Compute Engine
+
+↓
+
+Database
+
+↓
+
+Dashboard
+```
+
+---
+
+# Question 43
+
+## What is Sonar Scanner?
+
+### Answer
+
+Sonar Scanner is the client that analyzes source code and sends analysis results to the SonarQube server.
+
+It can run from:
+
+- Jenkins
+- GitHub Actions
+- GitLab CI
+- Azure DevOps
+- Local Developer Machines
+
+---
+
+# Question 44
+
+## What is a Quality Gate?
+
+### Answer
+
+A Quality Gate is a set of predefined conditions that determine whether code meets organizational quality and security standards.
+
+If the Quality Gate fails, the CI/CD pipeline should stop until the issues are resolved.
+
+---
+
+# Quality Gate Workflow
+
+```text
+Source Code
+
+↓
+
+Scan
+
+↓
+
+Quality Gate
+
+├── PASS → Continue Pipeline
+
+└── FAIL → Stop Pipeline
+```
+
+---
+
+# Question 45
+
+## What conditions are commonly included in a Quality Gate?
+
+### Answer
+
+Typical conditions include:
+
+- No new Critical vulnerabilities
+- No new Blocker vulnerabilities
+- Minimum code coverage
+- Maximum code duplication
+- Security Rating
+- Reliability Rating
+- Maintainability Rating
+
+---
+
+# Question 46
+
+## What is a Quality Profile?
+
+### Answer
+
+A Quality Profile is a collection of coding and security rules applied during code analysis.
+
+Organizations typically create language-specific Quality Profiles for Java, Python, JavaScript, Go, C#, and other languages.
+
+---
+
+# Question 47
+
+## What are Code Smells?
+
+### Answer
+
+Code Smells are maintainability issues that may not immediately break functionality but increase technical debt and make code more difficult to maintain.
+
+Examples include:
+
+- Duplicate code
+- Long methods
+- Unused variables
+- Excessive complexity
+- Dead code
+
+---
+
+# Question 48
+
+## What is Technical Debt?
+
+### Answer
+
+Technical Debt represents the estimated effort required to fix maintainability issues identified during code analysis.
+
+Reducing technical debt improves long-term software quality and maintainability.
+
+---
+
+# Question 49
+
+## What is the difference between Bugs, Vulnerabilities, and Code Smells?
+
+| Type | Description |
+|------|-------------|
+| Bugs | Defects that may cause incorrect application behaviour |
+| Vulnerabilities | Security weaknesses that attackers can exploit |
+| Code Smells | Maintainability issues that increase technical debt |
+
+---
+
+# Question 50
+
+## What are Security Hotspots?
+
+### Answer
+
+Security Hotspots are pieces of code that require manual security review because they could become vulnerable depending on how they are implemented.
+
+Unlike confirmed vulnerabilities, Security Hotspots require developer validation before remediation decisions are made.
+
+---
+
+# Question 51
+
+## What is Branch Analysis in SonarQube?
+
+### Answer
+
+Branch Analysis allows separate analysis of feature branches, release branches, and the main branch.
+
+This enables teams to identify security and quality issues before merging code into the primary branch.
+
+---
+
+# Question 52
+
+## What is Pull Request Analysis?
+
+### Answer
+
+Pull Request Analysis scans only the changes introduced in a pull request and provides feedback directly to reviewers before the code is merged.
+
+This prevents new security issues from entering the main branch.
+
+---
+
+# Pull Request Security Workflow
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+Sonar Analysis
+
+↓
+
+Quality Gate
+
+├── Pass
+
+│      ↓
+
+│    Merge
+
+└── Fail
+
+       ↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Merge
+```
+
+---
+
+# Question 53
+
+## How do you integrate SonarQube into Jenkins?
+
+### Answer
+
+The typical workflow is:
+
+```text
+Git Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Sonar Scanner
+
+↓
+
+Quality Gate
+
+↓
+
+Continue or Stop Pipeline
+```
+
+The Jenkins pipeline waits for the Quality Gate result before proceeding to later stages such as container builds or deployments.
+
+---
+
+# Question 54
+
+## Where should SonarQube be placed in a DevSecOps pipeline?
+
+### Answer
+
+SonarQube should run immediately after the application is built and unit tests complete, but before container images are created or deployments begin.
+
+This ensures insecure code is identified before additional pipeline resources are consumed.
+
+---
+
+# Enterprise DevSecOps Pipeline with SonarQube
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube Scan
+
+↓
+
+Quality Gate
+
+↓
+
+SCA
+
+↓
+
+Secret Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Container Scan
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 55
+
+## How do you reduce false positives in SonarQube?
+
+### Answer
+
+False positives can be minimized by:
+
+- Using appropriate Quality Profiles
+- Updating rule sets regularly
+- Reviewing Security Hotspots
+- Customizing rules for organizational standards
+- Suppressing findings only after documented review and approval
+
+---
+
+# Enterprise Best Practices
+
+- Run SAST on every Pull Request.
+- Block merges when Quality Gates fail.
+- Customize Quality Profiles for each programming language.
+- Treat Security Hotspots as mandatory review items.
+- Review new vulnerabilities instead of only total vulnerabilities.
+- Integrate SonarQube early in the CI/CD pipeline.
+- Regularly update SonarQube and its rule sets.
+- Combine SAST with SCA, DAST, IaC scanning, and container scanning.
+- Continuously reduce technical debt rather than allowing it to accumulate.
+- Monitor Quality Gate trends across all repositories.
+
+----
