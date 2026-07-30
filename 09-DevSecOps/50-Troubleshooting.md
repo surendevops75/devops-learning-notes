@@ -1509,5 +1509,535 @@ Always eliminate possible causes systematically.
 
 ---
 
+# Network Troubleshooting
+
+Network problems are one of the most common causes of production incidents.
+
+Always verify connectivity before investigating the application.
+
+---
+
+# Network Troubleshooting Workflow
+
+```text
+Application Error
+
+↓
+
+DNS
+
+↓
+
+Network
+
+↓
+
+Firewall
+
+↓
+
+Load Balancer
+
+↓
+
+Service
+
+↓
+
+Application
+
+↓
+
+Resolved
+```
+
+Investigate each network layer sequentially.
+
+---
+
+# Scenario 1
+
+# DNS Resolution Failure
+
+## Symptoms
+
+```text
+Application
+
+↓
+
+DNS Lookup
+
+↓
+
+Failed
+```
+
+---
+
+## Investigation
+
+```bash
+nslookup application.example.com
+
+dig application.example.com
+```
+
+---
+
+## Possible Causes
+
+- Incorrect DNS Record
+- DNS Propagation Delay
+- CoreDNS Failure
+- Route53 Configuration Error
+
+---
+
+## Resolution
+
+- Verify DNS records.
+- Check DNS propagation.
+- Restart CoreDNS if necessary.
+- Validate Route53 configuration.
+
+---
+
+# Scenario 2
+
+# Application Load Balancer Returns 502
+
+## Symptoms
+
+```text
+Client
+
+↓
+
+ALB
+
+↓
+
+502 Bad Gateway
+```
+
+---
+
+## Investigation
+
+Verify:
+
+- Target Group Health
+- Application Health
+- Security Groups
+- Listener Rules
+- Target Registration
+
+---
+
+## Resolution
+
+- Restore healthy targets.
+- Review application logs.
+- Verify target ports.
+- Confirm readiness probes.
+
+---
+
+# Scenario 3
+
+# Service Connection Timeout
+
+## Symptoms
+
+```text
+Client
+
+↓
+
+Service
+
+↓
+
+Timeout
+```
+
+---
+
+## Investigation
+
+```bash
+curl http://service
+
+kubectl get svc
+
+kubectl get endpoints
+```
+
+---
+
+## Resolution
+
+- Verify Service selectors.
+- Confirm Endpoints exist.
+- Review Network Policies.
+- Validate firewall configuration.
+
+---
+
+# Security Troubleshooting
+
+Security controls may block legitimate application traffic.
+
+Always review security policies before modifying them.
+
+---
+
+# Scenario 1
+
+# Access Denied
+
+## Symptoms
+
+```text
+User
+
+↓
+
+Authentication
+
+↓
+
+Access Denied
+```
+
+---
+
+## Investigation
+
+Verify:
+
+- IAM Policy
+- RBAC
+- Security Groups
+- Authentication Logs
+
+---
+
+## Resolution
+
+Grant only the required permissions following the Principle of Least Privilege.
+
+---
+
+# Scenario 2
+
+# Secret Not Available
+
+## Symptoms
+
+Application startup fails because required secrets cannot be loaded.
+
+---
+
+## Investigation
+
+```bash
+kubectl get secrets
+
+kubectl describe secret <secret-name>
+```
+
+---
+
+## Resolution
+
+- Verify secret exists.
+- Confirm namespace.
+- Check application references.
+- Validate secret permissions.
+
+---
+
+# Monitoring Troubleshooting
+
+Monitoring systems must function correctly to detect production issues.
+
+---
+
+# Scenario 1
+
+# Prometheus Target Down
+
+## Symptoms
+
+```text
+Target
+
+↓
+
+DOWN
+```
+
+---
+
+## Investigation
+
+Verify:
+
+- Exporter Status
+- Service Discovery
+- Network Connectivity
+- Prometheus Configuration
+
+---
+
+## Resolution
+
+Restart exporters if necessary and validate scrape configuration.
+
+---
+
+# Scenario 2
+
+# Grafana Dashboard Shows No Data
+
+## Symptoms
+
+Charts display "No Data".
+
+---
+
+## Investigation
+
+Verify:
+
+- Prometheus Data Source
+- Dashboard Variables
+- Time Range
+- Query Syntax
+
+---
+
+## Resolution
+
+Reconnect the data source and validate PromQL queries.
+
+---
+
+# Scenario 3
+
+# Alertmanager Not Sending Alerts
+
+## Symptoms
+
+Critical issues occur without notifications.
+
+---
+
+## Investigation
+
+Verify:
+
+- Alert Rules
+- Notification Configuration
+- SMTP or Webhook Settings
+- Alertmanager Logs
+
+---
+
+## Resolution
+
+Test notification channels and validate routing configuration.
+
+---
+
+# Database Troubleshooting
+
+Databases are often the source of application failures.
+
+Investigate connectivity before modifying application code.
+
+---
+
+# Scenario 1
+
+# Database Connection Refused
+
+## Symptoms
+
+```text
+Application
+
+↓
+
+Database
+
+↓
+
+Connection Refused
+```
+
+---
+
+## Investigation
+
+Verify:
+
+- Database Availability
+- Credentials
+- Network Connectivity
+- Security Groups
+- Database Listener Port
+
+---
+
+## Resolution
+
+Restore connectivity and validate authentication.
+
+---
+
+# Scenario 2
+
+# Slow Database Queries
+
+## Symptoms
+
+Application response time increases significantly.
+
+---
+
+## Investigation
+
+Review:
+
+- Query Execution Plans
+- Database CPU
+- Locks
+- Index Usage
+- Connection Pool
+
+---
+
+## Resolution
+
+Optimize queries, add indexes where appropriate, and review connection pool settings.
+
+---
+
+# Production Incident Management
+
+Every production incident should follow a standardized process.
+
+---
+
+# Incident Workflow
+
+```text
+Alert
+
+↓
+
+Incident Created
+
+↓
+
+Assign Owner
+
+↓
+
+Investigation
+
+↓
+
+Root Cause
+
+↓
+
+Mitigation
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Postmortem
+```
+
+Incident ownership should be assigned immediately.
+
+---
+
+# Root Cause Analysis Checklist
+
+Investigate the following:
+
+- What failed?
+- When did it fail?
+- Who was affected?
+- What changed?
+- How was the issue detected?
+- What resolved the issue?
+- How can recurrence be prevented?
+
+Root Cause Analysis should focus on system improvements.
+
+---
+
+# Production Verification
+
+After resolving an incident, verify:
+
+- Application Availability
+- API Response
+- Database Connectivity
+- Monitoring Dashboards
+- Alert Status
+- Logs
+- User Transactions
+- Error Rate
+
+Production validation confirms successful recovery.
+
+---
+
+# Enterprise Incident Checklist
+
+Before closing an incident, confirm:
+
+- Root Cause Identified
+- Permanent Fix Applied
+- Monitoring Restored
+- Alerts Operational
+- Documentation Updated
+- Stakeholders Informed
+- Postmortem Completed
+- Preventive Actions Assigned
+
+Incident closure should occur only after verification.
+
+---
+
+# Enterprise Best Practices
+
+- Troubleshoot one layer at a time.
+- Correlate logs, metrics, and events.
+- Verify infrastructure before modifying applications.
+- Follow documented incident response procedures.
+- Preserve evidence during investigations.
+- Validate production health after every fix.
+- Perform Root Cause Analysis for significant incidents.
+- Update runbooks after recurring issues.
+- Automate health checks and diagnostics where possible.
+- Continuously improve operational processes based on production incidents.
+
+---
+
 
 
