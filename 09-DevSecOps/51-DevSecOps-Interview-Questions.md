@@ -6166,3 +6166,547 @@ Production
 - Treat container security as a continuous process across the entire software supply chain.
 
 ---
+
+# Kubernetes Security Interview Questions
+
+---
+
+# Question 236
+
+## What is Kubernetes Security?
+
+### Answer
+
+Kubernetes Security is the practice of protecting Kubernetes clusters, workloads, networking, identities, and data throughout the application lifecycle.
+
+It focuses on securing the control plane, worker nodes, containers, APIs, and communications.
+
+---
+
+# Kubernetes Security Architecture
+
+```text
+Developer
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Container Image
+
+↓
+
+Image Scan
+
+↓
+
+Kubernetes API Server
+
+↓
+
+Worker Nodes
+
+↓
+
+Pods
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Question 237
+
+## Why is Kubernetes Security important?
+
+### Answer
+
+Kubernetes manages business-critical workloads. A compromised cluster can expose applications, customer data, secrets, and cloud infrastructure.
+
+Securing Kubernetes minimizes the risk of unauthorized access and workload compromise.
+
+---
+
+# Question 238
+
+## What are the major areas of Kubernetes Security?
+
+### Answer
+
+Kubernetes Security includes:
+
+- Cluster Security
+- API Server Security
+- Authentication
+- Authorization
+- RBAC
+- Network Security
+- Pod Security
+- Secrets Management
+- Runtime Security
+- Image Security
+
+---
+
+# Question 239
+
+## What is the Kubernetes API Server?
+
+### Answer
+
+The API Server is the central management component of Kubernetes.
+
+All users, applications, controllers, and tools communicate with the cluster through the API Server.
+
+---
+
+# Kubernetes Architecture
+
+```text
+kubectl
+
+↓
+
+API Server
+
+↓
+
+Scheduler
+
+↓
+
+Controller Manager
+
+↓
+
+etcd
+
+↓
+
+Worker Nodes
+
+↓
+
+Pods
+```
+
+---
+
+# Question 240
+
+## Why must the Kubernetes API Server be secured?
+
+### Answer
+
+The API Server controls every Kubernetes resource.
+
+If compromised, an attacker could:
+
+- Create workloads
+- Delete applications
+- Access Secrets
+- Escalate privileges
+- Modify RBAC
+- Control the cluster
+
+---
+
+# Question 241
+
+## What is RBAC in Kubernetes?
+
+### Answer
+
+Role-Based Access Control (RBAC) restricts access to Kubernetes resources based on assigned permissions.
+
+RBAC follows the Principle of Least Privilege by granting only the required permissions.
+
+---
+
+# RBAC Flow
+
+```text
+User
+
+↓
+
+Role
+
+↓
+
+RoleBinding
+
+↓
+
+Namespace
+
+↓
+
+Permissions
+```
+
+---
+
+# Question 242
+
+## What are Roles and ClusterRoles?
+
+### Answer
+
+**Role**
+
+Provides permissions within a single namespace.
+
+**ClusterRole**
+
+Provides permissions across the entire Kubernetes cluster.
+
+---
+
+# Question 243
+
+## What are RoleBinding and ClusterRoleBinding?
+
+### Answer
+
+**RoleBinding**
+
+Assigns a Role to a user, group, or Service Account within a namespace.
+
+**ClusterRoleBinding**
+
+Assigns a ClusterRole across the entire cluster.
+
+---
+
+# Question 244
+
+## What is a Service Account?
+
+### Answer
+
+A Service Account is an identity used by applications and Pods to communicate securely with the Kubernetes API.
+
+Applications should use dedicated Service Accounts instead of the default Service Account.
+
+---
+
+# Question 245
+
+## Why should the default Service Account be avoided?
+
+### Answer
+
+The default Service Account may provide unnecessary permissions.
+
+Creating dedicated Service Accounts with minimal permissions reduces security risks.
+
+---
+
+# Service Account Best Practice
+
+```text
+Application
+
+↓
+
+Dedicated Service Account
+
+↓
+
+RBAC
+
+↓
+
+Minimum Permissions
+```
+
+---
+
+# Question 246
+
+## What are Kubernetes Secrets?
+
+### Answer
+
+Kubernetes Secrets securely store sensitive information such as:
+
+- Passwords
+- API Keys
+- Certificates
+- OAuth Tokens
+- Database Credentials
+
+Secrets should never be stored directly inside application manifests.
+
+---
+
+# Question 247
+
+## Are Kubernetes Secrets encrypted by default?
+
+### Answer
+
+Secrets are Base64 encoded by default, which is **not encryption**.
+
+Production clusters should enable Encryption at Rest using a Key Management Service (KMS).
+
+---
+
+# Question 248
+
+## What is Pod Security?
+
+### Answer
+
+Pod Security refers to security controls applied to Pods to reduce the attack surface and prevent privilege escalation.
+
+Examples include:
+
+- Non-root containers
+- Read-only filesystem
+- Dropping Linux capabilities
+- Seccomp profiles
+- AppArmor
+
+---
+
+# Question 249
+
+## Why should Pods not run as root?
+
+### Answer
+
+Running Pods as root increases the impact of a container compromise.
+
+Using non-root users limits privilege escalation and improves workload isolation.
+
+---
+
+# Question 250
+
+## What is a Security Context?
+
+### Answer
+
+A Security Context defines security settings for a Pod or container.
+
+Common settings include:
+
+- runAsUser
+- runAsNonRoot
+- readOnlyRootFilesystem
+- allowPrivilegeEscalation
+- capabilities
+- fsGroup
+
+---
+
+# Security Context
+
+```text
+Pod
+
+↓
+
+Security Context
+
+├── Non-Root
+
+├── Read-Only FS
+
+├── Drop Capabilities
+
+└── No Privilege Escalation
+```
+
+---
+
+# Question 251
+
+## What are Pod Security Standards (PSS)?
+
+### Answer
+
+Pod Security Standards define recommended security profiles for Kubernetes workloads.
+
+The three predefined profiles are:
+
+- Privileged
+- Baseline
+- Restricted
+
+Most production environments adopt the Restricted profile wherever possible.
+
+---
+
+# Question 252
+
+## What are Network Policies?
+
+### Answer
+
+Network Policies control communication between Pods and namespaces.
+
+Without Network Policies, Pods may communicate freely depending on the Container Network Interface (CNI) implementation.
+
+---
+
+# Network Policy
+
+```text
+Pod A
+
+↓
+
+Network Policy
+
+↓
+
+Pod B
+
+↓
+
+Allow
+
+or
+
+Deny
+```
+
+---
+
+# Question 253
+
+## Why are Network Policies important?
+
+### Answer
+
+Network Policies implement network segmentation.
+
+They reduce lateral movement by allowing only approved communication between workloads.
+
+---
+
+# Question 254
+
+## What is Admission Control?
+
+### Answer
+
+Admission Controllers validate or modify Kubernetes requests before objects are created.
+
+Examples include:
+
+- Pod Security Admission
+- Resource Quotas
+- Image Policy
+- Mutating Admission Controllers
+- Validating Admission Controllers
+
+---
+
+# Question 255
+
+## What are enterprise best practices for Kubernetes Security?
+
+### Answer
+
+Organizations should:
+
+- Enable RBAC.
+- Use dedicated Service Accounts.
+- Encrypt Kubernetes Secrets.
+- Enforce Pod Security Standards.
+- Use Network Policies.
+- Scan container images before deployment.
+- Enable audit logging.
+- Monitor runtime activity with Falco.
+- Keep Kubernetes updated.
+- Integrate Kubernetes security into the DevSecOps pipeline.
+
+---
+
+# Enterprise DevSecOps Pipeline with Kubernetes Security
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+Image Signing
+
+↓
+
+Admission Controller
+
+↓
+
+Amazon EKS
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Enforce the Principle of Least Privilege using RBAC.
+- Use dedicated Service Accounts for every workload.
+- Enable Encryption at Rest for Kubernetes Secrets.
+- Apply the Restricted Pod Security Standard whenever practical.
+- Use Network Policies to isolate applications.
+- Deploy only signed and verified container images.
+- Enable Kubernetes audit logging for security investigations.
+- Continuously monitor runtime activity using Falco or equivalent tools.
+- Keep Kubernetes versions and worker nodes patched.
+- Combine Kubernetes security with container security, runtime security, and supply chain security for defence in depth.
+
+---
+
