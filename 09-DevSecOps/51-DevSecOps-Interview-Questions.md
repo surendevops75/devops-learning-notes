@@ -5573,3 +5573,596 @@ Production
 
 ---
 
+# Container Security Interview Questions
+
+---
+
+# Question 216
+
+## What is Container Security?
+
+### Answer
+
+Container Security is the practice of protecting containerized applications throughout their lifecycle, from image creation and registry storage to deployment, runtime, and decommissioning.
+
+It focuses on reducing vulnerabilities, preventing unauthorized access, and securing the container runtime.
+
+---
+
+# Container Security Lifecycle
+
+```text
+Source Code
+
+↓
+
+Build
+
+↓
+
+Container Image
+
+↓
+
+Security Scan
+
+↓
+
+Registry
+
+↓
+
+Image Signing
+
+↓
+
+Deployment
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Question 217
+
+## Why is Container Security important?
+
+### Answer
+
+Containers are lightweight and widely used in modern cloud-native applications.
+
+A vulnerable container image can expose production systems to attacks such as privilege escalation, remote code execution, and data breaches.
+
+---
+
+# Question 218
+
+## What are the major components of Container Security?
+
+### Answer
+
+Container Security includes:
+
+- Secure base images
+- Image vulnerability scanning
+- Image signing
+- Least privilege
+- Runtime protection
+- Registry security
+- Secrets management
+- Kubernetes security
+- Continuous monitoring
+
+---
+
+# Question 219
+
+## What is a Container Image?
+
+### Answer
+
+A container image is an immutable package containing:
+
+- Application code
+- Runtime
+- Libraries
+- Dependencies
+- Configuration files
+
+Images are used to create running containers.
+
+---
+
+# Container Image Architecture
+
+```text
+Application
+
+↓
+
+Dependencies
+
+↓
+
+Runtime
+
+↓
+
+Operating System Libraries
+
+↓
+
+Base Image
+```
+
+---
+
+# Question 220
+
+## What is a Base Image?
+
+### Answer
+
+A Base Image is the starting layer used to build container images.
+
+Examples include:
+
+- Ubuntu
+- Alpine
+- Debian
+- Distroless Images
+- Amazon Linux
+
+Using trusted and minimal base images reduces the attack surface.
+
+---
+
+# Question 221
+
+## Why are minimal base images recommended?
+
+### Answer
+
+Minimal images contain fewer packages, reducing:
+
+- Vulnerabilities
+- Image size
+- Attack surface
+- Patch management effort
+
+Examples include Alpine Linux and Distroless images.
+
+---
+
+# Question 222
+
+## What is the attack surface of a container?
+
+### Answer
+
+The attack surface includes every component that could potentially be exploited, such as:
+
+- Operating system packages
+- Installed software
+- Open ports
+- Running processes
+- Configuration files
+- Secrets
+- Network exposure
+
+Reducing unnecessary components minimizes risk.
+
+---
+
+# Question 223
+
+## Why should containers not run as the root user?
+
+### Answer
+
+Running containers as root increases the impact of a compromise.
+
+If an attacker escapes the container, root privileges may allow greater access to the host system.
+
+Running containers as a non-root user follows the Principle of Least Privilege.
+
+---
+
+# Root vs Non-Root
+
+```text
+Container
+
+├── Root User
+
+│      ↓
+
+│ High Risk
+
+│
+
+└── Non-Root User
+
+       ↓
+
+Lower Risk
+```
+
+---
+
+# Question 224
+
+## What is the Principle of Least Privilege?
+
+### Answer
+
+Least Privilege means applications, users, and containers should only receive the permissions required to perform their intended tasks.
+
+This limits the potential damage caused by compromised workloads.
+
+---
+
+# Question 225
+
+## What Linux capabilities are available to containers?
+
+### Answer
+
+Linux capabilities divide root privileges into smaller permissions.
+
+Examples include:
+
+- NET_ADMIN
+- SYS_ADMIN
+- SYS_TIME
+- CHOWN
+- SETUID
+- SETGID
+
+Containers should only receive capabilities they require.
+
+---
+
+# Question 226
+
+## Why should privileged containers be avoided?
+
+### Answer
+
+Privileged containers receive almost unrestricted access to the host.
+
+They can:
+
+- Access host devices
+- Modify kernel settings
+- Escape isolation
+- Increase security risk
+
+Privileged mode should only be used when absolutely necessary.
+
+---
+
+# Question 227
+
+## What is a read-only root filesystem?
+
+### Answer
+
+A read-only root filesystem prevents applications from modifying the container filesystem during runtime.
+
+This reduces the risk of malware persistence and unauthorized changes.
+
+---
+
+# Read-Only Filesystem
+
+```text
+Container
+
+↓
+
+Root Filesystem
+
+↓
+
+Read Only
+
+↓
+
+No Runtime Modifications
+```
+
+---
+
+# Question 228
+
+## Why should unnecessary packages be removed from container images?
+
+### Answer
+
+Unused packages increase:
+
+- Attack surface
+- Image size
+- Vulnerability count
+- Patching effort
+
+Images should include only the software required to run the application.
+
+---
+
+# Question 229
+
+## What is image hardening?
+
+### Answer
+
+Image hardening is the process of reducing security risks by:
+
+- Removing unnecessary packages
+- Updating software
+- Running as non-root
+- Using trusted base images
+- Applying secure configurations
+- Disabling unused services
+
+---
+
+# Question 230
+
+## What is image immutability?
+
+### Answer
+
+Container images should remain unchanged after they are are built.
+
+If updates are required, a new image should be built, scanned, signed, and deployed instead of modifying a running container.
+
+---
+
+# Immutable Image Workflow
+
+```text
+Source Code
+
+↓
+
+Build Image
+
+↓
+
+Scan
+
+↓
+
+Sign
+
+↓
+
+Push Registry
+
+↓
+
+Deploy
+
+↓
+
+Never Modify
+
+↓
+
+Build New Image
+```
+
+---
+
+# Question 231
+
+## Why should container images be scanned?
+
+### Answer
+
+Image scanning identifies:
+
+- Known CVEs
+- Vulnerable packages
+- Misconfigurations
+- Embedded secrets
+- Outdated software
+
+Scanning prevents vulnerable images from reaching production.
+
+---
+
+# Question 232
+
+## Which tools are commonly used for image scanning?
+
+### Answer
+
+Popular image scanning tools include:
+
+- Trivy
+- Prisma Cloud
+- Aqua Security
+- Snyk
+- Clair
+- Amazon ECR Image Scanning
+
+---
+
+# Question 233
+
+## What is a container registry?
+
+### Answer
+
+A container registry is a repository used to securely store, manage, and distribute container images.
+
+Examples include:
+
+- Amazon ECR
+- Azure Container Registry (ACR)
+- Google Artifact Registry
+- Docker Hub
+- JFrog Artifactory
+- Harbor
+
+---
+
+# Container Registry Workflow
+
+```text
+Build Image
+
+↓
+
+Security Scan
+
+↓
+
+Image Signing
+
+↓
+
+Registry
+
+↓
+
+Deployment
+```
+
+---
+
+# Question 234
+
+## How do you secure a container registry?
+
+### Answer
+
+Best practices include:
+
+- Enable authentication
+- Implement RBAC
+- Scan images automatically
+- Enable image signing
+- Restrict public access
+- Encrypt stored images
+- Audit image access
+- Apply lifecycle policies
+
+---
+
+# Question 235
+
+## What are enterprise best practices for Container Security?
+
+### Answer
+
+Organizations should:
+
+- Use trusted minimal base images.
+- Scan every image before pushing to the registry.
+- Never run containers as root.
+- Apply the Principle of Least Privilege.
+- Sign container images before deployment.
+- Store images only in trusted registries.
+- Continuously monitor runtime behavior.
+- Keep base images updated.
+- Remove unused packages and services.
+- Combine container security with Kubernetes security, runtime protection, and supply chain security.
+
+---
+
+# Enterprise DevSecOps Pipeline with Container Security
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Build Image
+
+↓
+
+Trivy Scan
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Registry
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Build images from trusted and regularly updated base images.
+- Enforce image scanning before every deployment.
+- Use immutable and versioned container images.
+- Enable registry authentication and role-based access control.
+- Sign and verify images before deployment.
+- Avoid privileged containers and unnecessary Linux capabilities.
+- Deploy containers with read-only root filesystems wherever practical.
+- Continuously monitor container runtime activity using tools such as Falco.
+- Automate image lifecycle management and vulnerability remediation.
+- Treat container security as a continuous process across the entire software supply chain.
+
+---
