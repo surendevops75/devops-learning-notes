@@ -2724,3 +2724,503 @@ Production
 
 ---
 
+# OWASP Dependency-Check Interview Questions
+
+---
+
+# Question 116
+
+## What is OWASP Dependency-Check?
+
+### Answer
+
+OWASP Dependency-Check is an open-source Software Composition Analysis (SCA) tool that identifies publicly disclosed vulnerabilities in project dependencies by comparing them against vulnerability databases such as the National Vulnerability Database (NVD).
+
+---
+
+# Dependency-Check Workflow
+
+```text
+Application
+
+↓
+
+Dependency Files
+
+↓
+
+Dependency Analysis
+
+↓
+
+NVD Database
+
+↓
+
+CVE Matching
+
+↓
+
+Security Report
+
+↓
+
+Developer Fix
+```
+
+---
+
+# Question 117
+
+## Why do organizations use OWASP Dependency-Check?
+
+### Answer
+
+Organizations use OWASP Dependency-Check to:
+
+- Detect vulnerable libraries
+- Reduce software supply chain risks
+- Automate dependency analysis
+- Improve compliance
+- Prevent vulnerable software from reaching production
+
+---
+
+# Question 118
+
+## Which dependency files can OWASP Dependency-Check analyze?
+
+### Answer
+
+It supports many package managers including:
+
+| Technology | Dependency File |
+|------------|-----------------|
+| Maven | pom.xml |
+| Gradle | build.gradle |
+| npm | package-lock.json |
+| Yarn | yarn.lock |
+| Python | requirements.txt |
+| Go | go.mod |
+| .NET | packages.config |
+
+---
+
+# Question 119
+
+## What security issues does OWASP Dependency-Check identify?
+
+### Answer
+
+It identifies:
+
+- Known CVEs
+- Vulnerable dependencies
+- Outdated libraries
+- Transitive dependency risks
+- Vulnerability severity
+- Remediation recommendations
+
+---
+
+# Question 120
+
+## How does OWASP Dependency-Check work?
+
+### Answer
+
+The tool:
+
+1. Reads dependency manifests.
+2. Builds a dependency inventory.
+3. Matches package versions with known CVEs.
+4. Calculates risk based on CVSS scores.
+5. Generates detailed vulnerability reports.
+
+---
+
+# Detection Workflow
+
+```text
+Dependency Files
+
+↓
+
+Package Identification
+
+↓
+
+Version Detection
+
+↓
+
+NVD Lookup
+
+↓
+
+CVE Match
+
+↓
+
+Risk Report
+```
+
+---
+
+# Question 121
+
+## Does OWASP Dependency-Check perform SAST?
+
+### Answer
+
+No.
+
+Dependency-Check does not analyze application source code. It performs Software Composition Analysis (SCA) by evaluating third-party libraries and dependencies.
+
+---
+
+# Question 122
+
+## Does OWASP Dependency-Check perform DAST?
+
+### Answer
+
+No.
+
+It does not test running applications. Runtime security testing requires DAST tools such as OWASP ZAP.
+
+---
+
+# Question 123
+
+## What is the difference between Dependency-Check and Trivy?
+
+| OWASP Dependency-Check | Trivy |
+|-------------------------|--------|
+| Primarily SCA | Multi-purpose security scanner |
+| Focuses on dependencies | Scans images, IaC, Kubernetes, secrets and dependencies |
+| No container image scanning | Supports container image scanning |
+| No Kubernetes scanning | Supports Kubernetes scanning |
+| Open-source | Open-source |
+
+---
+
+# Question 124
+
+## What is the difference between Dependency-Check and Veracode SCA?
+
+### Answer
+
+Both identify vulnerable dependencies.
+
+Dependency-Check is an open-source tool primarily focused on dependency vulnerability detection, while Veracode SCA provides enterprise features such as centralized management, policy enforcement, compliance reporting, and broader application security integration.
+
+---
+
+# Question 125
+
+## Which vulnerability databases are used?
+
+### Answer
+
+Common sources include:
+
+- National Vulnerability Database (NVD)
+- CISA advisories
+- Vendor security advisories
+- CVE database
+
+These databases are updated regularly with newly disclosed vulnerabilities.
+
+---
+
+# Question 126
+
+## What is CVE matching?
+
+### Answer
+
+Dependency-Check compares detected package names and versions against known CVE records to determine whether a dependency is affected by published vulnerabilities.
+
+---
+
+# CVE Matching
+
+```text
+Dependency
+
+↓
+
+Package Version
+
+↓
+
+NVD Search
+
+↓
+
+Matching CVE
+
+↓
+
+Risk Score
+
+↓
+
+Security Report
+```
+
+---
+
+# Question 127
+
+## What reports can OWASP Dependency-Check generate?
+
+### Answer
+
+It supports multiple report formats including:
+
+- HTML
+- JSON
+- XML
+- JUnit
+- SARIF
+
+These reports can be integrated with CI/CD pipelines and security dashboards.
+
+---
+
+# Question 128
+
+## Can OWASP Dependency-Check fail a CI/CD pipeline?
+
+### Answer
+
+Yes.
+
+Organizations commonly configure pipelines to fail when vulnerabilities exceed approved severity thresholds.
+
+Example:
+
+```text
+Critical CVE Found
+
+↓
+
+Pipeline Failed
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Continue Pipeline
+```
+
+---
+
+# Question 129
+
+## Where should Dependency-Check run in a DevSecOps pipeline?
+
+### Answer
+
+Dependency-Check should execute immediately after the application build and before container image creation or deployment.
+
+This prevents vulnerable dependencies from progressing through later pipeline stages.
+
+---
+
+# Enterprise Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Dependency-Check
+
+↓
+
+Trivy
+
+↓
+
+Secrets Scan
+
+↓
+
+IaC Scan
+
+↓
+
+SBOM
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 130
+
+## What are false positives in Dependency-Check?
+
+### Answer
+
+False positives occur when a reported CVE does not actually affect the application because the vulnerable code path is not used or the package identification is incorrect.
+
+Each finding should be reviewed before suppression.
+
+---
+
+# Question 131
+
+## How should vulnerabilities be prioritized?
+
+### Answer
+
+Organizations should prioritize based on:
+
+- CVSS severity
+- Business impact
+- Internet exposure
+- Exploit availability
+- Criticality of the application
+- Availability of patches
+
+Critical exploitable vulnerabilities should be remediated first.
+
+---
+
+# Question 132
+
+## What are suppression files?
+
+### Answer
+
+Suppression files allow organizations to exclude known false positives after proper security review and documentation.
+
+Suppressions should be reviewed regularly and removed when no longer required.
+
+---
+
+# Question 133
+
+## How do you integrate Dependency-Check with Jenkins?
+
+### Answer
+
+A common workflow is:
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Dependency-Check
+
+↓
+
+Generate Report
+
+↓
+
+Evaluate Severity
+
+├── Pass
+
+│      ↓
+
+│ Continue
+
+└── Fail
+
+       ↓
+
+Developer Fix
+```
+
+The generated reports can be archived and used for audit and compliance purposes.
+
+---
+
+# Question 134
+
+## How does Dependency-Check support compliance?
+
+### Answer
+
+Dependency-Check helps organizations demonstrate that open-source dependencies are regularly scanned for known vulnerabilities.
+
+Its reports support compliance initiatives such as:
+
+- PCI DSS
+- ISO 27001
+- SOC 2
+- NIST Secure Software Development Framework (SSDF)
+
+---
+
+# Question 135
+
+## What are enterprise best practices for OWASP Dependency-Check?
+
+### Answer
+
+Organizations should:
+
+- Scan every build.
+- Keep vulnerability databases updated.
+- Fail builds on critical vulnerabilities.
+- Review suppression files periodically.
+- Monitor transitive dependencies.
+- Integrate reports into vulnerability management.
+- Combine Dependency-Check with SAST, DAST, IaC scanning, and container scanning.
+- Continuously monitor dependencies after deployment.
+- Generate reports for compliance audits.
+- Re-scan applications whenever dependencies are upgraded.
+
+---
+
+# Enterprise Best Practices
+
+- Scan every application build automatically.
+- Update vulnerability databases before scanning.
+- Treat critical CVEs as deployment blockers unless formally approved.
+- Review and document every suppression rule.
+- Monitor both direct and transitive dependencies.
+- Combine Dependency-Check with SonarQube, Trivy, Veracode, Checkov, and Gitleaks for layered security.
+- Maintain an inventory of all third-party components.
+- Integrate reports into enterprise SIEM and vulnerability management platforms.
+- Continuously assess dependencies as new CVEs are published.
+- Make dependency security an ongoing process rather than a one-time activity.
+
+---
+
