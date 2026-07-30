@@ -764,3 +764,264 @@ Prevent Recurrence
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 31
+
+## A deployment completed successfully, but ArgoCD reports the application as Healthy while customers still receive HTTP 503 Service Unavailable. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- ALB Target Group health
+- Kubernetes Service endpoints
+- Pod readiness status
+- Ingress configuration
+- Backend application logs
+- Health check path
+- Recent deployment changes
+- Network connectivity
+
+---
+
+# Scenario 32
+
+## Your Jenkins pipeline suddenly fails during the Trivy scan because of a database update error. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Internet connectivity
+- Trivy database cache
+- Trivy version
+- Proxy configuration
+- Offline database mirror
+- Runner disk space
+- Registry connectivity
+- Retry strategy
+
+---
+
+# Scenario 33
+
+## A developer accidentally deletes the Terraform remote state file stored in Amazon S3. What actions would you take?
+
+### Expected Approach
+
+Investigate:
+
+- S3 Versioning
+- Backup availability
+- State recovery options
+- DynamoDB state lock status
+- Cloud resources already provisioned
+- Terraform plan before applying
+- Team communication
+- Recovery validation
+
+---
+
+# Scenario 34
+
+## Falco generates repeated alerts indicating that multiple containers are attempting privilege escalation. How would you respond?
+
+### Expected Approach
+
+Check:
+
+- Affected namespaces
+- Container images
+- Deployment history
+- Kubernetes Audit Logs
+- RBAC permissions
+- Host activity
+- Recent image changes
+- Isolate affected workloads if malicious behaviour is confirmed
+
+---
+
+# Scenario 35
+
+## During deployment, Kubernetes Pods cannot connect to Amazon RDS even though the database is healthy. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Security Groups
+- Network ACLs
+- VPC routing
+- RDS endpoint
+- DNS resolution
+- IAM authentication (if used)
+- Secrets
+- Database firewall rules
+
+---
+
+# Scenario 36
+
+## After merging a Pull Request, Jenkins builds an older commit instead of the latest code. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Git branch configuration
+- Jenkins webhook
+- SCM polling
+- Repository cache
+- Branch references
+- Detached HEAD state
+- Pipeline configuration
+- Build parameters
+
+---
+
+# Scenario 37
+
+## A newly deployed application suddenly starts consuming all available database connections. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Connection pool configuration
+- Connection leaks
+- Application logs
+- Database monitoring
+- Recent code changes
+- Query execution time
+- Idle connections
+- Maximum connection limits
+
+---
+
+# Scenario 38
+
+## Amazon EKS nodes are healthy, but new Pods remain in Pending state. Existing Pods continue running normally. What could be the issue?
+
+### Expected Approach
+
+Verify:
+
+- Available CPU and memory
+- Node taints
+- Tolerations
+- Node selectors
+- Affinity rules
+- Persistent Volume Claims
+- Scheduler events
+- Cluster Autoscaler status
+
+---
+
+# Scenario 39
+
+## During a production release, users report intermittent failures while the application appears healthy. How would you approach this issue?
+
+### Expected Approach
+
+Investigate:
+
+- Load Balancer health
+- Session persistence
+- Multiple application replicas
+- Pod restarts
+- API latency
+- Network packet loss
+- DNS resolution
+- Backend dependency health
+
+---
+
+# Scenario 40
+
+## A security audit reveals that production Kubernetes Secrets are stored as plain YAML files in the Git repository. How would you remediate this?
+
+### Expected Approach
+
+Take immediate action:
+
+- Remove secrets from Git history
+- Rotate all exposed credentials
+- Move secrets to AWS Secrets Manager or Kubernetes External Secrets
+- Encrypt sensitive configuration
+- Enable secret scanning
+- Review repository access
+- Audit credential usage
+- Update deployment process
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Incident Detected
+
+↓
+
+Validate Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Security Controls
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Continuous Improvement
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate infrastructure and application health independently during troubleshooting.
+- Protect Terraform state with versioning, backups, and state locking.
+- Use automated secret management instead of storing sensitive values in Git.
+- Investigate runtime security alerts immediately and preserve evidence.
+- Verify cloud networking before assuming application failures.
+- Ensure CI/CD pipelines always build the intended source revision.
+- Monitor database connection pools and application resource consumption.
+- Regularly review Kubernetes scheduling constraints and cluster capacity.
+- Implement automated health checks, alerting, and rollback strategies.
+- Document every production incident and use the findings to strengthen security and operational resilience.
+
+---
+
