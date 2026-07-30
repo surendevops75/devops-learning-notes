@@ -6710,3 +6710,591 @@ Production
 
 ---
 
+# Runtime Security (Falco) Interview Questions
+
+---
+
+# Question 256
+
+## What is Runtime Security?
+
+### Answer
+
+Runtime Security is the continuous monitoring and protection of applications, containers, Kubernetes workloads, and hosts while they are actively running.
+
+Unlike preventive security tools, runtime security detects suspicious behaviour during execution.
+
+---
+
+# Runtime Security Lifecycle
+
+```text
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Deploy
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Threat Detection
+
+↓
+
+Alert
+
+↓
+
+Investigation
+
+↓
+
+Response
+```
+
+---
+
+# Question 257
+
+## Why is Runtime Security important?
+
+### Answer
+
+Even after passing SAST, SCA, IaC, and container image scans, workloads may still be compromised through zero-day vulnerabilities, stolen credentials, or insider threats.
+
+Runtime Security provides continuous protection after deployment.
+
+---
+
+# Question 258
+
+## What is Falco?
+
+### Answer
+
+Falco is an open-source Cloud Native Computing Foundation (CNCF) runtime security tool that monitors Linux system calls and Kubernetes events to detect suspicious activity in real time.
+
+It helps identify malicious behaviour in containers, Kubernetes clusters, and Linux hosts.
+
+---
+
+# Falco Architecture
+
+```text
+Container
+
+↓
+
+Linux Kernel
+
+↓
+
+System Calls
+
+↓
+
+Falco Engine
+
+↓
+
+Rules Engine
+
+↓
+
+Alert
+
+↓
+
+SIEM / SOC
+```
+
+---
+
+# Question 259
+
+## How does Falco work?
+
+### Answer
+
+Falco captures system events using the Linux kernel and evaluates them against predefined or custom security rules.
+
+When a rule is matched, Falco immediately generates an alert for investigation.
+
+---
+
+# Detection Workflow
+
+```text
+Application
+
+↓
+
+System Calls
+
+↓
+
+Falco
+
+↓
+
+Rule Evaluation
+
+↓
+
+Threat Detected
+
+↓
+
+Alert Generated
+```
+
+---
+
+# Question 260
+
+## What events can Falco monitor?
+
+### Answer
+
+Falco monitors:
+
+- Process execution
+- File access
+- Network connections
+- Container activity
+- Kubernetes API events
+- User logins
+- Privilege escalation
+- System calls
+
+---
+
+# Question 261
+
+## What are Falco Rules?
+
+### Answer
+
+Falco Rules define the conditions used to detect suspicious activity.
+
+Rules can monitor:
+
+- Sensitive file access
+- Shell execution
+- Privileged containers
+- Unexpected network connections
+- Kubernetes events
+- Process execution
+
+---
+
+# Question 262
+
+## Can organizations create custom Falco rules?
+
+### Answer
+
+Yes.
+
+Organizations frequently create custom rules to detect application-specific threats, compliance violations, and organization-specific attack patterns.
+
+---
+
+# Rule Evaluation
+
+```text
+System Event
+
+↓
+
+Falco Rule
+
+├── Match
+
+│      ↓
+
+│ Alert
+
+└── No Match
+
+       ↓
+
+Continue Monitoring
+```
+
+---
+
+# Question 263
+
+## What suspicious activities can Falco detect?
+
+### Answer
+
+Examples include:
+
+- Container shell access
+- Privilege escalation
+- File modification
+- Unexpected outbound connections
+- Reverse shells
+- Crypto miners
+- Sensitive file access
+- Unauthorized Kubernetes API actions
+
+---
+
+# Question 264
+
+## What is Privilege Escalation?
+
+### Answer
+
+Privilege Escalation occurs when a user or process gains permissions beyond those originally granted.
+
+Falco detects behaviours that indicate privilege escalation attempts.
+
+---
+
+# Question 265
+
+## Why is shell access inside containers considered suspicious?
+
+### Answer
+
+Production containers typically run a single application process.
+
+Unexpected shell access may indicate:
+
+- Manual tampering
+- Container compromise
+- Malware execution
+- Unauthorized debugging
+
+---
+
+# Container Attack Example
+
+```text
+Application
+
+↓
+
+Unexpected Shell
+
+↓
+
+Falco Alert
+
+↓
+
+SOC Investigation
+```
+
+---
+
+# Question 266
+
+## Can Falco detect container escape attempts?
+
+### Answer
+
+Yes.
+
+Falco can detect behaviours commonly associated with container escape attempts, including suspicious privilege usage, host filesystem access, and abnormal system calls.
+
+---
+
+# Question 267
+
+## What Kubernetes events can Falco monitor?
+
+### Answer
+
+Falco monitors events such as:
+
+- Pod creation
+- Pod deletion
+- Secret access
+- ConfigMap changes
+- Role creation
+- ClusterRole modifications
+- Service Account changes
+- Namespace activity
+
+---
+
+# Question 268
+
+## Can Falco integrate with Kubernetes?
+
+### Answer
+
+Yes.
+
+Falco runs as a DaemonSet on Kubernetes nodes, allowing it to monitor all workloads running on each worker node.
+
+---
+
+# Kubernetes Runtime Monitoring
+
+```text
+Worker Node
+
+↓
+
+DaemonSet
+
+↓
+
+Falco
+
+↓
+
+All Containers
+
+↓
+
+Threat Detection
+```
+
+---
+
+# Question 269
+
+## Can Falco monitor Linux hosts?
+
+### Answer
+
+Yes.
+
+Falco supports monitoring Linux hosts in addition to containerized environments, making it suitable for hybrid infrastructure.
+
+---
+
+# Question 270
+
+## Where should Falco be placed in a DevSecOps architecture?
+
+### Answer
+
+Falco operates after deployment.
+
+It continuously monitors production workloads and complements preventive security tools such as SonarQube, Trivy, Checkov, and Gitleaks.
+
+---
+
+# Enterprise Security Pipeline
+
+```text
+Developer
+
+↓
+
+CI/CD Security
+
+↓
+
+Deploy
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Threat Detection
+
+↓
+
+SIEM
+
+↓
+
+Incident Response
+```
+
+---
+
+# Question 271
+
+## Can Falco integrate with SIEM platforms?
+
+### Answer
+
+Yes.
+
+Falco alerts can be forwarded to platforms such as:
+
+- Splunk
+- Microsoft Sentinel
+- Elastic SIEM
+- IBM QRadar
+- Google Chronicle
+
+This enables centralized monitoring and incident response.
+
+---
+
+# Question 272
+
+## How should Falco alerts be prioritized?
+
+### Answer
+
+Organizations should prioritize alerts based on:
+
+- Severity
+- Asset criticality
+- Business impact
+- Internet exposure
+- Active exploitation
+- Compliance requirements
+
+Critical production alerts require immediate investigation.
+
+---
+
+# Question 273
+
+## What are the limitations of Falco?
+
+### Answer
+
+Falco cannot:
+
+- Perform SAST
+- Scan source code
+- Detect vulnerable dependencies
+- Replace container image scanning
+- Replace penetration testing
+
+Falco complements preventive security by detecting threats during runtime.
+
+---
+
+# Question 274
+
+## How does Falco differ from Trivy?
+
+| Falco | Trivy |
+|--------|--------|
+| Runtime Security | Pre-deployment Security |
+| Monitors running workloads | Scans images and files |
+| Detects suspicious behaviour | Detects vulnerabilities |
+| Event-driven detection | Static security analysis |
+| Continuous monitoring | Build-time scanning |
+
+---
+
+# Question 275
+
+## What are enterprise best practices for Runtime Security?
+
+### Answer
+
+Organizations should:
+
+- Deploy Falco on every Kubernetes worker node.
+- Enable runtime monitoring for production workloads.
+- Create custom Falco rules for business-critical applications.
+- Forward alerts to enterprise SIEM platforms.
+- Investigate all Critical runtime alerts immediately.
+- Continuously tune rules to reduce false positives.
+- Combine runtime security with SAST, SCA, IaC scanning, and container security.
+- Retain runtime logs for forensic investigations.
+- Regularly review detection coverage.
+- Include runtime monitoring in the incident response process.
+
+---
+
+# Enterprise Runtime Security Architecture
+
+```text
+Developer
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+Image Signing
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco DaemonSet
+
+↓
+
+Runtime Detection
+
+↓
+
+SIEM
+
+↓
+
+SOC
+
+↓
+
+Incident Response
+```
+
+---
+
+# Enterprise Best Practices
+
+- Treat runtime monitoring as the final security layer after deployment.
+- Monitor both Kubernetes events and Linux system calls.
+- Keep Falco rules updated to detect emerging attack techniques.
+- Integrate Falco with SIEM, SOAR, and alerting platforms.
+- Validate every alert before closing an incident.
+- Monitor privileged containers, shell access, and sensitive file modifications.
+- Correlate Falco alerts with Kubernetes audit logs and cloud logs.
+- Test runtime detection rules during security exercises.
+- Maintain documented incident response procedures for runtime alerts.
+- Use Falco alongside Trivy, SonarQube, Checkov, Gitleaks, and OWASP ZAP for comprehensive DevSecOps security.
+
+---
+
