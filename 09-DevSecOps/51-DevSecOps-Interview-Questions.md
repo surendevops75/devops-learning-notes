@@ -11520,3 +11520,574 @@ Production
 
 ---
 
+# GitLab DevSecOps Interview Questions
+
+---
+
+# Question 436
+
+## What is GitLab CI/CD?
+
+### Answer
+
+GitLab CI/CD is GitLab's built-in Continuous Integration and Continuous Deployment platform used to automate building, testing, security scanning, and application deployment.
+
+It supports DevSecOps by integrating security directly into the software delivery lifecycle.
+
+---
+
+# GitLab CI/CD Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+GitLab Pipeline
+
+↓
+
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Deploy
+
+↓
+
+Production
+```
+
+---
+
+# Question 437
+
+## What is a `.gitlab-ci.yml` file?
+
+### Answer
+
+A `.gitlab-ci.yml` file defines the CI/CD pipeline using YAML syntax.
+
+It contains stages, jobs, variables, artifacts, rules, and deployment configurations stored alongside the application source code.
+
+---
+
+# Question 438
+
+## What are GitLab Pipeline Stages?
+
+### Answer
+
+Stages organize pipeline execution into logical phases.
+
+Common stages include:
+
+- Build
+- Test
+- Security
+- Package
+- Deploy
+- Verify
+
+Each stage executes only after the previous stage completes successfully.
+
+---
+
+# Pipeline Stages
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Security
+
+↓
+
+Package
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 439
+
+## What are GitLab Runners?
+
+### Answer
+
+GitLab Runners are agents that execute CI/CD pipeline jobs.
+
+They can be:
+
+- Shared Runners
+- Group Runners
+- Project Runners
+- Self-managed Runners
+
+---
+
+# Question 440
+
+## Why should GitLab Runners be secured?
+
+### Answer
+
+GitLab Runners often have access to source code, secrets, and deployment credentials.
+
+Organizations should isolate runners, keep them patched, and apply least privilege to reduce security risks.
+
+---
+
+# Secure Runner
+
+```text
+Pipeline
+
+↓
+
+Runner
+
+↓
+
+Isolated Environment
+
+↓
+
+Pipeline Execution
+
+↓
+
+Cleanup
+```
+
+---
+
+# Question 441
+
+## Where should Gitleaks be executed in GitLab CI/CD?
+
+### Answer
+
+Gitleaks should execute immediately after the repository checkout stage.
+
+This prevents hardcoded secrets from progressing through the pipeline.
+
+---
+
+# Question 442
+
+## Where should SonarQube be integrated?
+
+### Answer
+
+SonarQube should run after the build and unit testing stages.
+
+The pipeline should fail if the configured Quality Gate is not satisfied.
+
+---
+
+# Question 443
+
+## Where should Dependency Scanning be performed?
+
+### Answer
+
+Dependency scanning should execute after the application build to identify vulnerable third-party libraries before packaging or deployment.
+
+---
+
+# Question 444
+
+## Where should Trivy be integrated?
+
+### Answer
+
+Trivy should scan:
+
+- Source filesystem
+- Dependencies
+- Container images
+
+Container image scanning should occur before pushing images to the container registry.
+
+---
+
+# Trivy Integration
+
+```text
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Pass
+
+↓
+
+Container Registry
+```
+
+---
+
+# Question 445
+
+## Where should Checkov and TFSec be executed?
+
+### Answer
+
+Checkov and TFSec should scan Infrastructure as Code before Terraform or CloudFormation resources are provisioned.
+
+This prevents insecure infrastructure from being deployed.
+
+---
+
+# Question 446
+
+## Why should GitLab pipelines fail on Critical vulnerabilities?
+
+### Answer
+
+Failing the pipeline prevents vulnerable applications, infrastructure, or container images from reaching production.
+
+Critical security findings should block deployments until remediation is complete.
+
+---
+
+# Question 447
+
+## How should secrets be managed in GitLab?
+
+### Answer
+
+Secrets should be stored using GitLab CI/CD Variables or retrieved dynamically from enterprise secrets management platforms.
+
+Sensitive values should never be stored inside `.gitlab-ci.yml` files or source code.
+
+---
+
+# Secrets Flow
+
+```text
+Pipeline
+
+↓
+
+GitLab Variables
+
+or
+
+Secrets Manager
+
+↓
+
+Pipeline Job
+
+↓
+
+Deployment
+```
+
+---
+
+# Question 448
+
+## How should GitLab authenticate with cloud providers?
+
+### Answer
+
+GitLab pipelines should use temporary credentials, workload identities, or IAM Roles instead of long-lived access keys whenever supported.
+
+This reduces credential management risks.
+
+---
+
+# Question 449
+
+## Why should artifacts be signed before deployment?
+
+### Answer
+
+Signing artifacts ensures they were produced by a trusted pipeline and have not been modified.
+
+Only verified artifacts should be promoted to production environments.
+
+---
+
+# Question 450
+
+## What security features are available in GitLab?
+
+### Answer
+
+GitLab provides several security capabilities, including:
+
+- Secret Detection
+- SAST
+- Dependency Scanning
+- Container Scanning
+- DAST
+- License Compliance
+- Code Quality
+- Security Dashboards
+
+---
+
+# GitLab Security Features
+
+```text
+GitLab
+
+├── SAST
+
+├── Dependency Scan
+
+├── Secret Detection
+
+├── Container Scan
+
+├── DAST
+
+└── Security Dashboard
+```
+
+---
+
+# Question 451
+
+## Why are Merge Requests important?
+
+### Answer
+
+Merge Requests require code review before changes are merged.
+
+They improve collaboration, identify security issues, and help prevent unauthorized code from reaching protected branches.
+
+---
+
+# Question 452
+
+## What are Protected Branches in GitLab?
+
+### Answer
+
+Protected Branches prevent unauthorized users from directly pushing or deleting critical branches.
+
+They enforce controlled development through Merge Requests and approvals.
+
+---
+
+# Protected Branch Workflow
+
+```text
+Feature Branch
+
+↓
+
+Merge Request
+
+↓
+
+Approval
+
+↓
+
+Security Checks
+
+↓
+
+Merge
+
+↓
+
+Protected Branch
+```
+
+---
+
+# Question 453
+
+## What is the purpose of GitLab Security Dashboards?
+
+### Answer
+
+Security Dashboards provide a centralized view of vulnerabilities identified across repositories and pipelines.
+
+They help security teams prioritize remediation based on severity and risk.
+
+---
+
+# Question 454
+
+## How does GitLab support DevSecOps?
+
+### Answer
+
+GitLab integrates security directly into the software delivery lifecycle by automating security testing, compliance checks, vulnerability reporting, and deployment controls.
+
+This enables continuous security validation within every pipeline.
+
+---
+
+# Question 455
+
+## What are enterprise best practices for GitLab DevSecOps?
+
+### Answer
+
+Organizations should:
+
+- Protect critical branches.
+- Require Merge Request approvals.
+- Secure GitLab Runners.
+- Store secrets outside source code.
+- Integrate automated SAST, SCA, IaC, container, and DAST scanning.
+- Fail pipelines on Critical vulnerabilities.
+- Sign production artifacts.
+- Enable audit logging.
+- Apply Role-Based Access Control (RBAC).
+- Treat GitLab CI/CD as production infrastructure.
+
+---
+
+# Enterprise DevSecOps Pipeline with GitLab
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Merge Request
+
+↓
+
+Code Review
+
+↓
+
+Approval
+
+↓
+
+GitLab Pipeline
+
+↓
+
+Checkout
+
+↓
+
+Gitleaks
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Secure GitLab with Multi-Factor Authentication (MFA) and Role-Based Access Control (RBAC).
+- Protect production branches using Merge Requests and approval rules.
+- Execute pipelines on isolated, regularly patched runners.
+- Store secrets in GitLab CI/CD Variables or external secret management platforms.
+- Automate SAST, SCA, IaC, container, and DAST scanning in every pipeline.
+- Block deployments when critical vulnerabilities or Quality Gate failures occur.
+- Sign and verify production artifacts before deployment.
+- Enable audit logs for administrative actions and pipeline executions.
+- Continuously monitor pipeline security and review runner configurations.
+- Treat GitLab CI/CD as a mission-critical component of the enterprise DevSecOps platform.
+
+---
+
