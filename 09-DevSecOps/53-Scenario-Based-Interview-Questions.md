@@ -3143,3 +3143,278 @@ Continuous Improvement
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 121
+
+## A deployment succeeds, but newly created Pods fail to start because the container image cannot be pulled from Amazon ECR, while older Pods continue running normally. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- ECR repository
+- Image tag
+- Image digest
+- IAM Role
+- IRSA configuration
+- Node IAM permissions
+- ImagePullSecrets
+- Pod Events
+
+---
+
+# Scenario 122
+
+## During a production release, a Canary deployment receives only 10% of traffic, but error rates are significantly higher than the stable version. What would you do?
+
+### Expected Approach
+
+Verify:
+
+- Error logs
+- Request distribution
+- API responses
+- Resource utilization
+- Database performance
+- Recent code changes
+- Rollback criteria
+- Business impact
+
+Rollback the Canary if predefined error thresholds are exceeded.
+
+---
+
+# Scenario 123
+
+## A developer accidentally commits a Kubernetes Secret into the Git repository. Although it is removed in the next commit, why is this still a security issue?
+
+### Expected Approach
+
+Review:
+
+- Git history
+- Repository clones
+- CI/CD logs
+- Secret exposure
+- Credential rotation
+- Audit logs
+- Repository access
+- Secret scanning
+
+Rotate all exposed credentials immediately.
+
+---
+
+# Scenario 124
+
+## Jenkins agents suddenly stop connecting to the Jenkins controller after a network maintenance window. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Network connectivity
+- Firewall rules
+- Agent logs
+- Controller logs
+- JNLP configuration
+- DNS resolution
+- SSL certificates
+- Port availability
+
+---
+
+# Scenario 125
+
+## An application deployed on Amazon EKS cannot communicate with another microservice in a different namespace. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Kubernetes Service
+- DNS resolution
+- Network Policies
+- Namespace configuration
+- Service ports
+- Pod labels
+- Endpoints
+- Application logs
+
+---
+
+# Scenario 126
+
+## During a compliance audit, you discover several Kubernetes namespaces without ResourceQuotas or LimitRanges. Why is this a concern?
+
+### Expected Approach
+
+Review:
+
+- Resource allocation
+- Namespace limits
+- CPU requests
+- Memory requests
+- Resource abuse
+- Multi-tenant isolation
+- Cluster stability
+- Governance policies
+
+Implement quotas before production workloads are deployed.
+
+---
+
+# Scenario 127
+
+## Terraform Apply fails because an AWS service quota has been exceeded. How would you respond?
+
+### Expected Approach
+
+Check:
+
+- Error messages
+- AWS quotas
+- Existing resources
+- Resource cleanup
+- Terraform plan
+- Regional limits
+- Capacity requirements
+- Quota increase requests
+
+---
+
+# Scenario 128
+
+## During deployment, Kubernetes Pods repeatedly fail the Readiness Probe, but the Liveness Probe continues to succeed. What does this indicate?
+
+### Expected Approach
+
+Investigate:
+
+- Application startup
+- Dependency availability
+- Database connectivity
+- External APIs
+- Readiness endpoint
+- Response time
+- Recent deployments
+- Application logs
+
+The application is running but not yet ready to receive production traffic.
+
+---
+
+# Scenario 129
+
+## A production application suddenly experiences a significant increase in memory usage without any increase in traffic. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Memory metrics
+- Heap usage
+- Memory leaks
+- Garbage collection
+- Recent deployments
+- Background jobs
+- Cache growth
+- Application profiling
+
+---
+
+# Scenario 130
+
+## A penetration test reveals that multiple Kubernetes workloads have unrestricted outbound internet access. How would you remediate this?
+
+### Expected Approach
+
+Verify:
+
+- Network Policies
+- Egress rules
+- VPC routing
+- Security Groups
+- Required external endpoints
+- DNS access
+- Monitoring
+- Least Privilege networking
+
+Restrict outbound traffic to only approved destinations.
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Security Alert
+
+↓
+
+Assess Business Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Application
+
+↓
+
+Network Security
+
+↓
+
+Compliance Review
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Update Standards
+```
+
+---
+
+# Enterprise Best Practices
+
+- Use immutable image references and validate image availability before deployment.
+- Define rollback criteria for Canary releases before shifting production traffic.
+- Never rely on Git history cleanup alone after a secret is exposed—rotate all affected credentials.
+- Continuously monitor Jenkins controller and agent connectivity after infrastructure changes.
+- Validate cross-namespace communication using Services, DNS, and Network Policies.
+- Apply ResourceQuotas and LimitRanges to every production namespace.
+- Monitor AWS service quotas proactively to avoid deployment failures.
+- Design Readiness Probes to accurately reflect application readiness for production traffic.
+- Continuously profile applications to detect memory leaks before they impact users.
+- Implement Zero Trust networking by restricting outbound traffic with Kubernetes Network Policies and cloud-native security controls.
+
+---
+
