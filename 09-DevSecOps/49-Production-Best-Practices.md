@@ -1264,3 +1264,463 @@ Operations should become more predictable over time.
 
 ----
 
+# Common Mistakes
+
+## Mistake 1
+
+### Manual Changes in Production
+
+**Problem**
+
+Administrators directly modify production infrastructure or Kubernetes resources.
+
+```text
+Administrator
+
+↓
+
+Manual Change
+
+↓
+
+Production
+```
+
+**Impact**
+
+- Configuration drift
+- Inconsistent environments
+- Difficult rollbacks
+- Poor auditability
+
+**Recommendation**
+
+Manage all infrastructure and deployments through GitOps and Infrastructure as Code.
+
+---
+
+## Mistake 2
+
+### No Rollback Strategy
+
+**Problem**
+
+A deployment fails without a recovery plan.
+
+```text
+Deploy
+
+↓
+
+Failure
+
+↓
+
+No Rollback
+```
+
+**Impact**
+
+- Extended downtime
+- Customer impact
+- Revenue loss
+
+**Recommendation**
+
+Always prepare and test rollback procedures before production deployments.
+
+---
+
+## Mistake 3
+
+### Insufficient Monitoring
+
+**Problem**
+
+Applications are deployed without dashboards or alerts.
+
+**Impact**
+
+- Slow incident detection
+- Longer recovery time
+- Poor visibility
+
+**Recommendation**
+
+Monitor infrastructure, applications, and business metrics using Prometheus, Grafana, and Alertmanager.
+
+---
+
+## Mistake 4
+
+### Single Point of Failure
+
+**Problem**
+
+Critical services run on a single instance.
+
+```text
+Application
+
+↓
+
+Single Server
+
+↓
+
+Failure
+
+↓
+
+Outage
+```
+
+**Impact**
+
+- Service interruption
+- Reduced availability
+- Business disruption
+
+**Recommendation**
+
+Deploy applications across multiple replicas and Availability Zones.
+
+---
+
+## Mistake 5
+
+### Ignoring Security Updates
+
+**Problem**
+
+Operating systems, containers, or dependencies remain unpatched.
+
+**Impact**
+
+- Known vulnerabilities
+- Increased attack surface
+- Compliance violations
+
+**Recommendation**
+
+Implement a structured vulnerability and patch management process.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### Application in CrashLoopBackOff
+
+**Symptoms**
+
+Pods restart continuously.
+
+**Resolution**
+
+```bash
+kubectl describe pod <pod-name>
+
+kubectl logs <pod-name> --previous
+```
+
+Verify:
+
+- Application logs
+- Environment variables
+- Secrets
+- Resource limits
+- Health probes
+
+---
+
+## Scenario 2
+
+### High CPU Utilization
+
+**Symptoms**
+
+Application response time increases.
+
+**Resolution**
+
+```bash
+kubectl top pod
+
+kubectl top node
+```
+
+Review:
+
+- Resource requests
+- Resource limits
+- Horizontal Pod Autoscaler
+- Application performance
+
+---
+
+## Scenario 3
+
+### Production Deployment Failed
+
+**Symptoms**
+
+Deployment remains incomplete.
+
+**Resolution**
+
+```bash
+kubectl rollout status deployment <deployment-name>
+
+kubectl rollout history deployment <deployment-name>
+```
+
+Verify:
+
+- Container image
+- Readiness probes
+- Deployment events
+- Pipeline logs
+
+---
+
+## Scenario 4
+
+### Database Connection Failure
+
+**Symptoms**
+
+Application cannot communicate with the database.
+
+**Resolution**
+
+Verify:
+
+- Database availability
+- Network connectivity
+- Credentials
+- Security Groups
+- Connection pool configuration
+
+Check application and database logs for connection errors.
+
+---
+
+## Scenario 5
+
+### Alerts Not Triggering
+
+**Symptoms**
+
+Application issues occur without notifications.
+
+**Resolution**
+
+Verify:
+
+- Prometheus targets
+- Alertmanager configuration
+- Alert rules
+- Notification channels
+- Dashboard metrics
+
+Confirm that monitoring components are healthy.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What defines a production-ready application?
+
+**Answer**
+
+A production-ready application is secure, scalable, highly available, observable, fault tolerant, monitored, and capable of automated deployment and recovery.
+
+---
+
+## Question 2
+
+### Why is GitOps recommended for production?
+
+**Answer**
+
+GitOps provides version-controlled deployments, automated reconciliation, simplified rollbacks, and complete deployment auditability.
+
+---
+
+## Question 3
+
+### What is immutable infrastructure?
+
+**Answer**
+
+Immutable infrastructure replaces existing servers with newly provisioned instances instead of modifying them, reducing configuration drift and improving consistency.
+
+---
+
+## Question 4
+
+### What is the difference between High Availability and Disaster Recovery?
+
+**Answer**
+
+High Availability minimizes service interruptions during component failures, while Disaster Recovery restores services after major outages or disasters.
+
+---
+
+## Question 5
+
+### Why are health probes important?
+
+**Answer**
+
+Liveness, Readiness, and Startup probes enable Kubernetes to detect unhealthy applications and recover them automatically.
+
+---
+
+## Question 6
+
+### What are RTO and RPO?
+
+**Answer**
+
+Recovery Time Objective (RTO) defines the maximum acceptable recovery time, while Recovery Point Objective (RPO) defines the maximum acceptable data loss after an incident.
+
+---
+
+## Question 7
+
+### Why are SLIs, SLOs, and Error Budgets important?
+
+**Answer**
+
+They provide measurable reliability targets, guide operational decisions, and balance feature delivery with system stability.
+
+---
+
+## Question 8
+
+### Why should production infrastructure be managed as code?
+
+**Answer**
+
+Infrastructure as Code improves consistency, enables version control, simplifies reviews, supports automation, and reduces manual errors.
+
+---
+
+## Question 9
+
+### What monitoring tools are commonly used in production Kubernetes environments?
+
+**Answer**
+
+Prometheus collects metrics, Grafana provides dashboards, Alertmanager sends alerts, and the ELK Stack centralizes log management.
+
+---
+
+## Question 10
+
+### What are the key characteristics of operational excellence?
+
+**Answer**
+
+Automation, observability, reliability, security, continuous improvement, standardization, documentation, and proactive incident management.
+
+---
+
+# Key Takeaways
+
+- Treat production as a controlled and automated environment.
+- Manage infrastructure using Infrastructure as Code.
+- Use GitOps for deployments.
+- Eliminate manual production changes.
+- Design systems for high availability.
+- Implement automatic scaling and failover.
+- Centralize monitoring, logging, and alerting.
+- Perform regular backups and disaster recovery testing.
+- Patch infrastructure and applications continuously.
+- Monitor SLIs, SLOs, and Error Budgets.
+- Conduct Root Cause Analysis after major incidents.
+- Continuously improve operational processes based on production learnings.
+
+---
+
+# Enterprise Production Best Practices Workflow
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+CI Pipeline
+
+↓
+
+Unit Tests
+
+↓
+
+Security Validation
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Production Deployment
+
+↓
+
+Health Checks
+
+↓
+
+Monitoring
+
+├── Prometheus
+
+├── Grafana
+
+├── ELK Stack
+
+└── Alertmanager
+
+↓
+
+Incident Detection
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Continuous Improvement
+```
+
+This workflow demonstrates an enterprise production operating model that combines automation, GitOps, observability, security, high availability, and continuous improvement to maintain reliable and resilient production systems.
+
