@@ -10926,3 +10926,597 @@ Production
 
 ---
 
+# GitHub Actions DevSecOps Interview Questions
+
+---
+
+# Question 416
+
+## What is GitHub Actions?
+
+### Answer
+
+GitHub Actions is GitHub's native CI/CD platform used to automate building, testing, security scanning, and deployment directly from GitHub repositories.
+
+It enables Infrastructure as Code and Pipeline as Code using workflow files.
+
+---
+
+# GitHub Actions Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Workflow Trigger
+
+↓
+
+GitHub Runner
+
+↓
+
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 417
+
+## What is a GitHub Actions Workflow?
+
+### Answer
+
+A Workflow is an automated process defined in a YAML file inside the `.github/workflows/` directory.
+
+It specifies the events, jobs, and steps required to execute a CI/CD pipeline.
+
+---
+
+# Question 418
+
+## What are Events in GitHub Actions?
+
+### Answer
+
+Events are triggers that start a workflow.
+
+Common events include:
+
+- push
+- pull_request
+- workflow_dispatch
+- schedule
+- release
+- tag creation
+
+---
+
+# Workflow Execution
+
+```text
+Git Push
+
+↓
+
+Workflow Trigger
+
+↓
+
+Jobs
+
+↓
+
+Steps
+
+↓
+
+Deployment
+```
+
+---
+
+# Question 419
+
+## What are Jobs and Steps?
+
+### Answer
+
+A **Job** is a collection of related tasks executed on a runner.
+
+A **Step** is an individual command or action performed within a job.
+
+---
+
+# Question 420
+
+## What is a GitHub Runner?
+
+### Answer
+
+A GitHub Runner is the machine that executes workflow jobs.
+
+Organizations can use:
+
+- GitHub-hosted runners
+- Self-hosted runners
+
+Self-hosted runners should be properly secured and monitored.
+
+---
+
+# Question 421
+
+## Why should self-hosted runners be secured?
+
+### Answer
+
+Self-hosted runners may have access to production credentials and internal infrastructure.
+
+Organizations should isolate them, patch them regularly, and restrict network access.
+
+---
+
+# Secure Runner
+
+```text
+Workflow
+
+↓
+
+Runner
+
+↓
+
+Isolated Environment
+
+↓
+
+Pipeline Execution
+
+↓
+
+Cleanup
+```
+
+---
+
+# Question 422
+
+## How should secrets be managed in GitHub Actions?
+
+### Answer
+
+Secrets should be stored using GitHub Secrets or retrieved dynamically from enterprise secrets management platforms.
+
+Secrets must never be hardcoded inside workflow files.
+
+---
+
+# Question 423
+
+## How can GitHub Actions authenticate with AWS securely?
+
+### Answer
+
+GitHub Actions should use OpenID Connect (OIDC) with IAM Roles instead of long-lived AWS access keys.
+
+This provides temporary credentials and improves security.
+
+---
+
+# Authentication Flow
+
+```text
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+IAM Role
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS
+```
+
+---
+
+# Question 424
+
+## Where should Gitleaks be executed in GitHub Actions?
+
+### Answer
+
+Gitleaks should execute immediately after checking out the repository.
+
+This prevents hardcoded secrets from progressing through the CI/CD pipeline.
+
+---
+
+# Question 425
+
+## Where should SonarQube be integrated?
+
+### Answer
+
+SonarQube should run after the application build and unit testing.
+
+The workflow should stop if the Quality Gate fails.
+
+---
+
+# Question 426
+
+## Where should Trivy be executed?
+
+### Answer
+
+Trivy should scan:
+
+- Source filesystem
+- Dependencies
+- Container images
+
+Image scanning should occur after the Docker image is built and before publishing it to the registry.
+
+---
+
+# Trivy Workflow
+
+```text
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Pass
+
+↓
+
+Push Registry
+```
+
+---
+
+# Question 427
+
+## Where should Checkov and TFSec be integrated?
+
+### Answer
+
+Checkov and TFSec should scan Terraform and Infrastructure as Code files before infrastructure provisioning.
+
+This prevents insecure infrastructure from reaching cloud environments.
+
+---
+
+# Question 428
+
+## Why should GitHub Actions fail the workflow on Critical vulnerabilities?
+
+### Answer
+
+Automatically stopping the workflow prevents vulnerable applications or infrastructure from reaching production.
+
+Security failures should be treated as deployment blockers.
+
+---
+
+# Question 429
+
+## How should artifacts be managed in GitHub Actions?
+
+### Answer
+
+Artifacts should be:
+
+- Versioned
+- Security scanned
+- Signed
+- Stored in trusted repositories
+- Verified before deployment
+
+---
+
+# Question 430
+
+## How does GitHub Actions support DevSecOps?
+
+### Answer
+
+GitHub Actions integrates directly with security tools such as:
+
+- SonarQube
+- Gitleaks
+- Trivy
+- Checkov
+- TFSec
+- OWASP ZAP
+- SBOM generators
+- Cosign
+
+This enables automated security validation within every workflow.
+
+---
+
+# Question 431
+
+## Why is Branch Protection important in GitHub?
+
+### Answer
+
+Branch Protection prevents direct changes to protected branches.
+
+It enforces:
+
+- Pull Requests
+- Required approvals
+- Status checks
+- Successful workflows
+- Restricted force pushes
+
+---
+
+# Branch Protection Flow
+
+```text
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+Review
+
+↓
+
+Security Checks
+
+↓
+
+Merge
+```
+
+---
+
+# Question 432
+
+## Why are Pull Request reviews important?
+
+### Answer
+
+Pull Request reviews help identify:
+
+- Security vulnerabilities
+- Coding mistakes
+- Configuration issues
+- Unauthorized changes
+
+They improve overall code quality before merging.
+
+---
+
+# Question 433
+
+## How should workflow permissions be configured?
+
+### Answer
+
+Workflow permissions should follow the Principle of Least Privilege.
+
+Grant only the minimum permissions required for each workflow to perform its tasks.
+
+---
+
+# Question 434
+
+## What security controls should protect GitHub repositories?
+
+### Answer
+
+Recommended controls include:
+
+- Multi-Factor Authentication (MFA)
+- Branch Protection Rules
+- Signed Commits
+- Dependabot
+- Secret Scanning
+- Code Scanning
+- Repository Audit Logs
+
+---
+
+# GitHub Security
+
+```text
+Repository
+
+↓
+
+MFA
+
+↓
+
+Branch Protection
+
+↓
+
+Workflow Security
+
+↓
+
+Production
+```
+
+---
+
+# Question 435
+
+## What are enterprise best practices for GitHub Actions DevSecOps?
+
+### Answer
+
+Organizations should:
+
+- Protect repositories using Branch Protection Rules.
+- Require Pull Requests and mandatory code reviews.
+- Use OIDC instead of long-lived cloud credentials.
+- Store secrets securely using GitHub Secrets or external secret managers.
+- Integrate automated security scanning into every workflow.
+- Sign production artifacts before deployment.
+- Keep runners patched and isolated.
+- Enable repository audit logging.
+- Restrict workflow permissions using least privilege.
+- Treat GitHub Actions workflows as production infrastructure.
+
+---
+
+# Enterprise DevSecOps Pipeline with GitHub Actions
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+GitHub Actions Trigger
+
+↓
+
+Checkout
+
+↓
+
+Gitleaks
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Secure repositories with MFA, Branch Protection, and signed commits.
+- Use OIDC with cloud providers instead of storing long-lived credentials.
+- Execute automated security checks in every workflow.
+- Store secrets securely and never expose them in workflow logs.
+- Use isolated and regularly patched runners for workflow execution.
+- Fail workflows immediately when critical vulnerabilities or policy violations are detected.
+- Sign and verify production artifacts before deployment.
+- Enable repository and workflow audit logging.
+- Review workflow permissions regularly using the Principle of Least Privilege.
+- Treat GitHub Actions as a critical component of the enterprise DevSecOps platform.
+
+---
+
