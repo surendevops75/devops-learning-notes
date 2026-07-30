@@ -2872,3 +2872,274 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 111
+
+## A production deployment finishes successfully, but Kubernetes Pods remain in the Pending state for more than 30 minutes. Cluster Autoscaler does not create new nodes. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Pod Events
+- Resource requests
+- Node capacity
+- Cluster Autoscaler logs
+- Auto Scaling Group
+- AWS quotas
+- Node labels
+- Taints and Tolerations
+
+---
+
+# Scenario 112
+
+## Developers report that GitHub Actions cannot assume an AWS IAM Role using OIDC, even though the workflow worked yesterday. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- IAM Trust Policy
+- OIDC Provider
+- Repository name
+- Branch conditions
+- GitHub token claims
+- Role permissions
+- Workflow changes
+- AWS CloudTrail logs
+
+---
+
+# Scenario 113
+
+## An application deployed on Amazon EKS suddenly starts experiencing intermittent DNS failures. Some requests succeed while others fail. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- CoreDNS logs
+- CoreDNS replicas
+- DNS latency
+- Node networking
+- VPC DNS settings
+- Network Policies
+- Service discovery
+- Cluster Events
+
+---
+
+# Scenario 114
+
+## SonarQube Quality Gate fails because code coverage dropped from 85% to 74%. The team insists no production code changed. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Test execution
+- Coverage reports
+- Build configuration
+- Excluded files
+- Test failures
+- Scanner logs
+- SonarQube project settings
+- Recent pipeline changes
+
+---
+
+# Scenario 115
+
+## A deployment reaches Production successfully, but external users receive HTTP 502 while internal Kubernetes Service communication works correctly. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- ALB Target Groups
+- Ingress Controller
+- Health checks
+- Backend Service
+- Service ports
+- TLS configuration
+- ALB listener rules
+- Application logs
+
+---
+
+# Scenario 116
+
+## A new Terraform module is merged into the main branch. During deployment, Terraform plans to recreate an Amazon RDS instance. What should you do?
+
+### Expected Approach
+
+Review:
+
+- Terraform plan
+- Resource lifecycle
+- Module changes
+- State file
+- Force replacement reason
+- Dependencies
+- Backup availability
+- Team approval
+
+Never recreate production databases without validating the impact.
+
+---
+
+# Scenario 117
+
+## Falco reports that a container attempted to access the host filesystem. How would you respond?
+
+### Expected Approach
+
+Investigate:
+
+- Falco alert details
+- Pod identity
+- HostPath volumes
+- Container logs
+- Image source
+- Kubernetes Audit Logs
+- Recent deployments
+- Runtime activity
+
+Immediately isolate the workload if malicious activity is suspected.
+
+---
+
+# Scenario 118
+
+## During deployment, a Helm upgrade fails with a timeout error, but Kubernetes resources continue to be created. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Helm release status
+- Kubernetes Events
+- Pod readiness
+- Hook execution
+- Resource creation
+- API Server logs
+- Deployment progress
+- Helm history
+
+---
+
+# Scenario 119
+
+## Amazon EKS worker nodes suddenly become NotReady because kubelet cannot communicate with the Kubernetes API Server. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- API Server availability
+- Security Groups
+- Network ACLs
+- kubelet logs
+- Cluster certificates
+- IAM permissions
+- VPC networking
+- Node connectivity
+
+---
+
+# Scenario 120
+
+## A routine security audit discovers that production container images are not digitally signed before deployment. Why is this a concern, and how would you fix it?
+
+### Expected Approach
+
+Review:
+
+- Image signing process
+- CI/CD pipeline
+- Artifact integrity
+- Supply chain security
+- Signature verification
+- Admission Controller
+- Trusted registries
+- Deployment policies
+
+Implement image signing and verification before allowing deployments into Production.
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Alert Received
+
+↓
+
+Confirm Business Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Networking
+
+↓
+
+Application
+
+↓
+
+Security Controls
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Continuous Improvement
+```
+
+---
+
+# Enterprise Best Practices
+
+- Configure Cluster Autoscaler with proper IAM permissions and capacity limits.
+- Use GitHub OIDC instead of long-lived AWS access keys for CI/CD authentication.
+- Continuously monitor CoreDNS health and DNS latency in Kubernetes.
+- Enforce Quality Gates to prevent untested code from reaching Production.
+- Validate ALB, Ingress, and backend health before troubleshooting applications.
+- Carefully review every Terraform execution plan involving stateful resources.
+- Treat runtime security alerts as potential incidents until proven otherwise.
+- Monitor Helm releases and validate deployments after upgrades.
+- Secure Kubernetes control plane communication with proper networking and certificate management.
+- Strengthen software supply chain security using image signing, verification, and admission policies.
+
+---
+
