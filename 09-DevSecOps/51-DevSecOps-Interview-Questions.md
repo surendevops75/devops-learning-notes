@@ -9834,3 +9834,1095 @@ Production
 
 ---
 
+# CI/CD Security Interview Questions
+
+---
+
+# Question 376
+
+## What is CI/CD Security?
+
+### Answer
+
+CI/CD Security is the practice of protecting Continuous Integration and Continuous Deployment pipelines from unauthorized access, malicious code, credential theft, and software supply chain attacks.
+
+Security controls should be applied throughout the entire pipeline.
+
+---
+
+# Secure CI/CD Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+CI Pipeline
+
+↓
+
+Security Scans
+
+↓
+
+Artifact Signing
+
+↓
+
+Deployment
+
+↓
+
+Production
+```
+
+---
+
+# Question 377
+
+## Why is CI/CD Security important?
+
+### Answer
+
+The CI/CD pipeline builds and deploys production software.
+
+If attackers compromise the pipeline, they can inject malicious code, steal secrets, or deploy unauthorized applications.
+
+---
+
+# Question 378
+
+## What are the major components of CI/CD Security?
+
+### Answer
+
+CI/CD Security includes:
+
+- Source Code Security
+- Branch Protection
+- Identity and Access Management
+- Secrets Management
+- Build Security
+- Dependency Scanning
+- Container Security
+- Artifact Signing
+- Deployment Verification
+- Audit Logging
+
+---
+
+# Question 379
+
+## What are common threats to CI/CD pipelines?
+
+### Answer
+
+Common threats include:
+
+- Credential theft
+- Malicious commits
+- Insider attacks
+- Dependency poisoning
+- Pipeline misconfiguration
+- Artifact tampering
+- Secret leakage
+- Unauthorized deployments
+
+---
+
+# Threat Flow
+
+```text
+Attacker
+
+↓
+
+Compromised Pipeline
+
+↓
+
+Malicious Build
+
+↓
+
+Production
+```
+
+---
+
+# Question 380
+
+## How can source code be protected in CI/CD?
+
+### Answer
+
+Source code should be protected by:
+
+- Branch protection rules
+- Pull Requests
+- Mandatory code reviews
+- Signed commits
+- Least privilege access
+- Repository auditing
+
+---
+
+# Question 381
+
+## Why are Pull Requests important for security?
+
+### Answer
+
+Pull Requests require code changes to be reviewed before merging.
+
+They help identify security issues, coding mistakes, and unauthorized modifications before code reaches the main branch.
+
+---
+
+# Question 382
+
+## Why is Branch Protection important?
+
+### Answer
+
+Branch Protection prevents unauthorized changes by enforcing:
+
+- Pull Requests
+- Required approvals
+- Successful pipeline execution
+- Status checks
+- Restricted force pushes
+
+---
+
+# Branch Protection Workflow
+
+```text
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Security Checks
+
+↓
+
+Merge
+```
+
+---
+
+# Question 383
+
+## Why should CI/CD pipelines use dedicated service accounts?
+
+### Answer
+
+Dedicated service accounts isolate pipeline permissions.
+
+They reduce the risk of privilege escalation and limit the impact of compromised credentials.
+
+---
+
+# Question 384
+
+## How should secrets be managed in CI/CD?
+
+### Answer
+
+Secrets should:
+
+- Never be stored in source code.
+- Be retrieved dynamically.
+- Be encrypted.
+- Be rotated regularly.
+- Be stored in centralized secrets management platforms.
+
+---
+
+# Question 385
+
+## Why should build agents be isolated?
+
+### Answer
+
+Build agents should execute in isolated environments to prevent one build from accessing another build's artifacts, secrets, or temporary files.
+
+Ephemeral build agents further reduce security risks.
+
+---
+
+# Build Isolation
+
+```text
+Pipeline
+
+↓
+
+Temporary Build Agent
+
+↓
+
+Build
+
+↓
+
+Destroy Agent
+```
+
+---
+
+# Question 386
+
+## Why should dependencies be scanned during CI/CD?
+
+### Answer
+
+Dependency scanning identifies vulnerable open-source libraries before deployment.
+
+It helps prevent applications from shipping with known security vulnerabilities.
+
+---
+
+# Question 387
+
+## Which security tools are commonly integrated into CI/CD?
+
+### Answer
+
+Common tools include:
+
+- SonarQube
+- Trivy
+- Gitleaks
+- Checkov
+- TFSec
+- OWASP ZAP
+- Cosign
+- SBOM generators
+
+---
+
+# Question 388
+
+## Why should artifacts be signed?
+
+### Answer
+
+Artifact signing verifies that software was produced by a trusted build process and has not been modified after creation.
+
+Only verified artifacts should be deployed.
+
+---
+
+# Question 389
+
+## What is Pipeline Integrity?
+
+### Answer
+
+Pipeline Integrity ensures that every stage of the CI/CD process is trusted, auditable, and protected against unauthorized modifications.
+
+This includes protecting build scripts, runners, credentials, and artifacts.
+
+---
+
+# Question 390
+
+## Why should deployments be automated?
+
+### Answer
+
+Automated deployments reduce manual errors, improve consistency, enforce security policies, and ensure repeatable release processes.
+
+---
+
+# Question 391
+
+## What is Deployment Approval?
+
+### Answer
+
+Deployment Approval is a control that requires authorized personnel or automated policy checks before promoting software to higher environments such as staging or production.
+
+---
+
+# Deployment Flow
+
+```text
+Build
+
+↓
+
+Security Checks
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+---
+
+# Question 392
+
+## Why are audit logs important in CI/CD?
+
+### Answer
+
+Audit logs record:
+
+- Pipeline executions
+- User actions
+- Deployment history
+- Configuration changes
+- Security events
+
+They support compliance, troubleshooting, and forensic investigations.
+
+---
+
+# Question 393
+
+## What is pipeline hardening?
+
+### Answer
+
+Pipeline hardening is the process of securing CI/CD infrastructure by:
+
+- Restricting access
+- Removing unnecessary permissions
+- Securing runners
+- Protecting secrets
+- Keeping tools updated
+- Enabling continuous monitoring
+
+---
+
+# Question 394
+
+## How does CI/CD Security support DevSecOps?
+
+### Answer
+
+CI/CD Security enables security to become an automated part of software delivery.
+
+Security testing, compliance checks, and policy enforcement occur continuously rather than at the end of development.
+
+---
+
+# Question 395
+
+## What are enterprise best practices for CI/CD Security?
+
+### Answer
+
+Organizations should:
+
+- Protect repositories with branch protection rules.
+- Require Pull Requests and code reviews.
+- Store secrets in centralized secret managers.
+- Use ephemeral build agents.
+- Integrate automated security scanning.
+- Sign all production artifacts.
+- Verify signatures before deployment.
+- Enable comprehensive audit logging.
+- Restrict pipeline permissions using least privilege.
+- Continuously monitor CI/CD infrastructure.
+
+---
+
+# Enterprise DevSecOps Pipeline with CI/CD Security
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Enforce branch protection and mandatory Pull Requests.
+- Use dedicated service accounts with least privilege.
+- Store secrets in centralized secrets management solutions.
+- Use ephemeral and isolated build agents for every pipeline execution.
+- Automate SAST, SCA, IaC, container, and DAST security scanning.
+- Sign and verify all production artifacts before deployment.
+- Enable comprehensive audit logging for every pipeline action.
+- Continuously patch CI/CD platforms, runners, and plugins.
+- Monitor CI/CD infrastructure for suspicious activity and unauthorized changes.
+- Treat the CI/CD pipeline as critical production infrastructure and secure it with the same rigor as production workloads.
+
+---
+
+# Jenkins DevSecOps Interview Questions
+
+---
+
+# Question 396
+
+## What is Jenkins?
+
+### Answer
+
+Jenkins is an open-source automation server used to build, test, scan, and deploy applications through CI/CD pipelines.
+
+It integrates with numerous DevOps and DevSecOps tools.
+
+---
+
+# Jenkins Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Security Scan
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 397
+
+## Why is Jenkins widely used in DevSecOps?
+
+### Answer
+
+Jenkins supports automation, integrates with security tools, and enables security checks to be executed during every software build.
+
+This helps identify vulnerabilities before applications reach production.
+
+---
+
+# Question 398
+
+## What are the major components of a Jenkins pipeline?
+
+### Answer
+
+A Jenkins pipeline typically consists of:
+
+- Source Code Checkout
+- Build
+- Unit Testing
+- Code Quality Analysis
+- Security Scanning
+- Container Build
+- Artifact Storage
+- Deployment
+
+---
+
+# Question 399
+
+## What is a Jenkinsfile?
+
+### Answer
+
+A Jenkinsfile is a version-controlled file that defines the CI/CD pipeline as code.
+
+It enables repeatable, automated, and consistent pipeline execution.
+
+---
+
+# Jenkinsfile Workflow
+
+```text
+Git Repository
+
+↓
+
+Jenkinsfile
+
+↓
+
+Pipeline Execution
+
+↓
+
+Deployment
+```
+
+---
+
+# Question 400
+
+## What are Declarative and Scripted Pipelines?
+
+### Answer
+
+**Declarative Pipeline**
+
+Uses structured syntax and is easier to maintain.
+
+**Scripted Pipeline**
+
+Uses Groovy scripting and offers greater flexibility for complex workflows.
+
+---
+
+# Question 401
+
+## Where should SonarQube be integrated in Jenkins?
+
+### Answer
+
+SonarQube should run immediately after the application build and unit tests.
+
+The pipeline should stop if the Quality Gate fails.
+
+---
+
+# Secure Pipeline
+
+```text
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Quality Gate
+
+↓
+
+Continue
+```
+
+---
+
+# Question 402
+
+## Where should Gitleaks be executed?
+
+### Answer
+
+Gitleaks should execute immediately after checking out the source code.
+
+This prevents hardcoded secrets from entering later stages of the pipeline.
+
+---
+
+# Question 403
+
+## Where should Dependency Scanning be performed?
+
+### Answer
+
+Dependency scanning should execute after the build process.
+
+It identifies vulnerable third-party libraries before container images are created.
+
+---
+
+# Question 404
+
+## Where should Trivy be integrated?
+
+### Answer
+
+Trivy should scan:
+
+- Source filesystem
+- Container images
+- Kubernetes manifests
+
+The image scan should occur after the Docker image is built and before pushing it to the registry.
+
+---
+
+# Trivy Integration
+
+```text
+Build Image
+
+↓
+
+Trivy Scan
+
+↓
+
+Pass
+
+↓
+
+Push Registry
+```
+
+---
+
+# Question 405
+
+## Where should Checkov and TFSec be executed?
+
+### Answer
+
+Checkov and TFSec should scan Infrastructure as Code before infrastructure provisioning.
+
+This prevents insecure cloud resources from being created.
+
+---
+
+# Question 406
+
+## Why should Jenkins pipelines fail on Critical vulnerabilities?
+
+### Answer
+
+Allowing deployments with Critical vulnerabilities exposes production systems to significant security risks.
+
+Blocking the pipeline ensures only compliant builds are promoted.
+
+---
+
+# Question 407
+
+## Why should Jenkins agents be ephemeral?
+
+### Answer
+
+Ephemeral agents are created for a single pipeline execution and destroyed afterward.
+
+This minimizes credential exposure and prevents cross-build contamination.
+
+---
+
+# Ephemeral Agent
+
+```text
+Pipeline
+
+↓
+
+Temporary Agent
+
+↓
+
+Build
+
+↓
+
+Destroy Agent
+```
+
+---
+
+# Question 408
+
+## How should secrets be managed in Jenkins?
+
+### Answer
+
+Secrets should be stored in Jenkins Credentials or retrieved dynamically from enterprise secrets management platforms such as HashiCorp Vault or AWS Secrets Manager.
+
+Secrets should never be hardcoded in Jenkinsfiles.
+
+---
+
+# Question 409
+
+## How should Jenkins authenticate with AWS?
+
+### Answer
+
+Jenkins should use IAM Roles, temporary credentials, or secure credential providers instead of long-lived AWS access keys.
+
+This reduces credential management risks.
+
+---
+
+# Question 410
+
+## What is the purpose of the Jenkins Credentials Store?
+
+### Answer
+
+The Jenkins Credentials Store securely stores sensitive information such as:
+
+- SSH Keys
+- API Tokens
+- Passwords
+- Certificates
+- Cloud Credentials
+
+Access should be restricted using Role-Based Access Control (RBAC).
+
+---
+
+# Question 411
+
+## Why should Jenkins plugins be updated regularly?
+
+### Answer
+
+Outdated plugins may contain known vulnerabilities.
+
+Regular updates reduce security risks and improve compatibility with newer pipeline features.
+
+---
+
+# Question 412
+
+## What security controls should protect a Jenkins server?
+
+### Answer
+
+Recommended controls include:
+
+- Multi-Factor Authentication (MFA)
+- Role-Based Access Control (RBAC)
+- HTTPS
+- Backup strategy
+- Audit logging
+- Network restrictions
+- Regular patching
+
+---
+
+# Jenkins Security Architecture
+
+```text
+Developer
+
+↓
+
+Jenkins
+
+↓
+
+Authentication
+
+↓
+
+RBAC
+
+↓
+
+Pipeline
+
+↓
+
+Production
+```
+
+---
+
+# Question 413
+
+## How should artifacts be managed in Jenkins?
+
+### Answer
+
+Artifacts should be:
+
+- Scanned
+- Signed
+- Versioned
+- Stored in trusted repositories
+- Verified before deployment
+
+This ensures software integrity throughout the delivery process.
+
+---
+
+# Question 414
+
+## How does Jenkins support DevSecOps?
+
+### Answer
+
+Jenkins automates security checks across the CI/CD pipeline by integrating tools such as SonarQube, Trivy, Gitleaks, Checkov, TFSec, OWASP ZAP, SBOM generation, and Cosign.
+
+This enables continuous security validation before deployment.
+
+---
+
+# Question 415
+
+## What are enterprise best practices for Jenkins DevSecOps?
+
+### Answer
+
+Organizations should:
+
+- Store pipeline definitions as code using Jenkinsfiles.
+- Use ephemeral build agents.
+- Protect Jenkins with RBAC and MFA.
+- Store secrets securely using credential management solutions.
+- Integrate automated SAST, SCA, IaC, container, and DAST scanning.
+- Fail pipelines on Critical security findings.
+- Sign production artifacts before publishing.
+- Keep Jenkins and plugins fully patched.
+- Enable audit logging for pipeline executions.
+- Treat Jenkins as critical production infrastructure.
+
+---
+
+# Enterprise DevSecOps Pipeline with Jenkins
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+Jenkins Trigger
+
+↓
+
+Checkout
+
+↓
+
+Gitleaks
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Protect Jenkins with MFA, RBAC, HTTPS, and network restrictions.
+- Execute every pipeline on isolated, ephemeral build agents.
+- Integrate security scanning into every pipeline execution.
+- Store all secrets outside the Jenkinsfile using secure credential providers.
+- Block deployments when Quality Gates or security scans fail.
+- Sign and verify production artifacts before deployment.
+- Regularly update Jenkins core and installed plugins.
+- Enable detailed audit logs for all administrative and pipeline actions.
+- Back up Jenkins configuration and securely manage pipeline definitions in Git.
+- Consider Jenkins a high-value production asset and continuously monitor its security posture.
+
+---
+
