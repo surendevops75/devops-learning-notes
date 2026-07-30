@@ -2141,3 +2141,586 @@ Enterprise best practices include:
 
 ---
 
+# Trivy Interview Questions
+
+---
+
+# Question 76
+
+## What is Trivy?
+
+### Answer
+
+Trivy is an open-source security scanner developed by Aqua Security that scans container images, file systems, Git repositories, Kubernetes clusters, Infrastructure as Code (IaC), and Software Bill of Materials (SBOM) for vulnerabilities, secrets, and misconfigurations.
+
+---
+
+# Trivy Architecture
+
+```text
+Application
+
+↓
+
+Container Image
+
+↓
+
+Trivy Scanner
+
+↓
+
+Vulnerability Database
+
+↓
+
+Security Report
+
+↓
+
+CI/CD Decision
+```
+
+---
+
+# Question 77
+
+## Why is Trivy widely used in DevSecOps?
+
+### Answer
+
+Trivy is popular because it:
+
+- Is easy to install
+- Supports multiple scan types
+- Has fast scan times
+- Integrates with CI/CD
+- Detects vulnerabilities and misconfigurations
+- Generates SBOMs
+- Supports multiple output formats
+
+---
+
+# Question 78
+
+## What can Trivy scan?
+
+### Answer
+
+Trivy supports scanning:
+
+- Container Images
+- File Systems
+- Git Repositories
+- Kubernetes Clusters
+- Infrastructure as Code
+- SBOM Files
+- VM Images
+- Root File Systems
+
+---
+
+# Question 79
+
+## What security issues can Trivy detect?
+
+### Answer
+
+Trivy detects:
+
+- OS package vulnerabilities
+- Application dependency vulnerabilities
+- Secrets
+- IaC misconfigurations
+- Kubernetes misconfigurations
+- Dockerfile issues
+- Sensitive files
+- License information (SBOM workflows)
+
+---
+
+# Question 80
+
+## Explain the Trivy scanning workflow.
+
+### Answer
+
+```text
+Source Code
+
+↓
+
+Build
+
+↓
+
+Container Image
+
+↓
+
+Trivy Scan
+
+↓
+
+Vulnerability Database
+
+↓
+
+Security Report
+
+↓
+
+Fix Issues
+
+↓
+
+Re-Scan
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 81
+
+## What vulnerability databases does Trivy use?
+
+### Answer
+
+Trivy downloads vulnerability information from trusted sources, including:
+
+- National Vulnerability Database (NVD)
+- GitHub Security Advisories
+- Distribution-specific advisories
+- Vendor security advisories
+
+The database is updated regularly to detect newly disclosed vulnerabilities.
+
+---
+
+# Question 82
+
+## What is Image Scanning?
+
+### Answer
+
+Image Scanning analyzes container images for known vulnerabilities in:
+
+- Base operating system packages
+- Installed libraries
+- Application dependencies
+
+This helps identify security issues before images are deployed.
+
+---
+
+# Question 83
+
+## How do you scan a Docker image using Trivy?
+
+### Answer
+
+```bash
+trivy image nginx:latest
+```
+
+Trivy analyzes the image layers and reports detected vulnerabilities.
+
+---
+
+# Question 84
+
+## What is File System Scanning?
+
+### Answer
+
+File System Scanning analyzes local directories before container images are built.
+
+It detects:
+
+- Vulnerable dependencies
+- Secrets
+- Configuration issues
+
+---
+
+# Example
+
+```bash
+trivy fs .
+```
+
+---
+
+# Question 85
+
+## What is Repository Scanning?
+
+### Answer
+
+Repository Scanning analyzes source code repositories directly for vulnerabilities, secrets, and misconfigurations before the build process begins.
+
+---
+
+# Example
+
+```bash
+trivy repo https://github.com/example/project
+```
+
+---
+
+# Question 86
+
+## What is Kubernetes Scanning?
+
+### Answer
+
+Kubernetes Scanning reviews cluster resources for security issues such as:
+
+- Privileged containers
+- Missing security contexts
+- Insecure RBAC
+- Misconfigured workloads
+- Exposed services
+
+---
+
+# Kubernetes Scan Workflow
+
+```text
+Cluster
+
+↓
+
+Pods
+
+↓
+
+Deployments
+
+↓
+
+RBAC
+
+↓
+
+Network Policies
+
+↓
+
+Security Analysis
+
+↓
+
+Report
+```
+
+---
+
+# Question 87
+
+## What is Infrastructure as Code (IaC) Scanning in Trivy?
+
+### Answer
+
+Trivy scans Infrastructure as Code templates to identify security misconfigurations before infrastructure is provisioned.
+
+Supported technologies include:
+
+- Terraform
+- Kubernetes YAML
+- Helm Charts
+- Dockerfiles
+
+---
+
+# Question 88
+
+## What is Secret Scanning?
+
+### Answer
+
+Secret Scanning identifies sensitive information accidentally stored in source code or configuration files.
+
+Examples include:
+
+- AWS Access Keys
+- API Keys
+- Database Passwords
+- SSH Private Keys
+- Tokens
+- Certificates
+
+---
+
+# Secret Scan Workflow
+
+```text
+Repository
+
+↓
+
+Files
+
+↓
+
+Secret Detection
+
+↓
+
+Security Report
+
+↓
+
+Developer
+
+↓
+
+Remove Secret
+
+↓
+
+Rotate Credentials
+```
+
+---
+
+# Question 89
+
+## What are Misconfigurations?
+
+### Answer
+
+Misconfigurations are insecure settings that increase security risk even if no software vulnerabilities exist.
+
+Examples include:
+
+- Privileged containers
+- Public S3 buckets
+- Root containers
+- Weak IAM permissions
+- Missing encryption
+- Public databases
+
+---
+
+# Question 90
+
+## What severity levels does Trivy use?
+
+### Answer
+
+Trivy classifies findings into:
+
+| Severity | Description |
+|----------|-------------|
+| Unknown | Severity not available |
+| Low | Low risk |
+| Medium | Moderate risk |
+| High | Significant risk |
+| Critical | Immediate attention required |
+
+---
+
+# Question 91
+
+## How should organizations prioritize Trivy findings?
+
+### Answer
+
+Prioritization should consider:
+
+- Severity
+- Exploitability
+- Internet exposure
+- Business impact
+- Availability of patches
+- Active exploitation
+
+Critical findings affecting production-facing systems should receive the highest priority.
+
+---
+
+# Question 92
+
+## Can Trivy fail a CI/CD pipeline?
+
+### Answer
+
+Yes.
+
+Organizations commonly configure Trivy to fail the pipeline when vulnerabilities exceed predefined severity thresholds.
+
+Example policy:
+
+```text
+Critical Vulnerability
+
+↓
+
+Pipeline Failed
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Pipeline Continues
+```
+
+---
+
+# Question 93
+
+## Where should Trivy be placed in a DevSecOps pipeline?
+
+### Answer
+
+Trivy should execute after the application or container image is built but before deployment.
+
+Typical placement:
+
+```text
+Build
+
+↓
+
+SonarQube
+
+↓
+
+SCA
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+Deployment
+```
+
+---
+
+# Question 94
+
+## What output formats does Trivy support?
+
+### Answer
+
+Trivy supports multiple output formats including:
+
+- Table
+- JSON
+- SARIF
+- CycloneDX
+- SPDX
+- Template-based reports
+
+These formats support CI/CD systems, dashboards, and compliance workflows.
+
+---
+
+# Question 95
+
+## How does Trivy integrate with Jenkins, GitHub Actions, and GitLab CI?
+
+### Answer
+
+Trivy can be executed as a pipeline stage after the build process.
+
+If the scan detects vulnerabilities exceeding the configured policy threshold, the pipeline can stop automatically before deployment.
+
+---
+
+# Enterprise Trivy Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+SCA
+
+↓
+
+Trivy Image Scan
+
+↓
+
+Secret Scan
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Scan every container image before pushing it to the registry.
+- Scan source code repositories for secrets before building artifacts.
+- Scan Infrastructure as Code before provisioning resources.
+- Keep Trivy's vulnerability database updated.
+- Block deployments containing critical vulnerabilities unless an approved exception exists.
+- Generate SBOMs for every production release.
+- Prioritize remediation based on exploitability and business impact.
+- Integrate Trivy with Jenkins, GitHub Actions, and GitLab CI.
+- Combine Trivy with SonarQube, SCA, Checkov, Gitleaks, and runtime security tools for comprehensive coverage.
+- Continuously monitor deployed workloads for newly disclosed vulnerabilities.
+
+---
+
