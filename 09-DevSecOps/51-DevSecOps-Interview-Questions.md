@@ -9154,3 +9154,683 @@ Production
 - Reject unsigned or tampered artifacts automatically.
 - Integrate Cosign with Kubernetes policy engines such as Kyverno or OPA Gatekeeper.
 - Make artifact signing and verification mandatory across the entire software supply chain.
+
+---
+
+# Cloud Security (AWS) Interview Questions
+
+---
+
+# Question 356
+
+## What is Cloud Security?
+
+### Answer
+
+Cloud Security is the practice of protecting cloud infrastructure, applications, identities, workloads, and data from unauthorized access, attacks, and misconfigurations.
+
+It combines identity management, network security, encryption, monitoring, and compliance.
+
+---
+
+# Cloud Security Architecture
+
+```text
+Users
+
+↓
+
+IAM
+
+↓
+
+AWS Services
+
+↓
+
+VPC
+
+↓
+
+EC2 / EKS / RDS
+
+↓
+
+Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Question 357
+
+## What is the AWS Shared Responsibility Model?
+
+### Answer
+
+AWS follows a Shared Responsibility Model.
+
+AWS is responsible for the security **of** the cloud, while customers are responsible for security **in** the cloud.
+
+---
+
+# Shared Responsibility Model
+
+```text
+AWS
+
+↓
+
+Physical Security
+
+↓
+
+Networking
+
+↓
+
+Hardware
+
+↓
+
+Hypervisor
+
+------------------------
+
+Customer
+
+↓
+
+IAM
+
+↓
+
+Applications
+
+↓
+
+Data
+
+↓
+
+Operating Systems
+
+↓
+
+Configuration
+```
+
+---
+
+# Question 358
+
+## What services are commonly used for AWS Security?
+
+### Answer
+
+Common AWS security services include:
+
+- IAM
+- KMS
+- AWS Secrets Manager
+- Security Groups
+- Network ACLs
+- AWS WAF
+- AWS Shield
+- Amazon GuardDuty
+- Amazon Inspector
+- AWS Config
+- AWS CloudTrail
+
+---
+
+# Question 359
+
+## What is IAM?
+
+### Answer
+
+AWS Identity and Access Management (IAM) controls authentication and authorization for AWS resources.
+
+IAM enables secure access using users, groups, roles, and policies.
+
+---
+
+# IAM Components
+
+```text
+IAM
+
+├── Users
+
+├── Groups
+
+├── Roles
+
+└── Policies
+```
+
+---
+
+# Question 360
+
+## What is the Principle of Least Privilege in AWS?
+
+### Answer
+
+Users, applications, and services should receive only the permissions required to perform their tasks.
+
+Least Privilege reduces the impact of compromised accounts and accidental misuse.
+
+---
+
+# Question 361
+
+## What is an IAM Role?
+
+### Answer
+
+An IAM Role provides temporary AWS permissions without using long-term access keys.
+
+Applications, EC2 instances, Lambda functions, and EKS workloads commonly use IAM Roles.
+
+---
+
+# IAM Role Workflow
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Service
+```
+
+---
+
+# Question 362
+
+## Why are IAM Roles preferred over Access Keys?
+
+### Answer
+
+IAM Roles provide temporary credentials that are automatically rotated.
+
+Long-lived access keys increase the risk of credential theft and should be avoided whenever possible.
+
+---
+
+# Question 363
+
+## What is AWS KMS?
+
+### Answer
+
+AWS Key Management Service (KMS) is a managed service for creating, managing, and protecting encryption keys.
+
+It supports encryption for many AWS services including EBS, S3, RDS, and Secrets Manager.
+
+---
+
+# Question 364
+
+## What is Encryption at Rest in AWS?
+
+### Answer
+
+Encryption at Rest protects stored data using encryption keys managed through services such as AWS KMS.
+
+Examples include encrypted EBS volumes, S3 buckets, RDS databases, and EKS secrets.
+
+---
+
+# Question 365
+
+## What is Encryption in Transit?
+
+### Answer
+
+Encryption in Transit protects data while it travels between clients and AWS services.
+
+TLS is commonly used to secure communication channels.
+
+---
+
+# Encryption Flow
+
+```text
+Client
+
+↓
+
+TLS
+
+↓
+
+AWS Service
+
+↓
+
+Encrypted Communication
+```
+
+---
+
+# Question 366
+
+## What is a Security Group?
+
+### Answer
+
+A Security Group acts as a virtual firewall for AWS resources.
+
+It controls inbound and outbound traffic using allow rules.
+
+---
+
+# Security Group
+
+```text
+Internet
+
+↓
+
+Security Group
+
+↓
+
+EC2 / EKS
+
+↓
+
+Application
+```
+
+---
+
+# Question 367
+
+## What is a Network ACL?
+
+### Answer
+
+A Network Access Control List (NACL) is a subnet-level firewall.
+
+Unlike Security Groups, NACLs support both allow and deny rules.
+
+---
+
+# Security Groups vs Network ACLs
+
+| Security Groups | Network ACLs |
+|-----------------|--------------|
+| Instance level | Subnet level |
+| Stateful | Stateless |
+| Allow rules only | Allow and Deny rules |
+| Applied to EC2/ENIs | Applied to subnets |
+
+---
+
+# Question 368
+
+## What is Amazon GuardDuty?
+
+### Answer
+
+Amazon GuardDuty is a managed threat detection service.
+
+It continuously analyzes AWS logs and events to detect suspicious activity, compromised accounts, and malicious behaviour.
+
+---
+
+# Question 369
+
+## What is Amazon Inspector?
+
+### Answer
+
+Amazon Inspector automatically scans AWS workloads for vulnerabilities.
+
+It helps identify security issues affecting EC2 instances, container images, and Lambda functions.
+
+---
+
+# Question 370
+
+## What is AWS WAF?
+
+### Answer
+
+AWS Web Application Firewall (WAF) protects web applications from common attacks such as:
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Bot traffic
+- HTTP flood attacks
+
+---
+
+# Web Protection
+
+```text
+Internet
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Application
+```
+
+---
+
+# Question 371
+
+## What is AWS Shield?
+
+### Answer
+
+AWS Shield is a managed Distributed Denial-of-Service (DDoS) protection service.
+
+It protects applications against network and transport layer attacks.
+
+---
+
+# Question 372
+
+## How do you secure an Amazon EKS cluster?
+
+### Answer
+
+Best practices include:
+
+- Use IAM Roles for Service Accounts (IRSA).
+- Enable RBAC.
+- Scan container images.
+- Apply Network Policies.
+- Encrypt Kubernetes Secrets.
+- Monitor runtime activity.
+- Restrict API access.
+- Keep worker nodes updated.
+
+---
+
+# Question 373
+
+## What is AWS Config?
+
+### Answer
+
+AWS Config continuously monitors AWS resource configurations.
+
+It detects configuration drift and evaluates compliance against organizational security policies.
+
+---
+
+# AWS Config Workflow
+
+```text
+AWS Resources
+
+↓
+
+AWS Config
+
+↓
+
+Configuration Evaluation
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Question 374
+
+## How does Cloud Security integrate with DevSecOps?
+
+### Answer
+
+Cloud Security is integrated throughout the CI/CD pipeline using:
+
+- IAM
+- Secrets Management
+- Infrastructure as Code scanning
+- Container Security
+- Image Signing
+- Runtime Monitoring
+- Continuous Compliance
+
+---
+
+# Enterprise Cloud Security Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+GuardDuty
+
+↓
+
+Falco
+
+↓
+
+Production
+```
+
+---
+
+# Question 375
+
+## What are enterprise best practices for AWS Cloud Security?
+
+### Answer
+
+Organizations should:
+
+- Enforce Multi-Factor Authentication (MFA) for privileged accounts.
+- Apply the Principle of Least Privilege using IAM policies and roles.
+- Use IAM Roles instead of long-lived access keys.
+- Encrypt sensitive data using AWS KMS.
+- Secure applications with Security Groups, Network ACLs, and AWS WAF.
+- Continuously monitor threats using Amazon GuardDuty and Amazon Inspector.
+- Enable AWS Config to detect configuration drift.
+- Store secrets in AWS Secrets Manager instead of source code.
+- Regularly patch EC2 instances, EKS worker nodes, and managed services.
+- Integrate cloud security into every phase of the DevSecOps lifecycle.
+
+---
+
+# Enterprise DevSecOps Pipeline with AWS Cloud Security
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Merge
+
+↓
+
+CI Trigger
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Coverage
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+GuardDuty
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Adopt the AWS Shared Responsibility Model across all teams.
+- Enforce least privilege with IAM Roles and fine-grained IAM policies.
+- Eliminate long-lived credentials by using temporary credentials and IAM Roles.
+- Encrypt all sensitive data at rest with AWS KMS and in transit using TLS.
+- Enable continuous monitoring with GuardDuty, Inspector, AWS Config, and CloudTrail.
+- Secure network traffic using Security Groups, Network ACLs, AWS WAF, and private subnets.
+- Continuously scan Infrastructure as Code before deployment using Checkov and TFSec.
+- Integrate cloud security controls into CI/CD pipelines and GitOps workflows.
+- Regularly review IAM permissions, security findings, and compliance reports.
+- Treat cloud security as a continuous process spanning development, deployment, and operations.
+
+---
+
