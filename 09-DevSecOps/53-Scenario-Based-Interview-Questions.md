@@ -2338,3 +2338,276 @@ Prevent Future Issues
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 91
+
+## A deployment completes successfully, but Amazon ALB Target Groups show all Kubernetes Pods as Unhealthy. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Health check path
+- Health check port
+- Kubernetes Readiness Probe
+- Service TargetPort
+- Ingress annotations
+- Security Groups
+- Pod logs
+- Application startup status
+
+---
+
+# Scenario 92
+
+## A Jenkins pipeline starts failing immediately after upgrading the Jenkins master. None of the application code has changed. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Plugin compatibility
+- Pipeline syntax
+- Shared libraries
+- Agent compatibility
+- Java version
+- Jenkins logs
+- Credentials
+- Tool configurations
+
+---
+
+# Scenario 93
+
+## A Kubernetes Secret was accidentally deleted from the Production namespace. Running Pods continue working, but newly created Pods fail. Why?
+
+### Expected Approach
+
+Investigate:
+
+- Secret availability
+- Pod restart history
+- Deployment events
+- Secret references
+- Volume mounts
+- Environment variables
+- Backup availability
+- Secret restoration process
+
+---
+
+# Scenario 94
+
+## After deploying a new version, ArgoCD reports "Healthy", but users are still accessing the previous version of the application. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Browser cache
+- CDN cache
+- ALB routing
+- ReplicaSet versions
+- Service selector
+- Image digest
+- DNS propagation
+- Deployment rollout
+
+---
+
+# Scenario 95
+
+## Terraform successfully provisions infrastructure, but EC2 instances fail during bootstrapping. What would you check?
+
+### Expected Approach
+
+Review:
+
+- User Data script
+- Cloud-init logs
+- IAM Role
+- Security Groups
+- Internet connectivity
+- Package repositories
+- AMI compatibility
+- Bootstrap script errors
+
+---
+
+# Scenario 96
+
+## A production application suddenly starts returning SSL/TLS certificate errors after a successful deployment. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Certificate validity
+- ACM certificate
+- ALB Listener
+- Ingress TLS configuration
+- Certificate chain
+- DNS records
+- Application certificates
+- Recent certificate renewal
+
+---
+
+# Scenario 97
+
+## Developers report that Kubernetes ConfigMaps are updating correctly in Git, but ArgoCD never applies the changes to the cluster. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Git commit
+- Sync policy
+- Auto-sync status
+- GitOps repository
+- ArgoCD controller logs
+- Resource differences
+- IgnoreDifferences configuration
+- Application events
+
+---
+
+# Scenario 98
+
+## During a production deployment, Prometheus starts reporting a sharp increase in Pod restart counts. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Pod logs
+- CrashLoopBackOff events
+- OOMKilled events
+- Node health
+- Liveness probes
+- Readiness probes
+- Recent deployments
+- Resource limits
+
+---
+
+# Scenario 99
+
+## Your security team reports that a Kubernetes Service Account token has been exposed publicly. What actions would you take?
+
+### Expected Approach
+
+Immediately:
+
+- Identify affected workloads
+- Revoke or rotate credentials
+- Review RBAC permissions
+- Check Kubernetes Audit Logs
+- Investigate cluster activity
+- Replace compromised credentials
+- Review access history
+- Strengthen secret management
+
+---
+
+# Scenario 100
+
+## During a major production release, users report intermittent failures across multiple microservices. Monitoring shows healthy infrastructure, healthy Kubernetes nodes, and successful deployments. How would you approach the investigation?
+
+### Expected Approach
+
+Investigate systematically:
+
+- Service-to-service communication
+- API Gateway or ALB routing
+- DNS resolution
+- Database latency
+- Message Queue health
+- Redis cache
+- Recent application changes
+- Distributed tracing
+- Application logs
+- Dependency failures
+
+Avoid assuming that healthy infrastructure guarantees healthy business transactions.
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Customer Reports Issue
+
+↓
+
+Validate Impact
+
+↓
+
+Review Deployment
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Networking
+
+↓
+
+Application
+
+↓
+
+Dependencies
+
+↓
+
+Security
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate infrastructure, platform, and application layers independently.
+- Test Jenkins upgrades in lower environments before Production rollout.
+- Back up Kubernetes Secrets and implement secure secret management.
+- Monitor deployment health beyond GitOps synchronization status.
+- Validate EC2 bootstrap scripts after infrastructure provisioning.
+- Automate certificate renewal monitoring and expiry alerts.
+- Review GitOps synchronization logs whenever configuration changes are not applied.
+- Correlate restart counts with logs, events, and resource metrics.
+- Treat exposed Service Account tokens as security incidents requiring immediate response.
+- Use logs, metrics, traces, and audit records together to identify the root cause of distributed system failures.
+
+---
+
