@@ -248,3 +248,262 @@ Post-Incident Review
 - Preserve audit logs and evidence during security incidents.
 - Document the root cause and preventive actions after every incident.
 - Continuously improve monitoring, alerting, and automation based on production learnings.
+
+---
+
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 11
+
+## A Jenkins pipeline suddenly starts failing at the Docker Build stage even though no code changes were made. How would you investigate?
+
+### Expected Approach
+
+Investigate:
+
+- Jenkins agent availability
+- Docker daemon status
+- Disk space
+- Build cache
+- Base image availability
+- Dockerfile changes
+- Registry authentication
+- Recent Jenkins plugin updates
+
+---
+
+# Scenario 12
+
+## After deploying a new application version, Pods start showing `ImagePullBackOff`. The image exists in Amazon ECR. What would you check?
+
+### Expected Approach
+
+Verify:
+
+- Image tag
+- Repository name
+- IAM Role for Service Account (IRSA)
+- Node IAM permissions
+- ECR authentication
+- ImagePullSecrets
+- Network connectivity
+- Repository policy
+
+---
+
+# Scenario 13
+
+## Your application works correctly inside the cluster, but users cannot access it through the Application Load Balancer. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Route53 DNS
+- ALB Listener Rules
+- Target Group Health
+- Ingress configuration
+- Security Groups
+- Kubernetes Service
+- Service Endpoints
+- Pod readiness
+
+---
+
+# Scenario 14
+
+## A Terraform deployment attempts to recreate existing production resources instead of updating them. What could be the cause?
+
+### Expected Approach
+
+Investigate:
+
+- Terraform state file
+- Remote backend
+- State locking
+- Resource import status
+- Workspace selection
+- Drift between state and infrastructure
+- Provider configuration
+
+---
+
+# Scenario 15
+
+## After a successful deployment, users report extremely slow response times. Monitoring shows low CPU and memory utilisation. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Database query performance
+- External API latency
+- Redis cache
+- Network latency
+- DNS resolution
+- Storage IOPS
+- Thread pool exhaustion
+- Connection pool utilisation
+
+---
+
+# Scenario 16
+
+## Gitleaks detects hardcoded credentials in a Pull Request. The developer says they are test credentials. What would you do?
+
+### Expected Approach
+
+- Validate whether the credentials are active.
+- Block the merge until verified.
+- Remove secrets from Git history if necessary.
+- Rotate credentials if exposed.
+- Educate the developer.
+- Store secrets in a secrets manager instead of Git.
+
+---
+
+# Scenario 17
+
+## After updating Kubernetes Secrets, the application continues using the old credentials. Why?
+
+### Expected Approach
+
+Verify:
+
+- Secret update completed
+- Deployment rollout
+- Pod restart
+- Secret mount type
+- Environment variable loading
+- Application secret reload capability
+
+Remember that many applications only read environment variables during startup.
+
+---
+
+# Scenario 18
+
+## ArgoCD reports an application as `OutOfSync`. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Git repository
+- Desired manifest
+- Live Kubernetes resources
+- Manual cluster changes
+- Sync policy
+- Failed sync operations
+- Resource health
+- Drift between Git and cluster
+
+---
+
+# Scenario 19
+
+## Falco reports that a container attempted to modify a sensitive system file. How would you respond?
+
+### Expected Approach
+
+Treat it as a potential security incident.
+
+Investigate:
+
+- Container identity
+- Namespace
+- Pod owner
+- Recent deployments
+- Container logs
+- Kubernetes Audit Logs
+- User activity
+- Possible privilege escalation
+
+Contain the workload if malicious behaviour is confirmed.
+
+---
+
+# Scenario 20
+
+## During a production deployment, SonarQube passes, Trivy passes, Checkov passes, and Jenkins succeeds. However, customers report missing data after deployment. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Database migration scripts
+- Application version compatibility
+- Rollback history
+- Backup availability
+- Deployment sequence
+- API version changes
+- Data validation
+- Application logs
+
+Remember that security scans validate security posture—they do not guarantee application functionality or data integrity.
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Incident Report
+
+↓
+
+Confirm Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+Infrastructure
+
+↓
+
+Platform
+
+↓
+
+Application
+
+↓
+
+Dependencies
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Always validate the business impact before beginning technical troubleshooting.
+- Compare recent deployments, infrastructure changes, and configuration updates.
+- Correlate logs, metrics, traces, and audit events to identify the root cause.
+- Avoid manual fixes in GitOps-managed environments unless required for emergency recovery.
+- Preserve evidence during security incidents before making irreversible changes.
+- Test rollback procedures regularly to ensure rapid recovery.
+- Perform post-incident reviews and implement preventive controls.
+- Continuously improve observability, automation, and deployment practices based on production experience.
+
+---
+
