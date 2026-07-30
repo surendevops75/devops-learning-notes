@@ -507,3 +507,260 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 21
+
+## A developer reports that Jenkins fails during the SonarQube Quality Gate stage, but the SonarQube dashboard shows "Passed." How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Jenkins SonarQube plugin configuration
+- SonarQube webhook delivery
+- Project Key
+- Authentication token
+- Network connectivity
+- Quality Gate timeout
+- Jenkins logs
+- SonarQube server logs
+
+---
+
+# Scenario 22
+
+## After a successful deployment, only one microservice is unable to communicate with another service inside the Kubernetes cluster. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Service DNS resolution
+- Kubernetes Service configuration
+- Endpoints
+- Network Policies
+- Pod labels
+- Namespace configuration
+- Application logs
+- Target service availability
+
+---
+
+# Scenario 23
+
+## Your AWS infrastructure deployment fails with an "Access Denied" error, even though Terraform code has not changed. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- IAM Role permissions
+- IAM policy changes
+- Service Control Policies (SCP)
+- Temporary credential expiration
+- AWS account changes
+- Terraform backend access
+- CloudTrail logs
+
+---
+
+# Scenario 24
+
+## After a production deployment, CPU usage suddenly reaches 95% across multiple Pods. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Recent application changes
+- Infinite loops
+- Traffic spikes
+- HPA behaviour
+- Resource requests and limits
+- JVM or runtime tuning
+- Application profiling
+- Database response time
+
+---
+
+# Scenario 25
+
+## ArgoCD continuously reports "OutOfSync" even after every successful synchronization. What could be the reason?
+
+### Expected Approach
+
+Investigate:
+
+- Manual cluster changes
+- Mutating admission webhooks
+- Helm-generated values
+- Resource annotations
+- Custom Resource Definitions
+- Sync options
+- IgnoreDifferences configuration
+
+---
+
+# Scenario 26
+
+## A production Pod is repeatedly getting OOMKilled. Increasing memory fixes the issue temporarily, but it happens again after a few hours. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Memory leaks
+- Heap dumps
+- Application profiling
+- Garbage Collection behaviour
+- Resource limits
+- Traffic patterns
+- Large object allocation
+- Recent code changes
+
+---
+
+# Scenario 27
+
+## Your Docker image size suddenly increases from 350 MB to 2.5 GB. How would you determine the cause?
+
+### Expected Approach
+
+Review:
+
+- Dockerfile changes
+- Base image updates
+- Installed packages
+- Multi-stage build usage
+- Large dependencies
+- Build artifacts
+- Layer history
+- `.dockerignore` configuration
+
+---
+
+# Scenario 28
+
+## A security team reports that an application is using a vulnerable open-source library even though Dependency Scanning passed. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Dependency database updates
+- Scanner version
+- Transitive dependencies
+- SBOM contents
+- Package lock files
+- Manual dependency additions
+- False negatives
+- Scanner configuration
+
+---
+
+# Scenario 29
+
+## A Kubernetes Deployment remains in the "Progressing" state for a long time and never completes. What would you check?
+
+### Expected Approach
+
+Verify:
+
+- ReplicaSet status
+- Pod readiness
+- Image availability
+- Scheduling events
+- Resource availability
+- Readiness probe failures
+- Persistent Volume issues
+- Deployment strategy
+
+---
+
+# Scenario 30
+
+## During a routine security review, you discover that several developers have AdministratorAccess in the AWS Production account. How would you address this?
+
+### Expected Approach
+
+Take a structured approach:
+
+- Review business requirements
+- Identify unused permissions
+- Apply Least Privilege
+- Use IAM Roles instead of users
+- Enable MFA
+- Review CloudTrail activity
+- Implement periodic access reviews
+- Document and approve privileged access
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Issue
+
+↓
+
+Identify Scope
+
+↓
+
+Review Recent Changes
+
+↓
+
+Infrastructure
+
+↓
+
+Cloud Services
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Security
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Prevent Recurrence
+```
+
+---
+
+# Enterprise Best Practices
+
+- Verify identity, access, and configuration changes before assuming application defects.
+- Correlate cloud logs, Kubernetes events, and CI/CD history during investigations.
+- Follow the Principle of Least Privilege for all production access.
+- Keep Terraform state, infrastructure, and Git repositories synchronized.
+- Continuously monitor resource utilisation and application behaviour after deployments.
+- Investigate recurring issues to identify root causes instead of applying temporary fixes.
+- Maintain an up-to-date SBOM and regularly update vulnerability databases.
+- Conduct post-incident reviews and convert findings into preventive controls and automation.
+
+---
+
