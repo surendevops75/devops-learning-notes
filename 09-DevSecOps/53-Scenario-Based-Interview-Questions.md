@@ -1812,3 +1812,267 @@ Post-Incident Review
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 71
+
+## A deployment is successful, but Prometheus shows a sudden spike in 5xx errors while CPU and Memory remain normal. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Application logs
+- Recent code changes
+- Database connectivity
+- API dependencies
+- Load Balancer logs
+- Pod events
+- Error stack traces
+- Request patterns
+
+---
+
+# Scenario 72
+
+## During deployment, Jenkins fails while pushing artifacts to JFrog Artifactory. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Artifactory availability
+- Repository permissions
+- Jenkins credentials
+- Network connectivity
+- Repository quota
+- Artifact version conflicts
+- SSL certificates
+- Upload logs
+
+---
+
+# Scenario 73
+
+## A production EKS cluster suddenly reports that multiple Pods cannot resolve internal service names. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- CoreDNS Pods
+- CoreDNS logs
+- Service records
+- DNS configuration
+- Network Policies
+- Cluster networking
+- Node connectivity
+- kube-dns service
+
+---
+
+# Scenario 74
+
+## After deploying a new version, users report intermittent authentication failures. Some users can log in while others cannot. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Authentication service logs
+- Session management
+- JWT configuration
+- Load Balancer stickiness
+- Database replication
+- Redis cache
+- Token expiration
+- Clock synchronization
+
+---
+
+# Scenario 75
+
+## Your Terraform pipeline reports that several AWS resources will be destroyed unexpectedly. What steps would you take before approving the deployment?
+
+### Expected Approach
+
+Review:
+
+- Terraform plan
+- State file
+- Recent code changes
+- Workspace selection
+- Resource dependencies
+- Import status
+- Manual infrastructure changes
+- Team approval
+
+Never apply destructive changes without understanding why Terraform generated them.
+
+---
+
+# Scenario 76
+
+## Falco detects execution of `/bin/bash` inside a production container during business hours. How would you respond?
+
+### Expected Approach
+
+Investigate:
+
+- User identity
+- Kubernetes Audit Logs
+- Pod owner
+- Container logs
+- Recent deployments
+- Interactive sessions
+- RBAC permissions
+- Possible compromise
+
+Isolate the workload if unauthorized access is confirmed.
+
+---
+
+# Scenario 77
+
+## A GitHub Pull Request passes all automated checks, but the Security team rejects the deployment during review. What could be the reasons?
+
+### Expected Approach
+
+Verify:
+
+- Architecture compliance
+- Business security policies
+- Manual penetration testing findings
+- Data protection requirements
+- Compliance requirements
+- Risk assessment
+- Third-party integrations
+- Security exceptions
+
+---
+
+# Scenario 78
+
+## After updating a Kubernetes Ingress resource, all APIs start returning HTTP 404. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Ingress rules
+- Host configuration
+- Path configuration
+- Backend Service
+- Service port
+- Ingress Controller logs
+- DNS records
+- ALB listener configuration
+
+---
+
+# Scenario 79
+
+## During a production release, Amazon RDS CPU utilization reaches 100%, causing application failures. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Slow queries
+- Database locks
+- Connection pool
+- Application traffic
+- Recent schema changes
+- Index usage
+- Query execution plans
+- Database monitoring
+
+---
+
+# Scenario 80
+
+## A deployment completed successfully, but ArgoCD reports the application as Degraded. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Pod health
+- ReplicaSet status
+- Deployment rollout
+- Kubernetes events
+- Resource limits
+- Failed hooks
+- Health checks
+- ArgoCD application events
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Alert
+
+↓
+
+Identify Scope
+
+↓
+
+Review Deployment
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Platform
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Dependencies
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Documentation
+```
+
+---
+
+# Enterprise Best Practices
+
+- Correlate monitoring alerts with deployment timelines before making changes.
+- Validate artifact repository connectivity as part of CI/CD health checks.
+- Continuously monitor CoreDNS and cluster networking in Kubernetes.
+- Design authentication systems to handle distributed deployments consistently.
+- Review every Terraform execution plan before applying infrastructure changes.
+- Treat unexpected shell access in production containers as a potential security incident.
+- Combine automated security checks with manual reviews for high-risk releases.
+- Test Ingress and routing changes in non-production environments before deployment.
+- Monitor database performance continuously and optimize queries proactively.
+- Investigate degraded GitOps applications immediately to prevent production impact.
+
+---
