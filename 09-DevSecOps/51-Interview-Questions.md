@@ -1722,3 +1722,561 @@ Integrating security into CI/CD enables early vulnerability detection, reduces r
 
 ---
 
+# Production Scenario-Based Interview Questions
+
+Scenario-based questions are designed to evaluate how you think, troubleshoot, and make decisions in real production environments.
+
+Interviewers expect a structured approach rather than jumping directly to a solution.
+
+---
+
+# Enterprise Problem Solving Framework
+
+```text
+Understand Problem
+
+↓
+
+Collect Information
+
+↓
+
+Identify Impact
+
+↓
+
+Review Logs
+
+↓
+
+Review Metrics
+
+↓
+
+Find Root Cause
+
+↓
+
+Implement Fix
+
+↓
+
+Validate
+
+↓
+
+Document RCA
+```
+
+---
+
+# Scenario 1
+
+## Production Application is Down
+
+### Interview Question
+
+Users report that the application is unavailable. How would you troubleshoot?
+
+### Answer
+
+I would troubleshoot layer by layer.
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+Load Balancer
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pods
+
+↓
+
+Application
+
+↓
+
+Database
+```
+
+### Investigation Steps
+
+```bash
+kubectl get pods
+
+kubectl get svc
+
+kubectl get ingress
+
+kubectl describe pod <pod>
+
+kubectl logs <pod>
+
+kubectl get events
+```
+
+### What Interviewers Expect
+
+- Structured troubleshooting
+- No assumptions
+- Evidence collection
+- Root cause identification
+- Validation after the fix
+
+---
+
+# Scenario 2
+
+## Jenkins Pipeline Suddenly Starts Failing
+
+### Interview Question
+
+Yesterday the pipeline worked successfully, but today it fails. What will you check?
+
+### Answer
+
+I investigate in the following order:
+
+```text
+Pipeline
+
+↓
+
+Failed Stage
+
+↓
+
+Build Logs
+
+↓
+
+Credentials
+
+↓
+
+Environment Variables
+
+↓
+
+Dependencies
+
+↓
+
+Infrastructure
+
+↓
+
+Recent Changes
+```
+
+### Investigation
+
+- Console Output
+- Git Changes
+- Jenkins Credentials
+- Agent Status
+- Plugin Updates
+- Build Server Resources
+
+---
+
+# Scenario 3
+
+## Kubernetes Pods are Continuously Restarting
+
+### Interview Question
+
+How would you troubleshoot CrashLoopBackOff?
+
+### Answer
+
+I would collect evidence before restarting the Pod.
+
+### Commands
+
+```bash
+kubectl describe pod <pod>
+
+kubectl logs <pod>
+
+kubectl logs <pod> --previous
+
+kubectl get events
+```
+
+### Possible Causes
+
+- Application crash
+- Missing Secret
+- Missing ConfigMap
+- Database unavailable
+- Memory issue
+- Startup failure
+
+---
+
+# Scenario 4
+
+## Terraform Apply Failed
+
+### Interview Question
+
+Terraform worked yesterday but fails today.
+
+### Answer
+
+Investigation order:
+
+```text
+Terraform
+
+↓
+
+Validate
+
+↓
+
+Plan
+
+↓
+
+Provider
+
+↓
+
+Backend
+
+↓
+
+IAM
+
+↓
+
+Cloud API
+```
+
+### Commands
+
+```bash
+terraform validate
+
+terraform plan
+
+terraform providers
+```
+
+### Verify
+
+- AWS credentials
+- IAM permissions
+- Backend configuration
+- Existing resources
+- Resource limits
+
+---
+
+# Scenario 5
+
+## Deployment Completed but Application is Inaccessible
+
+### Interview Question
+
+Deployment is successful but users cannot access the application.
+
+### Answer
+
+The deployment status alone does not guarantee application availability.
+
+### Investigation
+
+```text
+Deployment
+
+↓
+
+Pods
+
+↓
+
+Service
+
+↓
+
+Ingress
+
+↓
+
+Load Balancer
+
+↓
+
+DNS
+
+↓
+
+Application
+```
+
+### Verify
+
+- Pod readiness
+- Service endpoints
+- Ingress rules
+- Load Balancer health
+- DNS records
+- Application logs
+
+---
+
+# Scenario 6
+
+## High CPU Usage on Kubernetes Nodes
+
+### Interview Question
+
+Production nodes are showing high CPU utilization. What will you do?
+
+### Answer
+
+I first determine whether the issue is node-wide or isolated to specific Pods.
+
+### Commands
+
+```bash
+kubectl top node
+
+kubectl top pod
+
+kubectl describe node
+```
+
+### Investigation
+
+- Recent deployments
+- HPA activity
+- Infinite loops
+- Traffic spikes
+- Resource requests and limits
+
+---
+
+# Scenario 7
+
+## High Memory Usage in Production
+
+### Interview Question
+
+Application memory keeps increasing until the Pod is restarted.
+
+### Answer
+
+This indicates a possible memory leak or insufficient memory allocation.
+
+### Investigation
+
+```text
+Metrics
+
+↓
+
+Container Logs
+
+↓
+
+Heap Analysis
+
+↓
+
+Application Profiling
+
+↓
+
+Memory Limits
+```
+
+### Resolution
+
+- Review heap usage
+- Identify memory leaks
+- Tune JVM/runtime settings
+- Increase limits only after analysis
+
+---
+
+# Scenario 8
+
+## ArgoCD Shows OutOfSync
+
+### Interview Question
+
+What does OutOfSync mean, and how do you resolve it?
+
+### Answer
+
+OutOfSync means the live Kubernetes resources differ from the desired state stored in Git.
+
+### Investigation
+
+- Compare Git manifests
+- Review cluster resources
+- Check recent manual changes
+- Validate synchronization status
+
+### Resolution
+
+- Remove manual changes
+- Update Git if changes are intentional
+- Sync the application through ArgoCD
+
+---
+
+# Scenario 9
+
+## SonarQube Quality Gate Failed
+
+### Interview Question
+
+The pipeline failed because the Quality Gate failed. What should happen next?
+
+### Answer
+
+The deployment should stop until the issues are addressed.
+
+### Investigation
+
+- Review SonarQube report
+- Fix bugs
+- Reduce code smells
+- Improve test coverage
+- Resolve security hotspots as required
+
+---
+
+# Scenario 10
+
+## Trivy Finds Critical Vulnerabilities
+
+### Interview Question
+
+The container scan reports critical vulnerabilities.
+
+### Answer
+
+The image should not be promoted to production until critical issues are resolved or an approved risk exception exists.
+
+### Investigation
+
+```text
+Container Image
+
+↓
+
+Trivy Report
+
+↓
+
+Affected Packages
+
+↓
+
+Fixed Versions
+
+↓
+
+Rebuild Image
+
+↓
+
+Rescan
+
+↓
+
+Deploy
+```
+
+---
+
+# Scenario 11
+
+## Database is Slow After a Release
+
+### Interview Question
+
+Application latency increased after deployment. How would you investigate?
+
+### Answer
+
+Determine whether the bottleneck is in the application, database, or infrastructure.
+
+### Investigation
+
+- Database metrics
+- Slow query logs
+- Connection pool
+- Index usage
+- Application response times
+- Infrastructure utilization
+
+---
+
+# Scenario 12
+
+## Production Deployment Failed Midway
+
+### Interview Question
+
+Half of the Pods are running the new version while the rest remain on the old version.
+
+### Answer
+
+First determine the deployment strategy and rollout status.
+
+### Commands
+
+```bash
+kubectl rollout status deployment <deployment>
+
+kubectl rollout history deployment <deployment>
+
+kubectl describe deployment <deployment>
+```
+
+### Resolution
+
+- Identify the failed ReplicaSet
+- Review readiness probes
+- Roll back if necessary
+- Fix the issue before retrying the rollout
+
+---
+
+# Enterprise Best Practices
+
+- Always troubleshoot systematically.
+- Never guess the root cause.
+- Collect logs before restarting services.
+- Correlate logs, metrics, and events.
+- Validate fixes before closing incidents.
+- Explain the reasoning behind every troubleshooting step.
+- Focus on business impact as well as technical impact.
+- Perform Root Cause Analysis for significant incidents.
+- Document lessons learned and update operational runbooks.
+- Prioritize automation to reduce repetitive operational tasks.
+
+----
+
