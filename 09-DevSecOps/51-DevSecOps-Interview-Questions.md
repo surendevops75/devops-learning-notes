@@ -8486,3 +8486,671 @@ Production
 
 ---
 
+# Cosign & Sigstore Interview Questions
+
+---
+
+# Question 316
+
+## What is Cosign?
+
+### Answer
+
+Cosign is an open-source container image signing tool developed under the Sigstore project.
+
+It enables organizations to digitally sign and verify container images, ensuring that only trusted artifacts are deployed.
+
+---
+
+# Cosign Architecture
+
+```text
+Build Image
+
+↓
+
+Cosign Sign
+
+↓
+
+Digital Signature
+
+↓
+
+Container Registry
+
+↓
+
+Signature Verification
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 317
+
+## What is Sigstore?
+
+### Answer
+
+Sigstore is an open-source software supply chain security project that provides tools for securely signing, verifying, and protecting software artifacts.
+
+Its primary components include:
+
+- Cosign
+- Fulcio
+- Rekor
+
+---
+
+# Sigstore Components
+
+```text
+Sigstore
+
+├── Cosign
+
+├── Fulcio
+
+└── Rekor
+```
+
+---
+
+# Question 318
+
+## Why is image signing important?
+
+### Answer
+
+Image signing verifies that a container image:
+
+- Was created by a trusted source
+- Has not been modified
+- Is authentic
+- Maintains integrity throughout the software supply chain
+
+---
+
+# Image Signing Workflow
+
+```text
+Build Image
+
+↓
+
+Security Scan
+
+↓
+
+Sign Image
+
+↓
+
+Push Registry
+
+↓
+
+Verify Signature
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 319
+
+## What problem does Cosign solve?
+
+### Answer
+
+Without image signing, anyone with registry access could replace trusted images with malicious ones.
+
+Cosign helps prevent artifact tampering by allowing deployments only when image signatures are successfully verified.
+
+---
+
+# Question 320
+
+## What is a Digital Signature?
+
+### Answer
+
+A digital signature is a cryptographic value created using a private key.
+
+It proves:
+
+- Authenticity
+- Integrity
+- Non-repudiation
+
+Any modification to the artifact invalidates the signature.
+
+---
+
+# Digital Signature Flow
+
+```text
+Artifact
+
+↓
+
+Private Key
+
+↓
+
+Digital Signature
+
+↓
+
+Verification
+
+↓
+
+Trusted Artifact
+```
+
+---
+
+# Question 321
+
+## What is Image Verification?
+
+### Answer
+
+Image Verification validates that a container image matches its digital signature before deployment.
+
+If verification fails, the deployment should be rejected.
+
+---
+
+# Verification Workflow
+
+```text
+Container Image
+
+↓
+
+Verify Signature
+
+├── Valid
+
+│      ↓
+
+│ Deploy
+
+└── Invalid
+
+       ↓
+
+Reject Deployment
+```
+
+---
+
+# Question 322
+
+## What is Fulcio?
+
+### Answer
+
+Fulcio is Sigstore's certificate authority.
+
+It issues short-lived signing certificates after verifying the identity of the signer.
+
+---
+
+# Question 323
+
+## What is Rekor?
+
+### Answer
+
+Rekor is Sigstore's tamper-evident transparency log.
+
+It records signing events, allowing organizations to verify when, how, and by whom software artifacts were signed.
+
+---
+
+# Rekor Architecture
+
+```text
+Artifact Signed
+
+↓
+
+Rekor
+
+↓
+
+Transparency Log
+
+↓
+
+Verification
+
+↓
+
+Audit
+```
+
+---
+
+# Question 324
+
+## What is Keyless Signing?
+
+### Answer
+
+Keyless Signing allows developers to sign artifacts using short-lived identity-based certificates instead of managing long-lived private keys.
+
+This reduces operational overhead and lowers the risk of key compromise.
+
+---
+
+# Question 325
+
+## What is Provenance?
+
+### Answer
+
+Provenance records how an artifact was created.
+
+Typical provenance information includes:
+
+- Source repository
+- Commit ID
+- Build system
+- Build timestamp
+- Builder identity
+- Build environment
+
+---
+
+# Provenance Flow
+
+```text
+Source Code
+
+↓
+
+CI Pipeline
+
+↓
+
+Build
+
+↓
+
+Provenance
+
+↓
+
+Signed Artifact
+```
+
+---
+
+# Question 326
+
+## How does Cosign integrate with a container registry?
+
+### Answer
+
+Cosign stores image signatures alongside container images in the registry.
+
+During deployment, the signature is retrieved and verified before the image is allowed to run.
+
+---
+
+# Question 327
+
+## Where should Cosign be placed in a DevSecOps pipeline?
+
+### Answer
+
+Cosign should execute after vulnerability scanning and SBOM generation but before pushing artifacts to the registry.
+
+---
+
+# Enterprise Pipeline
+
+```text
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+Registry
+
+↓
+
+Signature Verification
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 328
+
+## Can Kubernetes verify signed images?
+
+### Answer
+
+Yes.
+
+Admission controllers such as Kyverno or OPA Gatekeeper can enforce policies requiring valid image signatures before allowing workloads to be deployed.
+
+---
+
+# Kubernetes Verification
+
+```text
+Image
+
+↓
+
+Admission Controller
+
+↓
+
+Signature Check
+
+├── Valid
+
+│      ↓
+
+│ Deploy
+
+└── Invalid
+
+       ↓
+
+Reject
+```
+
+---
+
+# Question 329
+
+## What happens if image verification fails?
+
+### Answer
+
+If signature verification fails:
+
+- Deployment should stop.
+- Security teams should investigate.
+- Artifact integrity should be validated.
+- The image should not be deployed until the issue is resolved.
+
+---
+
+# Question 330
+
+## How does Cosign improve Supply Chain Security?
+
+### Answer
+
+Cosign improves supply chain security by:
+
+- Preventing artifact tampering
+- Verifying software authenticity
+- Supporting trusted deployments
+- Improving auditability
+- Strengthening software integrity
+
+---
+
+# Question 331
+
+## What is the relationship between Cosign and SBOM?
+
+### Answer
+
+Cosign can sign both container images and SBOMs.
+
+This ensures that the software inventory itself has not been altered and can be trusted during audits and incident response.
+
+---
+
+# Question 332
+
+## Can Cosign sign artifacts other than container images?
+
+### Answer
+
+Yes.
+
+Cosign supports signing multiple artifact types, including:
+
+- Container images
+- SBOMs
+- OCI artifacts
+- Binary files
+- Build attestations
+
+---
+
+# Question 333
+
+## How does Cosign integrate with CI/CD?
+
+### Answer
+
+Cosign is typically executed after all security scans have passed.
+
+Only approved artifacts are signed and pushed to the artifact repository.
+
+---
+
+# Enterprise DevSecOps Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Cosign
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Signature Verification
+
+↓
+
+Production
+```
+
+---
+
+# Question 334
+
+## What are the limitations of Cosign?
+
+### Answer
+
+Cosign cannot:
+
+- Detect vulnerabilities
+- Perform runtime monitoring
+- Replace SAST or DAST
+- Replace container image scanning
+- Prevent insecure code from being built
+
+It complements other DevSecOps security controls by protecting artifact integrity.
+
+---
+
+# Question 335
+
+## What are enterprise best practices for Cosign and Sigstore?
+
+### Answer
+
+Organizations should:
+
+- Sign every production container image.
+- Verify signatures before deployment.
+- Use keyless signing where appropriate.
+- Store signed artifacts in trusted registries.
+- Integrate Cosign with CI/CD pipelines.
+- Enforce signature verification using Kubernetes admission controllers.
+- Protect build environments from unauthorized access.
+- Retain signing and transparency logs for auditing.
+- Combine Cosign with SBOMs, SCA, and container scanning.
+- Continuously validate artifact integrity throughout the software lifecycle.
+
+---
+
+# Enterprise DevSecOps Pipeline with Cosign
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Gitleaks
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Trivy
+
+↓
+
+SBOM Generation
+
+↓
+
+Cosign Sign
+
+↓
+
+Artifact Repository
+
+↓
+
+Signature Verification
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Falco Runtime Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Sign all production artifacts before publishing them.
+- Verify every image before deployment using admission controllers.
+- Adopt keyless signing to reduce private key management risks.
+- Store signatures and transparency logs securely for auditing.
+- Protect CI/CD pipelines because trusted signatures depend on trusted builds.
+- Combine Cosign with SBOM generation and vulnerability scanning.
+- Regularly review artifact provenance and signing records.
+- Reject unsigned or tampered artifacts automatically.
+- Integrate Cosign with Kubernetes policy engines such as Kyverno or OPA Gatekeeper.
+- Make artifact signing and verification mandatory across the entire software supply chain.
