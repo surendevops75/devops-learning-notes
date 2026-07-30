@@ -528,3 +528,500 @@ A DevSecOps Engineer should have practical knowledge of:
 
 ---
 
+# Secure SDLC Interview Questions
+
+---
+
+# Question 16
+
+## What is Secure SDLC?
+
+### Answer
+
+Secure SDLC (Secure Software Development Life Cycle) integrates security activities into every phase of software development, from requirements gathering to production maintenance.
+
+Instead of testing security only before release, Secure SDLC ensures security is built into the application from the beginning.
+
+---
+
+# Secure SDLC Lifecycle
+
+```text
+Requirements
+
+↓
+
+Security Requirements
+
+↓
+
+Architecture Design
+
+↓
+
+Threat Modeling
+
+↓
+
+Secure Coding
+
+↓
+
+Code Review
+
+↓
+
+SAST
+
+↓
+
+SCA
+
+↓
+
+Secret Scan
+
+↓
+
+Build
+
+↓
+
+Container Scan
+
+↓
+
+DAST
+
+↓
+
+Deployment
+
+↓
+
+Runtime Security
+
+↓
+
+Continuous Monitoring
+```
+
+---
+
+# Question 17
+
+## Why is Secure SDLC important?
+
+### Answer
+
+Secure SDLC helps organizations:
+
+- Detect vulnerabilities early
+- Reduce remediation costs
+- Improve software quality
+- Meet compliance requirements
+- Reduce security incidents
+- Protect customer data
+- Minimize production risks
+
+---
+
+# Question 18
+
+## What are the phases of Secure SDLC?
+
+### Answer
+
+A typical Secure SDLC consists of:
+
+- Requirements
+- Design
+- Development
+- Testing
+- Deployment
+- Operations
+- Maintenance
+
+Security activities are integrated into every phase.
+
+---
+
+# Question 19
+
+## What security activities are performed during the Requirements phase?
+
+### Answer
+
+Typical activities include:
+
+- Security requirements gathering
+- Regulatory compliance identification
+- Risk assessment
+- Data classification
+- Security acceptance criteria
+- Privacy requirements
+
+---
+
+# Question 20
+
+## What security activities are performed during the Design phase?
+
+### Answer
+
+Security design activities include:
+
+- Threat modeling
+- Security architecture review
+- Trust boundary identification
+- Authentication design
+- Authorization design
+- Encryption strategy
+- Secure API design
+
+---
+
+# Question 21
+
+## What security activities are performed during Development?
+
+### Answer
+
+During development:
+
+- Secure coding practices
+- Code reviews
+- SAST
+- Secret scanning
+- Dependency management
+- Secure library selection
+- Peer review
+
+---
+
+# Question 22
+
+## What security activities are performed during Testing?
+
+### Answer
+
+Testing includes:
+
+- SAST validation
+- DAST
+- API security testing
+- Penetration testing
+- SCA validation
+- Vulnerability assessment
+- Security regression testing
+
+---
+
+# Question 23
+
+## What security activities occur during Deployment?
+
+### Answer
+
+Before deployment:
+
+- IaC scanning
+- Container scanning
+- Kubernetes policy validation
+- Image signing
+- SBOM generation
+- Compliance validation
+- Deployment approval
+
+---
+
+# Question 24
+
+## What security activities occur after deployment?
+
+### Answer
+
+Production security includes:
+
+- Runtime monitoring
+- Threat detection
+- Log analysis
+- Security alerts
+- Incident response
+- Vulnerability management
+- Patch management
+
+---
+
+# Question 25
+
+## What is Threat Modeling?
+
+### Answer
+
+Threat Modeling is the process of identifying potential security threats, attack vectors, and weaknesses during the application design phase before implementation begins.
+
+Its objective is to reduce security risks early in the SDLC.
+
+---
+
+# Threat Modeling Workflow
+
+```text
+Application Design
+
+↓
+
+Identify Assets
+
+↓
+
+Identify Threats
+
+↓
+
+Risk Analysis
+
+↓
+
+Mitigation
+
+↓
+
+Security Validation
+```
+
+---
+
+# Question 26
+
+## Why is Threat Modeling important?
+
+### Answer
+
+Threat Modeling enables organizations to:
+
+- Discover security risks early
+- Reduce design flaws
+- Improve architecture
+- Lower remediation costs
+- Strengthen application security
+- Meet compliance requirements
+
+---
+
+# Question 27
+
+## What are Assets in Threat Modeling?
+
+### Answer
+
+Assets are valuable resources that require protection.
+
+Examples include:
+
+- Customer data
+- Payment information
+- Authentication tokens
+- API keys
+- Source code
+- Databases
+- Cloud resources
+- Secrets
+- Intellectual property
+
+---
+
+# Question 28
+
+## What are Trust Boundaries?
+
+### Answer
+
+Trust Boundaries separate components with different security trust levels.
+
+Whenever data crosses a trust boundary, additional validation and security controls should be applied.
+
+---
+
+# Trust Boundary Example
+
+```text
+Internet
+
+↓
+
+Load Balancer
+
+========================
+Trust Boundary
+========================
+
+Application
+
+↓
+
+Database
+```
+
+---
+
+# Question 29
+
+## What is STRIDE?
+
+### Answer
+
+STRIDE is Microsoft's threat modeling framework used to classify security threats.
+
+| Threat | Meaning |
+|---------|----------|
+| S | Spoofing |
+| T | Tampering |
+| R | Repudiation |
+| I | Information Disclosure |
+| D | Denial of Service |
+| E | Elevation of Privilege |
+
+---
+
+# Question 30
+
+## Explain Spoofing.
+
+### Answer
+
+Spoofing occurs when an attacker pretends to be another user, system, or service to gain unauthorized access.
+
+Examples include:
+
+- Credential theft
+- Token impersonation
+- Session hijacking
+- Fake identities
+
+Mitigation:
+
+- MFA
+- Strong authentication
+- Token validation
+- Identity verification
+
+---
+
+# Question 31
+
+## Explain Tampering.
+
+### Answer
+
+Tampering involves unauthorized modification of data, configuration files, requests, or application code.
+
+Mitigation:
+
+- Hashing
+- Digital signatures
+- Integrity validation
+- Immutable infrastructure
+
+---
+
+# Question 32
+
+## Explain Repudiation.
+
+### Answer
+
+Repudiation occurs when users deny performing an action because sufficient audit evidence is unavailable.
+
+Mitigation:
+
+- Audit logging
+- Immutable logs
+- Time synchronization
+- Digital signatures
+
+---
+
+# Question 33
+
+## Explain Information Disclosure.
+
+### Answer
+
+Information Disclosure occurs when confidential information becomes accessible to unauthorized users.
+
+Examples:
+
+- Database leaks
+- API key exposure
+- Sensitive logs
+- Public storage buckets
+
+Mitigation:
+
+- Encryption
+- Access control
+- Data masking
+- Least privilege
+
+---
+
+# Question 34
+
+## Explain Denial of Service (DoS).
+
+### Answer
+
+Denial of Service attacks attempt to exhaust system resources, making applications unavailable to legitimate users.
+
+Mitigation:
+
+- Auto Scaling
+- WAF
+- Rate limiting
+- Load balancing
+- DDoS protection
+
+---
+
+# Question 35
+
+## Explain Elevation of Privilege.
+
+### Answer
+
+Elevation of Privilege occurs when an attacker gains permissions beyond those originally granted.
+
+Examples:
+
+- Privilege escalation
+- Kubernetes RBAC bypass
+- IAM misconfiguration
+- Container escape
+
+Mitigation:
+
+- Least Privilege
+- RBAC
+- IAM policies
+- Security reviews
+- Runtime protection
+
+---
+
+# Enterprise Best Practices
+
+- Integrate Secure SDLC into every project.
+- Perform Threat Modeling before development starts.
+- Review security requirements during design.
+- Identify trust boundaries early.
+- Apply STRIDE during architecture reviews.
+- Validate security controls throughout the SDLC.
+- Automate security testing in CI/CD pipelines.
+- Maintain immutable audit logs.
+- Continuously review risks as applications evolve.
+- Revisit threat models whenever significant architectural changes occur.
+
+---
+
