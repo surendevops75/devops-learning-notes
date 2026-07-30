@@ -3776,3 +3776,558 @@ Production
 
 ---
 
+# TFSec Interview Questions
+
+---
+
+# Question 156
+
+## What is TFSec?
+
+### Answer
+
+TFSec is an open-source Infrastructure as Code (IaC) security scanner specifically designed for Terraform. It analyzes Terraform code to identify security misconfigurations before infrastructure is provisioned.
+
+---
+
+# TFSec Workflow
+
+```text
+Terraform Code
+
+↓
+
+TFSec
+
+↓
+
+Security Policies
+
+↓
+
+Misconfiguration Detection
+
+↓
+
+Security Report
+
+↓
+
+Developer Fix
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 157
+
+## Why is TFSec used in DevSecOps?
+
+### Answer
+
+TFSec enables organizations to identify infrastructure security issues during development instead of after deployment. This reduces security risks and supports Shift Left security practices.
+
+---
+
+# Question 158
+
+## What types of Terraform resources can TFSec scan?
+
+### Answer
+
+TFSec scans almost every Terraform resource, including:
+
+- AWS Resources
+- Azure Resources
+- Google Cloud Resources
+- Kubernetes Resources
+- Network Resources
+- IAM Resources
+- Storage Resources
+- Databases
+- Compute Resources
+
+---
+
+# Question 159
+
+## What security issues can TFSec detect?
+
+### Answer
+
+TFSec identifies:
+
+- Public S3 buckets
+- Unencrypted storage
+- Weak IAM permissions
+- Public databases
+- Open Security Groups
+- Missing logging
+- Disabled encryption
+- Insecure Kubernetes configurations
+
+---
+
+# Question 160
+
+## How does TFSec work?
+
+### Answer
+
+TFSec parses Terraform configuration files, evaluates them against built-in security policies, and reports policy violations before infrastructure is deployed.
+
+---
+
+# TFSec Scan Process
+
+```text
+Terraform Files
+
+↓
+
+Terraform Parser
+
+↓
+
+Security Policies
+
+↓
+
+Policy Evaluation
+
+↓
+
+Passed Checks
+
+↓
+
+Failed Checks
+
+↓
+
+Security Report
+```
+
+---
+
+# Question 161
+
+## Which cloud providers are supported by TFSec?
+
+### Answer
+
+TFSec supports Terraform resources for:
+
+- AWS
+- Microsoft Azure
+- Google Cloud Platform (GCP)
+- Kubernetes
+
+Support depends on the Terraform providers and available security rules.
+
+---
+
+# Question 162
+
+## What are built-in security checks in TFSec?
+
+### Answer
+
+Built-in security checks validate common cloud security best practices.
+
+Examples include:
+
+- Encryption enabled
+- Logging enabled
+- Public access disabled
+- Secure IAM policies
+- Secure networking
+- Least privilege
+- Resource protection
+
+---
+
+# Question 163
+
+## Can TFSec detect compliance violations?
+
+### Answer
+
+Yes.
+
+TFSec helps identify infrastructure configurations that may violate internal security policies and industry compliance standards by detecting insecure Terraform configurations.
+
+---
+
+# Question 164
+
+## What are false positives in TFSec?
+
+### Answer
+
+False positives occur when TFSec reports a potential security issue that is acceptable in the application's context or is mitigated through other security controls.
+
+Every suppression should be reviewed and documented.
+
+---
+
+# Question 165
+
+## Can TFSec scan Terraform modules?
+
+### Answer
+
+Yes.
+
+TFSec evaluates both root Terraform configurations and reusable modules to identify security issues throughout the infrastructure codebase.
+
+---
+
+# Module Scan Workflow
+
+```text
+Terraform Root Module
+
+↓
+
+Child Modules
+
+↓
+
+TFSec
+
+↓
+
+Security Analysis
+
+↓
+
+Report
+```
+
+---
+
+# Question 166
+
+## Can TFSec scan Terraform Plans?
+
+### Answer
+
+TFSec primarily analyzes Terraform configuration files before execution.
+
+For evaluating the planned infrastructure state, many organizations combine TFSec with Terraform Plan analysis and tools such as Checkov.
+
+---
+
+# Question 167
+
+## What are common AWS security checks performed by TFSec?
+
+### Answer
+
+Examples include:
+
+- S3 encryption enabled
+- S3 public access blocked
+- Security Groups restricted
+- EBS encryption enabled
+- RDS encryption enabled
+- IAM least privilege
+- CloudTrail enabled
+- KMS encryption configured
+
+---
+
+# Question 168
+
+## What are common Kubernetes security checks?
+
+### Answer
+
+TFSec can identify Terraform-managed Kubernetes issues such as:
+
+- Privileged containers
+- Containers running as root
+- Missing Network Policies
+- Missing resource limits
+- Weak RBAC configurations
+- Insecure security contexts
+
+---
+
+# Question 169
+
+## Can TFSec be integrated into CI/CD?
+
+### Answer
+
+Yes.
+
+TFSec integrates with:
+
+- Jenkins
+- GitHub Actions
+- GitLab CI
+- Azure DevOps
+- Bitbucket Pipelines
+
+Security checks execute automatically before infrastructure deployment.
+
+---
+
+# Question 170
+
+## Where should TFSec run in a DevSecOps pipeline?
+
+### Answer
+
+TFSec should run after source code checkout and before Terraform Plan or Terraform Apply.
+
+This prevents insecure infrastructure from being provisioned.
+
+---
+
+# Enterprise Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Terraform Plan
+
+↓
+
+Terraform Apply
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 171
+
+## What output formats does TFSec support?
+
+### Answer
+
+TFSec supports multiple output formats, including:
+
+- CLI
+- JSON
+- SARIF
+- JUnit
+- CSV
+- HTML
+
+These reports integrate with security dashboards and CI/CD platforms.
+
+---
+
+# Question 172
+
+## How should TFSec findings be prioritized?
+
+### Answer
+
+Organizations should prioritize findings based on:
+
+- Severity
+- Resource exposure
+- Business impact
+- Compliance requirements
+- Environment (Development, Test, Production)
+- Ease of exploitation
+
+Critical production issues should be addressed immediately.
+
+---
+
+# Question 173
+
+## What is the difference between TFSec and Checkov?
+
+| TFSec | Checkov |
+|-------|----------|
+| Focuses primarily on Terraform | Supports multiple IaC technologies |
+| Terraform-specific policies | Multi-cloud and multi-framework support |
+| Lightweight Terraform scanner | Broader Policy-as-Code platform |
+| Strong Terraform security checks | Terraform, Kubernetes, Dockerfile, CI/CD and more |
+
+---
+
+# Question 174
+
+## Can TFSec fail a CI/CD pipeline?
+
+### Answer
+
+Yes.
+
+Organizations commonly configure TFSec to fail builds when high or critical infrastructure security issues are detected.
+
+Example:
+
+```text
+Critical Finding
+
+↓
+
+Pipeline Failed
+
+↓
+
+Developer Fix
+
+↓
+
+Re-Scan
+
+↓
+
+Continue Pipeline
+```
+
+---
+
+# Question 175
+
+## What are enterprise best practices for TFSec?
+
+### Answer
+
+Organizations should:
+
+- Scan every Terraform change.
+- Scan Pull Requests before merging.
+- Prevent Terraform Apply when critical findings exist.
+- Combine TFSec with Checkov for broader IaC coverage.
+- Integrate TFSec into all CI/CD pipelines.
+- Review exceptions through formal approval.
+- Keep security policies updated.
+- Store reports for compliance evidence.
+- Continuously improve Terraform security baselines.
+- Re-scan infrastructure after every code change.
+
+---
+
+# Enterprise DevSecOps Pipeline with TFSec
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency-Check
+
+↓
+
+Checkov
+
+↓
+
+TFSec
+
+↓
+
+Terraform Plan
+
+↓
+
+Terraform Apply
+
+↓
+
+Trivy
+
+↓
+
+SBOM
+
+↓
+
+Image Signing
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Best Practices
+
+- Run TFSec during every Infrastructure as Code pipeline.
+- Block infrastructure deployments containing critical security issues.
+- Combine TFSec with Checkov to improve Terraform security coverage.
+- Scan reusable Terraform modules as well as root modules.
+- Integrate TFSec findings into enterprise vulnerability management.
+- Use version-controlled security policies and review them regularly.
+- Continuously update TFSec to receive new security checks.
+- Store scan reports for audit and compliance purposes.
+- Validate all remediations with re-scans before deployment.
+- Treat Infrastructure as Code security as a mandatory stage in every DevSecOps pipeline.
+
+---
+
