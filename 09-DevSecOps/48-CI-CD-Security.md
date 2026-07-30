@@ -1797,3 +1797,514 @@ Every deployment should pass all security controls before reaching production.
 - Enforce immutable artifacts.
 - Deploy through GitOps workflows.
 - Validate deployments using OPA or Kyverno before production.
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+### Hardcoding Secrets in the Pipeline
+
+**Problem**
+
+Secrets are stored directly in pipeline configuration files.
+
+```yaml
+environment:
+
+  AWS_ACCESS_KEY_ID: AKIAxxxxxxxx
+
+  AWS_SECRET_ACCESS_KEY: xxxxxxxxxxxxxxxxx
+```
+
+**Impact**
+
+- Credential leakage
+- Repository compromise
+- Unauthorized cloud access
+
+**Recommendation**
+
+Store secrets in AWS Secrets Manager, HashiCorp Vault, or another enterprise secrets manager.
+
+---
+
+## Mistake 2
+
+### Ignoring Critical Vulnerabilities
+
+**Problem**
+
+The pipeline continues even when critical vulnerabilities are detected.
+
+```text
+Trivy
+
+↓
+
+Critical CVEs Found
+
+↓
+
+Pipeline Continues
+```
+
+**Impact**
+
+- Vulnerable applications
+- Increased production risk
+- Compliance violations
+
+**Recommendation**
+
+Configure security gates to fail the pipeline for critical findings.
+
+---
+
+## Mistake 3
+
+### Running Pipelines with Administrator Privileges
+
+**Problem**
+
+Pipelines execute using highly privileged accounts.
+
+```text
+Pipeline
+
+↓
+
+Administrator Account
+
+↓
+
+Production Access
+```
+
+**Impact**
+
+- Excessive permissions
+- Larger attack surface
+- High impact if compromised
+
+**Recommendation**
+
+Assign dedicated service accounts with least-privilege permissions.
+
+---
+
+## Mistake 4
+
+### Deploying Unsigned Artifacts
+
+**Problem**
+
+Applications are deployed without integrity verification.
+
+**Impact**
+
+- Artifact tampering
+- Supply chain attacks
+- Untrusted deployments
+
+**Recommendation**
+
+Sign all production artifacts using Cosign and verify signatures before deployment.
+
+---
+
+## Mistake 5
+
+### No Security Validation Before Deployment
+
+**Problem**
+
+Applications are deployed immediately after a successful build.
+
+```text
+Build
+
+↓
+
+Deploy
+
+↓
+
+Production
+```
+
+**Impact**
+
+- Vulnerable software reaches production
+- Security issues remain undetected
+- Higher operational risk
+
+**Recommendation**
+
+Include automated security validation before every deployment.
+
+---
+
+# Troubleshooting
+
+## Scenario 1
+
+### SonarQube Quality Gate Failed
+
+**Symptoms**
+
+The pipeline stops after code analysis.
+
+**Possible Causes**
+
+- Low code coverage
+- Critical vulnerabilities
+- Code smells
+- Quality Gate failure
+
+**Resolution**
+
+```bash
+mvn sonar:sonar
+```
+
+Review:
+
+- SonarQube Dashboard
+- Security Hotspots
+- Quality Gate Results
+- Coverage Report
+
+---
+
+## Scenario 2
+
+### Gitleaks Detects Secrets
+
+**Symptoms**
+
+Pipeline fails during secret scanning.
+
+**Possible Causes**
+
+- Hardcoded passwords
+- API Keys
+- Access Tokens
+- Private Keys
+
+**Resolution**
+
+```bash
+gitleaks detect --source .
+```
+
+Remove exposed secrets, rotate compromised credentials, and store them in a secure secrets manager.
+
+---
+
+## Scenario 3
+
+### Trivy Reports Critical Vulnerabilities
+
+**Symptoms**
+
+Container image scanning fails.
+
+**Possible Causes**
+
+- Outdated base image
+- Vulnerable packages
+- Unsupported operating system
+- Unpatched dependencies
+
+**Resolution**
+
+```bash
+trivy image application:v1
+```
+
+Update the base image, upgrade vulnerable packages, and rebuild the container.
+
+---
+
+## Scenario 4
+
+### Checkov or TFSec Pipeline Failure
+
+**Symptoms**
+
+Infrastructure security scan fails.
+
+**Possible Causes**
+
+- Public cloud resources
+- Open Security Groups
+- Missing encryption
+- Weak IAM configuration
+
+**Resolution**
+
+```bash
+checkov -d .
+
+tfsec .
+```
+
+Review the reported findings and remediate infrastructure misconfigurations before deployment.
+
+---
+
+## Scenario 5
+
+### Cosign Signature Verification Failed
+
+**Symptoms**
+
+Deployment is rejected during signature verification.
+
+**Possible Causes**
+
+- Unsigned image
+- Invalid signature
+- Modified artifact
+- Incorrect public key
+
+**Resolution**
+
+```bash
+cosign verify application:v1
+```
+
+Verify the signing key, regenerate the signature if required, and ensure the image has not been modified.
+
+---
+
+# Production Interview Questions
+
+## Question 1
+
+### What is CI/CD Security?
+
+**Answer**
+
+CI/CD Security integrates automated security controls into every stage of the software delivery pipeline to identify and prevent vulnerabilities before deployment.
+
+---
+
+## Question 2
+
+### Why is Shift Left Security important?
+
+**Answer**
+
+Shift Left Security identifies security issues early in development, reducing remediation cost and preventing vulnerable code from reaching production.
+
+---
+
+## Question 3
+
+### What is the purpose of SAST?
+
+**Answer**
+
+Static Application Security Testing analyzes source code for security vulnerabilities without executing the application.
+
+---
+
+## Question 4
+
+### What is Software Composition Analysis (SCA)?
+
+**Answer**
+
+SCA identifies vulnerable third-party libraries and open-source dependencies used by an application.
+
+---
+
+## Question 5
+
+### Why should secrets never be stored in Git repositories?
+
+**Answer**
+
+Repositories may be cloned, forked, or exposed, making hardcoded secrets vulnerable to unauthorized access.
+
+---
+
+## Question 6
+
+### Why are container images scanned?
+
+**Answer**
+
+Container image scanning identifies operating system vulnerabilities, application vulnerabilities, misconfigurations, and exposed secrets before deployment.
+
+---
+
+## Question 7
+
+### Why should images be signed?
+
+**Answer**
+
+Image signing ensures integrity and authenticity, preventing tampered or unauthorized images from being deployed.
+
+---
+
+## Question 8
+
+### What is an SBOM?
+
+**Answer**
+
+A Software Bill of Materials (SBOM) is a complete inventory of software components used in an application or container image, supporting vulnerability management and compliance.
+
+---
+
+## Question 9
+
+### Why is GitOps considered more secure than manual deployments?
+
+**Answer**
+
+GitOps provides version-controlled deployments, automated reconciliation, auditability, approval workflows, and reduces manual deployment errors.
+
+---
+
+## Question 10
+
+### What are the essential security stages in a production CI/CD pipeline?
+
+**Answer**
+
+Source code protection, SAST, SCA, secret scanning, IaC scanning, container scanning, SBOM generation, artifact signing, GitOps deployment, policy enforcement, runtime monitoring, and continuous compliance.
+
+---
+
+# Key Takeaways
+
+- Protect source code using branch protection and mandatory code reviews.
+- Implement least-privilege access using RBAC.
+- Secure CI/CD platforms with Multi-Factor Authentication.
+- Integrate SAST, SCA, and secret scanning into every pipeline.
+- Scan Infrastructure as Code before provisioning resources.
+- Scan every container image using Trivy.
+- Generate an SBOM for every production release.
+- Sign all production artifacts using Cosign.
+- Store artifacts in trusted repositories.
+- Deploy applications using GitOps workflows.
+- Enforce deployment policies using OPA or Kyverno.
+- Continuously monitor production workloads and infrastructure.
+- Integrate security throughout the software development lifecycle.
+- Regularly audit pipeline permissions, credentials, and security controls.
+
+---
+
+# Enterprise CI/CD Security Pipeline
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Git Push
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Protected Branch
+
+↓
+
+CI Pipeline
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube (SAST)
+
+↓
+
+Gitleaks (Secrets)
+
+↓
+
+OWASP Dependency-Check (SCA)
+
+↓
+
+Checkov (IaC)
+
+↓
+
+TFSec (Terraform)
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Generate SBOM
+
+↓
+
+Cosign Sign
+
+↓
+
+JFrog Artifactory
+
+↓
+
+GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Policy Validation (OPA/Kyverno)
+
+↓
+
+Amazon EKS / Kubernetes
+
+↓
+
+Falco Runtime Security
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Production
+```
+
+This workflow represents a complete enterprise CI/CD security implementation, combining secure software development, automated security validation, supply chain protection, GitOps deployment, runtime security, observability, and continuous compliance.
