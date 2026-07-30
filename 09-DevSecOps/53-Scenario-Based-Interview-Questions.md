@@ -1551,3 +1551,264 @@ Continuous Improvement
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 61
+
+## A Jenkins pipeline fails during the Terraform Apply stage with a "State Lock" error. Another engineer claims no deployment is running. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Active Terraform jobs
+- State locking mechanism
+- Backend configuration
+- Previous failed pipelines
+- Stale lock information
+- CI/CD concurrency
+- Manual Terraform executions
+- Lock release procedure
+
+---
+
+# Scenario 62
+
+## After a successful deployment, some users see the new application version while others still see the old version. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Load Balancer routing
+- Rolling update status
+- ReplicaSet versions
+- Browser caching
+- CDN cache
+- DNS propagation
+- Sticky sessions
+- Pod versions
+
+---
+
+# Scenario 63
+
+## Kubernetes Pods suddenly start failing with "No space left on device." How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Node disk usage
+- Container logs
+- Image cache
+- EmptyDir volumes
+- Persistent Volumes
+- Container runtime storage
+- Log rotation
+- Node cleanup policies
+
+---
+
+# Scenario 64
+
+## A developer reports that a ConfigMap update is visible in Kubernetes, but the application continues using the old configuration. What would you check?
+
+### Expected Approach
+
+Verify:
+
+- ConfigMap mounted correctly
+- Environment variables
+- Volume mounts
+- Pod restart
+- Deployment rollout
+- Application reload capability
+- Sidecar reload mechanism
+- Configuration cache
+
+---
+
+# Scenario 65
+
+## During a production deployment, the Horizontal Pod Autoscaler suddenly scales the application from 10 Pods to 100 Pods. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- CPU metrics
+- Memory metrics
+- Custom metrics
+- Metrics Server
+- Recent traffic spike
+- Application behaviour
+- HPA thresholds
+- Autoscaler events
+
+---
+
+# Scenario 66
+
+## GitHub Actions successfully deploys the application, but ArgoCD never detects the Git changes. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Git commit
+- Target branch
+- GitOps repository
+- Repository permissions
+- Webhook configuration
+- ArgoCD repository connection
+- Sync policy
+- Application revision
+
+---
+
+# Scenario 67
+
+## During a security audit, you discover that multiple Docker images are using the `latest` tag in Production. Why is this a problem, and how would you fix it?
+
+### Expected Approach
+
+Review:
+
+- Image versioning
+- Deployment manifests
+- CI/CD tagging strategy
+- Image digest usage
+- Rollback capability
+- GitOps manifests
+- Release process
+- Image promotion workflow
+
+---
+
+# Scenario 68
+
+## An application deployed on Amazon EKS suddenly loses connectivity to Amazon S3 after an IAM policy update. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- IAM Role
+- IAM policy changes
+- IRSA configuration
+- Bucket policy
+- AWS Region
+- VPC Endpoint
+- DNS resolution
+- Application logs
+
+---
+
+# Scenario 69
+
+## A new Jenkins agent has been added, but every pipeline executed on that agent fails immediately. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Agent connectivity
+- Java version
+- Jenkins agent configuration
+- Workspace permissions
+- Required tools
+- Network access
+- Docker availability
+- Pipeline labels
+
+---
+
+# Scenario 70
+
+## Your monitoring system reports a sudden increase in HTTP 404 errors immediately after deployment. Infrastructure appears healthy. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Application routes
+- API version changes
+- Ingress paths
+- Load Balancer rules
+- Frontend configuration
+- Backend endpoints
+- Recent code changes
+- Deployment manifests
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Alert Generated
+
+↓
+
+Confirm Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Dependencies
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Protect Terraform state with proper locking and avoid concurrent deployments.
+- Use immutable image tags instead of `latest` for predictable deployments.
+- Monitor node storage and configure automated cleanup to prevent disk exhaustion.
+- Restart or reload workloads when configuration changes require application refresh.
+- Review autoscaling events regularly to detect abnormal scaling behaviour.
+- Ensure GitOps repositories remain the single source of truth for deployments.
+- Validate IAM policy changes in lower environments before Production rollout.
+- Standardize Jenkins agent configuration to maintain consistent pipeline execution.
+- Include functional validation after deployment in addition to infrastructure health checks.
+- Capture lessons learned from every incident and update automation, monitoring, and documentation accordingly.
+
+---
+
