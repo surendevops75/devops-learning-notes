@@ -1286,3 +1286,268 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 51
+
+## Jenkins successfully builds the application, but the Docker image is not pushed to Amazon ECR. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- ECR authentication
+- IAM permissions
+- Repository existence
+- Docker login
+- Network connectivity
+- Repository policy
+- Image tag
+- Jenkins credentials
+
+---
+
+# Scenario 52
+
+## A Kubernetes Deployment is successful, but one replica continuously enters CrashLoopBackOff while the others run normally. How would you troubleshoot?
+
+### Expected Approach
+
+Investigate:
+
+- Pod logs
+- Previous container logs
+- Node health
+- Mounted volumes
+- ConfigMaps
+- Secrets
+- Resource limits
+- Node-specific issues
+
+---
+
+# Scenario 53
+
+## After a Terraform deployment, an Application Load Balancer is created successfully, but users cannot access the application. What would you check?
+
+### Expected Approach
+
+Verify:
+
+- Listener Rules
+- Target Groups
+- Security Groups
+- Route53 records
+- Ingress configuration
+- Health checks
+- Backend service
+- Target registration
+
+---
+
+# Scenario 54
+
+## A developer bypasses the Pull Request process and pushes code directly to the main branch. How would you prevent this from happening again?
+
+### Expected Approach
+
+Implement:
+
+- Protected branches
+- Mandatory Pull Requests
+- Code review approvals
+- Branch protection rules
+- RBAC
+- Audit logging
+- CI validation
+- Repository policies
+
+---
+
+# Scenario 55
+
+## A Trivy scan identifies Critical vulnerabilities in the base image used by multiple applications. What actions would you take?
+
+### Expected Approach
+
+Review:
+
+- Vulnerability details
+- Available patched image
+- Impacted applications
+- Image rebuild
+- Regression testing
+- Redeployment
+- SBOM update
+- Continuous monitoring
+
+---
+
+# Scenario 56
+
+## Pods cannot pull images from Amazon ECR after new worker nodes are added to the EKS cluster. Existing nodes work correctly. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Node IAM Role
+- IRSA configuration
+- ECR permissions
+- Network access
+- DNS
+- Container runtime
+- Bootstrap configuration
+- Image pull logs
+
+---
+
+# Scenario 57
+
+## Prometheus reports that application latency increased immediately after a deployment, but Grafana dashboards show normal infrastructure metrics. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Application logs
+- Slow API endpoints
+- Database queries
+- Thread pools
+- External services
+- Recent code changes
+- Distributed request flow
+- Error logs
+
+---
+
+# Scenario 58
+
+## During deployment, ArgoCD reports "Sync Failed" because one Kubernetes resource already exists. How would you resolve this?
+
+### Expected Approach
+
+Review:
+
+- Existing resource ownership
+- Resource annotations
+- Git manifests
+- Helm release history
+- Manual changes
+- Resource conflicts
+- ArgoCD logs
+- Synchronization strategy
+
+---
+
+# Scenario 59
+
+## Your security team reports unusual outbound traffic from one Kubernetes Pod. What steps would you take?
+
+### Expected Approach
+
+Investigate:
+
+- Pod identity
+- Container image
+- Network connections
+- Application logs
+- Falco alerts
+- Kubernetes Audit Logs
+- Recent deployments
+- Possible compromise
+
+Contain the workload if malicious behaviour is confirmed.
+
+---
+
+# Scenario 60
+
+## After deploying a new version, all health checks pass, but customers report that one critical business feature no longer works. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Business logic changes
+- API responses
+- Feature flags
+- Database schema changes
+- Backend services
+- Integration tests
+- Application logs
+- User workflows
+
+Remember that infrastructure health does not guarantee business functionality.
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Issue Reported
+
+↓
+
+Confirm Scope
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Security
+
+↓
+
+Business Validation
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Continuous Improvement
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate both technical health and business functionality after every deployment.
+- Protect production branches with mandatory reviews and approval policies.
+- Keep container base images updated and rebuild dependent applications regularly.
+- Verify IAM and node permissions whenever new infrastructure is introduced.
+- Correlate application metrics with logs to identify performance bottlenecks.
+- Resolve GitOps drift instead of making manual changes in the cluster.
+- Investigate unusual network activity immediately and preserve evidence.
+- Include smoke tests and business validation tests in deployment pipelines.
+- Automate security, compliance, and operational checks throughout the SDLC.
+- Perform root cause analysis after every production issue and implement preventive controls.
+
+---
+
