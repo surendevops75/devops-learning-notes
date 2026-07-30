@@ -3418,3 +3418,276 @@ Update Standards
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 131
+
+## A Jenkins pipeline successfully builds and scans the Docker image, but the deployment is blocked because the image signature verification fails in Kubernetes. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Image signature
+- Signing keys
+- Cosign verification
+- Admission Controller
+- Image digest
+- ECR repository
+- Public key configuration
+- Verification logs
+
+---
+
+# Scenario 132
+
+## Developers complain that every deployment is taking twice as long as before. Infrastructure metrics look normal. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Pipeline execution time
+- Build duration
+- Test execution
+- Security scans
+- Docker build cache
+- Artifact upload
+- ArgoCD sync time
+- Kubernetes rollout history
+
+---
+
+# Scenario 133
+
+## A Kubernetes Deployment remains in the "Progressing" state because one Pod never becomes Ready. All other Pods are healthy. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Pod logs
+- Pod events
+- Readiness Probe
+- Resource limits
+- Node assignment
+- Image version
+- Volume mounts
+- Dependency availability
+
+---
+
+# Scenario 134
+
+## During an AWS audit, you discover that several IAM Roles attached to Amazon EKS workloads have wildcard (`*`) permissions. What should you do?
+
+### Expected Approach
+
+Review:
+
+- IAM policies
+- IRSA configuration
+- Least Privilege
+- CloudTrail logs
+- Resource access
+- Service usage
+- Policy optimisation
+- Permission boundaries
+
+---
+
+# Scenario 135
+
+## After upgrading Kubernetes, several Helm releases fail because Custom Resource Definitions (CRDs) cannot be found. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- CRD installation
+- Helm chart version
+- Kubernetes compatibility
+- API versions
+- Helm dependencies
+- Cluster upgrade notes
+- Controller status
+- Release history
+
+---
+
+# Scenario 136
+
+## A production application starts failing because it cannot connect to Redis, although Redis Pods are healthy. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Redis Service
+- DNS resolution
+- Network Policies
+- Authentication
+- Connection limits
+- Application configuration
+- Redis logs
+- Service endpoints
+
+---
+
+# Scenario 137
+
+## During a disaster recovery exercise, ArgoCD reports all applications as OutOfSync immediately after restoring the cluster. Why could this happen?
+
+### Expected Approach
+
+Review:
+
+- Cluster restoration
+- Git repository state
+- Resource differences
+- Missing CRDs
+- Namespace restoration
+- Sync options
+- Resource ownership
+- ArgoCD controller logs
+
+---
+
+# Scenario 138
+
+## A developer manually deletes an Amazon EKS LoadBalancer Service. A few minutes later, the Service is recreated automatically. Why?
+
+### Expected Approach
+
+Investigate:
+
+- ArgoCD reconciliation
+- Desired state in Git
+- Deployment manifests
+- Service ownership
+- GitOps workflow
+- Kubernetes Events
+- Sync history
+- Recent commits
+
+---
+
+# Scenario 139
+
+## During a production deployment, Checkov identifies a Critical infrastructure misconfiguration in Terraform. The deployment deadline is only one hour away. What would you do?
+
+### Expected Approach
+
+Review:
+
+- Checkov findings
+- Severity
+- Business impact
+- Exploitability
+- Compensating controls
+- Risk acceptance
+- Security approval
+- Remediation plan
+
+Do not bypass Critical findings without formal approval and documented risk acceptance.
+
+---
+
+# Scenario 140
+
+## A major production incident occurs immediately after a deployment. Multiple monitoring systems report different symptoms, making the root cause unclear. How would you coordinate the investigation?
+
+### Expected Approach
+
+Follow a structured approach:
+
+- Establish incident commander
+- Define business impact
+- Review deployment timeline
+- Correlate logs
+- Analyse metrics
+- Review traces
+- Check audit logs
+- Validate infrastructure
+- Identify root cause
+- Coordinate recovery
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Incident Triggered
+
+↓
+
+Assess Business Impact
+
+↓
+
+Assign Incident Owner
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Security Controls
+
+↓
+
+Correlate Logs, Metrics & Traces
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Enforce image signature verification before admitting workloads into Kubernetes.
+- Continuously optimise CI/CD pipelines to reduce deployment lead time.
+- Investigate individual unhealthy Pods instead of assuming deployment-wide failures.
+- Implement Least Privilege IAM policies for every workload using IRSA.
+- Validate Helm chart compatibility before Kubernetes upgrades.
+- Monitor application dependencies such as Redis independently from application health.
+- Regularly test disaster recovery procedures for GitOps-managed clusters.
+- Prevent manual infrastructure drift by enforcing GitOps as the only deployment mechanism.
+- Treat Critical IaC security findings as release blockers unless formally approved through risk management.
+- Follow a well-defined incident management process with clear ownership, communication, and post-incident improvements.
+
+---
+
