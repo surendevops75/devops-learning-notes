@@ -1025,3 +1025,264 @@ Continuous Improvement
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 41
+
+## Your Jenkins pipeline succeeds, Docker image is pushed to Amazon ECR, but ArgoCD doesn't deploy the latest image. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- GitOps repository updated
+- Image tag in manifests
+- ArgoCD sync status
+- Auto-sync configuration
+- Image Pull Policy
+- Git commit history
+- Repository access
+- ArgoCD controller logs
+
+---
+
+# Scenario 42
+
+## Amazon EKS worker nodes suddenly become NotReady after a scheduled maintenance window. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- EC2 instance health
+- Kubelet service
+- Container runtime
+- Node IAM Role
+- Network connectivity
+- Security Groups
+- Disk usage
+- Cluster events
+
+---
+
+# Scenario 43
+
+## A production deployment fails because the application cannot retrieve secrets from AWS Secrets Manager. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- IAM Role permissions
+- IRSA configuration
+- Secret ARN
+- Region configuration
+- Network connectivity
+- SDK configuration
+- Secret policy
+- Application logs
+
+---
+
+# Scenario 44
+
+## Checkov suddenly reports hundreds of Infrastructure as Code violations after a Terraform module update. How would you handle this?
+
+### Expected Approach
+
+Investigate:
+
+- Module version
+- Policy updates
+- Terraform code changes
+- False positives
+- Baseline comparison
+- Policy severity
+- Review findings
+- Prioritize remediation
+
+---
+
+# Scenario 45
+
+## After a production deployment, Kubernetes Pods continuously fail their Liveness Probe while the application appears healthy. What could be the reason?
+
+### Expected Approach
+
+Verify:
+
+- Probe endpoint
+- Probe timeout
+- Initial delay
+- Resource usage
+- Application startup time
+- Network latency
+- Health endpoint implementation
+- Recent configuration changes
+
+---
+
+# Scenario 46
+
+## Developers report that GitHub Actions pipelines fail only when deploying to Production, while Development deployments work successfully. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Production secrets
+- Environment protection rules
+- IAM permissions
+- Deployment approvals
+- Branch protection
+- Runner permissions
+- Production variables
+- Deployment logs
+
+---
+
+# Scenario 47
+
+## An application deployed in Amazon EKS cannot communicate with another application in a different namespace. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Kubernetes Services
+- DNS resolution
+- Network Policies
+- Namespace configuration
+- Service names
+- RBAC
+- Application logs
+- Cluster networking
+
+---
+
+# Scenario 48
+
+## OWASP ZAP identifies several High-risk vulnerabilities just before production deployment. The release is scheduled within the next hour. How would you proceed?
+
+### Expected Approach
+
+Determine:
+
+- Vulnerability severity
+- Exploitability
+- Internet exposure
+- Business impact
+- Available fixes
+- Temporary mitigations
+- Risk acceptance process
+- Deployment decision
+
+---
+
+# Scenario 49
+
+## Prometheus reports increasing API latency, but CPU, memory, and network metrics appear normal. How would you troubleshoot?
+
+### Expected Approach
+
+Investigate:
+
+- Database response time
+- External APIs
+- Slow queries
+- Application logs
+- Thread pools
+- Connection pools
+- Garbage Collection
+- Storage latency
+
+---
+
+# Scenario 50
+
+## During a routine audit, you discover that multiple Kubernetes Service Accounts have ClusterAdmin permissions. How would you remediate this?
+
+### Expected Approach
+
+Take the following steps:
+
+- Identify affected workloads
+- Review RBAC assignments
+- Apply Least Privilege
+- Create dedicated Roles
+- Create RoleBindings
+- Remove unnecessary ClusterRoleBindings
+- Test application functionality
+- Continuously audit permissions
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Alert
+
+↓
+
+Confirm Issue
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD
+
+↓
+
+Cloud Platform
+
+↓
+
+Kubernetes
+
+↓
+
+Security
+
+↓
+
+Application
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Ensure GitOps repositories are the single source of truth for deployments.
+- Validate IAM permissions whenever cloud services become inaccessible.
+- Review Infrastructure as Code findings before suppressing policy violations.
+- Configure health probes to reflect realistic application behaviour.
+- Separate deployment permissions between Development and Production environments.
+- Apply Kubernetes RBAC using the Principle of Least Privilege.
+- Treat High and Critical security findings as release blockers unless an approved exception process exists.
+- Use observability data from metrics, logs, and traces together during investigations.
+- Regularly audit cloud identities, Kubernetes Service Accounts, and CI/CD credentials.
+- Document every incident, remediation, and preventive action to improve operational maturity.
+
+---
+
