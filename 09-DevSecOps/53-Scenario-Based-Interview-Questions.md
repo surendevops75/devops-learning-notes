@@ -4228,3 +4228,271 @@ Post-Incident Review
 - Measure incident impact using business transactions, not infrastructure health alone.
 
 ---
+
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 161
+
+## During a production deployment, ArgoCD reports Sync Successful, but one Kubernetes Deployment never starts because the required Custom Resource Definition (CRD) is missing. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- CRD availability
+- Helm chart dependencies
+- Kubernetes Events
+- ArgoCD logs
+- Resource order
+- API version
+- Cluster compatibility
+- Deployment manifests
+
+---
+
+# Scenario 162
+
+## A Jenkins pipeline fails while downloading dependencies from JFrog Artifactory. Other internet resources are accessible from the Jenkins agent. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Artifactory availability
+- Repository URL
+- Authentication
+- Repository permissions
+- SSL certificates
+- Firewall rules
+- Proxy configuration
+- Build logs
+
+---
+
+# Scenario 163
+
+## Developers report that Pods can communicate within the same namespace but fail to access Services in another namespace. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Service DNS
+- Namespace configuration
+- Network Policies
+- Service selectors
+- Endpoints
+- RBAC
+- Application configuration
+- Pod logs
+
+---
+
+# Scenario 164
+
+## During a deployment, Kubernetes reports "FailedScheduling" because no nodes match the Pod's affinity rules. What would you check?
+
+### Expected Approach
+
+Verify:
+
+- Node labels
+- Node affinity
+- Pod affinity
+- Anti-affinity rules
+- NodeSelector
+- Scheduler Events
+- Cluster capacity
+- Deployment configuration
+
+---
+
+# Scenario 165
+
+## A new Docker base image significantly reduces image size but introduces unexpected runtime failures. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Base image compatibility
+- Missing libraries
+- Runtime dependencies
+- Dockerfile changes
+- Application logs
+- Multi-stage build
+- Package versions
+- Container startup
+
+---
+
+# Scenario 166
+
+## During an AWS security review, CloudTrail reports repeated failed AssumeRole attempts from the CI/CD pipeline. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- IAM Trust Policy
+- Role ARN
+- OIDC configuration
+- Jenkins/GitHub configuration
+- Token claims
+- CloudTrail logs
+- Permission boundaries
+- Recent IAM changes
+
+---
+
+# Scenario 167
+
+## A Kubernetes Deployment completes successfully, but Prometheus reports that request latency continues increasing every hour until the Pods are restarted. How would you troubleshoot?
+
+### Expected Approach
+
+Investigate:
+
+- Memory leaks
+- Connection pools
+- Thread usage
+- Cache growth
+- Garbage collection
+- Application profiling
+- Database connections
+- Resource utilization
+
+---
+
+# Scenario 168
+
+## During a routine audit, you discover that production namespaces do not enforce Pod Security Standards. What risks does this introduce?
+
+### Expected Approach
+
+Review:
+
+- Privileged containers
+- Host networking
+- Host PID
+- Host IPC
+- Root user
+- Capabilities
+- Volume mounts
+- Admission policies
+
+---
+
+# Scenario 169
+
+## Terraform Apply succeeds, but Amazon ALB is created without any registered healthy targets. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Target Group
+- Health checks
+- Ingress configuration
+- Service type
+- Pod readiness
+- Security Groups
+- Listener rules
+- Controller logs
+
+---
+
+# Scenario 170
+
+## After a production deployment, business KPIs show a 20% drop in successful customer transactions, but infrastructure dashboards remain healthy. What would be your investigation strategy?
+
+### Expected Approach
+
+Follow a structured approach:
+
+- Validate business metrics
+- Review deployment timeline
+- Check application logs
+- Analyse distributed traces
+- Verify downstream services
+- Review database transactions
+- Validate message queues
+- Compare previous release
+- Identify regression
+- Plan rollback if necessary
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Business Alert
+
+↓
+
+Assess Customer Impact
+
+↓
+
+Review Deployment Timeline
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Networking
+
+↓
+
+Application Services
+
+↓
+
+Security Controls
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Business Validation
+
+↓
+
+Continuous Improvement
+```
+
+---
+
+# Enterprise Best Practices
+
+- Deploy CRDs before dependent Kubernetes resources.
+- Maintain highly available artifact repositories for CI/CD pipelines.
+- Validate cross-namespace communication after applying Network Policies.
+- Design scheduling constraints carefully to avoid unnecessary Pending Pods.
+- Test new base images thoroughly before production adoption.
+- Monitor IAM role assumptions and investigate repeated authentication failures.
+- Use application profiling tools to identify long-running performance degradation.
+- Enforce Kubernetes Pod Security Standards across all production namespaces.
+- Validate ALB target registration immediately after infrastructure deployment.
+- Measure deployment success using business KPIs in addition to infrastructure and platform metrics.
+
+---
+
