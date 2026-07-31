@@ -4496,3 +4496,272 @@ Continuous Improvement
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 171
+
+## A Jenkins pipeline successfully builds the application, but the Docker image scan fails because Trivy cannot update its vulnerability database. Production deployment is blocked. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Internet connectivity
+- Trivy database server
+- Proxy configuration
+- Cache directory
+- Trivy version
+- Pipeline logs
+- Network firewall
+- Offline database option
+
+---
+
+# Scenario 172
+
+## A Kubernetes Deployment rollout pauses because the maximum unavailable Pods threshold has been reached. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- RollingUpdate strategy
+- maxUnavailable
+- maxSurge
+- Pod health
+- Readiness Probes
+- Deployment Events
+- ReplicaSet status
+- Resource availability
+
+---
+
+# Scenario 173
+
+## A GitHub Actions workflow updates the GitOps repository, but ArgoCD deploys an older commit instead of the latest one. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Git commit history
+- Target revision
+- Repository branch
+- ArgoCD cache
+- Sync history
+- Repository webhook
+- Application revision
+- Controller logs
+
+---
+
+# Scenario 174
+
+## Amazon RDS storage utilization reaches 95%, causing database write failures. How would you respond?
+
+### Expected Approach
+
+Check:
+
+- Storage metrics
+- Database logs
+- Auto Scaling configuration
+- Backup usage
+- Temporary files
+- Large tables
+- Cleanup opportunities
+- Storage expansion plan
+
+---
+
+# Scenario 175
+
+## A new Kubernetes NetworkPolicy is deployed, and Prometheus immediately stops scraping application metrics. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- NetworkPolicy rules
+- Prometheus namespace
+- Pod selectors
+- Allowed ports
+- ServiceMonitor
+- Endpoints
+- Metrics endpoint
+- Prometheus logs
+
+---
+
+# Scenario 176
+
+## During a routine audit, you discover that several Amazon S3 buckets created through Terraform are publicly accessible. What should you investigate?
+
+### Expected Approach
+
+Review:
+
+- Bucket policy
+- Public Access Block
+- ACL configuration
+- Terraform modules
+- Checkov findings
+- IAM permissions
+- CloudTrail logs
+- Organization policies
+
+---
+
+# Scenario 177
+
+## A production Pod restarts every night at exactly 2:00 AM. Infrastructure appears healthy. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- CronJobs
+- Node maintenance
+- Backup schedules
+- Log rotation
+- Security scans
+- Application logs
+- Kubernetes Events
+- Deployment history
+
+---
+
+# Scenario 178
+
+## Falco reports repeated attempts to execute package managers like `apt` and `yum` inside production containers. How would you respond?
+
+### Expected Approach
+
+Investigate:
+
+- Container identity
+- User activity
+- Kubernetes Audit Logs
+- Interactive shell access
+- Container image
+- Runtime logs
+- RBAC permissions
+- Possible compromise
+
+Treat unexpected package installation attempts as potential security incidents.
+
+---
+
+# Scenario 179
+
+## A Terraform deployment succeeds, but newly provisioned EC2 instances cannot register with the Application Load Balancer. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Security Groups
+- Target Group
+- Health check path
+- User Data execution
+- EC2 status
+- Application startup
+- Listener configuration
+- Target registration
+
+---
+
+# Scenario 180
+
+## During a Production incident, logs from one critical microservice are completely unavailable because the logging agent failed. How would you continue the investigation?
+
+### Expected Approach
+
+Use alternative evidence:
+
+- Kubernetes Events
+- Prometheus metrics
+- CloudWatch metrics
+- Application traces
+- ALB access logs
+- Database logs
+- Audit logs
+- Service dependencies
+- Infrastructure metrics
+- Recent deployments
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Alert
+
+↓
+
+Determine Business Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Cloud Platform
+
+↓
+
+Kubernetes
+
+↓
+
+Networking
+
+↓
+
+Application
+
+↓
+
+Security
+
+↓
+
+Collect Alternative Evidence
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Validation
+```
+
+---
+
+# Enterprise Best Practices
+
+- Cache vulnerability databases to reduce dependency on external downloads during CI/CD.
+- Configure Kubernetes rolling updates to balance availability and deployment speed.
+- Verify GitOps synchronization against the intended Git revision.
+- Monitor database storage growth and enable proactive scaling.
+- Validate NetworkPolicies against monitoring and observability traffic before deployment.
+- Enforce S3 security controls with Public Access Block and IaC scanning tools.
+- Investigate recurring incidents by correlating them with scheduled jobs and maintenance windows.
+- Treat unexpected package installation attempts inside containers as high-severity security events.
+- Validate application readiness before registering targets with load balancers.
+- Design observability with multiple telemetry sources so investigations can continue even if one logging component fails.
+
+===
+
