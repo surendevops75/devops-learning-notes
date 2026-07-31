@@ -3962,3 +3962,269 @@ Document Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 151
+
+## A Jenkins pipeline completes successfully, but the deployment stage is skipped even though the build was triggered from the main branch. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Pipeline conditions
+- Branch filters
+- Jenkinsfile logic
+- Environment variables
+- Stage conditions
+- Build parameters
+- Shared libraries
+- Pipeline logs
+
+---
+
+# Scenario 152
+
+## During a production deployment, Amazon EKS reports that Pods cannot mount a Persistent Volume because it is already attached to another node. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Persistent Volume status
+- Persistent Volume Claim
+- Access Mode
+- StorageClass
+- Node attachment
+- CSI Driver logs
+- Kubernetes Events
+- Pod scheduling
+
+---
+
+# Scenario 153
+
+## Developers report that GitHub Actions workflows are failing because secrets are unavailable after a repository migration. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Repository secrets
+- Organization secrets
+- Environment secrets
+- Repository permissions
+- Workflow configuration
+- Secret names
+- OIDC configuration
+- Audit logs
+
+---
+
+# Scenario 154
+
+## A new Terraform deployment fails because multiple resources already exist in AWS, but they were created manually months ago. How should you proceed?
+
+### Expected Approach
+
+Check:
+
+- Terraform state
+- Existing AWS resources
+- Resource import
+- State consistency
+- Naming conflicts
+- Terraform plan
+- Module configuration
+- Drift analysis
+
+---
+
+# Scenario 155
+
+## Kubernetes Nodes are healthy, but application response time increases significantly every evening at the same time. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Scheduled Jobs
+- CronJobs
+- Backup processes
+- Database maintenance
+- Resource utilization
+- Batch workloads
+- Network traffic
+- Monitoring dashboards
+
+---
+
+# Scenario 156
+
+## During deployment, SonarQube reports a failed Quality Gate due to newly introduced Security Hotspots. Developers argue that the code is functioning correctly. What should you do?
+
+### Expected Approach
+
+Review:
+
+- Security Hotspots
+- Code review
+- Business risk
+- Secure coding practices
+- Manual validation
+- SonarQube report
+- Team approval
+- Remediation plan
+
+---
+
+# Scenario 157
+
+## A production Kubernetes cluster experiences intermittent API Server latency. kubectl commands occasionally timeout. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- API Server metrics
+- etcd health
+- Control Plane logs
+- Network latency
+- Authentication latency
+- Admission Controllers
+- Resource utilization
+- Cluster Events
+
+---
+
+# Scenario 158
+
+## During an audit, you discover multiple Docker images in Amazon ECR that have never been deployed but contain Critical vulnerabilities. What would you do?
+
+### Expected Approach
+
+Review:
+
+- Image usage
+- Vulnerability reports
+- Image lifecycle policy
+- Deployment history
+- Registry cleanup
+- Patch availability
+- Security policy
+- Image retention
+
+---
+
+# Scenario 159
+
+## An application deployed through ArgoCD repeatedly alternates between Synced and OutOfSync without any Git commits. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Mutating Admission Webhooks
+- Operators
+- Controllers
+- Auto-generated fields
+- IgnoreDifferences
+- Resource reconciliation
+- Kubernetes Events
+- ArgoCD logs
+
+---
+
+# Scenario 160
+
+## A major production incident affects customer transactions across multiple microservices. Infrastructure metrics appear normal, but business transactions are failing. How would you coordinate the investigation?
+
+### Expected Approach
+
+Follow a structured approach:
+
+- Validate business impact
+- Review deployment timeline
+- Check distributed tracing
+- Correlate application logs
+- Review message queues
+- Verify database transactions
+- Identify affected services
+- Coordinate recovery
+- Validate fixes
+- Conduct root cause analysis
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Customer Issue Reported
+
+↓
+
+Assess Business Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Control Plane
+
+↓
+
+Application Layer
+
+↓
+
+Security Controls
+
+↓
+
+Dependencies
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Business Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate pipeline conditions before assuming deployment failures.
+- Use appropriate Persistent Volume access modes for workload requirements.
+- Regularly audit repository and organization secrets after migrations.
+- Import existing infrastructure into Terraform instead of recreating resources.
+- Monitor scheduled workloads that may affect production performance.
+- Treat Security Hotspots as review items even if builds succeed.
+- Continuously monitor Kubernetes control plane health and etcd performance.
+- Apply image lifecycle policies to remove unused vulnerable container images.
+- Configure ArgoCD to ignore expected runtime-managed field differences.
+- Measure incident impact using business transactions, not infrastructure health alone.
+
+---
