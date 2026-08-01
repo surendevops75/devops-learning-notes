@@ -5581,3 +5581,272 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 211
+
+## A production deployment completes successfully, but ArgoCD reports that one StatefulSet is stuck in the "Progressing" state. Existing Pods are healthy, but the new Pod never starts. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- StatefulSet Events
+- PVC binding
+- StorageClass
+- Pod scheduling
+- Volume attachment
+- Pod logs
+- Node status
+- CSI Driver logs
+
+---
+
+# Scenario 212
+
+## Jenkins suddenly starts failing because it cannot authenticate with GitHub, even though the Personal Access Token has not expired. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- GitHub credentials
+- Repository permissions
+- Jenkins credential store
+- GitHub API status
+- Webhook configuration
+- Network connectivity
+- Jenkins logs
+- Git plugin configuration
+
+---
+
+# Scenario 213
+
+## A production Pod starts throwing "Too Many Open Files" errors after several days of uptime. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- File descriptor usage
+- ulimit configuration
+- Open file handles
+- Application logs
+- Resource leaks
+- Container limits
+- Node configuration
+- Runtime metrics
+
+---
+
+# Scenario 214
+
+## Terraform successfully provisions Amazon EKS, but worker nodes never join the cluster. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Bootstrap script
+- IAM Role
+- Security Groups
+- Cluster endpoint
+- Node group logs
+- VPC configuration
+- DNS resolution
+- EC2 User Data
+
+---
+
+# Scenario 215
+
+## During deployment, Trivy reports that the application image contains malware. What should be your immediate response?
+
+### Expected Approach
+
+Immediately:
+
+- Stop deployment
+- Quarantine image
+- Verify scan results
+- Review image source
+- Check build pipeline
+- Investigate supply chain
+- Notify Security Team
+- Build a clean image
+
+---
+
+# Scenario 216
+
+## Users report intermittent failures while accessing applications through Amazon ALB. Health checks remain successful. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- ALB access logs
+- Target response time
+- Backend application logs
+- Sticky sessions
+- Network latency
+- Connection timeout
+- HTTP keep-alive
+- Traffic patterns
+
+---
+
+# Scenario 217
+
+## During a Production deployment, Kubernetes reports ImagePullBackOff for only one deployment, while all other applications pull images successfully. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Image tag
+- Repository path
+- ECR permissions
+- Image existence
+- ImagePullSecrets
+- Deployment manifest
+- Node connectivity
+- Pod Events
+
+---
+
+# Scenario 218
+
+## Amazon CloudWatch reports a sudden spike in EC2 CPU utilization, but Kubernetes metrics remain normal. What could be the reason?
+
+### Expected Approach
+
+Review:
+
+- Host processes
+- Container runtime
+- kubelet
+- System daemons
+- Background jobs
+- Security agents
+- OS updates
+- EC2 monitoring
+
+---
+
+# Scenario 219
+
+## During a Production deployment, a new Kubernetes Ingress is created, but DNS still points users to the old Load Balancer. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Route53 record
+- ExternalDNS
+- ALB hostname
+- DNS propagation
+- Ingress annotations
+- TTL
+- Hosted Zone
+- Load Balancer status
+
+---
+
+# Scenario 220
+
+## During a Production incident, every monitoring dashboard shows healthy infrastructure, but customers report that payments are being processed twice. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Idempotency logic
+- Retry mechanism
+- Message Queue
+- Database transactions
+- Payment gateway
+- Application logs
+- Distributed tracing
+- API retries
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Customer Reports Issue
+
+↓
+
+Assess Business Impact
+
+↓
+
+Review Deployment
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Application Layer
+
+↓
+
+Storage
+
+↓
+
+Networking
+
+↓
+
+Security
+
+↓
+
+Business Logic
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+```
+
+---
+
+# Enterprise Best Practices
+
+- Monitor StatefulSet rollouts separately from Deployments because they rely on persistent storage.
+- Periodically validate Jenkins integrations with Git providers to detect authentication issues early.
+- Monitor file descriptor usage for long-running applications.
+- Verify worker node bootstrap logs whenever nodes fail to join an EKS cluster.
+- Treat malware findings in container images as critical security incidents and stop deployments immediately.
+- Correlate ALB metrics with backend application telemetry during intermittent failures.
+- Validate image repositories and tags before deploying container workloads.
+- Monitor both host-level and Kubernetes-level metrics for complete infrastructure visibility.
+- Automate DNS updates using ExternalDNS to reduce manual routing errors.
+- Validate business workflows such as payment processing in addition to technical health after every production deployment.
+
+---
+
