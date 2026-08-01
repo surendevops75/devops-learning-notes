@@ -6125,3 +6125,272 @@ Post-Incident Review
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 231
+
+## A Jenkins pipeline completes successfully, but ArgoCD reports "Manifest Generation Error" while deploying the application. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Helm templates
+- Kustomize configuration
+- Git repository
+- Values files
+- YAML syntax
+- ArgoCD repository access
+- Plugin logs
+- Application manifests
+
+---
+
+# Scenario 232
+
+## During a Production deployment, Kubernetes reports "FailedMount" because the ConfigMap cannot be mounted. The ConfigMap exists in the cluster. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- ConfigMap name
+- Namespace
+- Volume definition
+- VolumeMount
+- Deployment manifest
+- Kubernetes Events
+- Pod description
+- Resource permissions
+
+---
+
+# Scenario 233
+
+## Amazon EKS applications suddenly lose connectivity to Amazon ElastiCache Redis after a Security Group update. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Security Groups
+- Redis endpoint
+- Network ACLs
+- Route Tables
+- DNS resolution
+- Redis authentication
+- Application logs
+- Connectivity tests
+
+---
+
+# Scenario 234
+
+## Terraform successfully provisions infrastructure, but the Application Load Balancer health checks continuously fail. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Health check path
+- Health check port
+- Security Groups
+- Target Groups
+- Backend application
+- Listener rules
+- Pod readiness
+- ALB access logs
+
+---
+
+# Scenario 235
+
+## A production application suddenly begins generating duplicate Kafka messages after a deployment. Infrastructure remains healthy. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Producer configuration
+- Retry policy
+- Idempotent producer
+- Consumer acknowledgements
+- Offset commits
+- Application logs
+- Topic configuration
+- Deployment changes
+
+---
+
+# Scenario 236
+
+## During a security audit, you discover that multiple Kubernetes namespaces allow unrestricted communication between workloads. What would you recommend?
+
+### Expected Approach
+
+Review:
+
+- Network Policies
+- Namespace isolation
+- Pod selectors
+- Ingress rules
+- Egress rules
+- Default deny policy
+- Service communication
+- Security requirements
+
+---
+
+# Scenario 237
+
+## Jenkins agents begin failing because the workspace disk becomes full after several weeks of continuous builds. How would you resolve this?
+
+### Expected Approach
+
+Check:
+
+- Workspace cleanup
+- Build retention
+- Docker image cleanup
+- Artifact cleanup
+- Log rotation
+- Disk monitoring
+- Pipeline optimization
+- Agent maintenance
+
+---
+
+# Scenario 238
+
+## During a Blue-Green deployment, health checks for the Green environment pass, but users experience failures immediately after traffic is switched. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Smoke tests
+- Session handling
+- Database compatibility
+- Feature flags
+- External dependencies
+- Traffic routing
+- Application logs
+- Rollback criteria
+
+---
+
+# Scenario 239
+
+## Amazon CloudTrail reports repeated attempts to delete Amazon S3 backups from an unknown IAM Role. What actions would you take?
+
+### Expected Approach
+
+Immediately:
+
+- Block IAM Role
+- Preserve evidence
+- Review CloudTrail logs
+- Verify backup integrity
+- Rotate credentials
+- Notify Security Team
+- Investigate compromise
+- Review IAM policies
+
+---
+
+# Scenario 240
+
+## During a Production incident, every infrastructure component appears healthy, but customer notifications are not being delivered. The application uses RabbitMQ for asynchronous processing. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- RabbitMQ queues
+- Queue depth
+- Consumer health
+- Producer logs
+- Dead Letter Queue
+- Message acknowledgements
+- Notification service
+- Application logs
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Business Alert
+
+↓
+
+Validate Customer Impact
+
+↓
+
+Review Deployment Timeline
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Messaging Services
+
+↓
+
+Security Controls
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Business Validation
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate generated manifests before every GitOps deployment.
+- Verify namespace and resource references when mounting ConfigMaps.
+- Test connectivity after every cloud networking or Security Group change.
+- Monitor ALB health checks continuously after infrastructure deployments.
+- Design Kafka producers with idempotency to prevent duplicate message delivery.
+- Implement Kubernetes NetworkPolicies with a default-deny approach.
+- Automate Jenkins workspace and artifact cleanup to prevent disk exhaustion.
+- Validate end-to-end business workflows before switching Blue-Green traffic.
+- Treat unauthorized backup access attempts as high-priority security incidents.
+- Monitor asynchronous messaging systems to ensure complete business transaction processing.
+
+---
+
