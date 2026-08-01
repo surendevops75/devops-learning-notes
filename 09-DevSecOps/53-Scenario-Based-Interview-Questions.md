@@ -6671,3 +6671,280 @@ Post-Incident Review
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 251
+
+## During a Production deployment, ArgoCD reports "OutOfSync" immediately after a successful synchronization because a Kubernetes Operator continuously modifies the deployed resource. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Operator logs
+- Resource annotations
+- Mutating webhooks
+- IgnoreDifferences
+- Git manifests
+- Resource ownership
+- Sync history
+- Controller logs
+
+---
+
+# Scenario 252
+
+## Jenkins pipelines suddenly fail because Maven dependencies cannot be downloaded. Internet connectivity is working normally. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Nexus/Artifactory availability
+- Repository URL
+- Credentials
+- SSL certificates
+- Repository storage
+- Maven settings.xml
+- Proxy configuration
+- Build logs
+
+---
+
+# Scenario 253
+
+## A newly deployed microservice continuously receives HTTP 504 Gateway Timeout from Amazon ALB, while other services work normally. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- ALB Target Groups
+- Target health
+- Application logs
+- Backend processing time
+- Readiness Probe
+- Service endpoints
+- Database latency
+- Request timeout
+
+---
+
+# Scenario 254
+
+## During Terraform Apply, infrastructure deployment stops because another engineer manually modified resources directly in AWS. How would you respond?
+
+### Expected Approach
+
+Check:
+
+- Terraform state
+- Resource drift
+- AWS changes
+- CloudTrail logs
+- Terraform plan
+- State refresh
+- Team communication
+- Infrastructure reconciliation
+
+---
+
+# Scenario 255
+
+## Prometheus reports that Kubernetes API Server latency has increased significantly, affecting kubectl operations across the cluster. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- API Server metrics
+- etcd latency
+- Control Plane resources
+- Admission Controllers
+- Authentication
+- Audit logging
+- Cluster Events
+- Network latency
+
+---
+
+# Scenario 256
+
+## During a security assessment, you discover that developers can execute `kubectl exec` into Production Pods. What controls would you recommend?
+
+### Expected Approach
+
+Review:
+
+- RBAC
+- Least Privilege
+- Audit logging
+- Pod Security
+- Break-glass access
+- MFA
+- Approval workflow
+- Session recording
+
+---
+
+# Scenario 257
+
+## During a Production deployment, Kubernetes Nodes report MemoryPressure, but application Pods are still running. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Node memory
+- kubelet status
+- Eviction thresholds
+- Running Pods
+- Resource requests
+- Memory leaks
+- System processes
+- Node Events
+
+---
+
+# Scenario 258
+
+## A production application becomes unavailable because an Amazon ACM certificate expired. How would you investigate and recover?
+
+### Expected Approach
+
+Verify:
+
+- ACM certificate
+- Expiration date
+- ALB Listener
+- DNS validation
+- Certificate renewal
+- Application endpoints
+- Browser errors
+- Recovery process
+
+---
+
+# Scenario 259
+
+## Falco reports that a Production container attempted to modify `/etc/passwd`. How would you respond?
+
+### Expected Approach
+
+Investigate:
+
+- Container identity
+- Runtime logs
+- Container image
+- Kubernetes Audit Logs
+- Recent deployments
+- User activity
+- Host access
+- Possible compromise
+
+Immediately isolate the workload if malicious activity is suspected.
+
+---
+
+# Scenario 260
+
+## During a Production deployment, every infrastructure component reports healthy status, but customers complain that invoices are not being generated after successful payments. How would you investigate?
+
+### Expected Approach
+
+Follow the complete business transaction:
+
+- Payment Service
+- Invoice Service
+- Message Queue
+- Consumer logs
+- Database updates
+- API communication
+- Distributed tracing
+- Application logs
+- Recent deployment
+- Business validation
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Business Issue
+
+↓
+
+Customer Impact
+
+↓
+
+Deployment Timeline
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Networking
+
+↓
+
+Application Services
+
+↓
+
+Database
+
+↓
+
+Messaging Layer
+
+↓
+
+Security Review
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Business Validation
+
+↓
+
+Continuous Improvement
+```
+
+---
+
+# Enterprise Best Practices
+
+- Configure ArgoCD to ignore expected Operator-managed field changes.
+- Use highly available artifact repositories for dependency management.
+- Tune application and Load Balancer timeout values based on workload requirements.
+- Detect and reconcile infrastructure drift before applying Terraform changes.
+- Continuously monitor Kubernetes control plane health and etcd performance.
+- Restrict `kubectl exec` access using RBAC, approval workflows, and audit logging.
+- Monitor node resource pressure to prevent Pod eviction and service degradation.
+- Automate ACM certificate renewal and monitor certificate expiration proactively.
+- Treat runtime attempts to modify sensitive operating system files as high-severity security incidents.
+- Measure deployment success using complete business workflows rather than infrastructure health alone.
+
+---
+
