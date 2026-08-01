@@ -902,3 +902,930 @@ Application Running
 
 Amazon EKS is AWS's fully managed Kubernetes platform that removes the operational burden of managing Kubernetes control planes while providing seamless integration with AWS networking, security, monitoring, and container services. Understanding the Control Plane, Worker Nodes, Pods, Deployments, VPC CNI, IAM authentication, and RBAC authorization forms the foundation for operating production-grade Kubernetes clusters on AWS.
 
+---
+
+# IAM Roles for Service Accounts (IRSA)
+
+---
+
+# What is IRSA?
+
+IAM Roles for Service Accounts (IRSA) allows Kubernetes Pods to securely access AWS services using IAM Roles.
+
+Without IRSA, every Pod running on the same Worker Node inherits the permissions of the EC2 Node IAM Role.
+
+Example
+
+```text
+Worker Node
+
+↓
+
+EC2 IAM Role
+
+↓
+
+All Pods
+```
+
+This violates the Principle of Least Privilege.
+
+With IRSA
+
+```text
+Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+AWS Service
+```
+
+Each application receives only the permissions it needs.
+
+---
+
+# Why IRSA?
+
+Suppose three applications run on one Worker Node.
+
+```text
+Payment Service
+
+↓
+
+Amazon DynamoDB
+
+----------------------
+
+Notification Service
+
+↓
+
+Amazon SNS
+
+----------------------
+
+Image Service
+
+↓
+
+Amazon S3
+```
+
+Without IRSA
+
+All three Pods share the same EC2 IAM Role.
+
+This means every Pod can potentially access every AWS service allowed by that role.
+
+With IRSA
+
+```text
+Payment Pod
+
+↓
+
+Payment IAM Role
+
+↓
+
+DynamoDB
+
+--------------------
+
+Image Pod
+
+↓
+
+Image IAM Role
+
+↓
+
+S3
+
+--------------------
+
+Notification Pod
+
+↓
+
+SNS IAM Role
+
+↓
+
+SNS
+```
+
+Each Pod receives only the required permissions.
+
+---
+
+# IRSA Architecture
+
+```text
+Application Pod
+
+↓
+
+Kubernetes Service Account
+
+↓
+
+OIDC Identity Provider
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+IAM Role
+
+↓
+
+AWS Services
+```
+
+---
+
+# OIDC Provider
+
+Amazon EKS creates an OpenID Connect (OIDC) identity provider.
+
+Purpose
+
+Authenticate Kubernetes Service Accounts with AWS IAM.
+
+Workflow
+
+```text
+Service Account
+
+↓
+
+OIDC Token
+
+↓
+
+AWS STS
+
+↓
+
+Temporary IAM Credentials
+```
+
+---
+
+# Service Accounts
+
+Every Pod runs using a Service Account.
+
+Default
+
+```text
+default
+```
+
+Production
+
+Create dedicated Service Accounts.
+
+Example
+
+```yaml
+payment-service-account
+
+notification-service-account
+
+image-service-account
+```
+
+---
+
+# IRSA Authentication Flow
+
+```text
+Pod Starts
+
+↓
+
+Service Account Token
+
+↓
+
+OIDC Provider
+
+↓
+
+AWS STS AssumeRoleWithWebIdentity
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS API
+```
+
+No static AWS credentials are required.
+
+---
+
+# Benefits
+
+- Least Privilege
+- No Access Keys
+- Temporary Credentials
+- Better Security
+- Easy Rotation
+- Native AWS Integration
+
+---
+
+# Kubernetes Services
+
+A Service provides stable networking for Pods.
+
+Without Service
+
+```text
+Pod
+
+↓
+
+Deleted
+
+↓
+
+New IP
+```
+
+Applications lose connectivity.
+
+With Service
+
+```text
+Application
+
+↓
+
+Service
+
+↓
+
+Pods
+```
+
+The Service IP remains stable.
+
+---
+
+# Service Types
+
+Supported Services
+
+- ClusterIP
+- NodePort
+- LoadBalancer
+- ExternalName
+
+---
+
+# ClusterIP
+
+Default Service type.
+
+Accessible only inside the cluster.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+ClusterIP
+
+↓
+
+Pod
+```
+
+Used for:
+
+- Internal APIs
+- Backend Services
+
+---
+
+# NodePort
+
+Exposes applications on every Worker Node.
+
+```text
+NodeIP:30080
+```
+
+Architecture
+
+```text
+Internet
+
+↓
+
+Worker Node
+
+↓
+
+NodePort
+
+↓
+
+Pod
+```
+
+Mostly used for testing.
+
+---
+
+# LoadBalancer
+
+Creates an AWS Load Balancer automatically.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+AWS Load Balancer
+
+↓
+
+Service
+
+↓
+
+Pods
+```
+
+Recommended for production.
+
+---
+
+# ExternalName
+
+Maps Kubernetes Services to external DNS names.
+
+Example
+
+```text
+payment-db
+
+↓
+
+rds.amazonaws.com
+```
+
+---
+
+# Ingress
+
+Ingress manages HTTP and HTTPS routing.
+
+Instead of creating multiple Load Balancers,
+
+One ALB serves multiple applications.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+ALB
+
+↓
+
+Ingress
+
+↓
+
+Multiple Services
+
+↓
+
+Pods
+```
+
+---
+
+# AWS Load Balancer Controller
+
+The AWS Load Balancer Controller automatically creates AWS ALBs and NLBs.
+
+Workflow
+
+```text
+Ingress Created
+
+↓
+
+AWS Load Balancer Controller
+
+↓
+
+Application Load Balancer
+
+↓
+
+Target Groups
+
+↓
+
+Pods
+```
+
+Supported Features
+
+- Host Routing
+- Path Routing
+- SSL
+- ACM
+- WAF
+- HTTP Redirect
+- Sticky Sessions
+
+---
+
+# Path-Based Routing
+
+```text
+/api
+
+↓
+
+API Pods
+
+----------------
+
+/admin
+
+↓
+
+Admin Pods
+
+----------------
+
+/
+
+↓
+
+Frontend Pods
+```
+
+---
+
+# Host-Based Routing
+
+```text
+shop.company.com
+
+↓
+
+Frontend
+
+--------------------
+
+api.company.com
+
+↓
+
+Backend
+
+--------------------
+
+admin.company.com
+
+↓
+
+Admin
+```
+
+---
+
+# ConfigMaps
+
+ConfigMaps store application configuration.
+
+Example
+
+```yaml
+database_host
+
+api_url
+
+environment
+```
+
+Applications read configuration dynamically.
+
+---
+
+# Secrets
+
+Secrets store sensitive information.
+
+Examples
+
+- Passwords
+- API Keys
+- Database Credentials
+- Certificates
+- Tokens
+
+Production Recommendation
+
+Integrate Kubernetes Secrets with AWS Secrets Manager.
+
+---
+
+# Persistent Storage
+
+Containers are ephemeral.
+
+If a Pod is deleted
+
+Local storage disappears.
+
+Persistent Volumes solve this problem.
+
+---
+
+# Persistent Volume (PV)
+
+Represents actual storage.
+
+Example
+
+```text
+Amazon EBS
+
+↓
+
+Persistent Volume
+
+↓
+
+Pod
+```
+
+---
+
+# Persistent Volume Claim (PVC)
+
+Applications request storage.
+
+Workflow
+
+```text
+PVC
+
+↓
+
+PV
+
+↓
+
+Amazon EBS
+```
+
+---
+
+# Storage Classes
+
+Storage Classes dynamically provision storage.
+
+Common Storage Classes
+
+- gp3
+- io2
+- EFS
+
+---
+
+# Amazon EBS CSI Driver
+
+Provides block storage.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+PVC
+
+↓
+
+EBS CSI Driver
+
+↓
+
+Amazon EBS
+```
+
+Best for
+
+- Databases
+- Stateful Applications
+
+---
+
+# Amazon EFS CSI Driver
+
+Provides shared file storage.
+
+Architecture
+
+```text
+Multiple Pods
+
+↓
+
+EFS CSI Driver
+
+↓
+
+Amazon EFS
+```
+
+Suitable for
+
+- Shared Content
+- Machine Learning
+- CMS Applications
+
+---
+
+# Horizontal Pod Autoscaler (HPA)
+
+Automatically scales Pods.
+
+Example
+
+```text
+CPU > 70%
+
+↓
+
+HPA
+
+↓
+
+Pods
+
+3
+
+↓
+
+8
+```
+
+Metrics
+
+- CPU
+- Memory
+- Custom Metrics
+
+---
+
+# Cluster Autoscaler
+
+Adds or removes Worker Nodes.
+
+Workflow
+
+```text
+Pods Pending
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+Launch EC2
+
+↓
+
+Schedule Pods
+```
+
+---
+
+# Karpenter
+
+Karpenter is AWS's next-generation autoscaler.
+
+Instead of scaling fixed node groups,
+
+Karpenter provisions exactly the required instances.
+
+Workflow
+
+```text
+Pending Pods
+
+↓
+
+Karpenter
+
+↓
+
+Optimal EC2 Instance
+
+↓
+
+Pods Running
+```
+
+Advantages
+
+- Faster Scaling
+- Lower Cost
+- Better Instance Selection
+
+AWS recommends Karpenter for modern EKS deployments.
+
+---
+
+# Network Policies
+
+Network Policies control Pod-to-Pod communication.
+
+Example
+
+```text
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Database
+
+Blocked
+
+↓
+
+Other Pods
+```
+
+Implements Zero Trust networking.
+
+---
+
+# Monitoring
+
+Production clusters require monitoring.
+
+Typical Stack
+
+```text
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alertmanager
+
+↓
+
+CloudWatch
+```
+
+---
+
+# Prometheus
+
+Collects metrics.
+
+Examples
+
+- CPU
+- Memory
+- Requests
+- Errors
+- Latency
+
+---
+
+# Grafana
+
+Visualizes metrics.
+
+Common Dashboards
+
+- Cluster Health
+- Node Utilization
+- Pod CPU
+- Memory
+- Network
+
+---
+
+# Fluent Bit
+
+Collects logs.
+
+Workflow
+
+```text
+Pod Logs
+
+↓
+
+Fluent Bit
+
+↓
+
+CloudWatch Logs
+```
+
+---
+
+# CloudWatch Integration
+
+Amazon EKS integrates with CloudWatch Container Insights.
+
+Collects
+
+- Node Metrics
+- Pod Metrics
+- Cluster Metrics
+- Container Logs
+
+Architecture
+
+```text
+Pods
+
+↓
+
+Container Insights
+
+↓
+
+CloudWatch
+
+↓
+
+Dashboard
+
+↓
+
+Alarms
+```
+
+---
+
+# Security Best Practices
+
+- Enable IRSA
+- Use Private Cluster Endpoints
+- Enable Control Plane Logging
+- Use Security Groups for Pods
+- Scan Images in Amazon ECR
+- Use Network Policies
+- Encrypt Kubernetes Secrets
+- Enable Audit Logs
+- Use Pod Security Standards
+- Keep Kubernetes Version Updated
+
+---
+
+# Summary
+
+Amazon EKS production environments rely on IAM Roles for Service Accounts (IRSA), Services, Ingress, AWS Load Balancer Controller, persistent storage with EBS and EFS CSI drivers, autoscaling through HPA and Karpenter, and comprehensive monitoring using Prometheus, Grafana, Fluent Bit, and CloudWatch. These components provide secure, scalable, and highly available Kubernetes platforms capable of running enterprise microservices in AWS.
