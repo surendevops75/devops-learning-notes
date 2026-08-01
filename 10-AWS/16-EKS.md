@@ -1829,3 +1829,947 @@ Alarms
 # Summary
 
 Amazon EKS production environments rely on IAM Roles for Service Accounts (IRSA), Services, Ingress, AWS Load Balancer Controller, persistent storage with EBS and EFS CSI drivers, autoscaling through HPA and Karpenter, and comprehensive monitoring using Prometheus, Grafana, Fluent Bit, and CloudWatch. These components provide secure, scalable, and highly available Kubernetes platforms capable of running enterprise microservices in AWS.
+
+---
+
+# Multi-AZ Architecture
+
+Amazon EKS is designed for High Availability.
+
+Production clusters should always span multiple Availability Zones.
+
+Architecture
+
+```text
+                    Amazon EKS Cluster
+
+      ┌───────────────────────────────────────┐
+
+      │           Control Plane               │
+      │      (Managed by AWS - Multi AZ)      │
+      └───────────────────────────────────────┘
+
+              │            │            │
+
+        ┌─────┘            │            └─────┐
+
+        │                  │                  │
+
+   Worker Node       Worker Node       Worker Node
+
+      AZ-A              AZ-B              AZ-C
+
+        │                  │                  │
+
+     Multiple Pods     Multiple Pods     Multiple Pods
+```
+
+Benefits
+
+- High Availability
+- Fault Tolerance
+- Better Scheduling
+- Reduced Downtime
+
+---
+
+# Control Plane High Availability
+
+Unlike self-managed Kubernetes,
+
+Amazon EKS automatically deploys the Control Plane across multiple Availability Zones.
+
+Components replicated
+
+- API Server
+- etcd
+- Controller Manager
+- Scheduler
+
+If one Availability Zone fails,
+
+The Control Plane continues operating.
+
+---
+
+# Worker Node High Availability
+
+Worker Nodes should also be distributed across multiple Availability Zones.
+
+Example
+
+```text
+AZ-A
+
+2 Worker Nodes
+
+----------------
+
+AZ-B
+
+2 Worker Nodes
+
+----------------
+
+AZ-C
+
+2 Worker Nodes
+```
+
+Pods are automatically distributed.
+
+---
+
+# Pod Distribution
+
+Never deploy all Pods on one Worker Node.
+
+Example
+
+```text
+Payment Service
+
+↓
+
+Pod-1
+
+AZ-A
+
+--------------
+
+Pod-2
+
+AZ-B
+
+--------------
+
+Pod-3
+
+AZ-C
+```
+
+If one AZ fails,
+
+Remaining Pods continue serving traffic.
+
+---
+
+# Pod Anti-Affinity
+
+Pod Anti-Affinity prevents identical Pods from running on the same node.
+
+Example
+
+Without Anti-Affinity
+
+```text
+Worker Node
+
+↓
+
+Payment Pod
+
+↓
+
+Payment Pod
+
+↓
+
+Payment Pod
+```
+
+One node failure causes complete outage.
+
+With Anti-Affinity
+
+```text
+Node-1
+
+↓
+
+Payment Pod
+
+--------------
+
+Node-2
+
+↓
+
+Payment Pod
+
+--------------
+
+Node-3
+
+↓
+
+Payment Pod
+```
+
+---
+
+# Node Affinity
+
+Node Affinity schedules Pods onto specific nodes.
+
+Example
+
+```yaml
+Frontend
+
+↓
+
+Frontend Nodes
+
+-------------------
+
+Database
+
+↓
+
+Database Nodes
+```
+
+Useful for workload isolation.
+
+---
+
+# Taints and Tolerations
+
+Taints prevent Pods from being scheduled on specific nodes.
+
+Example
+
+```text
+GPU Node
+
+↓
+
+Only ML Pods
+```
+
+Other Pods cannot run unless they have matching tolerations.
+
+---
+
+# Dedicated Node Groups
+
+Large organizations create separate Node Groups.
+
+Example
+
+```text
+Production Node Group
+
+↓
+
+Production Apps
+
+------------------------
+
+Monitoring Node Group
+
+↓
+
+Prometheus
+
+Grafana
+
+------------------------
+
+ML Node Group
+
+↓
+
+AI Workloads
+```
+
+Benefits
+
+- Isolation
+- Security
+- Better Resource Allocation
+
+---
+
+# Multi-Cluster Architecture
+
+Many enterprises run multiple EKS clusters.
+
+Example
+
+```text
+Development Cluster
+
+↓
+
+Testing Cluster
+
+↓
+
+Staging Cluster
+
+↓
+
+Production Cluster
+```
+
+Advantages
+
+- Isolation
+- Safer Upgrades
+- Independent Scaling
+- Better Security
+
+---
+
+# Production Deployment Flow
+
+A typical enterprise deployment pipeline:
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Update Kubernetes Manifest
+
+↓
+
+Git Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods Updated
+```
+
+---
+
+# GitOps with ArgoCD
+
+Git becomes the single source of truth.
+
+Workflow
+
+```text
+Git Commit
+
+↓
+
+ArgoCD Detects Change
+
+↓
+
+Sync Cluster
+
+↓
+
+Deploy Application
+```
+
+Benefits
+
+- Version Control
+- Easy Rollback
+- Drift Detection
+- Automated Deployments
+
+---
+
+# CI/CD Integration
+
+Typical pipeline
+
+```text
+GitHub
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Trivy Scan
+
+↓
+
+Docker Build
+
+↓
+
+Push to Amazon ECR
+
+↓
+
+Update GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Rolling Deployment
+
+```text
+Version 1
+
+↓
+
+Launch Version 2
+
+↓
+
+Health Check
+
+↓
+
+Terminate Version 1
+```
+
+No downtime.
+
+---
+
+# Blue/Green Deployment
+
+```text
+Blue Environment
+
+↓
+
+Green Environment
+
+↓
+
+Validation
+
+↓
+
+Traffic Switch
+```
+
+Advantages
+
+- Instant Rollback
+- Safer Releases
+
+---
+
+# Canary Deployment
+
+Traffic is shifted gradually.
+
+```text
+Version 1
+
+100%
+
+↓
+
+Version 2
+
+10%
+
+↓
+
+25%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Useful for production releases.
+
+---
+
+# Backup Strategy
+
+Applications are stateless,
+
+but Kubernetes resources must be backed up.
+
+Backup
+
+- Deployments
+- Services
+- Secrets
+- ConfigMaps
+- Persistent Volumes
+
+---
+
+# Velero
+
+Velero is the standard Kubernetes backup tool.
+
+Architecture
+
+```text
+EKS Cluster
+
+↓
+
+Velero
+
+↓
+
+Amazon S3
+```
+
+Supports
+
+- Cluster Backup
+- Restore
+- Disaster Recovery
+
+---
+
+# Disaster Recovery
+
+Production DR Architecture
+
+```text
+Primary Region
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon ECR Replication
+
+↓
+
+Velero Backup
+
+↓
+
+Amazon S3
+
+↓
+
+Secondary Region
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# AWS CLI
+
+Create Cluster
+
+```bash
+aws eks create-cluster \
+--name production
+```
+
+Describe Cluster
+
+```bash
+aws eks describe-cluster \
+--name production
+```
+
+List Clusters
+
+```bash
+aws eks list-clusters
+```
+
+Update kubeconfig
+
+```bash
+aws eks update-kubeconfig \
+--region ap-south-1 \
+--name production
+```
+
+---
+
+# eksctl
+
+Create Cluster
+
+```bash
+eksctl create cluster \
+--name production
+```
+
+List Node Groups
+
+```bash
+eksctl get nodegroup \
+--cluster production
+```
+
+Delete Cluster
+
+```bash
+eksctl delete cluster \
+--name production
+```
+
+---
+
+# Terraform
+
+```hcl
+module "eks" {
+
+  source = "terraform-aws-modules/eks/aws"
+
+  cluster_name = "production"
+
+  cluster_version = "1.31"
+
+}
+```
+
+---
+
+# CloudFormation
+
+```yaml
+Resources:
+
+  Cluster:
+
+    Type: AWS::EKS::Cluster
+
+    Properties:
+
+      Name: production
+```
+
+---
+
+# Python (Boto3)
+
+```python
+import boto3
+
+eks = boto3.client("eks")
+
+response = eks.list_clusters()
+
+print(response)
+```
+
+---
+
+# Enterprise Production Architecture
+
+```text
+                     Internet
+
+                         │
+
+                      Route53
+
+                         │
+
+                        ALB
+
+                         │
+
+            AWS Load Balancer Controller
+
+                         │
+
+                 Amazon EKS Cluster
+
+      ┌──────────────────────────────────────────┐
+
+      │      Multi-AZ Managed Node Groups        │
+
+      └──────────────────────────────────────────┘
+
+         │          │          │          │
+
+      Frontend   Backend   Payment   Monitoring
+
+         │          │          │          │
+
+       Amazon ECR   EBS   EFS   CloudWatch
+
+                         │
+
+                    Prometheus
+
+                         │
+
+                      Grafana
+
+                         │
+
+                      Fluent Bit
+
+                         │
+
+                      ArgoCD
+
+                         │
+
+                      GitHub
+```
+
+---
+
+# Best Practices
+
+- Deploy across at least three Availability Zones
+- Use Managed Node Groups
+- Enable IRSA
+- Use private cluster endpoints
+- Enable Control Plane Logs
+- Store images in Amazon ECR
+- Use immutable image tags
+- Use GitOps with ArgoCD
+- Enable Cluster Autoscaler or Karpenter
+- Configure HPA for workloads
+- Enable Prometheus and Grafana
+- Use Fluent Bit for centralized logging
+- Back up clusters with Velero
+- Regularly upgrade Kubernetes versions
+- Apply least-privilege RBAC
+
+---
+
+# Common Mistakes
+
+- Running production in a single AZ
+- Using the `default` namespace for everything
+- Using the `latest` image tag
+- Hardcoding AWS credentials inside Pods
+- Not enabling IRSA
+- Not monitoring the cluster
+- Ignoring Pod resource requests and limits
+- Not configuring Pod Disruption Budgets
+- Running without backups
+- Skipping security scans
+
+---
+
+# Troubleshooting
+
+## Pods Stuck in Pending
+
+Check
+
+- Node Capacity
+- Resource Requests
+- Taints
+- PVC Binding
+- Scheduler Events
+
+---
+
+## ImagePullBackOff
+
+Verify
+
+- Amazon ECR Repository
+- Image Name
+- Image Tag
+- IAM Permissions
+- Network Connectivity
+
+---
+
+## CrashLoopBackOff
+
+Check
+
+- Container Logs
+- Readiness Probe
+- Liveness Probe
+- Environment Variables
+- Secrets
+- ConfigMaps
+
+---
+
+## Node Not Ready
+
+Verify
+
+- kubelet
+- CNI Plugin
+- EC2 Health
+- IAM Role
+- Network
+
+---
+
+## High API Server Latency
+
+Check
+
+- Control Plane Logs
+- API Requests
+- Excessive Controllers
+- Resource Quotas
+
+---
+
+# Interview Questions
+
+### Basic
+
+1. What is Amazon EKS?
+2. Why use EKS?
+3. Difference between ECS and EKS?
+4. What is a Pod?
+5. What is a Deployment?
+6. What is a Service?
+7. What is Ingress?
+8. What is IRSA?
+9. What is a Node Group?
+10. What is a Fargate Profile?
+
+### Intermediate
+
+11. Explain the EKS Control Plane.
+12. Managed vs Self-Managed Node Groups?
+13. Explain VPC CNI.
+14. What is the AWS Load Balancer Controller?
+15. Explain HPA.
+16. Explain Cluster Autoscaler.
+17. What is Karpenter?
+18. Explain EBS CSI Driver.
+19. Explain EFS CSI Driver.
+20. Explain RBAC.
+
+### Advanced
+
+21. Explain IRSA internally.
+22. How does IAM authentication work in EKS?
+23. Explain Pod networking.
+24. Explain Control Plane HA.
+25. Design a production EKS cluster.
+26. Explain GitOps using ArgoCD.
+27. How would you secure an EKS cluster?
+28. Explain Blue/Green deployment.
+29. Explain Canary deployment.
+30. How would you troubleshoot a production EKS outage?
+
+---
+
+# Production Scenarios
+
+### Scenario 1
+
+Your EKS cluster suddenly cannot schedule new Pods.
+
+How would you investigate?
+
+---
+
+### Scenario 2
+
+Pods remain in `ImagePullBackOff` after a deployment.
+
+Which components would you verify?
+
+---
+
+### Scenario 3
+
+One Availability Zone fails.
+
+How does EKS maintain application availability?
+
+---
+
+### Scenario 4
+
+A developer accidentally deployed an image with a critical vulnerability.
+
+How would your CI/CD and GitOps pipeline prevent it from reaching production?
+
+---
+
+### Scenario 5
+
+The Payment service experiences high CPU utilization during a flash sale.
+
+How would HPA, Cluster Autoscaler, and Karpenter work together to handle the load?
+
+---
+
+# Cheat Sheet
+
+| Component | Purpose |
+|-----------|---------|
+| Control Plane | Cluster Management |
+| Managed Node Group | Managed Worker Nodes |
+| Pod | Smallest Deployable Unit |
+| Deployment | Pod Management |
+| Service | Stable Networking |
+| Ingress | HTTP/HTTPS Routing |
+| IRSA | Pod IAM Access |
+| VPC CNI | Pod Networking |
+| EBS CSI | Block Storage |
+| EFS CSI | Shared Storage |
+| HPA | Scale Pods |
+| Cluster Autoscaler | Scale Nodes |
+| Karpenter | Intelligent Node Provisioning |
+| ArgoCD | GitOps |
+| Velero | Backup & Restore |
+
+---
+
+# Summary
+
+Amazon EKS is AWS's managed Kubernetes platform for running containerized workloads at enterprise scale. By combining Managed Control Planes, Multi-AZ Node Groups, IRSA, AWS Load Balancer Controller, EBS/EFS CSI drivers, autoscaling with HPA and Karpenter, GitOps using ArgoCD, and comprehensive monitoring with Prometheus, Grafana, Fluent Bit, and CloudWatch, organizations can build secure, highly available, and production-ready Kubernetes environments. Proper architecture, automation, and observability are essential for operating EKS successfully in real-world production deployments.
