@@ -5850,3 +5850,278 @@ Validation
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 221
+
+## During a Production deployment, Jenkins completes successfully, but the GitOps repository update fails because of a merge conflict. As a result, ArgoCD does not deploy the latest version. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- GitOps repository
+- Merge conflicts
+- Branch protection
+- Git history
+- Pipeline logs
+- Repository permissions
+- Pull Requests
+- ArgoCD sync status
+
+---
+
+# Scenario 222
+
+## A Kubernetes Pod remains in the `ContainerCreating` state for more than 20 minutes. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Pod Events
+- Image download
+- Persistent Volume
+- CSI Driver
+- Secret mounting
+- ConfigMap mounting
+- CNI plugin
+- Node status
+
+---
+
+# Scenario 223
+
+## After rotating database credentials in AWS Secrets Manager, the application starts failing with authentication errors. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Secret version
+- Secret rotation
+- Application configuration
+- IAM permissions
+- Secret retrieval
+- Connection string
+- Pod restart
+- Application logs
+
+---
+
+# Scenario 224
+
+## During a deployment, Terraform Apply fails because the AWS API returns `ThrottlingException`. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- AWS API limits
+- Parallelism
+- Retry configuration
+- Terraform logs
+- Service quotas
+- Recent deployments
+- Provider configuration
+- Resource count
+
+---
+
+# Scenario 225
+
+## Prometheus reports that one Kubernetes Node is not exposing metrics, while all applications on that node continue running normally. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Node Exporter
+- Prometheus targets
+- Metrics endpoint
+- Firewall rules
+- Node connectivity
+- Exporter logs
+- ServiceMonitor
+- Network configuration
+
+---
+
+# Scenario 226
+
+## A new application deployment introduces intermittent deadlocks in Amazon RDS. Infrastructure metrics remain healthy. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Database locks
+- Transaction isolation
+- Long-running queries
+- Application logs
+- Recent schema changes
+- Query execution plans
+- Connection pool
+- Database monitoring
+
+---
+
+# Scenario 227
+
+## During a security review, you discover that several Kubernetes Pods are running in Privileged mode. What risks does this introduce?
+
+### Expected Approach
+
+Check:
+
+- Security Context
+- Host access
+- Linux capabilities
+- HostPath volumes
+- Runtime permissions
+- Pod Security Standards
+- Admission Controllers
+- RBAC
+
+---
+
+# Scenario 228
+
+## Jenkins pipelines suddenly become significantly slower because every build downloads all project dependencies from the internet. How would you optimize this?
+
+### Expected Approach
+
+Verify:
+
+- Dependency cache
+- Local artifact repository
+- Docker layer cache
+- Build cache
+- Maven/NPM cache
+- Jenkins workspace
+- Pipeline optimization
+- Parallel execution
+
+---
+
+# Scenario 229
+
+## During a Production deployment, users can successfully log in, but every file upload fails with HTTP 413 Request Entity Too Large. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Ingress configuration
+- ALB limits
+- NGINX configuration
+- Application limits
+- Request size
+- Load Balancer logs
+- API Gateway settings
+- Upload service logs
+
+---
+
+# Scenario 230
+
+## During a major incident, Kubernetes, AWS, Jenkins, and ArgoCD teams all claim their platforms are healthy. However, customers cannot place orders. How would you coordinate the investigation?
+
+### Expected Approach
+
+Follow a business-driven investigation:
+
+- Validate customer journey
+- Review deployment timeline
+- Check API Gateway
+- Review application logs
+- Validate database transactions
+- Review RabbitMQ/Kafka
+- Verify payment gateway
+- Correlate distributed traces
+- Roll back if necessary
+- Lead post-incident review
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Business Alert
+
+↓
+
+Customer Journey Validation
+
+↓
+
+Deployment Timeline
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Networking
+
+↓
+
+Application Services
+
+↓
+
+Database
+
+↓
+
+Messaging Layer
+
+↓
+
+Security Review
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Business Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Keep GitOps repositories free from direct manual changes to avoid merge conflicts.
+- Investigate Pod Events first when Pods remain in the `ContainerCreating` state.
+- Validate secret rotation procedures in lower environments before Production.
+- Configure Terraform retries and monitor AWS API rate limits.
+- Continuously monitor observability components such as Node Exporter.
+- Detect and resolve database deadlocks through query optimization and application design.
+- Avoid Privileged containers unless absolutely required and approved.
+- Optimize CI/CD pipelines using dependency caching and local artifact repositories.
+- Validate request size limits across Ingress, Load Balancers, and applications.
+- During major incidents, focus on restoring end-to-end business functionality rather than individual platform health.
+
+---
+
