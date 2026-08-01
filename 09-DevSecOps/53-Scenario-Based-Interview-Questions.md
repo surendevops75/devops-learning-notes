@@ -5312,3 +5312,272 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 201
+
+## During a production deployment, ArgoCD reports Sync Successful, but one microservice continuously enters CrashLoopBackOff while every other service is running normally. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Pod logs
+- Previous logs
+- Environment variables
+- ConfigMaps
+- Secrets
+- Database connectivity
+- Startup commands
+- Resource limits
+
+---
+
+# Scenario 202
+
+## A Jenkins pipeline completes successfully, but the application deployed to Production is built from an older Git commit. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Git commit hash
+- Jenkins workspace
+- SCM checkout
+- Branch configuration
+- Git tags
+- Build parameters
+- Pipeline logs
+- Deployment manifest
+
+---
+
+# Scenario 203
+
+## After upgrading Amazon EKS worker nodes, applications begin reporting TLS handshake failures while communicating with internal services. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Cluster certificates
+- Service certificates
+- Trust store
+- TLS versions
+- DNS resolution
+- Network connectivity
+- Application logs
+- Recent certificate changes
+
+---
+
+# Scenario 204
+
+## During a deployment, Terraform successfully creates Security Groups, but EC2 instances cannot communicate with Amazon RDS. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Security Group rules
+- Network ACLs
+- Route Tables
+- RDS endpoint
+- Database port
+- VPC configuration
+- DNS resolution
+- Connectivity tests
+
+---
+
+# Scenario 205
+
+## A production deployment causes one API to consume significantly more memory than previous releases, eventually triggering OOMKilled events. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Heap usage
+- Memory leaks
+- Request payload size
+- Cache behaviour
+- Application profiling
+- Recent code changes
+- Garbage Collection
+- Resource limits
+
+---
+
+# Scenario 206
+
+## During a security assessment, it is discovered that Kubernetes Secrets are stored as Base64-encoded YAML files without encryption at rest. What would you recommend?
+
+### Expected Approach
+
+Review:
+
+- Encryption at Rest
+- KMS integration
+- External Secrets
+- AWS Secrets Manager
+- Secret rotation
+- RBAC
+- Audit logging
+- Admission policies
+
+---
+
+# Scenario 207
+
+## Prometheus reports normal CPU and Memory usage, but Grafana shows a continuous increase in API response time. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Slow database queries
+- Thread pool
+- Connection pool
+- External APIs
+- Distributed tracing
+- Application logs
+- Storage latency
+- Cache performance
+
+---
+
+# Scenario 208
+
+## During a disaster recovery exercise, Amazon Route53 successfully redirects traffic to the secondary region, but users still experience failures. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- DNS propagation
+- ALB health
+- Application readiness
+- Database replication
+- Secrets synchronization
+- Regional configuration
+- Storage replication
+- Service dependencies
+
+---
+
+# Scenario 209
+
+## CloudTrail detects that an IAM user has disabled CloudTrail logging in the Production account. How would you respond?
+
+### Expected Approach
+
+Immediately:
+
+- Re-enable CloudTrail
+- Identify the user
+- Review IAM activity
+- Investigate unauthorized access
+- Rotate credentials if required
+- Notify Security Team
+- Preserve evidence
+- Conduct incident response
+
+---
+
+# Scenario 210
+
+## During a major production deployment, monitoring indicates all infrastructure components are healthy, but customers cannot complete checkout because orders are not reaching RabbitMQ. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- RabbitMQ cluster
+- Queue status
+- Producer logs
+- Consumer logs
+- Message acknowledgements
+- Network connectivity
+- Application logs
+- Dead Letter Queue
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Alert
+
+↓
+
+Business Impact
+
+↓
+
+Recent Deployment
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Messaging Layer
+
+↓
+
+Security
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Investigate individual workload failures even when the overall deployment succeeds.
+- Verify Git commit hashes throughout the CI/CD pipeline to prevent deploying stale code.
+- Monitor certificate expiration and TLS compatibility after cluster upgrades.
+- Validate end-to-end network connectivity after Infrastructure as Code changes.
+- Profile applications regularly to detect memory regressions before Production deployment.
+- Encrypt Kubernetes Secrets using KMS and integrate with enterprise secret management solutions.
+- Combine metrics, logs, and traces to identify application performance bottlenecks.
+- Test disaster recovery procedures, including DNS failover and data replication, on a regular schedule.
+- Protect audit logging services from unauthorized modification and monitor them continuously.
+- Monitor asynchronous messaging systems such as RabbitMQ to ensure successful end-to-end business transactions.
+
+---
+
