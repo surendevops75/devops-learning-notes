@@ -6948,3 +6948,278 @@ Continuous Improvement
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 261
+
+## During a Production deployment, Amazon EKS worker nodes are healthy, but newly deployed Pods cannot reach the Kubernetes API Server. Existing Pods continue working. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Service Account
+- RBAC
+- API Server endpoint
+- Network Policies
+- kube-proxy
+- DNS resolution
+- Security Groups
+- Pod logs
+
+---
+
+# Scenario 262
+
+## Jenkins successfully completes the build, but Docker Push to Amazon ECR fails with "Layer already exists" followed by an unexpected error. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- ECR availability
+- Repository permissions
+- Docker daemon
+- Image manifest
+- Registry logs
+- Network connectivity
+- Repository quota
+- Build logs
+
+---
+
+# Scenario 263
+
+## After deploying a new release, Kubernetes reports all Pods as Ready, but Prometheus reports a sharp increase in HTTP 500 responses. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Application logs
+- Exception stack traces
+- Database errors
+- API dependencies
+- Distributed tracing
+- Deployment changes
+- Resource utilization
+- Error metrics
+
+---
+
+# Scenario 264
+
+## Terraform Apply fails because the remote backend bucket becomes temporarily unavailable. What should you do?
+
+### Expected Approach
+
+Check:
+
+- Backend availability
+- S3 status
+- State lock
+- Retry strategy
+- Backup state
+- Network connectivity
+- Terraform logs
+- Recovery procedure
+
+---
+
+# Scenario 265
+
+## During a security review, you discover that Kubernetes admission controllers are disabled in Production. What risks does this introduce?
+
+### Expected Approach
+
+Review:
+
+- Policy enforcement
+- Pod Security
+- Image validation
+- Resource validation
+- Compliance
+- RBAC
+- Security policies
+- Cluster governance
+
+---
+
+# Scenario 266
+
+## During a Production deployment, one microservice begins generating duplicate RabbitMQ messages after enabling automatic retries. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Retry configuration
+- Message acknowledgement
+- Consumer logic
+- Queue configuration
+- Dead Letter Queue
+- Idempotency
+- Application logs
+- Deployment changes
+
+---
+
+# Scenario 267
+
+## A Kubernetes node repeatedly changes between Ready and NotReady status every few minutes. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- kubelet logs
+- Node Events
+- Network connectivity
+- CPU utilization
+- Memory usage
+- Disk pressure
+- EC2 health
+- Container runtime
+
+---
+
+# Scenario 268
+
+## During a disaster recovery exercise, applications are restored successfully, but Kubernetes Ingress resources fail because the Load Balancer Controller is unavailable. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Controller Pods
+- IAM Role
+- CRDs
+- Controller logs
+- Ingress Events
+- ALB resources
+- Service Account
+- Cluster permissions
+
+---
+
+# Scenario 269
+
+## Amazon CloudTrail reports that an IAM policy attached to the CI/CD role was modified outside business hours. How would you respond?
+
+### Expected Approach
+
+Immediately:
+
+- Review CloudTrail
+- Identify user
+- Compare policy
+- Verify approvals
+- Roll back unauthorized changes
+- Rotate credentials
+- Notify Security Team
+- Preserve evidence
+
+---
+
+# Scenario 270
+
+## During a Production deployment, infrastructure, Kubernetes, databases, and messaging systems appear healthy. However, customers cannot complete account registration because verification emails are never delivered. How would you investigate?
+
+### Expected Approach
+
+Follow the complete workflow:
+
+- User Service
+- Registration API
+- Database
+- RabbitMQ/Kafka
+- Email Service
+- SMTP provider
+- Application logs
+- Queue status
+- Distributed tracing
+- Business validation
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Alert
+
+↓
+
+Customer Journey
+
+↓
+
+Deployment Timeline
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Application Layer
+
+↓
+
+Database
+
+↓
+
+Messaging Layer
+
+↓
+
+External Services
+
+↓
+
+Security Review
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Validate Kubernetes API connectivity for newly deployed workloads.
+- Monitor container registry operations and implement retry mechanisms for image pushes.
+- Correlate HTTP error rates with application logs immediately after deployments.
+- Protect Terraform backends with versioning, backups, and high availability.
+- Keep admission controllers enabled to enforce cluster-wide security policies.
+- Design message processing systems with idempotency to avoid duplicate processing.
+- Monitor node stability using kubelet logs and infrastructure health metrics.
+- Include Kubernetes controllers in disaster recovery validation plans.
+- Continuously audit IAM policy changes and investigate all unauthorized modifications.
+- Verify complete customer workflows—including external integrations such as email services—before declaring a Production deployment successful.
+
+---
+
