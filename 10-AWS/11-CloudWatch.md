@@ -718,3 +718,786 @@ Production recommendation:
 Set retention policies according to compliance and business requirements instead of keeping logs indefinitely.
 
 ---
+
+# Metric Filters
+
+Metric Filters convert log data into CloudWatch metrics.
+
+Instead of monitoring only infrastructure metrics, CloudWatch can monitor specific log patterns.
+
+Example
+
+Application Log
+
+```text
+ERROR Database Connection Failed
+```
+
+Metric Filter
+
+```text
+Pattern
+
+↓
+
+ERROR
+
+↓
+
+CloudWatch Metric
+
+↓
+
+Alarm
+```
+
+Common Uses
+
+- Failed Logins
+- Exception Count
+- HTTP 500 Errors
+- Database Errors
+- Security Events
+
+---
+
+# CloudWatch Logs Insights
+
+CloudWatch Logs Insights is a query service used to analyze logs.
+
+Instead of downloading log files, engineers can search logs directly.
+
+Workflow
+
+```text
+CloudWatch Logs
+
+↓
+
+Logs Insights
+
+↓
+
+Query
+
+↓
+
+Results
+```
+
+Example Query
+
+```sql
+fields @timestamp, @message
+
+| filter @message like /ERROR/
+
+| sort @timestamp desc
+
+| limit 20
+```
+
+Another Example
+
+Find HTTP 500 Errors
+
+```sql
+fields @timestamp,@message
+
+| filter status=500
+
+| stats count() by bin(5m)
+```
+
+Useful For
+
+- Production troubleshooting
+- Security investigations
+- Performance analysis
+- Root Cause Analysis
+
+---
+
+# EventBridge Integration
+
+CloudWatch Events are now part of Amazon EventBridge.
+
+CloudWatch publishes events that EventBridge can process.
+
+Workflow
+
+```text
+AWS Event
+
+↓
+
+EventBridge
+
+↓
+
+Rule
+
+↓
+
+Lambda
+
+↓
+
+SNS
+
+↓
+
+Email
+```
+
+Example Events
+
+- EC2 State Change
+- Auto Scaling Activity
+- CodePipeline Execution
+- ECR Image Push
+- ECS Deployment
+- Scheduled Jobs
+
+---
+
+# SNS Notifications
+
+CloudWatch Alarms commonly send notifications using Amazon SNS.
+
+Architecture
+
+```text
+CloudWatch Alarm
+
+↓
+
+SNS Topic
+
+↓
+
+Email
+
+SMS
+
+Lambda
+
+Slack
+
+Webhook
+```
+
+Typical Workflow
+
+```text
+CPU > 80%
+
+↓
+
+Alarm
+
+↓
+
+SNS
+
+↓
+
+DevOps Team
+```
+
+---
+
+# EC2 Monitoring
+
+CloudWatch monitors EC2 instances.
+
+Default Metrics
+
+- CPU Utilization
+- Network In
+- Network Out
+- Disk Read Bytes
+- Disk Write Bytes
+- Status Checks
+
+Additional Metrics (CloudWatch Agent)
+
+- Memory Utilization
+- Disk Usage
+- Swap Usage
+- File System Usage
+- Running Processes
+
+Architecture
+
+```text
+EC2
+
+↓
+
+CloudWatch Agent
+
+↓
+
+CloudWatch
+
+↓
+
+Dashboard
+```
+
+---
+
+# Elastic Load Balancer Monitoring
+
+CloudWatch automatically monitors ALBs and NLBs.
+
+Important Metrics
+
+- Request Count
+- Target Response Time
+- Healthy Hosts
+- Unhealthy Hosts
+- HTTP 4XX Errors
+- HTTP 5XX Errors
+- Active Connections
+
+Workflow
+
+```text
+Application Load Balancer
+
+↓
+
+CloudWatch
+
+↓
+
+Alarm
+
+↓
+
+SNS
+```
+
+---
+
+# Auto Scaling Monitoring
+
+CloudWatch works closely with Auto Scaling.
+
+Example
+
+```text
+CPU
+
+85%
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+Auto Scaling
+
+↓
+
+Launch EC2
+```
+
+Useful Metrics
+
+- Group Desired Capacity
+- Group InService Instances
+- Group Pending Instances
+- Group Terminating Instances
+
+---
+
+# Amazon EKS Monitoring
+
+CloudWatch can monitor:
+
+- Worker Nodes
+- Pods (via Container Insights)
+- Cluster Logs
+- API Server
+- Scheduler
+- Controller Manager
+
+Architecture
+
+```text
+Amazon EKS
+
+↓
+
+Container Insights
+
+↓
+
+CloudWatch
+
+↓
+
+Dashboard
+
+↓
+
+Alarm
+```
+
+Container Insights provides:
+
+- Pod CPU
+- Pod Memory
+- Node CPU
+- Node Memory
+- Network Usage
+- Disk Usage
+
+---
+
+# Enterprise Production Architecture
+
+```text
+                 AWS Infrastructure
+
+ EC2   ALB   RDS   EKS   Lambda   ECS
+
+      │     │     │      │      │
+
+      └─────┼─────┼──────┼──────┘
+
+          CloudWatch Metrics
+
+                 │
+
+          CloudWatch Logs
+
+                 │
+
+         CloudWatch Dashboard
+
+                 │
+
+        CloudWatch Alarms
+
+                 │
+
+             EventBridge
+
+                 │
+
+                 SNS
+
+                 │
+
+     Email / Slack / Lambda / PagerDuty
+```
+
+---
+
+# AWS Console Walkthrough
+
+1. Open CloudWatch Console
+2. Navigate to Metrics
+3. Select Namespace
+4. Choose Metric
+5. Create Dashboard
+6. Create Alarm
+7. Configure SNS Notification
+8. Review Alarm State
+9. View Logs
+10. Query Logs Insights
+
+---
+
+# AWS CLI
+
+List Metrics
+
+```bash
+aws cloudwatch list-metrics
+```
+
+Get Metric Statistics
+
+```bash
+aws cloudwatch get-metric-statistics \
+--namespace AWS/EC2 \
+--metric-name CPUUtilization \
+--statistics Average
+```
+
+Create Alarm
+
+```bash
+aws cloudwatch put-metric-alarm \
+--alarm-name HighCPU \
+--metric-name CPUUtilization \
+--namespace AWS/EC2 \
+--statistic Average \
+--threshold 80 \
+--comparison-operator GreaterThanThreshold
+```
+
+Describe Alarms
+
+```bash
+aws cloudwatch describe-alarms
+```
+
+List Log Groups
+
+```bash
+aws logs describe-log-groups
+```
+
+List Log Streams
+
+```bash
+aws logs describe-log-streams \
+--log-group-name /application/logs
+```
+
+---
+
+# Terraform
+
+Dashboard
+
+```hcl
+resource "aws_cloudwatch_dashboard" "operations" {
+
+  dashboard_name = "operations-dashboard"
+
+  dashboard_body = jsonencode({
+
+    widgets = []
+
+  })
+
+}
+```
+
+CPU Alarm
+
+```hcl
+resource "aws_cloudwatch_metric_alarm" "cpu" {
+
+  alarm_name = "HighCPU"
+
+  namespace = "AWS/EC2"
+
+  metric_name = "CPUUtilization"
+
+  threshold = 80
+
+  comparison_operator = "GreaterThanThreshold"
+
+  evaluation_periods = 2
+
+  statistic = "Average"
+
+}
+```
+
+Log Group
+
+```hcl
+resource "aws_cloudwatch_log_group" "application" {
+
+  name = "/application/logs"
+
+  retention_in_days = 30
+
+}
+```
+
+---
+
+# CloudFormation
+
+```yaml
+Resources:
+
+  CPUAlarm:
+
+    Type: AWS::CloudWatch::Alarm
+
+    Properties:
+
+      AlarmName: HighCPU
+
+      Namespace: AWS/EC2
+
+      MetricName: CPUUtilization
+
+      Threshold: 80
+```
+
+---
+
+# Python (Boto3)
+
+List Metrics
+
+```python
+import boto3
+
+cloudwatch = boto3.client("cloudwatch")
+
+response = cloudwatch.list_metrics()
+
+print(response)
+```
+
+Create Alarm
+
+```python
+cloudwatch.put_metric_alarm(
+
+    AlarmName="HighCPU",
+
+    MetricName="CPUUtilization",
+
+    Namespace="AWS/EC2",
+
+    Threshold=80,
+
+    ComparisonOperator="GreaterThanThreshold",
+
+    EvaluationPeriods=2,
+
+    Statistic="Average"
+
+)
+```
+
+---
+
+# Best Practices
+
+- Enable Detailed Monitoring for production EC2 instances
+- Install the CloudWatch Agent for OS-level metrics
+- Create dashboards for critical applications
+- Configure alarms for CPU, memory, disk, and network usage
+- Store logs in structured formats (JSON where possible)
+- Set appropriate log retention policies
+- Use Composite Alarms to reduce alert fatigue
+- Monitor Auto Scaling and ELB health
+- Use Logs Insights for troubleshooting
+- Integrate alarms with SNS and incident management systems
+
+---
+
+# Common Mistakes
+
+- Relying only on CPU metrics
+- Not monitoring memory utilization
+- Keeping logs forever without retention policies
+- Creating too many unnecessary alarms
+- Ignoring alarm thresholds
+- Not enabling detailed monitoring
+- Missing application logs
+- Using overly broad Logs Insights queries
+
+---
+
+# Troubleshooting
+
+## Alarm Never Triggers
+
+Verify:
+
+- Metric exists
+- Correct namespace
+- Threshold
+- Evaluation period
+- Alarm state
+
+---
+
+## Missing Memory Metrics
+
+Check:
+
+- CloudWatch Agent
+- IAM Role
+- Agent Configuration
+- Agent Status
+
+---
+
+## Logs Not Appearing
+
+Verify:
+
+- CloudWatch Agent
+- IAM Permissions
+- Log Group
+- Log Stream
+- Network Connectivity
+
+---
+
+## Dashboard Shows No Data
+
+Check:
+
+- Correct Region
+- Namespace
+- Metric Name
+- Time Range
+- Resource Availability
+
+---
+
+## Auto Scaling Not Triggered
+
+Verify:
+
+- Alarm State
+- Scaling Policy
+- Auto Scaling Group
+- CloudWatch Metric
+- Desired/Maximum Capacity
+
+---
+
+# Interview Questions
+
+### Basic
+
+1. What is Amazon CloudWatch?
+2. Why is CloudWatch used?
+3. What are CloudWatch Metrics?
+4. What is a Namespace?
+5. What are Dimensions?
+6. Difference between Standard and Detailed Monitoring?
+7. What is a CloudWatch Alarm?
+8. What are Alarm States?
+9. What is a Dashboard?
+10. What are CloudWatch Logs?
+
+### Intermediate
+
+11. What is a Log Group?
+12. What is a Log Stream?
+13. What is a Metric Filter?
+14. Explain Logs Insights.
+15. What is the CloudWatch Agent?
+16. How do you monitor memory utilization?
+17. Explain Composite Alarms.
+18. How does CloudWatch integrate with SNS?
+19. How does CloudWatch integrate with Auto Scaling?
+20. Explain EventBridge integration.
+
+### Advanced
+
+21. How does CloudWatch monitor EKS?
+22. Difference between Metrics and Logs?
+23. How would you troubleshoot missing metrics?
+24. How do you monitor application logs?
+25. Explain CloudWatch architecture.
+26. How do you reduce alert fatigue?
+27. How do you monitor microservices?
+28. Explain custom metrics.
+29. Design a monitoring solution for a production application.
+30. How would you perform root cause analysis using CloudWatch?
+
+---
+
+# Scenario-Based Questions
+
+### Scenario 1
+
+A production EC2 instance is slow, but CPU utilization is only 20%.
+
+How would you investigate?
+
+---
+
+### Scenario 2
+
+Your CloudWatch Alarm never enters the ALARM state even though the application is overloaded.
+
+What would you check?
+
+---
+
+### Scenario 3
+
+Application logs are not appearing in CloudWatch Logs.
+
+How would you troubleshoot?
+
+---
+
+### Scenario 4
+
+A deployment causes HTTP 500 errors.
+
+How would you identify the root cause using CloudWatch?
+
+---
+
+### Scenario 5
+
+Auto Scaling is not launching new instances despite high traffic.
+
+How does CloudWatch help identify the issue?
+
+---
+
+### Scenario 6
+
+A company wants notifications sent to Slack whenever CPU exceeds 85%.
+
+How would you design the solution?
+
+---
+
+### Scenario 7
+
+Operations teams complain about too many alerts.
+
+How can Composite Alarms improve the situation?
+
+---
+
+### Scenario 8
+
+An Amazon EKS cluster experiences intermittent pod failures.
+
+Which CloudWatch features would you use to investigate?
+
+---
+
+# Cheat Sheet
+
+| Component | Purpose |
+|-----------|---------|
+| Metrics | Performance Data |
+| Namespace | Metric Category |
+| Dimensions | Metric Attributes |
+| Alarm | Threshold Monitoring |
+| Dashboard | Visualization |
+| Logs | Application/System Logs |
+| Log Group | Collection of Log Streams |
+| Log Stream | Logs from a Single Source |
+| Metric Filter | Convert Logs to Metrics |
+| Logs Insights | Query Logs |
+| EventBridge | Event Routing |
+| SNS | Notifications |
+| CloudWatch Agent | OS-Level Metrics |
+
+---
+
+# Summary
+
+Amazon CloudWatch is AWS's centralized monitoring and observability platform. It collects metrics, logs, and events from AWS resources and applications, enabling teams to monitor infrastructure, visualize performance, automate responses, and troubleshoot issues.
+
+In production environments, combine CloudWatch Metrics, Logs, Dashboards, Alarms, EventBridge, SNS, and the CloudWatch Agent to build a comprehensive monitoring solution. Monitor infrastructure, operating systems, applications, and business metrics together to achieve proactive operations, faster incident response, and higher application reliability.
