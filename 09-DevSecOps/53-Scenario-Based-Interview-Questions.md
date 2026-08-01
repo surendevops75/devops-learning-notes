@@ -5037,3 +5037,278 @@ Post-Incident Documentation
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 191
+
+## During a production deployment, ArgoCD reports "ComparisonError" because it cannot compare the live state with the desired state. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- ArgoCD controller logs
+- Kubernetes API Server
+- Missing CRDs
+- Repository access
+- Cluster connectivity
+- RBAC permissions
+- Application manifests
+- Sync status
+
+---
+
+# Scenario 192
+
+## A Jenkins pipeline suddenly fails because Docker builds cannot start. The Docker daemon is running, but every build returns "permission denied." How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Docker socket permissions
+- Jenkins user groups
+- Docker daemon logs
+- SELinux/AppArmor
+- Agent configuration
+- Docker service status
+- File permissions
+- Recent OS updates
+
+---
+
+# Scenario 193
+
+## After deploying a new application version, users experience random HTTP 503 errors during peak traffic. The application appears healthy under normal load. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Pod Autoscaler
+- Resource limits
+- Load Balancer metrics
+- Connection limits
+- Thread pools
+- Database performance
+- Traffic patterns
+- Load testing reports
+
+---
+
+# Scenario 194
+
+## During an infrastructure deployment, Terraform Apply fails because a remote state file has become corrupted. How would you recover?
+
+### Expected Approach
+
+Check:
+
+- State backup
+- Backend storage
+- Version history
+- State locking
+- Manual modifications
+- Terraform refresh
+- State validation
+- Recovery procedure
+
+---
+
+# Scenario 195
+
+## A production Kubernetes cluster suddenly reports certificate expiration warnings for kubelet communication. What actions would you take?
+
+### Expected Approach
+
+Verify:
+
+- Certificate expiry
+- kubelet certificates
+- Control Plane certificates
+- Certificate rotation
+- Cluster version
+- kubeadm status
+- Node logs
+- Renewal process
+
+---
+
+# Scenario 196
+
+## During a security audit, it is discovered that multiple Kubernetes Ingress resources allow unrestricted access from the internet to internal services. How would you remediate this?
+
+### Expected Approach
+
+Review:
+
+- Ingress rules
+- ALB configuration
+- Authentication
+- WAF policies
+- Security Groups
+- Private services
+- Network segmentation
+- Access controls
+
+---
+
+# Scenario 197
+
+## Prometheus reports normal infrastructure metrics, but customers report that order processing has stopped. Kafka is used for asynchronous communication. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Kafka brokers
+- Consumer lag
+- Producer errors
+- Topic health
+- Dead Letter Queue
+- Application logs
+- Message throughput
+- Business transactions
+
+---
+
+# Scenario 198
+
+## During deployment, Helm successfully upgrades the application, but the Post-Upgrade Hook fails, causing the release to remain in a failed state. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Helm hook logs
+- Kubernetes Jobs
+- Hook timeout
+- Resource creation
+- Application status
+- Helm history
+- Job completion
+- Release status
+
+---
+
+# Scenario 199
+
+## CloudTrail reports repeated unauthorized API calls from an EC2 instance hosting a Jenkins agent. How would you respond?
+
+### Expected Approach
+
+Investigate:
+
+- IAM Role
+- Instance metadata access
+- CloudTrail logs
+- Jenkins jobs
+- Credential exposure
+- Network traffic
+- EC2 security posture
+- Incident response procedures
+
+Immediately isolate the instance if compromise is suspected.
+
+---
+
+# Scenario 200
+
+## A production deployment is technically successful. All Pods are healthy, infrastructure is stable, security scans passed, and monitoring shows no issues. However, customers cannot complete purchases. How would you approach this incident?
+
+### Expected Approach
+
+Follow a business-first investigation:
+
+- Validate customer journey
+- Review application logs
+- Verify API responses
+- Check payment gateway
+- Validate database transactions
+- Review message queues
+- Analyse distributed traces
+- Compare previous release
+- Perform rollback if required
+- Conduct root cause analysis
+
+Remember that successful infrastructure does not guarantee successful business outcomes.
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Business Alert
+
+↓
+
+Validate Customer Impact
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Application Layer
+
+↓
+
+Security Controls
+
+↓
+
+Dependencies
+
+↓
+
+Business Transaction Flow
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Business Validation
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Enterprise Best Practices
+
+- Monitor ArgoCD health and comparison status continuously.
+- Secure Docker daemon access using the Principle of Least Privilege.
+- Validate application behavior under production-scale traffic using load testing.
+- Protect and back up Terraform remote state to enable rapid recovery.
+- Monitor Kubernetes certificate expiration and automate certificate rotation.
+- Restrict internet exposure using Ingress policies, WAF, and network segmentation.
+- Monitor asynchronous systems such as Kafka using consumer lag and throughput metrics.
+- Test Helm lifecycle hooks as part of deployment validation.
+- Investigate unexpected cloud API activity immediately using audit logs and incident response procedures.
+- Measure deployment success using end-to-end business transactions rather than infrastructure health alone.
+
+---
+
