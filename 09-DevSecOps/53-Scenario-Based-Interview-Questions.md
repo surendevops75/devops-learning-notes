@@ -6394,3 +6394,280 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 241
+
+## During a Production deployment, ArgoCD reports the application as Healthy, but Kubernetes Events show repeated "Back-off restarting failed container" messages. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Pod logs
+- Previous logs
+- Kubernetes Events
+- Startup command
+- Environment variables
+- ConfigMaps
+- Secrets
+- Application dependencies
+
+---
+
+# Scenario 242
+
+## After upgrading Jenkins plugins, all Declarative Pipelines fail with syntax errors, while Scripted Pipelines continue working. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Plugin compatibility
+- Pipeline Model Definition plugin
+- Jenkins version
+- Shared libraries
+- Pipeline syntax
+- Plugin dependencies
+- Jenkins logs
+- Rollback option
+
+---
+
+# Scenario 243
+
+## A newly deployed application cannot resolve external DNS names, but internal Kubernetes Services resolve correctly. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- CoreDNS configuration
+- Upstream DNS
+- VPC DNS
+- Network Policies
+- Node DNS settings
+- `/etc/resolv.conf`
+- Security Groups
+- Application logs
+
+---
+
+# Scenario 244
+
+## During a Terraform deployment, resources are created successfully in AWS, but Terraform loses connectivity before updating the remote state. What would you do?
+
+### Expected Approach
+
+Check:
+
+- Remote state
+- Terraform refresh
+- Resource existence
+- State consistency
+- Backend availability
+- Lock status
+- Terraform plan
+- Manual verification
+
+---
+
+# Scenario 245
+
+## A production deployment causes one Kubernetes Pod to consume excessive CPU while all replicas of the same Deployment remain healthy. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Node assignment
+- Pod logs
+- Traffic distribution
+- Resource usage
+- Thread dump
+- Infinite loops
+- Application profiling
+- Node health
+
+---
+
+# Scenario 246
+
+## During a compliance audit, you discover that container images are being pulled directly from Docker Hub instead of an approved private registry. What risks does this introduce?
+
+### Expected Approach
+
+Review:
+
+- Supply chain risk
+- Image authenticity
+- Rate limits
+- Image availability
+- Registry policies
+- Image scanning
+- Image signing
+- Organization standards
+
+---
+
+# Scenario 247
+
+## Amazon RDS reports an unusually high number of database connections after a Production deployment. Application CPU remains low. How would you troubleshoot?
+
+### Expected Approach
+
+Check:
+
+- Connection pool
+- Connection leaks
+- Idle connections
+- Database metrics
+- Recent deployment
+- Application logs
+- ORM configuration
+- Query execution
+
+---
+
+# Scenario 248
+
+## During deployment, Kubernetes reports that a Pod cannot be scheduled because of an unbound PersistentVolumeClaim. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- PVC status
+- StorageClass
+- Persistent Volume
+- Dynamic provisioning
+- CSI Driver
+- Kubernetes Events
+- Access mode
+- Capacity
+
+---
+
+# Scenario 249
+
+## Falco reports that a container is attempting to read the Kubernetes Service Account token repeatedly. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Container identity
+- Application behaviour
+- RBAC permissions
+- Kubernetes Audit Logs
+- Runtime activity
+- Image source
+- Recent deployments
+- Possible credential harvesting
+
+Treat repeated unauthorized token access as a potential security incident.
+
+---
+
+# Scenario 250
+
+## During a Production release, customers report that inventory is not updating after successful orders. Payment, notifications, and shipping continue to work normally. How would you investigate?
+
+### Expected Approach
+
+Follow a service-by-service investigation:
+
+- Order Service
+- Inventory Service
+- Kafka/RabbitMQ
+- Consumer logs
+- Database updates
+- Distributed tracing
+- API logs
+- Recent deployments
+- Business workflow
+- Root cause
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Customer Complaint
+
+↓
+
+Business Impact
+
+↓
+
+Deployment Timeline
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Networking
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Messaging Layer
+
+↓
+
+Security Review
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Use Kubernetes Events together with container logs for effective Pod troubleshooting.
+- Test Jenkins plugin upgrades in lower environments before applying them to Production.
+- Validate both internal and external DNS resolution after networking changes.
+- Verify Terraform state consistency whenever deployments are interrupted.
+- Investigate Pod-specific performance issues independently from Deployment-wide metrics.
+- Enforce the use of approved private container registries to strengthen software supply chain security.
+- Continuously monitor database connection pools to detect leaks before they impact Production.
+- Validate PersistentVolumeClaims before deploying stateful workloads.
+- Investigate abnormal Service Account token access immediately and preserve forensic evidence.
+- Verify complete business workflows after every deployment instead of relying only on infrastructure and application health.
+
+---
+
