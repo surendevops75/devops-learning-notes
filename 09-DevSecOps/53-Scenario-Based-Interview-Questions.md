@@ -7494,3 +7494,274 @@ Lessons Learned
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 281
+
+## During a Production deployment, Jenkins successfully updates the GitOps repository, but ArgoCD reports "Repository Unreachable." The Kubernetes cluster is healthy. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Git repository availability
+- Repository credentials
+- SSH keys
+- Personal Access Token
+- Network connectivity
+- DNS resolution
+- ArgoCD Repository configuration
+- Repository server logs
+
+---
+
+# Scenario 282
+
+## During deployment, Kubernetes Pods continuously fail because the ReadWriteMany (RWX) Persistent Volume cannot be mounted across multiple nodes. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- StorageClass
+- CSI Driver
+- RWX support
+- NFS/EFS availability
+- PVC binding
+- Mount targets
+- Pod Events
+- Volume logs
+
+---
+
+# Scenario 283
+
+## After a Production deployment, Amazon CloudWatch reports a sudden increase in NetworkIn and NetworkOut traffic from EKS worker nodes. Applications appear healthy. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Network monitoring
+- Pod traffic
+- Container logs
+- Falco alerts
+- Data replication
+- Backup jobs
+- Unexpected outbound traffic
+- VPC Flow Logs
+
+---
+
+# Scenario 284
+
+## During a Terraform deployment, Route53 records are created successfully, but users continue resolving the old IP address. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- DNS TTL
+- Route53 records
+- Local DNS cache
+- Recursive DNS cache
+- ALB hostname
+- Hosted Zone
+- Propagation status
+- nslookup/dig output
+
+---
+
+# Scenario 285
+
+## During a Production deployment, the Kubernetes Cluster Autoscaler fails to launch new nodes because AWS reports insufficient EC2 capacity. What would you do?
+
+### Expected Approach
+
+Verify:
+
+- EC2 capacity
+- Instance type
+- Availability Zone
+- Auto Scaling Group
+- Launch Template
+- Alternative instance families
+- AWS Health Dashboard
+- Cluster Autoscaler logs
+
+---
+
+# Scenario 286
+
+## During a security assessment, it is discovered that several container images are signed, but Kubernetes does not verify image signatures before deployment. How would you improve the deployment process?
+
+### Expected Approach
+
+Review:
+
+- Cosign verification
+- Admission Controllers
+- Kyverno policies
+- Gatekeeper policies
+- Image signature validation
+- Trusted registries
+- Supply chain security
+- CI/CD integration
+
+---
+
+# Scenario 287
+
+## A production application starts returning HTTP 429 (Too Many Requests) even though traffic volume has not increased. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- API rate limiting
+- WAF rules
+- API Gateway limits
+- Load Balancer configuration
+- Application throttling
+- Redis rate limiter
+- Recent configuration changes
+- Application logs
+
+---
+
+# Scenario 288
+
+## During an Amazon RDS failover event, applications fail to reconnect to the new primary database automatically. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Connection string
+- DNS resolution
+- Connection pool
+- Retry logic
+- Database endpoint
+- Application logs
+- Failover configuration
+- Timeout settings
+
+---
+
+# Scenario 289
+
+## During a compliance audit, it is discovered that Kubernetes Audit Logs are disabled in the Production cluster. Why is this a concern?
+
+### Expected Approach
+
+Review:
+
+- Security monitoring
+- Incident investigation
+- Compliance requirements
+- User activity
+- RBAC auditing
+- API requests
+- Forensics
+- Governance
+
+---
+
+# Scenario 290
+
+## During a major Production incident, infrastructure is restored successfully after rollback, but customers still experience failures because browser clients continue using cached API responses. How would you investigate?
+
+### Expected Approach
+
+Follow the complete request path:
+
+- Browser cache
+- CDN cache
+- API Gateway
+- ALB
+- Application
+- Cache headers
+- DNS
+- Client validation
+- Business testing
+- Cache invalidation
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Production Alert
+
+↓
+
+Customer Impact
+
+↓
+
+Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Networking
+
+↓
+
+Application Layer
+
+↓
+
+Storage & Database
+
+↓
+
+Security Controls
+
+↓
+
+Business Validation
+
+↓
+
+Root Cause
+
+↓
+
+Recovery
+
+↓
+
+Post-Incident Review
+```
+
+---
+
+# Enterprise Best Practices
+
+- Continuously monitor Git repository connectivity for GitOps platforms.
+- Validate storage capabilities before deploying stateful Kubernetes workloads.
+- Investigate unexpected network traffic even when applications appear healthy.
+- Understand DNS propagation and caching behavior before troubleshooting Route53 issues.
+- Configure Cluster Autoscaler with multiple instance types to handle EC2 capacity shortages.
+- Enforce image signature verification using admission policies for software supply chain security.
+- Monitor API rate-limiting configurations after every deployment.
+- Design applications with resilient database reconnection logic for automatic failover.
+- Enable Kubernetes Audit Logging in all production clusters for security and compliance.
+- Validate client-side caches after production rollbacks to ensure users receive the latest application state.
+
+---
+
