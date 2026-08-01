@@ -7765,3 +7765,350 @@ Post-Incident Review
 
 ---
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 291
+
+## During a Production deployment, Jenkins successfully pushes the Docker image to Amazon ECR, but Kubernetes keeps pulling the previous image even after restarting the Pods. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Image tag
+- Image digest
+- ImagePullPolicy
+- Deployment manifest
+- ReplicaSet
+- ArgoCD revision
+- ECR repository
+- Running container image
+
+---
+
+# Scenario 292
+
+## During deployment, Kubernetes Pods fail because the Init Container never completes successfully. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Init Container logs
+- Pod Events
+- Volume mounts
+- Secrets
+- ConfigMaps
+- Database connectivity
+- External APIs
+- Resource limits
+
+---
+
+# Scenario 293
+
+## A production application suddenly starts generating duplicate Kubernetes Jobs after every deployment. How would you investigate?
+
+### Expected Approach
+
+Review:
+
+- CronJob configuration
+- Helm hooks
+- ArgoCD hooks
+- Job history
+- Retry policy
+- Controller logs
+- Git history
+- Kubernetes Events
+
+---
+
+# Scenario 294
+
+## During Terraform Apply, AWS IAM Role creation fails because the role already exists, but Terraform state does not contain it. How would you proceed?
+
+### Expected Approach
+
+Check:
+
+- Existing IAM Role
+- Terraform state
+- Import command
+- CloudTrail logs
+- Resource drift
+- Naming conventions
+- Terraform plan
+- Backend state
+
+---
+
+# Scenario 295
+
+## During a Production deployment, Prometheus reports that all Pods are healthy, but Grafana dashboards suddenly stop displaying application metrics. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Prometheus targets
+- Grafana datasource
+- Dashboard queries
+- ServiceMonitor
+- Network connectivity
+- Metrics endpoint
+- Prometheus logs
+- Grafana logs
+
+---
+
+# Scenario 296
+
+## During a security review, you discover that multiple Kubernetes namespaces share the same Service Account with cluster-wide permissions. What would you recommend?
+
+### Expected Approach
+
+Review:
+
+- Service Accounts
+- RBAC
+- ClusterRoleBindings
+- Namespace isolation
+- Least Privilege
+- IRSA
+- Audit logs
+- Access review
+
+---
+
+# Scenario 297
+
+## During a Production deployment, Amazon S3 begins returning AccessDenied errors even though no bucket policies were changed. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- IAM Role
+- STS credentials
+- Bucket policy
+- SCPs
+- KMS permissions
+- VPC Endpoint policy
+- CloudTrail
+- Application logs
+
+---
+
+# Scenario 298
+
+## During a disaster recovery drill, Amazon RDS is successfully restored, but applications continue connecting to the old database endpoint. How would you troubleshoot?
+
+### Expected Approach
+
+Verify:
+
+- Connection string
+- DNS cache
+- Environment variables
+- Secrets
+- ConfigMaps
+- Application restart
+- Route53
+- Database endpoint
+
+---
+
+# Scenario 299
+
+## During a Production security incident, attackers gain access to a compromised Jenkins agent. What should be your immediate response?
+
+### Expected Approach
+
+Immediately:
+
+- Isolate the Jenkins agent
+- Stop active pipelines
+- Revoke credentials
+- Rotate secrets
+- Review Jenkins logs
+- Review CloudTrail
+- Scan build artifacts
+- Perform forensic investigation
+
+---
+
+# Scenario 300
+
+## During a large-scale Production incident affecting multiple cloud services, Kubernetes clusters, CI/CD pipelines, and customer-facing applications, you are the Lead DevSecOps Engineer. How would you manage the incident from start to finish?
+
+### Expected Approach
+
+Follow an enterprise incident response process:
+
+- Declare the incident
+- Assign Incident Commander
+- Freeze Production deployments
+- Establish communication channels
+- Assess business impact
+- Prioritize critical services
+- Coordinate DevOps, Security, Cloud, and Application teams
+- Review recent deployments
+- Correlate logs, metrics, traces, and audit records
+- Identify the root cause
+- Execute rollback or recovery
+- Validate business transactions
+- Restore normal operations
+- Conduct a blameless post-mortem
+- Implement preventive actions
+- Update runbooks and monitoring
+
+---
+
+# Enterprise Incident Response Flow
+
+```text
+Incident Detected
+
+↓
+
+Declare Major Incident
+
+↓
+
+Assign Incident Commander
+
+↓
+
+Freeze Non-Essential Changes
+
+↓
+
+Assess Business Impact
+
+↓
+
+Coordinate Teams
+
+↓
+
+Review Recent Changes
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes Platform
+
+↓
+
+Networking
+
+↓
+
+Application Services
+
+↓
+
+Database
+
+↓
+
+Messaging
+
+↓
+
+Security Investigation
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery / Rollback
+
+↓
+
+Business Validation
+
+↓
+
+Customer Communication
+
+↓
+
+Blameless Post-Mortem
+
+↓
+
+Automation Improvements
+
+↓
+
+Runbook Updates
+```
+
+---
+
+# Enterprise Best Practices
+
+- Use immutable image tags and verify image digests before every deployment.
+- Troubleshoot Init Containers separately from application containers.
+- Prevent duplicate Kubernetes Jobs by carefully reviewing Helm hooks, CronJobs, and GitOps workflows.
+- Import manually created AWS resources into Terraform instead of recreating them.
+- Monitor the complete observability stack, including Prometheus, Grafana, exporters, and dashboards.
+- Follow the Principle of Least Privilege for Kubernetes Service Accounts and cloud identities.
+- Investigate IAM, SCP, KMS, and VPC Endpoint policies when cloud storage access suddenly fails.
+- Test disaster recovery procedures regularly, including database endpoint updates and application reconnection.
+- Treat CI/CD infrastructure compromises as high-severity security incidents requiring immediate containment and credential rotation.
+- During major incidents, prioritize business continuity, clear communication, structured coordination, and continuous improvement through blameless post-incident reviews.
+
+---
+
+# Congratulations! 🎉
+
+You have successfully completed **300 Enterprise DevSecOps Scenario-Based Interview Questions**.
+
+This guide now covers real-world production scenarios across:
+
+- Jenkins
+- GitHub Actions
+- GitLab CI/CD
+- GitOps (ArgoCD)
+- Docker
+- Kubernetes
+- Amazon EKS
+- Terraform
+- AWS Services
+- IAM & Security
+- SonarQube
+- Trivy
+- Checkov
+- Falco
+- Networking
+- Prometheus
+- Grafana
+- ELK
+- Kafka
+- RabbitMQ
+- RDS
+- Redis
+- Disaster Recovery
+- Incident Management
+- Platform Engineering
+- DevSecOps
+- Enterprise Production Troubleshooting
+- Cloud Security
+- Software Supply Chain Security
+- High Availability
+- Business Continuity
+- Manager & Lead-level Incident Response
