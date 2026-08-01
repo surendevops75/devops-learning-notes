@@ -4766,3 +4766,274 @@ Validation
 ---
 
 
+# Enterprise DevSecOps Scenario-Based Interview Questions
+
+---
+
+# Scenario 181
+
+## During a Production deployment, Kubernetes Pods fail with `CreateContainerConfigError` because a referenced Secret cannot be found. The Secret exists in another namespace. How would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Secret namespace
+- Secret name
+- Namespace isolation
+- Deployment manifest
+- Secret references
+- Kubernetes Events
+- Pod description
+- GitOps manifests
+
+---
+
+# Scenario 182
+
+## A GitHub Actions workflow successfully updates Terraform code, but the infrastructure changes are never applied. The pipeline reports success. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Workflow stages
+- Apply conditions
+- Manual approvals
+- Environment protection
+- Terraform logs
+- Pipeline artifacts
+- GitHub Environment rules
+- Deployment history
+
+---
+
+# Scenario 183
+
+## Amazon EKS Cluster Autoscaler launches new worker nodes, but Pending Pods are still not scheduled. How would you troubleshoot?
+
+### Expected Approach
+
+Review:
+
+- Node readiness
+- Taints
+- Tolerations
+- Node labels
+- Resource requests
+- Affinity rules
+- Scheduler Events
+- Cluster Autoscaler logs
+
+---
+
+# Scenario 184
+
+## After a successful release, Prometheus shows a gradual increase in API response time over several hours, eventually leading to user complaints. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Memory usage
+- Connection pools
+- Database latency
+- Cache efficiency
+- Thread pools
+- Garbage collection
+- External dependencies
+- Distributed tracing
+
+---
+
+# Scenario 185
+
+## During a disaster recovery drill, ArgoCD successfully restores Kubernetes resources, but applications fail because Persistent Volumes are empty. What would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- Backup integrity
+- Persistent Volume snapshots
+- Restore procedure
+- StorageClass
+- PVC binding
+- Data consistency
+- Recovery documentation
+- Backup schedule
+
+---
+
+# Scenario 186
+
+## A security scan reports that several Docker images use outdated OpenSSL libraries, but application teams claim the images are secure. How would you proceed?
+
+### Expected Approach
+
+Review:
+
+- Vulnerability severity
+- Installed package versions
+- Available patches
+- CVE details
+- Runtime exposure
+- Business risk
+- Image rebuild plan
+- Security approval
+
+---
+
+# Scenario 187
+
+## Developers complain that Jenkins agents frequently disconnect during long-running builds. Short builds complete successfully. What would you investigate?
+
+### Expected Approach
+
+Check:
+
+- Network stability
+- Agent logs
+- Controller logs
+- Idle timeout
+- Firewall settings
+- JVM memory
+- Agent resources
+- Build duration
+
+---
+
+# Scenario 188
+
+## Amazon CloudTrail reports that a production IAM Role was modified outside the approved CI/CD pipeline. How would you investigate?
+
+### Expected Approach
+
+Verify:
+
+- CloudTrail events
+- User identity
+- Change timestamp
+- IAM policy differences
+- Approval records
+- Git history
+- Terraform state
+- Compliance violations
+
+---
+
+# Scenario 189
+
+## A Kubernetes Deployment remains unavailable because Pods continuously fail Startup Probes, while Liveness and Readiness Probes never execute. What would you investigate?
+
+### Expected Approach
+
+Review:
+
+- Startup Probe configuration
+- Application startup time
+- Initialization tasks
+- Database migration
+- External dependencies
+- Pod logs
+- Resource allocation
+- Kubernetes Events
+
+---
+
+# Scenario 190
+
+## During a major production outage, dashboards from Prometheus, Grafana, ELK, and CloudWatch report conflicting information. How would you establish the actual sequence of events?
+
+### Expected Approach
+
+Follow a structured investigation:
+
+- Synchronize timestamps
+- Review deployment history
+- Correlate logs
+- Compare metrics
+- Validate traces
+- Review Kubernetes Events
+- Check CloudTrail
+- Confirm business impact
+- Build incident timeline
+- Identify root cause
+
+---
+
+# Enterprise Investigation Flow
+
+```text
+Alert Triggered
+
+↓
+
+Validate Customer Impact
+
+↓
+
+Synchronize Timeline
+
+↓
+
+Review Deployments
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+AWS Infrastructure
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+
+↓
+
+Security & Audit Logs
+
+↓
+
+Correlate Metrics, Logs & Traces
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Post-Incident Documentation
+```
+
+---
+
+# Enterprise Best Practices
+
+- Store Kubernetes Secrets within the correct namespace and validate references during deployments.
+- Clearly separate Terraform Plan and Apply stages with controlled approvals.
+- Review scheduling constraints whenever Cluster Autoscaler adds nodes without resolving Pending Pods.
+- Monitor application performance trends to detect gradual degradation before customers are affected.
+- Include Persistent Volume backup and restoration in every disaster recovery exercise.
+- Continuously rebuild container images to incorporate security patches for critical libraries.
+- Monitor Jenkins agent health and network reliability for long-running pipelines.
+- Treat out-of-band IAM modifications as security incidents until fully investigated.
+- Configure Startup Probes based on realistic application initialization times.
+- Build incident timelines using multiple telemetry sources instead of relying on a single monitoring platform.
+
+---
+
