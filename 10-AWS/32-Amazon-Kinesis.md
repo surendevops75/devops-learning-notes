@@ -566,3 +566,719 @@ Amazon Kinesis is AWS's real-time streaming platform for ingesting, processing, 
 
 ---
 
+# Kinesis Data Firehose
+
+Amazon Kinesis Data Firehose is a fully managed delivery service that automatically captures, transforms, and loads streaming data into storage and analytics services.
+
+Unlike Kinesis Data Streams, Firehose does not require shard management.
+
+Supported Destinations
+
+- Amazon S3
+- Amazon Redshift
+- Amazon OpenSearch Service
+- Splunk
+- HTTP Endpoints
+
+Architecture
+
+```text
+Producers
+
+↓
+
+Firehose
+
+↓
+
+Transformation
+
+↓
+
+Destination
+```
+
+---
+
+# Firehose Buffering
+
+Firehose buffers data before delivery.
+
+Buffer Conditions
+
+- Buffer Size
+- Buffer Time
+
+Example
+
+```text
+5 MB
+
+or
+
+300 Seconds
+
+↓
+
+Deliver
+```
+
+Reduces API calls and improves efficiency.
+
+---
+
+# Firehose Data Transformation
+
+Firehose integrates with AWS Lambda.
+
+Workflow
+
+```text
+Streaming Data
+
+↓
+
+Lambda
+
+↓
+
+Transform
+
+↓
+
+Destination
+```
+
+Common transformations
+
+- JSON Formatting
+- Filtering
+- Data Enrichment
+- Compression
+
+---
+
+# Firehose Data Compression
+
+Supported formats
+
+- GZIP
+- ZIP
+- Snappy
+- Hadoop Snappy
+
+Benefits
+
+- Lower Storage Cost
+- Faster Analytics
+
+---
+
+# Kinesis Data Analytics
+
+Kinesis Data Analytics processes streaming data in real time.
+
+Supports
+
+- SQL
+- Apache Flink
+
+Use Cases
+
+- Fraud Detection
+- Live Dashboards
+- Operational Metrics
+- IoT Analytics
+
+---
+
+# Streaming SQL
+
+Example
+
+```sql
+SELECT COUNT(*)
+
+FROM STREAM
+
+GROUP BY WINDOW
+```
+
+Processes records continuously.
+
+---
+
+# Apache Flink
+
+Apache Flink enables
+
+- Stateful Processing
+- Event Time Processing
+- Windowing
+- Complex Event Processing
+
+Suitable for enterprise streaming applications.
+
+---
+
+# Window Processing
+
+Examples
+
+- Sliding Window
+- Tumbling Window
+- Session Window
+
+Architecture
+
+```text
+Incoming Events
+
+↓
+
+Window
+
+↓
+
+Aggregation
+
+↓
+
+Output
+```
+
+---
+
+# Kinesis Video Streams
+
+Designed for
+
+- Video Streaming
+- CCTV
+- Smart Cameras
+- Machine Vision
+- Surveillance
+
+Supports real-time video ingestion.
+
+---
+
+# Lambda Integration
+
+Lambda automatically processes stream records.
+
+Workflow
+
+```text
+Kinesis Stream
+
+↓
+
+Lambda
+
+↓
+
+Processing
+
+↓
+
+Database
+```
+
+Serverless event processing.
+
+---
+
+# Amazon S3 Integration
+
+Store streaming data in Amazon S3.
+
+Architecture
+
+```text
+Kinesis
+
+↓
+
+Firehose
+
+↓
+
+Amazon S3
+
+↓
+
+Data Lake
+```
+
+Useful for long-term storage.
+
+---
+
+# Amazon Redshift Integration
+
+Stream analytics data into Redshift.
+
+Architecture
+
+```text
+Kinesis Firehose
+
+↓
+
+Amazon S3
+
+↓
+
+COPY
+
+↓
+
+Amazon Redshift
+```
+
+Supports real-time business intelligence.
+
+---
+
+# OpenSearch Integration
+
+Send streaming logs directly to OpenSearch.
+
+Workflow
+
+```text
+Logs
+
+↓
+
+Firehose
+
+↓
+
+OpenSearch
+
+↓
+
+Dashboards
+```
+
+Useful for observability.
+
+---
+
+# CloudWatch Integration
+
+Monitor
+
+- Incoming Records
+- Incoming Bytes
+- Write Throughput
+- Read Throughput
+- Iterator Age
+- Put Record Success
+- Get Record Success
+
+CloudWatch alarms detect streaming issues.
+
+---
+
+# EventBridge Integration
+
+Stream events trigger downstream automation.
+
+Example
+
+```text
+Kinesis Event
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+Notification
+```
+
+---
+
+# Security
+
+Amazon Kinesis integrates with
+
+- IAM
+- AWS KMS
+- CloudTrail
+- VPC Endpoints
+
+Supports encryption
+
+- At Rest
+- In Transit
+
+---
+
+# High Availability
+
+Kinesis replicates data across multiple Availability Zones.
+
+Benefits
+
+- High Durability
+- Fault Tolerance
+- Automatic Recovery
+
+---
+
+# Scaling Best Practices
+
+Scale by
+
+- Increasing Shards
+- Enhanced Fan-Out
+- Parallel Consumers
+
+Monitor CloudWatch metrics continuously.
+
+---
+
+# AWS CLI
+
+Create Stream
+
+```bash
+aws kinesis create-stream \
+--stream-name orders \
+--shard-count 2
+```
+
+List Streams
+
+```bash
+aws kinesis list-streams
+```
+
+Describe Stream
+
+```bash
+aws kinesis describe-stream \
+--stream-name orders
+```
+
+Put Record
+
+```bash
+aws kinesis put-record \
+--stream-name orders \
+--partition-key customer1 \
+--data "Order Created"
+```
+
+---
+
+# Terraform
+
+```hcl
+resource "aws_kinesis_stream" "orders" {
+
+  name = "orders"
+
+  shard_count = 2
+
+  retention_period = 24
+
+}
+```
+
+---
+
+# CloudFormation
+
+```yaml
+Resources:
+
+  OrderStream:
+
+    Type: AWS::Kinesis::Stream
+
+    Properties:
+
+      Name: orders
+
+      ShardCount: 2
+```
+
+---
+
+# Python (Boto3)
+
+```python
+import boto3
+
+kinesis = boto3.client("kinesis")
+
+response = kinesis.list_streams()
+
+print(response)
+```
+
+Put Record
+
+```python
+kinesis.put_record(
+
+    StreamName="orders",
+
+    Data="Order Created",
+
+    PartitionKey="customer1"
+
+)
+```
+
+---
+
+# Enterprise Production Architecture
+
+```text
+           Applications & Devices
+
+ EC2  ECS  EKS  Mobile  IoT  Logs
+
+                  │
+
+                  ▼
+
+        Amazon Kinesis Data Streams
+
+                  │
+
+        ┌─────────┼─────────┐
+
+        │         │         │
+
+     Lambda   Firehose   Analytics
+
+        │         │         │
+
+ OpenSearch   Amazon S3  Redshift
+
+        │         │         │
+
+ Dashboards  Data Lake   BI Reports
+
+                  │
+
+      CloudWatch • EventBridge
+```
+
+---
+
+# Best Practices
+
+- Use appropriate partition keys
+- Enable KMS encryption
+- Monitor shard utilization
+- Use Enhanced Fan-Out for multiple consumers
+- Enable CloudWatch alarms
+- Archive data to S3
+- Compress Firehose deliveries
+- Design idempotent consumers
+- Monitor Iterator Age
+- Scale shards proactively
+
+---
+
+# Common Mistakes
+
+- Hot partition keys
+- Too few shards
+- Ignoring throttling
+- No checkpointing
+- Large record sizes
+- Missing encryption
+- No monitoring
+- Hardcoded shard assumptions
+- Ignoring retry logic
+- Poor consumer scaling
+
+---
+
+# Troubleshooting
+
+## Write Throughput Exceeded
+
+Check
+
+- Number of Shards
+- Partition Key Distribution
+- Producer Rate
+
+---
+
+## High Iterator Age
+
+Verify
+
+- Consumer Speed
+- Processing Time
+- Number of Consumers
+
+---
+
+## Consumer Not Receiving Records
+
+Check
+
+- Stream Status
+- IAM Permissions
+- Shard Iterator
+- Consumer Application
+
+---
+
+## Firehose Delivery Failed
+
+Verify
+
+- Destination Permissions
+- Buffer Settings
+- Lambda Transformation
+- S3 Bucket Policy
+
+---
+
+## Uneven Shard Utilization
+
+Check
+
+- Partition Keys
+- Record Distribution
+- Producer Logic
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is Amazon Kinesis?
+2. Kinesis Data Streams vs Firehose?
+3. What is a Shard?
+4. What is a Record?
+5. What is a Partition Key?
+6. What is Enhanced Fan-Out?
+7. What is Firehose?
+8. What is Kinesis Data Analytics?
+9. What is Kinesis Video Streams?
+10. What is Stream Retention?
+
+---
+
+## Intermediate
+
+11. Explain shard scaling.
+12. Explain checkpointing.
+13. Explain replay capability.
+14. Explain Firehose buffering.
+15. Explain Lambda integration.
+16. Explain Redshift integration.
+17. Explain OpenSearch integration.
+18. Explain stream encryption.
+19. Explain KCL.
+20. Explain CloudWatch monitoring.
+
+---
+
+## Advanced
+
+21. Design a real-time analytics platform.
+22. Design clickstream analytics using Kinesis.
+23. Explain shard splitting and merging.
+24. Design fraud detection architecture.
+25. Kinesis vs Kafka?
+26. Kinesis vs SQS?
+27. How would you process millions of events per second?
+28. Explain event ordering.
+29. Design enterprise streaming architecture.
+30. Best practices for production Kinesis deployments.
+
+---
+
+# Production Scenarios
+
+### Scenario 1
+
+A website generates millions of click events every hour.
+
+How would Amazon Kinesis process this data in real time?
+
+---
+
+### Scenario 2
+
+Your consumers are falling behind and Iterator Age continues increasing.
+
+How would you troubleshoot and scale the solution?
+
+---
+
+### Scenario 3
+
+Your analytics team needs all streaming data stored in Amazon S3.
+
+How would Firehose simplify the architecture?
+
+---
+
+### Scenario 4
+
+Fraud detection requires processing transactions within seconds.
+
+Which Kinesis services would you use?
+
+---
+
+### Scenario 5
+
+A single shard reaches its throughput limit.
+
+How would you resolve the issue?
+
+---
+
+### Scenario 6
+
+Your enterprise wants live dashboards from application logs.
+
+How would Kinesis integrate with OpenSearch and CloudWatch?
+
+---
+
+# Cheat Sheet
+
+| Component | Purpose |
+|-----------|---------|
+| Data Streams | Real-Time Streaming |
+| Firehose | Managed Data Delivery |
+| Data Analytics | SQL/Flink Processing |
+| Video Streams | Video Ingestion |
+| Shard | Throughput Unit |
+| Record | Stream Data |
+| Partition Key | Record Distribution |
+| Sequence Number | Record Ordering |
+| Enhanced Fan-Out | Dedicated Consumer Throughput |
+| KCL | Consumer Library |
+| Firehose Buffer | Batch Delivery |
+| Replay | Reprocess Stream Data |
+
+---
+
+# Summary
+
+Amazon Kinesis is AWS's fully managed real-time streaming platform that enables organizations to ingest, process, analyze, and deliver massive volumes of streaming data with low latency. Services such as Kinesis Data Streams, Data Firehose, Data Analytics, and Video Streams support use cases including clickstream analytics, IoT, fraud detection, log processing, and operational monitoring. Combined with Lambda, S3, Redshift, OpenSearch, CloudWatch, and EventBridge, Amazon Kinesis provides a scalable, highly available, and enterprise-ready foundation for modern real-time data architectures.
