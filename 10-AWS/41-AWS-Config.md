@@ -420,3 +420,640 @@ AWS Config is a fully managed configuration management and compliance service th
 
 ---
 
+# Conformance Packs
+
+Conformance Packs are collections of AWS Config Rules and remediation actions that help enforce security, operational, and compliance standards.
+
+Benefits
+
+- Standardized Compliance
+- Automated Governance
+- Simplified Auditing
+- Multi-Account Deployment
+
+Examples
+
+- CIS AWS Foundations Benchmark
+- PCI DSS
+- NIST
+- HIPAA
+
+---
+
+# Conformance Pack Workflow
+
+```text
+Conformance Pack
+
+↓
+
+Config Rules
+
+↓
+
+Compliance Evaluation
+
+↓
+
+Remediation
+
+↓
+
+Compliance Report
+```
+
+---
+
+# Config Aggregator
+
+A Config Aggregator collects configuration and compliance data from
+
+- Multiple AWS Accounts
+- Multiple AWS Regions
+
+Architecture
+
+```text
+Account A
+
+Account B
+
+Account C
+
+      │
+
+      ▼
+
+Config Aggregator
+
+      │
+
+Central Dashboard
+```
+
+Provides organization-wide visibility.
+
+---
+
+# Organization Aggregator
+
+Using AWS Organizations,
+
+Config Aggregators automatically collect
+
+- Resource Configurations
+- Compliance Status
+- Config Rules
+- Resource Inventory
+
+Useful for enterprise governance.
+
+---
+
+# Automatic Remediation
+
+AWS Config can automatically remediate non-compliant resources.
+
+Workflow
+
+```text
+Non-Compliant Resource
+
+↓
+
+Config Rule
+
+↓
+
+Systems Manager Automation
+
+↓
+
+Resource Fixed
+
+↓
+
+Compliant
+```
+
+---
+
+# Remediation Actions
+
+Examples
+
+- Enable S3 Versioning
+- Block Public Access
+- Attach Required IAM Policy
+- Encrypt EBS Volume
+- Restart EC2 Instance
+
+Automation reduces manual effort.
+
+---
+
+# Systems Manager Integration
+
+AWS Config integrates with Systems Manager Automation.
+
+Example
+
+```text
+Public S3 Bucket
+
+↓
+
+Config Rule
+
+↓
+
+Automation Runbook
+
+↓
+
+Block Public Access
+```
+
+---
+
+# Lambda Integration
+
+Custom Config Rules use AWS Lambda.
+
+Workflow
+
+```text
+Configuration Change
+
+↓
+
+Lambda
+
+↓
+
+Compliance Evaluation
+
+↓
+
+Result
+```
+
+Supports organization-specific compliance checks.
+
+---
+
+# Security Hub Integration
+
+Config findings automatically appear in AWS Security Hub.
+
+Example
+
+```text
+Config Rule Failed
+
+↓
+
+Security Hub
+
+↓
+
+Compliance Dashboard
+```
+
+---
+
+# EventBridge Integration
+
+Non-compliant resources generate EventBridge events.
+
+Architecture
+
+```text
+Non-Compliant Resource
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+SNS
+
+↓
+
+Operations Team
+```
+
+---
+
+# CloudTrail Integration
+
+CloudTrail records
+
+- Rule Creation
+- Rule Updates
+- Configuration Changes
+- Recorder Changes
+
+Supports auditing.
+
+---
+
+# CloudWatch Integration
+
+Monitor
+
+- Rule Evaluations
+- Non-Compliant Resources
+- Recording Status
+- Compliance Changes
+
+CloudWatch alarms notify administrators.
+
+---
+
+# AWS Organizations Integration
+
+Benefits
+
+- Central Rule Management
+- Organization-wide Compliance
+- Shared Conformance Packs
+- Aggregated Reporting
+
+---
+
+# Delegated Administrator
+
+One AWS account manages Config across the organization.
+
+Architecture
+
+```text
+AWS Organizations
+
+↓
+
+Delegated Admin
+
+↓
+
+Member Accounts
+
+↓
+
+AWS Config
+```
+
+---
+
+# AWS CLI
+
+Start Configuration Recorder
+
+```bash
+aws configservice start-configuration-recorder
+```
+
+Describe Config Rules
+
+```bash
+aws configservice describe-config-rules
+```
+
+Get Compliance Details
+
+```bash
+aws configservice get-compliance-details-by-config-rule
+```
+
+List Aggregators
+
+```bash
+aws configservice describe-configuration-aggregators
+```
+
+---
+
+# Terraform
+
+```hcl
+resource "aws_config_configuration_recorder" "main" {
+
+  name     = "default"
+
+  role_arn = aws_iam_role.config.arn
+
+}
+```
+
+Config Rule
+
+```hcl
+resource "aws_config_config_rule" "s3_public" {
+
+  name = "s3-bucket-public-read-prohibited"
+
+  source {
+
+    owner             = "AWS"
+
+    source_identifier = "S3_BUCKET_PUBLIC_READ_PROHIBITED"
+
+  }
+
+}
+```
+
+---
+
+# CloudFormation
+
+```yaml
+Resources:
+
+  ConfigRecorder:
+
+    Type: AWS::Config::ConfigurationRecorder
+
+  ConfigRule:
+
+    Type: AWS::Config::ConfigRule
+```
+
+---
+
+# Python (Boto3)
+
+```python
+import boto3
+
+config = boto3.client("config")
+
+response = config.describe_config_rules()
+
+print(response)
+```
+
+Get Compliance
+
+```python
+config.get_compliance_details_by_config_rule(
+
+    ConfigRuleName="s3-public-rule"
+
+)
+```
+
+---
+
+# Enterprise Production Architecture
+
+```text
+      AWS Resources
+
+ EC2  IAM  VPC  S3  RDS
+
+            │
+
+            ▼
+
+        AWS Config
+
+            │
+
+Configuration Recorder
+
+            │
+
+   Config Rules & Packs
+
+            │
+
+ ┌──────────┼──────────┐
+
+ │          │          │
+
+SecurityHub EventBridge Systems Manager
+
+ │          │          │
+
+SNS      Lambda   Automation
+
+            │
+
+     Compliance Dashboard
+```
+
+---
+
+# Best Practices
+
+- Enable Config in every Region
+- Record all supported resources
+- Use AWS Managed Rules where possible
+- Create custom rules for business policies
+- Enable Conformance Packs
+- Configure Aggregators
+- Enable automatic remediation
+- Integrate with Security Hub
+- Monitor CloudWatch metrics
+- Enable AWS Organizations integration
+- Review compliance reports regularly
+- Apply least-privilege IAM permissions
+
+---
+
+# Common Mistakes
+
+- Recording only selected resources
+- Ignoring non-compliant resources
+- No remediation automation
+- Missing Config Aggregators
+- Not enabling Config in all Regions
+- Overusing custom Lambda rules
+- Ignoring compliance reports
+- Missing CloudTrail logging
+- Delayed remediation
+- No governance process
+
+---
+
+# Troubleshooting
+
+## Configuration Recorder Not Running
+
+Check
+
+- IAM Role
+- Recorder Status
+- Region Configuration
+
+---
+
+## Config Rule Not Evaluating
+
+Verify
+
+- Rule Trigger
+- Supported Resource
+- Lambda Permissions
+- Configuration Recorder
+
+---
+
+## Resource Missing
+
+Check
+
+- Supported Resource Type
+- Recording Enabled
+- Region
+
+---
+
+## Aggregator Missing Data
+
+Verify
+
+- AWS Organizations
+- IAM Permissions
+- Member Accounts
+- Regions Included
+
+---
+
+## Automatic Remediation Failed
+
+Check
+
+- Systems Manager Automation
+- IAM Role
+- Automation Runbook
+- Resource Permissions
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is AWS Config?
+2. What is a Configuration Recorder?
+3. What is a Configuration Item?
+4. What are Config Rules?
+5. AWS Managed Rules vs Custom Rules?
+6. What are Conformance Packs?
+7. What is a Config Aggregator?
+8. What is Automatic Remediation?
+9. Config vs CloudTrail?
+10. Config vs Systems Manager?
+
+---
+
+## Intermediate
+
+11. Explain Configuration History.
+12. Explain Resource Timeline.
+13. Explain Aggregators.
+14. Explain Security Hub integration.
+15. Explain EventBridge integration.
+16. Explain Systems Manager remediation.
+17. Explain AWS Organizations integration.
+18. Explain compliance evaluation.
+19. Explain Conformance Packs.
+20. Explain Lambda custom rules.
+
+---
+
+## Advanced
+
+21. Design enterprise compliance monitoring.
+22. How would you detect public S3 buckets?
+23. Design organization-wide governance.
+24. Explain Config vs CloudFormation Drift Detection.
+25. Explain automated compliance remediation.
+26. Design enterprise auditing architecture.
+27. Explain Config operational best practices.
+28. Design multi-account compliance dashboards.
+29. Explain governance using Config Rules.
+30. Best practices for enterprise AWS Config deployments.
+
+---
+
+# Production Scenarios
+
+### Scenario 1
+
+A developer accidentally makes an S3 bucket public.
+
+How would AWS Config detect and automatically remediate the issue?
+
+---
+
+### Scenario 2
+
+Your organization manages 700 AWS accounts.
+
+How would Config Aggregators simplify compliance reporting?
+
+---
+
+### Scenario 3
+
+Auditors ask who modified a production security group last month.
+
+Which AWS Config capabilities provide this information?
+
+---
+
+### Scenario 4
+
+A company requires every EC2 instance to have mandatory tags.
+
+How would you enforce this using AWS Config?
+
+---
+
+### Scenario 5
+
+A critical compliance rule fails during production.
+
+How would EventBridge automate notifications?
+
+---
+
+### Scenario 6
+
+Security leadership wants a centralized dashboard showing compliance across all Regions and AWS accounts.
+
+Which AWS Config features satisfy this requirement?
+
+---
+
+# Cheat Sheet
+
+| Component | Purpose |
+|-----------|---------|
+| Configuration Recorder | Records Resource Changes |
+| Configuration Item | Resource Snapshot |
+| Configuration History | Historical Changes |
+| Resource Timeline | Change Tracking |
+| Config Rule | Compliance Check |
+| Conformance Pack | Collection of Rules |
+| Config Aggregator | Multi-Account Reporting |
+| Automatic Remediation | Auto-Fix Non-Compliance |
+| Security Hub | Central Findings |
+| Systems Manager | Automated Remediation |
+| EventBridge | Notifications & Automation |
+| AWS Organizations | Centralized Governance |
+
+---
+
+# Summary
+
+AWS Config is a fully managed configuration management and compliance service that continuously records AWS resource configurations, tracks historical changes, evaluates resources against compliance rules, and automates remediation. Features such as Configuration Recorders, Config Rules, Conformance Packs, Config Aggregators, Resource Timelines, Security Hub integration, EventBridge automation, Systems Manager remediation, and AWS Organizations support enable enterprises to implement governance, maintain compliance, and audit infrastructure changes across large-scale AWS environments.
