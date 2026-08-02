@@ -701,3 +701,688 @@ Useful for capacity planning.
 Amazon SQS is a fully managed message queuing service that enables asynchronous communication between distributed applications. Core concepts such as Standard Queues, FIFO Queues, Visibility Timeout, Long Polling, Message Retention, Delay Queues, Dead Letter Queues, Deduplication, and Message Groups provide the foundation for building scalable, fault-tolerant, and loosely coupled cloud architectures.
 
 ---
+
+# AWS CLI
+
+Create Queue
+
+```bash
+aws sqs create-queue \
+--queue-name order-processing
+```
+
+Create FIFO Queue
+
+```bash
+aws sqs create-queue \
+--queue-name payment.fifo \
+--attributes FifoQueue=true
+```
+
+List Queues
+
+```bash
+aws sqs list-queues
+```
+
+Send Message
+
+```bash
+aws sqs send-message \
+--queue-url <queue-url> \
+--message-body "Order Created"
+```
+
+Receive Messages
+
+```bash
+aws sqs receive-message \
+--queue-url <queue-url>
+```
+
+Delete Message
+
+```bash
+aws sqs delete-message \
+--queue-url <queue-url> \
+--receipt-handle <receipt-handle>
+```
+
+Delete Queue
+
+```bash
+aws sqs delete-queue \
+--queue-url <queue-url>
+```
+
+---
+
+# Terraform
+
+Create Standard Queue
+
+```hcl
+resource "aws_sqs_queue" "orders" {
+
+  name = "order-processing"
+
+  visibility_timeout_seconds = 60
+
+  message_retention_seconds = 345600
+
+}
+```
+
+Create FIFO Queue
+
+```hcl
+resource "aws_sqs_queue" "payments" {
+
+  name = "payment.fifo"
+
+  fifo_queue = true
+
+  content_based_deduplication = true
+
+}
+```
+
+Dead Letter Queue
+
+```hcl
+resource "aws_sqs_queue" "orders_dlq" {
+
+  name = "order-processing-dlq"
+
+}
+```
+
+---
+
+# CloudFormation
+
+```yaml
+Resources:
+
+  OrderQueue:
+
+    Type: AWS::SQS::Queue
+
+    Properties:
+
+      QueueName: order-processing
+
+      VisibilityTimeout: 60
+```
+
+---
+
+# Python (Boto3)
+
+Create Queue
+
+```python
+import boto3
+
+sqs = boto3.client("sqs")
+
+response = sqs.create_queue(
+    QueueName="order-processing"
+)
+
+print(response)
+```
+
+Send Message
+
+```python
+sqs.send_message(
+
+    QueueUrl=QUEUE_URL,
+
+    MessageBody="Order Created"
+
+)
+```
+
+Receive Message
+
+```python
+response = sqs.receive_message(
+
+    QueueUrl=QUEUE_URL
+
+)
+
+print(response)
+```
+
+Delete Message
+
+```python
+sqs.delete_message(
+
+    QueueUrl=QUEUE_URL,
+
+    ReceiptHandle=RECEIPT_HANDLE
+
+)
+```
+
+---
+
+# Amazon SNS Integration
+
+Amazon SNS can publish to multiple SQS queues.
+
+Architecture
+
+```text
+Application
+
+↓
+
+Amazon SNS
+
+↓
+
+Order Queue
+
+↓
+
+Billing Queue
+
+↓
+
+Inventory Queue
+
+↓
+
+Shipping Queue
+```
+
+Every queue processes the message independently.
+
+---
+
+# Lambda Integration
+
+Lambda automatically processes queue messages.
+
+Workflow
+
+```text
+Amazon SQS
+
+↓
+
+Lambda
+
+↓
+
+Business Logic
+
+↓
+
+Delete Message
+```
+
+Useful for serverless applications.
+
+---
+
+# EventBridge Integration
+
+EventBridge can send events directly to SQS.
+
+Example
+
+```text
+EC2 State Change
+
+↓
+
+EventBridge
+
+↓
+
+Amazon SQS
+
+↓
+
+Automation
+```
+
+---
+
+# ECS Integration
+
+ECS workers continuously poll SQS.
+
+Architecture
+
+```text
+Amazon SQS
+
+↓
+
+Amazon ECS
+
+↓
+
+Container Workers
+
+↓
+
+Database
+```
+
+Useful for background processing.
+
+---
+
+# EKS Integration
+
+Kubernetes workers consume queue messages.
+
+Example
+
+```text
+Amazon SQS
+
+↓
+
+Deployment
+
+↓
+
+Pods
+
+↓
+
+Processing
+```
+
+Applications scale independently.
+
+---
+
+# Auto Scaling Workers
+
+Queue depth determines worker scaling.
+
+Architecture
+
+```text
+Queue Depth
+
+↓
+
+CloudWatch
+
+↓
+
+Auto Scaling
+
+↓
+
+More Workers
+```
+
+Higher queue depth launches additional consumers.
+
+---
+
+# CloudWatch Monitoring
+
+Important Metrics
+
+- Approximate Number of Messages
+- Messages Sent
+- Messages Received
+- Messages Deleted
+- Oldest Message Age
+- Empty Receives
+
+These metrics help monitor queue health.
+
+---
+
+# CloudWatch Alarms
+
+Example
+
+```text
+Queue Depth > 1000
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+SNS
+
+↓
+
+Operations Team
+```
+
+---
+
+# Long Polling Best Practice
+
+Recommended
+
+```text
+Receive Wait Time
+
+↓
+
+20 Seconds
+```
+
+Benefits
+
+- Lower Cost
+- Fewer Empty Responses
+- Better Performance
+
+---
+
+# Scaling Architecture
+
+```text
+Users
+
+↓
+
+Application
+
+↓
+
+Amazon SQS
+
+↓
+
+Auto Scaling Group
+
+↓
+
+Worker 1
+
+Worker 2
+
+Worker 3
+
+Worker N
+
+↓
+
+Database
+```
+
+Workers increase or decrease automatically.
+
+---
+
+# Enterprise Production Architecture
+
+```text
+                  Users
+
+                    │
+
+              API Gateway
+
+                    │
+
+              Application
+
+                    │
+
+              Amazon SQS
+
+        ┌───────────┼───────────┐
+
+        │           │           │
+
+     Lambda      ECS Tasks    EKS Pods
+
+        │           │           │
+
+ Billing Service Inventory   Shipping
+
+        └───────────┼───────────┘
+
+                Amazon RDS
+
+                    │
+
+ CloudWatch • EventBridge • SNS
+```
+
+---
+
+# Security Best Practices
+
+- Enable Server-Side Encryption
+- Use Customer Managed KMS Keys
+- Apply Least Privilege IAM Policies
+- Configure Queue Policies
+- Enable CloudTrail
+- Use VPC Endpoints
+- Separate Production Queues
+- Configure Dead Letter Queues
+- Monitor Queue Metrics
+- Protect Sensitive Message Data
+
+---
+
+# Performance Best Practices
+
+- Enable Long Polling
+- Use Batch Operations
+- Keep Messages Small
+- Delete Messages Immediately
+- Configure Visibility Timeout Properly
+- Use FIFO Only When Ordering Is Required
+- Scale Consumers Automatically
+- Monitor Queue Age
+- Use DLQs for Failed Messages
+- Design Consumers to Be Idempotent
+
+---
+
+# Common Mistakes
+
+- Not deleting processed messages
+- Very short visibility timeout
+- No Dead Letter Queue
+- Using FIFO unnecessarily
+- Large message payloads
+- Polling too frequently
+- Ignoring CloudWatch metrics
+- Hardcoding queue URLs
+- No retry strategy
+- No encryption
+
+---
+
+# Troubleshooting
+
+## Messages Not Being Processed
+
+Check
+
+- Consumer Status
+- IAM Permissions
+- Queue URL
+- Visibility Timeout
+
+---
+
+## Duplicate Processing
+
+Verify
+
+- Visibility Timeout
+- Idempotent Processing
+- FIFO Requirements
+
+---
+
+## Queue Growing Continuously
+
+Check
+
+- Consumer Capacity
+- Worker Failures
+- CloudWatch Metrics
+- Auto Scaling
+
+---
+
+## Messages Sent to DLQ
+
+Verify
+
+- Application Errors
+- Retry Count
+- Visibility Timeout
+- Processing Logic
+
+---
+
+## High Queue Latency
+
+Check
+
+- Queue Depth
+- Number of Workers
+- Long Polling
+- Batch Processing
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is Amazon SQS?
+2. Standard Queue vs FIFO Queue?
+3. What is a Message?
+4. What is Visibility Timeout?
+5. What is Long Polling?
+6. What is Message Retention?
+7. What is a Dead Letter Queue?
+8. What is Message Deduplication?
+9. What is Message Group ID?
+10. SQS vs SNS?
+
+---
+
+## Intermediate
+
+11. Explain Visibility Timeout.
+12. Explain Long Polling.
+13. Explain Delay Queues.
+14. Explain Queue Encryption.
+15. Explain Batch Processing.
+16. Explain DLQs.
+17. Explain Queue Policies.
+18. Explain Lambda integration.
+19. Explain EventBridge integration.
+20. Explain CloudWatch monitoring.
+
+---
+
+## Advanced
+
+21. Design an enterprise asynchronous architecture.
+22. SQS vs Kafka?
+23. SQS vs RabbitMQ?
+24. Design a high-throughput order processing system.
+25. How would you process one million messages per hour?
+26. Explain FIFO internals.
+27. Explain exactly-once processing.
+28. How would you troubleshoot duplicate messages?
+29. Design scalable worker architecture.
+30. Best practices for production SQS deployments.
+
+---
+
+# Production Scenarios
+
+### Scenario 1
+
+An order processing application receives 50,000 orders per minute.
+
+How would Amazon SQS improve scalability?
+
+---
+
+### Scenario 2
+
+Worker nodes fail while processing messages.
+
+How does Visibility Timeout prevent message loss?
+
+---
+
+### Scenario 3
+
+Several messages repeatedly fail processing.
+
+How would Dead Letter Queues help identify the issue?
+
+---
+
+### Scenario 4
+
+A banking application requires transactions to be processed in strict order.
+
+Would you choose a Standard Queue or FIFO Queue? Why?
+
+---
+
+### Scenario 5
+
+Queue depth continues increasing while customers experience delays.
+
+How would you troubleshoot and scale the consumers?
+
+---
+
+### Scenario 6
+
+A single order must trigger Billing, Shipping, Inventory, and Analytics independently.
+
+Would you use SNS, SQS, or a combination of both? Explain the architecture.
+
+---
+
+# Cheat Sheet
+
+| Component | Purpose |
+|-----------|---------|
+| Queue | Message Storage |
+| Producer | Sends Messages |
+| Consumer | Processes Messages |
+| Standard Queue | High Throughput |
+| FIFO Queue | Ordered Processing |
+| Visibility Timeout | Prevent Duplicate Processing |
+| Long Polling | Reduce Empty Responses |
+| Delay Queue | Delay Message Delivery |
+| Dead Letter Queue | Failed Messages |
+| Message Retention | Message Lifetime |
+| Message Group ID | FIFO Ordering |
+| Deduplication | Prevent Duplicate Messages |
+| Batch Operations | Improve Performance |
+| CloudWatch | Queue Monitoring |
+
+---
+
+# Summary
+
+Amazon Simple Queue Service (Amazon SQS) is a fully managed messaging service that enables reliable, asynchronous communication between distributed applications. Features such as Standard and FIFO Queues, Visibility Timeout, Long Polling, Dead Letter Queues, Message Deduplication, Batch Operations, and Server-Side Encryption allow organizations to build scalable, fault-tolerant, and loosely coupled systems. When integrated with SNS, Lambda, ECS, EKS, EventBridge, CloudWatch, and Auto Scaling, Amazon SQS becomes a core building block for enterprise microservices, background processing, and event-driven architectures.
