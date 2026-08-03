@@ -1602,3 +1602,667 @@ This section covered AWS security and identity services including IAM, KMS, Secr
 
 ---
 
+# Docker
+
+---
+
+## Question 161
+
+### What is Docker?
+
+**Answer**
+
+Docker is a containerization platform that packages an application along with its dependencies into a lightweight, portable container.
+
+Benefits
+
+- Consistent Environments
+- Faster Deployments
+- Resource Efficiency
+- Portability
+
+---
+
+## Question 162
+
+### Difference between Virtual Machines and Containers?
+
+| Virtual Machine | Container |
+|-----------------|-----------|
+| Includes Guest OS | Shares Host OS Kernel |
+| Larger Size | Lightweight |
+| Slower Startup | Faster Startup |
+| Higher Resource Usage | Lower Resource Usage |
+
+---
+
+## Question 163
+
+### What is a Docker Image?
+
+**Answer**
+
+A Docker Image is a read-only template used to create containers.
+
+Contains
+
+- Application Code
+- Libraries
+- Runtime
+- Dependencies
+- Configuration
+
+---
+
+## Question 164
+
+### What is a Docker Container?
+
+**Answer**
+
+A Docker Container is a running instance of a Docker Image.
+
+---
+
+## Question 165
+
+### Difference between Docker Image and Container?
+
+| Docker Image | Docker Container |
+|---------------|------------------|
+| Template | Running Instance |
+| Immutable | Runtime |
+| Stored in Registry | Runs on Host |
+
+---
+
+# Amazon ECR
+
+---
+
+## Question 166
+
+### What is Amazon ECR?
+
+**Answer**
+
+Amazon Elastic Container Registry (ECR) is a fully managed Docker container image registry.
+
+Features
+
+- Private Repositories
+- Image Scanning
+- IAM Integration
+- Lifecycle Policies
+
+---
+
+## Question 167
+
+### Why use Amazon ECR?
+
+**Answer**
+
+- Secure Image Storage
+- AWS Integration
+- Image Versioning
+- Vulnerability Scanning
+- High Availability
+
+---
+
+# Amazon ECS
+
+---
+
+## Question 168
+
+### What is Amazon ECS?
+
+**Answer**
+
+Amazon Elastic Container Service (ECS) is a fully managed container orchestration service.
+
+Supports
+
+- EC2 Launch Type
+- AWS Fargate
+
+---
+
+## Question 169
+
+### ECS Components?
+
+**Answer**
+
+- Cluster
+- Task Definition
+- Task
+- Service
+- Container
+
+---
+
+## Question 170
+
+### Difference between ECS EC2 and Fargate?
+
+| ECS EC2 | ECS Fargate |
+|----------|-------------|
+| Manage EC2 | Serverless |
+| More Control | Less Management |
+| Lower Cost at Scale | Simpler Operations |
+
+---
+
+# AWS Fargate
+
+---
+
+## Question 171
+
+### What is AWS Fargate?
+
+**Answer**
+
+AWS Fargate is a serverless compute engine for containers used with Amazon ECS and Amazon EKS.
+
+Benefits
+
+- No Server Management
+- Automatic Scaling
+- Pay Per Use
+
+---
+
+# Amazon EKS
+
+---
+
+## Question 172
+
+### What is Amazon EKS?
+
+**Answer**
+
+Amazon Elastic Kubernetes Service (EKS) is a managed Kubernetes service.
+
+AWS manages
+
+- Control Plane
+- API Server
+- etcd
+- High Availability
+
+Customers manage
+
+- Worker Nodes (or Fargate)
+- Applications
+
+---
+
+## Question 173
+
+### Components of Kubernetes?
+
+**Answer**
+
+Control Plane
+
+- API Server
+- Scheduler
+- Controller Manager
+- etcd
+
+Worker Node
+
+- kubelet
+- kube-proxy
+- Pods
+
+---
+
+## Question 174
+
+### What is a Pod?
+
+**Answer**
+
+A Pod is the smallest deployable unit in Kubernetes.
+
+Contains
+
+- One or More Containers
+- Shared Network
+- Shared Storage
+
+---
+
+## Question 175
+
+### What is a Deployment?
+
+**Answer**
+
+A Deployment manages Pods and ReplicaSets.
+
+Provides
+
+- Rolling Updates
+- Rollbacks
+- Self Healing
+
+---
+
+## Question 176
+
+### What is a ReplicaSet?
+
+**Answer**
+
+ReplicaSet ensures the required number of Pods are always running.
+
+---
+
+## Question 177
+
+### Difference between Deployment and StatefulSet?
+
+| Deployment | StatefulSet |
+|------------|-------------|
+| Stateless Apps | Stateful Apps |
+| Random Pod Names | Stable Identity |
+| Independent Pods | Ordered Deployment |
+
+---
+
+## Question 178
+
+### What is a Service?
+
+**Answer**
+
+A Service provides stable network access to Pods.
+
+Types
+
+- ClusterIP
+- NodePort
+- LoadBalancer
+- ExternalName
+
+---
+
+## Question 179
+
+### What is an Ingress?
+
+**Answer**
+
+Ingress manages HTTP and HTTPS routing into Kubernetes clusters.
+
+Supports
+
+- Path Routing
+- Host Routing
+- TLS
+
+---
+
+## Question 180
+
+### Difference between Service and Ingress?
+
+| Service | Ingress |
+|----------|----------|
+| Internal Networking | External HTTP Routing |
+| Layer 4 | Layer 7 |
+
+---
+
+# Helm
+
+---
+
+## Question 181
+
+### What is Helm?
+
+**Answer**
+
+Helm is the package manager for Kubernetes.
+
+Components
+
+- Chart
+- Values.yaml
+- Release
+- Repository
+
+---
+
+## Question 182
+
+### What is a Helm Chart?
+
+**Answer**
+
+A Helm Chart is a collection of Kubernetes manifests packaged together.
+
+---
+
+# GitOps
+
+---
+
+## Question 183
+
+### What is GitOps?
+
+**Answer**
+
+GitOps is an operational model where Git serves as the single source of truth for infrastructure and application deployments.
+
+---
+
+## Question 184
+
+### What are the benefits of GitOps?
+
+**Answer**
+
+- Version Control
+- Rollback
+- Audit Trail
+- Automated Deployment
+- Drift Detection
+
+---
+
+## Question 185
+
+### What is Argo CD?
+
+**Answer**
+
+Argo CD is a GitOps continuous delivery tool for Kubernetes.
+
+Features
+
+- Automatic Synchronization
+- Drift Detection
+- Rollback
+- Declarative Deployments
+
+---
+
+# AWS CodePipeline
+
+---
+
+## Question 186
+
+### What is AWS CodePipeline?
+
+**Answer**
+
+AWS CodePipeline is a fully managed CI/CD orchestration service.
+
+Typical Pipeline
+
+```text
+Source
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+---
+
+# AWS CodeBuild
+
+---
+
+## Question 187
+
+### What is AWS CodeBuild?
+
+**Answer**
+
+AWS CodeBuild is a fully managed build service.
+
+Supports
+
+- Docker Builds
+- Unit Tests
+- Artifact Generation
+
+---
+
+# AWS CodeDeploy
+
+---
+
+## Question 188
+
+### What is AWS CodeDeploy?
+
+**Answer**
+
+AWS CodeDeploy automates deployments to
+
+- EC2
+- ECS
+- Lambda
+- On-Premises Servers
+
+Supports
+
+- Rolling Deployment
+- Blue-Green Deployment
+
+---
+
+# AWS CodeArtifact
+
+---
+
+## Question 189
+
+### What is AWS CodeArtifact?
+
+**Answer**
+
+AWS CodeArtifact is a managed artifact repository supporting
+
+- Maven
+- npm
+- PyPI
+- NuGet
+- Generic Packages
+
+---
+
+# AWS App Runner
+
+---
+
+## Question 190
+
+### What is AWS App Runner?
+
+**Answer**
+
+AWS App Runner is a fully managed service for deploying containerized web applications and APIs without managing infrastructure.
+
+---
+
+# CI/CD
+
+---
+
+## Question 191
+
+### What is CI?
+
+**Answer**
+
+Continuous Integration (CI) is the practice of automatically building and testing code whenever changes are committed.
+
+---
+
+## Question 192
+
+### What is CD?
+
+**Answer**
+
+Continuous Delivery/Deployment automates application releases into target environments.
+
+---
+
+## Question 193
+
+### Difference between Continuous Delivery and Continuous Deployment?
+
+| Continuous Delivery | Continuous Deployment |
+|----------------------|------------------------|
+| Manual Approval Before Production | Automatic Production Deployment |
+
+---
+
+## Question 194
+
+### What is a Blue-Green Deployment?
+
+**Answer**
+
+Blue-Green Deployment uses two identical environments.
+
+Traffic switches from Blue to Green after validation.
+
+---
+
+## Question 195
+
+### What is a Canary Deployment?
+
+**Answer**
+
+Deploys the new version to a small percentage of users before full rollout.
+
+---
+
+## Question 196
+
+### What is a Rolling Deployment?
+
+**Answer**
+
+Updates application instances gradually while maintaining service availability.
+
+---
+
+## Question 197
+
+### What is Immutable Infrastructure?
+
+**Answer**
+
+Infrastructure is never modified after deployment.
+
+New infrastructure replaces old infrastructure.
+
+---
+
+## Question 198
+
+### What is Infrastructure as Code (IaC)?
+
+**Answer**
+
+Infrastructure is defined and managed using code instead of manual configuration.
+
+Examples
+
+- Terraform
+- CloudFormation
+- AWS CDK
+
+---
+
+## Question 199
+
+### Why use Infrastructure as Code?
+
+**Answer**
+
+- Automation
+- Version Control
+- Consistency
+- Repeatability
+- Faster Deployments
+
+---
+
+## Question 200
+
+### What is Drift?
+
+**Answer**
+
+Drift occurs when deployed infrastructure differs from Infrastructure as Code definitions due to manual changes.
+
+---
+
+# Rapid Fire
+
+201. What is Docker?
+202. What is a Container?
+203. What is an Image?
+204. What is Amazon ECR?
+205. What is ECS?
+206. What is EKS?
+207. What is Fargate?
+208. What is Kubernetes?
+209. What is a Pod?
+210. What is a Deployment?
+211. What is a Service?
+212. What is Ingress?
+213. What is Helm?
+214. What is GitOps?
+215. What is Argo CD?
+216. What is CodePipeline?
+217. What is CodeBuild?
+218. What is CodeDeploy?
+219. What is CodeArtifact?
+220. What is App Runner?
+
+---
+
+# Interview Tips
+
+- Explain Kubernetes objects in the order: **Pod → ReplicaSet → Deployment → Service → Ingress**.
+- Compare **ECS vs EKS** and **EC2 vs Fargate** clearly.
+- Mention real-world GitOps workflows using **Git → Argo CD → Kubernetes**.
+- For DevOps interviews, describe a complete CI/CD pipeline from source code commit to production deployment.
+- Be prepared to discuss deployment strategies such as Blue-Green, Canary, and Rolling updates.
+
+---
+
+# Summary
+
+This section covered Docker, Amazon ECR, ECS, EKS, Fargate, Kubernetes fundamentals, Helm, GitOps, Argo CD, AWS CodePipeline, CodeBuild, CodeDeploy, CodeArtifact, App Runner, CI/CD concepts, Infrastructure as Code, and deployment strategies. These topics are central to modern DevOps and cloud-native engineering interviews.
+
+---
+
