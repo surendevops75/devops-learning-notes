@@ -2409,3 +2409,780 @@ These scenarios focus on CI/CD pipelines, Infrastructure as Code, GitOps, observ
 
 ---
 
+# Scenario 41
+
+# Secrets Manager Secret Rotation Failed
+
+---
+
+## Problem
+
+Application cannot retrieve updated database credentials after automatic secret rotation.
+
+---
+
+## Symptoms
+
+- Database authentication failed
+- Lambda errors
+- Secret rotation failed
+- Application outage
+
+---
+
+## Possible Causes
+
+- Rotation Lambda failed
+- IAM Permissions
+- Database connectivity
+- Incorrect rotation template
+
+---
+
+## Investigation
+
+Check
+
+```text
+Secrets Manager
+
+↓
+
+Rotation Configuration
+
+↓
+
+Lambda Logs
+
+↓
+
+CloudWatch Logs
+
+↓
+
+Database Connection
+```
+
+---
+
+## Root Cause
+
+Rotation Lambda lacked database permissions.
+
+---
+
+## Resolution
+
+Update IAM Role.
+
+Test rotation manually.
+
+---
+
+## Prevention
+
+- Enable rotation monitoring
+- Test every rotation
+- Use least privilege IAM
+
+---
+
+# Scenario 42
+
+# AWS KMS Access Denied
+
+---
+
+## Symptoms
+
+Application cannot decrypt data.
+
+---
+
+## Investigation
+
+Review
+
+- KMS Key Policy
+- IAM Policy
+- Grants
+- CloudTrail
+
+---
+
+## Root Cause
+
+Application role missing
+
+```text
+kms:Decrypt
+```
+
+permission.
+
+---
+
+## Resolution
+
+Update Key Policy.
+
+Grant required permissions.
+
+---
+
+## Prevention
+
+Regular IAM reviews.
+
+---
+
+# Scenario 43
+
+# ACM Certificate Expired
+
+---
+
+## Symptoms
+
+HTTPS unavailable.
+
+Browser shows certificate warning.
+
+---
+
+## Investigation
+
+Check
+
+ACM
+
+↓
+
+Certificate Status
+
+↓
+
+ALB Listener
+
+↓
+
+Domain Validation
+
+---
+
+## Root Cause
+
+Certificate validation failed.
+
+Auto renewal unsuccessful.
+
+---
+
+## Resolution
+
+Revalidate domain.
+
+Issue new certificate.
+
+---
+
+## Prevention
+
+Monitor certificate expiration.
+
+---
+
+# Scenario 44
+
+# AWS WAF Blocking Legitimate Requests
+
+---
+
+## Symptoms
+
+Users receive
+
+```text
+403 Forbidden
+```
+
+---
+
+## Investigation
+
+Review
+
+- WAF Logs
+- Web ACL
+- Managed Rules
+- Custom Rules
+
+---
+
+## Root Cause
+
+Rate-based rule too restrictive.
+
+---
+
+## Resolution
+
+Adjust threshold.
+
+Whitelist trusted IPs.
+
+---
+
+## Prevention
+
+Monitor WAF logs before enforcing new rules.
+
+---
+
+# Scenario 45
+
+# GuardDuty Detects Suspicious Activity
+
+---
+
+## Symptoms
+
+High-severity GuardDuty finding.
+
+---
+
+## Investigation
+
+Review
+
+- CloudTrail
+- IAM Activity
+- Source IP
+- EC2 Instance
+- VPC Flow Logs
+
+---
+
+## Root Cause
+
+Compromised IAM Access Key.
+
+---
+
+## Resolution
+
+- Disable key
+- Rotate credentials
+- Investigate affected resources
+- Enable MFA
+
+---
+
+## Prevention
+
+Use IAM Roles.
+
+Rotate keys regularly.
+
+---
+
+# Scenario 46
+
+# Security Hub Reports Critical Findings
+
+---
+
+## Symptoms
+
+Multiple failed security checks.
+
+---
+
+## Investigation
+
+Review
+
+- CIS Controls
+- AWS Foundational Security Best Practices
+- Resource Configuration
+
+---
+
+## Root Cause
+
+Public S3 bucket.
+
+Open Security Groups.
+
+---
+
+## Resolution
+
+Remediate findings.
+
+Re-run security evaluation.
+
+---
+
+## Prevention
+
+Continuous compliance monitoring.
+
+---
+
+# Scenario 47
+
+# SQS Queue Backlog Growing
+
+---
+
+## Symptoms
+
+Queue depth continuously increasing.
+
+Consumers unable to process messages.
+
+---
+
+## Investigation
+
+CloudWatch
+
+↓
+
+Queue Depth
+
+↓
+
+Consumer Logs
+
+↓
+
+Processing Rate
+
+---
+
+## Possible Causes
+
+- Slow Consumers
+- Application Failure
+- Poison Messages
+- Scaling Issue
+
+---
+
+## Root Cause
+
+Consumer deployment failed.
+
+No active workers.
+
+---
+
+## Resolution
+
+Restore consumers.
+
+Increase Auto Scaling.
+
+---
+
+## Prevention
+
+Dead Letter Queue.
+
+Queue monitoring.
+
+---
+
+# Scenario 48
+
+# SNS Notifications Not Delivered
+
+---
+
+## Symptoms
+
+Subscribers not receiving notifications.
+
+---
+
+## Investigation
+
+Check
+
+- Subscription Status
+- Endpoint Health
+- IAM
+- Delivery Logs
+
+---
+
+## Root Cause
+
+Email subscription unconfirmed.
+
+---
+
+## Resolution
+
+Confirm subscription.
+
+Retry notification.
+
+---
+
+## Prevention
+
+Validate subscriptions.
+
+---
+
+# Scenario 49
+
+# EventBridge Rule Not Triggering
+
+---
+
+## Symptoms
+
+Expected automation never starts.
+
+---
+
+## Investigation
+
+Check
+
+- Event Pattern
+- Target
+- Permissions
+- CloudWatch Logs
+
+---
+
+## Root Cause
+
+Incorrect event pattern.
+
+---
+
+## Resolution
+
+Correct rule.
+
+Test event manually.
+
+---
+
+## Prevention
+
+Validate event matching before deployment.
+
+---
+
+# Scenario 50
+
+# Step Functions Execution Failed
+
+---
+
+## Symptoms
+
+Workflow stopped midway.
+
+---
+
+## Investigation
+
+Review
+
+- Execution History
+- Lambda Logs
+- IAM Permissions
+- Input Payload
+
+---
+
+## Root Cause
+
+Lambda returned unexpected JSON.
+
+---
+
+## Resolution
+
+Fix payload format.
+
+Restart execution.
+
+---
+
+## Prevention
+
+Validate state machine inputs.
+
+---
+
+# Scenario 51
+
+# Lambda Throttling
+
+---
+
+## Symptoms
+
+```
+429 Too Many Requests
+```
+
+---
+
+## Investigation
+
+CloudWatch
+
+↓
+
+Concurrent Executions
+
+↓
+
+Throttle Count
+
+↓
+
+Duration
+
+---
+
+## Root Cause
+
+Reserved concurrency limit reached.
+
+---
+
+## Resolution
+
+Increase concurrency.
+
+Optimize execution time.
+
+---
+
+## Prevention
+
+Monitor concurrency.
+
+Use SQS buffering.
+
+---
+
+# Scenario 52
+
+# Unexpected AWS Cost Increase
+
+---
+
+## Symptoms
+
+Monthly AWS bill doubled.
+
+---
+
+## Investigation
+
+Review
+
+- Cost Explorer
+- CUR
+- Trusted Advisor
+- Resource Inventory
+- Billing Dashboard
+
+---
+
+## Possible Causes
+
+- Forgotten EC2
+- Large NAT Gateway traffic
+- Unused EBS
+- Idle Load Balancers
+- Data Transfer
+- Infinite Lambda Invocations
+
+---
+
+## Root Cause
+
+Large EC2 instances left running after testing.
+
+---
+
+## Resolution
+
+Stop unused resources.
+
+Purchase Savings Plans if appropriate.
+
+---
+
+## Prevention
+
+- AWS Budgets
+- Cost Anomaly Detection
+- Resource Tagging
+- Automated Cleanup
+
+---
+
+# Scenario 53
+
+# AWS Organizations SCP Blocking Deployment
+
+---
+
+## Symptoms
+
+Terraform and CloudFormation fail.
+
+```
+AccessDenied
+```
+
+despite AdministratorAccess.
+
+---
+
+## Investigation
+
+Review
+
+- SCP
+- IAM Policy
+- Organization OU
+- CloudTrail
+
+---
+
+## Root Cause
+
+Service Control Policy denied
+
+```
+ec2:RunInstances
+```
+
+---
+
+## Resolution
+
+Modify SCP.
+
+Retry deployment.
+
+---
+
+## Prevention
+
+Document organization guardrails.
+
+---
+
+# Scenario 54
+
+# IAM Role Cannot Be Assumed
+
+---
+
+## Symptoms
+
+Cross-account access fails.
+
+---
+
+## Investigation
+
+Verify
+
+- Trust Policy
+- IAM Role
+- External ID
+- sts:AssumeRole
+
+---
+
+## Root Cause
+
+Incorrect trust relationship.
+
+---
+
+## Resolution
+
+Update trust policy.
+
+---
+
+## Prevention
+
+Test cross-account roles regularly.
+
+---
+
+# Scenario 55
+
+# AWS API Rate Limiting
+
+---
+
+## Symptoms
+
+```
+ThrottlingException
+```
+
+from AWS APIs.
+
+---
+
+## Investigation
+
+Review
+
+- API Frequency
+- SDK Retries
+- CloudWatch Metrics
+
+---
+
+## Root Cause
+
+Application generated excessive API requests.
+
+---
+
+## Resolution
+
+Implement exponential backoff.
+
+Enable retries.
+
+Batch requests where possible.
+
+---
+
+## Prevention
+
+Use SDK retry mechanisms.
+
+Avoid excessive polling.
+
+---
+
+# Summary
+
+These scenarios focus on security, compliance, messaging, serverless workflows, identity management, and cost optimization. Enterprise DevOps engineers frequently troubleshoot Secrets Manager, KMS, ACM, WAF, GuardDuty, Security Hub, SQS, SNS, EventBridge, Step Functions, Lambda concurrency, AWS Organizations, IAM roles, API throttling, and unexpected cloud costs. Strong monitoring, automation, least-privilege access, and proactive governance are key to preventing these production issues.
+
+---
+
