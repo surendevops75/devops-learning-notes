@@ -476,3 +476,712 @@ This section introduced Boto3 fundamentals, sessions, clients vs resources, EC2 
 
 ---
 
+# Amazon VPC
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+ec2 = boto3.client("ec2")
+```
+
+---
+
+# List VPCs
+
+```python
+response = ec2.describe_vpcs()
+
+for vpc in response["Vpcs"]:
+    print(vpc["VpcId"])
+```
+
+---
+
+# Describe Specific VPC
+
+```python
+response = ec2.describe_vpcs(
+    VpcIds=[
+        "vpc-0123456789abcdef0"
+    ]
+)
+
+print(response["Vpcs"][0])
+```
+
+---
+
+# Create VPC
+
+```python
+response = ec2.create_vpc(
+    CidrBlock="10.0.0.0/16"
+)
+
+print(response["Vpc"]["VpcId"])
+```
+
+---
+
+# Delete VPC
+
+```python
+ec2.delete_vpc(
+    VpcId="vpc-xxxxxxxx"
+)
+```
+
+---
+
+# Enable DNS Support
+
+```python
+ec2.modify_vpc_attribute(
+    VpcId="vpc-xxxxxxxx",
+    EnableDnsSupport={
+        "Value": True
+    }
+)
+```
+
+---
+
+# Enable DNS Hostnames
+
+```python
+ec2.modify_vpc_attribute(
+    VpcId="vpc-xxxxxxxx",
+    EnableDnsHostnames={
+        "Value": True
+    }
+)
+```
+
+---
+
+# List Subnets
+
+```python
+response = ec2.describe_subnets()
+
+for subnet in response["Subnets"]:
+    print(subnet["SubnetId"])
+```
+
+---
+
+# Create Subnet
+
+```python
+response = ec2.create_subnet(
+    VpcId="vpc-xxxxxxxx",
+    CidrBlock="10.0.1.0/24",
+    AvailabilityZone="ap-south-1a"
+)
+
+print(response["Subnet"]["SubnetId"])
+```
+
+---
+
+# Delete Subnet
+
+```python
+ec2.delete_subnet(
+    SubnetId="subnet-xxxxxxxx"
+)
+```
+
+---
+
+# Enable Auto Assign Public IP
+
+```python
+ec2.modify_subnet_attribute(
+    SubnetId="subnet-xxxxxxxx",
+    MapPublicIpOnLaunch={
+        "Value": True
+    }
+)
+```
+
+---
+
+# Route Tables
+
+---
+
+# List Route Tables
+
+```python
+response = ec2.describe_route_tables()
+
+for rt in response["RouteTables"]:
+    print(rt["RouteTableId"])
+```
+
+---
+
+# Create Route Table
+
+```python
+response = ec2.create_route_table(
+    VpcId="vpc-xxxxxxxx"
+)
+
+print(response["RouteTable"]["RouteTableId"])
+```
+
+---
+
+# Associate Route Table
+
+```python
+ec2.associate_route_table(
+    RouteTableId="rtb-xxxxxxxx",
+    SubnetId="subnet-xxxxxxxx"
+)
+```
+
+---
+
+# Create Internet Route
+
+```python
+ec2.create_route(
+    RouteTableId="rtb-xxxxxxxx",
+    DestinationCidrBlock="0.0.0.0/0",
+    GatewayId="igw-xxxxxxxx"
+)
+```
+
+---
+
+# Delete Route
+
+```python
+ec2.delete_route(
+    RouteTableId="rtb-xxxxxxxx",
+    DestinationCidrBlock="0.0.0.0/0"
+)
+```
+
+---
+
+# Delete Route Table
+
+```python
+ec2.delete_route_table(
+    RouteTableId="rtb-xxxxxxxx"
+)
+```
+
+---
+
+# Internet Gateway
+
+---
+
+# List Internet Gateways
+
+```python
+response = ec2.describe_internet_gateways()
+
+for igw in response["InternetGateways"]:
+    print(igw["InternetGatewayId"])
+```
+
+---
+
+# Create Internet Gateway
+
+```python
+response = ec2.create_internet_gateway()
+
+print(response["InternetGateway"]["InternetGatewayId"])
+```
+
+---
+
+# Attach Internet Gateway
+
+```python
+ec2.attach_internet_gateway(
+    InternetGatewayId="igw-xxxxxxxx",
+    VpcId="vpc-xxxxxxxx"
+)
+```
+
+---
+
+# Detach Internet Gateway
+
+```python
+ec2.detach_internet_gateway(
+    InternetGatewayId="igw-xxxxxxxx",
+    VpcId="vpc-xxxxxxxx"
+)
+```
+
+---
+
+# Delete Internet Gateway
+
+```python
+ec2.delete_internet_gateway(
+    InternetGatewayId="igw-xxxxxxxx"
+)
+```
+
+---
+
+# NAT Gateway
+
+---
+
+# List NAT Gateways
+
+```python
+response = ec2.describe_nat_gateways()
+
+for nat in response["NatGateways"]:
+    print(nat["NatGatewayId"])
+```
+
+---
+
+# Create NAT Gateway
+
+```python
+response = ec2.create_nat_gateway(
+    AllocationId="eipalloc-xxxxxxxx",
+    SubnetId="subnet-xxxxxxxx"
+)
+
+print(response["NatGateway"]["NatGatewayId"])
+```
+
+---
+
+# Delete NAT Gateway
+
+```python
+ec2.delete_nat_gateway(
+    NatGatewayId="nat-xxxxxxxx"
+)
+```
+
+---
+
+# Security Groups
+
+---
+
+# List Security Groups
+
+```python
+response = ec2.describe_security_groups()
+
+for sg in response["SecurityGroups"]:
+    print(sg["GroupName"])
+```
+
+---
+
+# Create Security Group
+
+```python
+response = ec2.create_security_group(
+    GroupName="web-sg",
+    Description="Web Security Group",
+    VpcId="vpc-xxxxxxxx"
+)
+
+print(response["GroupId"])
+```
+
+---
+
+# Add SSH Rule
+
+```python
+ec2.authorize_security_group_ingress(
+    GroupId="sg-xxxxxxxx",
+    IpPermissions=[
+        {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "IpRanges": [
+                {
+                    "CidrIp": "0.0.0.0/0"
+                }
+            ]
+        }
+    ]
+)
+```
+
+---
+
+# Add HTTP Rule
+
+```python
+ec2.authorize_security_group_ingress(
+    GroupId="sg-xxxxxxxx",
+    IpPermissions=[
+        {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "IpRanges": [
+                {
+                    "CidrIp": "0.0.0.0/0"
+                }
+            ]
+        }
+    ]
+)
+```
+
+---
+
+# Remove Security Group Rule
+
+```python
+ec2.revoke_security_group_ingress(
+    GroupId="sg-xxxxxxxx",
+    IpPermissions=[
+        {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "IpRanges": [
+                {
+                    "CidrIp": "0.0.0.0/0"
+                }
+            ]
+        }
+    ]
+)
+```
+
+---
+
+# Delete Security Group
+
+```python
+ec2.delete_security_group(
+    GroupId="sg-xxxxxxxx"
+)
+```
+
+---
+
+# Elastic IP
+
+---
+
+# Allocate Elastic IP
+
+```python
+response = ec2.allocate_address(
+    Domain="vpc"
+)
+
+print(response["AllocationId"])
+```
+
+---
+
+# Associate Elastic IP
+
+```python
+ec2.associate_address(
+    InstanceId="i-xxxxxxxx",
+    AllocationId="eipalloc-xxxxxxxx"
+)
+```
+
+---
+
+# Disassociate Elastic IP
+
+```python
+ec2.disassociate_address(
+    AssociationId="eipassoc-xxxxxxxx"
+)
+```
+
+---
+
+# Release Elastic IP
+
+```python
+ec2.release_address(
+    AllocationId="eipalloc-xxxxxxxx"
+)
+```
+
+---
+
+# Network ACLs
+
+---
+
+# List Network ACLs
+
+```python
+response = ec2.describe_network_acls()
+
+for acl in response["NetworkAcls"]:
+    print(acl["NetworkAclId"])
+```
+
+---
+
+# Create Network ACL
+
+```python
+response = ec2.create_network_acl(
+    VpcId="vpc-xxxxxxxx"
+)
+
+print(response["NetworkAcl"]["NetworkAclId"])
+```
+
+---
+
+# Delete Network ACL
+
+```python
+ec2.delete_network_acl(
+    NetworkAclId="acl-xxxxxxxx"
+)
+```
+
+---
+
+# VPC Peering
+
+---
+
+# List Peering Connections
+
+```python
+response = ec2.describe_vpc_peering_connections()
+
+for peer in response["VpcPeeringConnections"]:
+    print(peer["VpcPeeringConnectionId"])
+```
+
+---
+
+# Create Peering Connection
+
+```python
+response = ec2.create_vpc_peering_connection(
+    VpcId="vpc-aaaa",
+    PeerVpcId="vpc-bbbb"
+)
+
+print(response["VpcPeeringConnection"]["VpcPeeringConnectionId"])
+```
+
+---
+
+# Accept Peering Request
+
+```python
+ec2.accept_vpc_peering_connection(
+    VpcPeeringConnectionId="pcx-xxxxxxxx"
+)
+```
+
+---
+
+# Delete Peering Connection
+
+```python
+ec2.delete_vpc_peering_connection(
+    VpcPeeringConnectionId="pcx-xxxxxxxx"
+)
+```
+
+---
+
+# Transit Gateway
+
+---
+
+# List Transit Gateways
+
+```python
+response = ec2.describe_transit_gateways()
+
+for tgw in response["TransitGateways"]:
+    print(tgw["TransitGatewayId"])
+```
+
+---
+
+# Create Transit Gateway
+
+```python
+response = ec2.create_transit_gateway()
+
+print(response["TransitGateway"]["TransitGatewayId"])
+```
+
+---
+
+# Delete Transit Gateway
+
+```python
+ec2.delete_transit_gateway(
+    TransitGatewayId="tgw-xxxxxxxx"
+)
+```
+
+---
+
+# Elastic Network Interfaces (ENIs)
+
+---
+
+# List ENIs
+
+```python
+response = ec2.describe_network_interfaces()
+
+for eni in response["NetworkInterfaces"]:
+    print(eni["NetworkInterfaceId"])
+```
+
+---
+
+# Create ENI
+
+```python
+response = ec2.create_network_interface(
+    SubnetId="subnet-xxxxxxxx"
+)
+
+print(response["NetworkInterface"]["NetworkInterfaceId"])
+```
+
+---
+
+# Attach ENI
+
+```python
+ec2.attach_network_interface(
+    NetworkInterfaceId="eni-xxxxxxxx",
+    InstanceId="i-xxxxxxxx",
+    DeviceIndex=1
+)
+```
+
+---
+
+# Delete ENI
+
+```python
+ec2.delete_network_interface(
+    NetworkInterfaceId="eni-xxxxxxxx"
+)
+```
+
+---
+
+# VPC Endpoints
+
+---
+
+# List VPC Endpoints
+
+```python
+response = ec2.describe_vpc_endpoints()
+
+for endpoint in response["VpcEndpoints"]:
+    print(endpoint["VpcEndpointId"])
+```
+
+---
+
+# Create Gateway Endpoint
+
+```python
+response = ec2.create_vpc_endpoint(
+    VpcId="vpc-xxxxxxxx",
+    ServiceName="com.amazonaws.ap-south-1.s3",
+    VpcEndpointType="Gateway",
+    RouteTableIds=["rtb-xxxxxxxx"]
+)
+
+print(response["VpcEndpoint"]["VpcEndpointId"])
+```
+
+---
+
+# Delete VPC Endpoint
+
+```python
+ec2.delete_vpc_endpoints(
+    VpcEndpointIds=[
+        "vpce-xxxxxxxx"
+    ]
+)
+```
+
+---
+
+# Wait Until VPC Available
+
+```python
+waiter = ec2.get_waiter("vpc_available")
+
+waiter.wait(
+    VpcIds=[
+        "vpc-xxxxxxxx"
+    ]
+)
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = ec2.describe_vpcs()
+
+except ClientError as error:
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Design VPC CIDR ranges carefully to avoid overlap.
+- Keep databases in private subnets.
+- Use Security Groups as the primary firewall.
+- Prefer VPC Endpoints over NAT Gateway where applicable.
+- Use Transit Gateway for hub-and-spoke architectures.
+- Tag all networking resources.
+- Avoid using the default VPC in production.
+- Use waiters when creating networking resources.
+
+---
+
+# Summary
+
+This section covered Boto3 examples for Amazon VPC, Subnets, Route Tables, Internet Gateways, NAT Gateways, Security Groups, Elastic IPs, Network ACLs, VPC Peering, Transit Gateway, ENIs, VPC Endpoints, waiters, and exception handling. These examples provide practical automation patterns for building and managing AWS networking infrastructure using Python.
+
