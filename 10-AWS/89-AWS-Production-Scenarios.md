@@ -717,3 +717,863 @@ Follow least privilege with proper testing.
 # Summary
 
 These first ten scenarios represent some of the most common production issues involving EC2, ALB, Auto Scaling, RDS, S3, Lambda, EBS, Route 53, CloudFront, and IAM. A structured troubleshooting approach—checking monitoring data, logs, networking, permissions, and application health—is essential for quickly identifying root causes and restoring services.
+
+---
+
+# Scenario 11
+
+# VPC Connectivity Issue
+
+---
+
+## Problem
+
+EC2 instances cannot communicate with other AWS resources.
+
+---
+
+## Symptoms
+
+- SSH timeout
+- API timeout
+- Database unreachable
+- Internet inaccessible
+
+---
+
+## Possible Causes
+
+- Route Table
+- Security Group
+- NACL
+- Internet Gateway
+- NAT Gateway
+- DNS
+
+---
+
+## Investigation
+
+Check
+
+```text
+VPC
+
+↓
+
+Subnet
+
+↓
+
+Route Table
+
+↓
+
+Security Group
+
+↓
+
+NACL
+
+↓
+
+Internet Gateway
+```
+
+Commands
+
+```bash
+ping
+
+traceroute
+
+curl
+```
+
+---
+
+## Root Cause
+
+Private subnet missing default route.
+
+---
+
+## Resolution
+
+Add
+
+```text
+0.0.0.0/0
+
+↓
+
+NAT Gateway
+```
+
+---
+
+## Prevention
+
+Review VPC architecture before deployment.
+
+---
+
+# Scenario 12
+
+# Internet Gateway Not Working
+
+---
+
+## Symptoms
+
+Public EC2 cannot access Internet.
+
+---
+
+## Investigation
+
+Check
+
+- Internet Gateway attached
+- Public Route Table
+- Public IP
+- Security Group
+
+---
+
+## Root Cause
+
+No Internet Gateway attached to VPC.
+
+---
+
+## Resolution
+
+Attach Internet Gateway.
+
+Update Route Table.
+
+---
+
+## Prevention
+
+Validate network architecture.
+
+---
+
+# Scenario 13
+
+# NAT Gateway Failure
+
+---
+
+## Symptoms
+
+Private instances cannot download packages.
+
+```bash
+yum update
+
+apt update
+
+docker pull
+```
+
+fail.
+
+---
+
+## Possible Causes
+
+- NAT Gateway deleted
+- Elastic IP missing
+- Route Table
+- Availability Zone issue
+
+---
+
+## Investigation
+
+Check
+
+```text
+Private Route
+
+↓
+
+NAT Gateway
+
+↓
+
+Elastic IP
+
+↓
+
+Internet Gateway
+```
+
+---
+
+## Root Cause
+
+Route pointed to deleted NAT Gateway.
+
+---
+
+## Resolution
+
+Create new NAT Gateway.
+
+Update Route Table.
+
+---
+
+## Prevention
+
+CloudWatch alarms.
+
+Infrastructure as Code.
+
+---
+
+# Scenario 14
+
+# Security Group Blocking Traffic
+
+---
+
+## Symptoms
+
+Application unavailable.
+
+SSH fails.
+
+Database unreachable.
+
+---
+
+## Investigation
+
+Review
+
+Inbound Rules
+
+Outbound Rules
+
+Source
+
+Destination
+
+---
+
+## Root Cause
+
+Port
+
+```text
+8080
+```
+
+blocked.
+
+---
+
+## Resolution
+
+Allow required ports.
+
+---
+
+## Prevention
+
+Maintain standard Security Group templates.
+
+---
+
+# Scenario 15
+
+# Network ACL Blocking Application
+
+---
+
+## Symptoms
+
+Security Groups appear correct.
+
+Traffic still blocked.
+
+---
+
+## Investigation
+
+Review
+
+Inbound Rule
+
+Outbound Rule
+
+Rule Priority
+
+---
+
+## Root Cause
+
+NACL denied ephemeral ports.
+
+---
+
+## Resolution
+
+Allow
+
+```text
+1024-65535
+```
+
+---
+
+## Prevention
+
+Understand stateless firewall behavior.
+
+---
+
+# Scenario 16
+
+# Docker Container Keeps Restarting
+
+---
+
+## Symptoms
+
+```bash
+docker ps
+```
+
+shows
+
+Restarting
+
+---
+
+## Investigation
+
+```bash
+docker logs
+
+docker inspect
+
+docker stats
+```
+
+---
+
+## Possible Causes
+
+- Application Crash
+- Missing Environment Variable
+- Port Conflict
+- Out of Memory
+
+---
+
+## Root Cause
+
+Database environment variable missing.
+
+---
+
+## Resolution
+
+Update
+
+```yaml
+environment:
+```
+
+Restart container.
+
+---
+
+## Prevention
+
+Validate environment variables before deployment.
+
+---
+
+# Scenario 17
+
+# Docker Image Pull Failed
+
+---
+
+## Symptoms
+
+```bash
+docker pull
+```
+
+fails.
+
+---
+
+## Possible Causes
+
+- Wrong Image Tag
+- Authentication
+- Network
+- Repository Missing
+
+---
+
+## Investigation
+
+```bash
+docker login
+
+docker images
+```
+
+---
+
+## Root Cause
+
+Image tag incorrect.
+
+---
+
+## Resolution
+
+Use correct version.
+
+---
+
+## Prevention
+
+Use immutable image tags.
+
+---
+
+# Scenario 18
+
+# Amazon ECR Authentication Failed
+
+---
+
+## Symptoms
+
+```bash
+docker push
+```
+
+returns
+
+Unauthorized
+
+---
+
+## Investigation
+
+Verify
+
+IAM
+
+Repository
+
+Login
+
+---
+
+## Resolution
+
+```bash
+aws ecr get-login-password
+
+docker login
+```
+
+Retry push.
+
+---
+
+## Prevention
+
+Automate authentication inside CI/CD.
+
+---
+
+# Scenario 19
+
+# ECS Tasks Continuously Stopping
+
+---
+
+## Symptoms
+
+Tasks
+
+↓
+
+Running
+
+↓
+
+Stopped
+
+↓
+
+Restart
+
+---
+
+## Investigation
+
+Review
+
+Task Definition
+
+Container Logs
+
+CloudWatch
+
+Memory
+
+CPU
+
+---
+
+## Root Cause
+
+Container exceeded memory limit.
+
+---
+
+## Resolution
+
+Increase task memory.
+
+Optimize application.
+
+---
+
+## Prevention
+
+Monitor resource utilization.
+
+---
+
+# Scenario 20
+
+# EKS Pods Not Starting
+
+---
+
+## Symptoms
+
+Pods remain
+
+```text
+Pending
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl get pods
+
+kubectl describe pod
+```
+
+Check
+
+- Scheduler
+- Node Resources
+- Taints
+- PVC
+- Events
+
+---
+
+## Possible Causes
+
+- No Nodes
+- Insufficient CPU
+- Memory
+- Taints
+- Storage
+
+---
+
+## Root Cause
+
+No worker nodes available.
+
+---
+
+## Resolution
+
+Scale Node Group.
+
+---
+
+## Prevention
+
+Cluster Autoscaler.
+
+Node monitoring.
+
+---
+
+# Scenario 21
+
+# Kubernetes CrashLoopBackOff
+
+---
+
+## Symptoms
+
+```bash
+kubectl get pods
+```
+
+shows
+
+CrashLoopBackOff
+
+---
+
+## Investigation
+
+```bash
+kubectl logs
+
+kubectl logs --previous
+
+kubectl describe pod
+```
+
+---
+
+## Possible Causes
+
+- Wrong Environment Variables
+- Database Down
+- Application Bug
+- Missing Secret
+- Missing ConfigMap
+
+---
+
+## Root Cause
+
+Secret not mounted.
+
+---
+
+## Resolution
+
+Create Secret.
+
+Restart deployment.
+
+---
+
+## Prevention
+
+Validate manifests before deployment.
+
+---
+
+# Scenario 22
+
+# ImagePullBackOff
+
+---
+
+## Symptoms
+
+Pod cannot download image.
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod
+```
+
+Review
+
+- Image Name
+- Registry
+- Pull Secret
+
+---
+
+## Root Cause
+
+Incorrect image tag.
+
+---
+
+## Resolution
+
+Update Deployment.
+
+---
+
+## Prevention
+
+CI/CD validation.
+
+---
+
+# Scenario 23
+
+# Kubernetes Service Not Accessible
+
+---
+
+## Symptoms
+
+Pod running.
+
+Application unreachable.
+
+---
+
+## Investigation
+
+```bash
+kubectl get svc
+
+kubectl describe svc
+
+kubectl get endpoints
+```
+
+---
+
+## Root Cause
+
+Wrong selector.
+
+---
+
+## Resolution
+
+Update labels.
+
+---
+
+## Prevention
+
+Follow consistent labeling strategy.
+
+---
+
+# Scenario 24
+
+# Load Balancer Not Created in EKS
+
+---
+
+## Symptoms
+
+Service
+
+```yaml
+type: LoadBalancer
+```
+
+No ELB created.
+
+---
+
+## Investigation
+
+Check
+
+AWS Load Balancer Controller
+
+IAM Role
+
+Subnet Tags
+
+---
+
+## Root Cause
+
+Controller missing.
+
+---
+
+## Resolution
+
+Install AWS Load Balancer Controller.
+
+---
+
+## Prevention
+
+Validate EKS prerequisites.
+
+---
+
+# Scenario 25
+
+# ALB Health Checks Failing
+
+---
+
+## Symptoms
+
+Targets unhealthy.
+
+---
+
+## Investigation
+
+Check
+
+Application
+
+Health Endpoint
+
+Target Group
+
+Security Group
+
+---
+
+## Root Cause
+
+Health endpoint
+
+```text
+/health
+```
+
+returned
+
+500.
+
+---
+
+## Resolution
+
+Fix application health endpoint.
+
+---
+
+## Prevention
+
+Standardize readiness endpoints.
+
+---
+
+# Summary
+
+These production scenarios cover VPC networking, Internet Gateway, NAT Gateway, Security Groups, NACLs, Docker, Amazon ECR, Amazon ECS, Amazon EKS, Kubernetes Pods, Services, Load Balancers, and ALB health checks. These are among the most frequently encountered operational issues in enterprise AWS and Kubernetes environments and are commonly discussed in DevOps interviews.
