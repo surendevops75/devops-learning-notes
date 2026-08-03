@@ -2655,3 +2655,740 @@ This section covered Boto3 automation for Amazon S3 including bucket management,
 
 ---
 
+# Amazon RDS
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+rds = boto3.client("rds")
+```
+
+---
+
+# List DB Instances
+
+```python
+response = rds.describe_db_instances()
+
+for db in response["DBInstances"]:
+    print(db["DBInstanceIdentifier"])
+```
+
+---
+
+# Describe DB Instance
+
+```python
+response = rds.describe_db_instances(
+    DBInstanceIdentifier="production-db"
+)
+
+print(response["DBInstances"][0])
+```
+
+---
+
+# Create DB Instance
+
+```python
+response = rds.create_db_instance(
+    DBInstanceIdentifier="production-db",
+    Engine="mysql",
+    DBInstanceClass="db.t3.micro",
+    AllocatedStorage=20,
+    MasterUsername="admin",
+    MasterUserPassword="Password@123"
+)
+
+print(response["DBInstance"]["DBInstanceIdentifier"])
+```
+
+---
+
+# Modify DB Instance
+
+```python
+rds.modify_db_instance(
+    DBInstanceIdentifier="production-db",
+    DBInstanceClass="db.t3.small",
+    ApplyImmediately=True
+)
+```
+
+---
+
+# Start DB Instance
+
+```python
+rds.start_db_instance(
+    DBInstanceIdentifier="production-db"
+)
+```
+
+---
+
+# Stop DB Instance
+
+```python
+rds.stop_db_instance(
+    DBInstanceIdentifier="production-db"
+)
+```
+
+---
+
+# Reboot DB Instance
+
+```python
+rds.reboot_db_instance(
+    DBInstanceIdentifier="production-db"
+)
+```
+
+---
+
+# Delete DB Instance
+
+```python
+rds.delete_db_instance(
+    DBInstanceIdentifier="production-db",
+    SkipFinalSnapshot=True
+)
+```
+
+---
+
+# Create Snapshot
+
+```python
+response = rds.create_db_snapshot(
+    DBSnapshotIdentifier="production-db-backup",
+    DBInstanceIdentifier="production-db"
+)
+
+print(response["DBSnapshot"]["DBSnapshotIdentifier"])
+```
+
+---
+
+# Restore Snapshot
+
+```python
+rds.restore_db_instance_from_db_snapshot(
+    DBInstanceIdentifier="restored-db",
+    DBSnapshotIdentifier="production-db-backup"
+)
+```
+
+---
+
+# Delete Snapshot
+
+```python
+rds.delete_db_snapshot(
+    DBSnapshotIdentifier="production-db-backup"
+)
+```
+
+---
+
+# Wait Until DB Available
+
+```python
+waiter = rds.get_waiter("db_instance_available")
+
+waiter.wait(
+    DBInstanceIdentifier="production-db"
+)
+```
+
+---
+
+# Amazon Aurora
+
+---
+
+# List Clusters
+
+```python
+response = rds.describe_db_clusters()
+
+for cluster in response["DBClusters"]:
+    print(cluster["DBClusterIdentifier"])
+```
+
+---
+
+# Create Aurora Cluster
+
+```python
+response = rds.create_db_cluster(
+    DBClusterIdentifier="aurora-prod",
+    Engine="aurora-mysql",
+    MasterUsername="admin",
+    MasterUserPassword="Password@123"
+)
+
+print(response["DBCluster"]["DBClusterIdentifier"])
+```
+
+---
+
+# Delete Aurora Cluster
+
+```python
+rds.delete_db_cluster(
+    DBClusterIdentifier="aurora-prod",
+    SkipFinalSnapshot=True
+)
+```
+
+---
+
+# Amazon DynamoDB
+
+---
+
+# Import Client
+
+```python
+dynamodb = boto3.client("dynamodb")
+```
+
+---
+
+# List Tables
+
+```python
+response = dynamodb.list_tables()
+
+for table in response["TableNames"]:
+    print(table)
+```
+
+---
+
+# Describe Table
+
+```python
+response = dynamodb.describe_table(
+    TableName="Employees"
+)
+
+print(response["Table"])
+```
+
+---
+
+# Create Table
+
+```python
+dynamodb.create_table(
+    TableName="Employees",
+    AttributeDefinitions=[
+        {
+            "AttributeName": "EmployeeId",
+            "AttributeType": "S"
+        }
+    ],
+    KeySchema=[
+        {
+            "AttributeName": "EmployeeId",
+            "KeyType": "HASH"
+        }
+    ],
+    BillingMode="PAY_PER_REQUEST"
+)
+```
+
+---
+
+# Put Item
+
+```python
+dynamodb.put_item(
+    TableName="Employees",
+    Item={
+        "EmployeeId": {
+            "S": "1001"
+        },
+        "Name": {
+            "S": "Surendra"
+        }
+    }
+)
+```
+
+---
+
+# Get Item
+
+```python
+response = dynamodb.get_item(
+    TableName="Employees",
+    Key={
+        "EmployeeId": {
+            "S": "1001"
+        }
+    }
+)
+
+print(response["Item"])
+```
+
+---
+
+# Scan Table
+
+```python
+response = dynamodb.scan(
+    TableName="Employees"
+)
+
+print(response["Items"])
+```
+
+---
+
+# Query Table
+
+```python
+response = dynamodb.query(
+    TableName="Employees",
+    KeyConditionExpression="EmployeeId = :id",
+    ExpressionAttributeValues={
+        ":id": {
+            "S": "1001"
+        }
+    }
+)
+```
+
+---
+
+# Delete Item
+
+```python
+dynamodb.delete_item(
+    TableName="Employees",
+    Key={
+        "EmployeeId": {
+            "S": "1001"
+        }
+    }
+)
+```
+
+---
+
+# Delete Table
+
+```python
+dynamodb.delete_table(
+    TableName="Employees"
+)
+```
+
+---
+
+# Amazon ElastiCache
+
+---
+
+# Import Client
+
+```python
+elasticache = boto3.client("elasticache")
+```
+
+---
+
+# List Cache Clusters
+
+```python
+response = elasticache.describe_cache_clusters()
+
+for cluster in response["CacheClusters"]:
+    print(cluster["CacheClusterId"])
+```
+
+---
+
+# Create Redis Cluster
+
+```python
+elasticache.create_cache_cluster(
+    CacheClusterId="redis-prod",
+    Engine="redis",
+    CacheNodeType="cache.t3.micro",
+    NumCacheNodes=1
+)
+```
+
+---
+
+# Delete Cache Cluster
+
+```python
+elasticache.delete_cache_cluster(
+    CacheClusterId="redis-prod"
+)
+```
+
+---
+
+# Amazon EFS
+
+---
+
+# Import Client
+
+```python
+efs = boto3.client("efs")
+```
+
+---
+
+# List File Systems
+
+```python
+response = efs.describe_file_systems()
+
+for fs in response["FileSystems"]:
+    print(fs["FileSystemId"])
+```
+
+---
+
+# Create File System
+
+```python
+response = efs.create_file_system()
+
+print(response["FileSystemId"])
+```
+
+---
+
+# Create Mount Target
+
+```python
+efs.create_mount_target(
+    FileSystemId="fs-xxxxxxxx",
+    SubnetId="subnet-xxxxxxxx",
+    SecurityGroups=[
+        "sg-xxxxxxxx"
+    ]
+)
+```
+
+---
+
+# Delete File System
+
+```python
+efs.delete_file_system(
+    FileSystemId="fs-xxxxxxxx"
+)
+```
+
+---
+
+# Amazon FSx
+
+---
+
+# Import Client
+
+```python
+fsx = boto3.client("fsx")
+```
+
+---
+
+# List File Systems
+
+```python
+response = fsx.describe_file_systems()
+
+for fs in response["FileSystems"]:
+    print(fs["FileSystemId"])
+```
+
+---
+
+# Create File System
+
+```python
+fsx.create_file_system(
+    FileSystemType="WINDOWS",
+    StorageCapacity=32,
+    SubnetIds=[
+        "subnet-xxxxxxxx"
+    ]
+)
+```
+
+---
+
+# Delete File System
+
+```python
+fsx.delete_file_system(
+    FileSystemId="fs-xxxxxxxx"
+)
+```
+
+---
+
+# AWS Backup
+
+---
+
+# Import Client
+
+```python
+backup = boto3.client("backup")
+```
+
+---
+
+# List Backup Vaults
+
+```python
+response = backup.list_backup_vaults()
+
+for vault in response["BackupVaultList"]:
+    print(vault["BackupVaultName"])
+```
+
+---
+
+# Create Backup Vault
+
+```python
+backup.create_backup_vault(
+    BackupVaultName="ProductionVault"
+)
+```
+
+---
+
+# Start Backup Job
+
+```python
+backup.start_backup_job(
+    BackupVaultName="ProductionVault",
+    ResourceArn="arn:aws:ec2:..."
+)
+```
+
+---
+
+# Start Restore Job
+
+```python
+backup.start_restore_job(
+    RecoveryPointArn="arn:aws:backup:..."
+)
+```
+
+---
+
+# AWS DataSync
+
+---
+
+# Import Client
+
+```python
+datasync = boto3.client("datasync")
+```
+
+---
+
+# List Tasks
+
+```python
+response = datasync.list_tasks()
+
+for task in response["Tasks"]:
+    print(task["TaskArn"])
+```
+
+---
+
+# Start Task
+
+```python
+datasync.start_task_execution(
+    TaskArn="arn:aws:datasync:..."
+)
+```
+
+---
+
+# Describe Task
+
+```python
+response = datasync.describe_task(
+    TaskArn="arn:aws:datasync:..."
+)
+
+print(response)
+```
+
+---
+
+# AWS Storage Gateway
+
+---
+
+# Import Client
+
+```python
+gateway = boto3.client("storagegateway")
+```
+
+---
+
+# List Gateways
+
+```python
+response = gateway.list_gateways()
+
+for gw in response["Gateways"]:
+    print(gw["GatewayARN"])
+```
+
+---
+
+# Describe Gateway
+
+```python
+response = gateway.describe_gateway_information(
+    GatewayARN="arn:aws:storagegateway:..."
+)
+
+print(response)
+```
+
+---
+
+# Refresh Cache
+
+```python
+gateway.refresh_cache(
+    FileShareARN="arn:aws:storagegateway:..."
+)
+```
+
+---
+
+# AWS Snow Family
+
+---
+
+# Import Client
+
+```python
+snow = boto3.client("snowball")
+```
+
+---
+
+# List Jobs
+
+```python
+response = snow.list_jobs()
+
+for job in response["JobListEntries"]:
+    print(job["JobId"])
+```
+
+---
+
+# Describe Job
+
+```python
+response = snow.describe_job(
+    JobId="JIDxxxxxxxx"
+)
+
+print(response)
+```
+
+---
+
+# Create Import Job
+
+```python
+snow.create_job(
+    JobType="IMPORT",
+    AddressId="ADxxxxxxxx",
+    Resources={}
+)
+```
+
+---
+
+# Cancel Job
+
+```python
+snow.cancel_job(
+    JobId="JIDxxxxxxxx"
+)
+```
+
+---
+
+# Pagination Example
+
+```python
+paginator = dynamodb.get_paginator(
+    "list_tables"
+)
+
+for page in paginator.paginate():
+    print(page["TableNames"])
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = rds.describe_db_instances()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Enable automated backups for Amazon RDS.
+- Use waiters for database provisioning and modifications.
+- Prefer DynamoDB Query over Scan for better performance.
+- Encrypt RDS, EFS, and FSx using AWS KMS.
+- Centralize backups with AWS Backup.
+- Monitor DataSync execution status for migrations.
+- Validate Snow Family jobs before data transfer.
+- Implement retry logic for long-running database operations.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for Amazon RDS, Aurora, DynamoDB, ElastiCache, EFS, FSx, AWS Backup, DataSync, Storage Gateway, and Snow Family. These examp
+
+les demonstrate production-ready automation for database provisioning, storage management, backup, migration, and recovery using Pyt
