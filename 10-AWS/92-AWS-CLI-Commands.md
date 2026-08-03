@@ -3046,3 +3046,626 @@ This section covered AWS CLI commands for Amazon S3, including bucket management
 
 ---
 
+# Amazon RDS
+
+---
+
+# List DB Instances
+
+```bash
+aws rds describe-db-instances
+```
+
+---
+
+# Describe Specific DB Instance
+
+```bash
+aws rds describe-db-instances \
+--db-instance-identifier prod-db
+```
+
+---
+
+# Create RDS Instance
+
+```bash
+aws rds create-db-instance \
+--db-instance-identifier prod-db \
+--engine mysql \
+--db-instance-class db.t3.micro \
+--allocated-storage 20 \
+--master-username admin \
+--master-user-password Password@123
+```
+
+---
+
+# Start DB Instance
+
+```bash
+aws rds start-db-instance \
+--db-instance-identifier prod-db
+```
+
+---
+
+# Stop DB Instance
+
+```bash
+aws rds stop-db-instance \
+--db-instance-identifier prod-db
+```
+
+---
+
+# Reboot DB Instance
+
+```bash
+aws rds reboot-db-instance \
+--db-instance-identifier prod-db
+```
+
+---
+
+# Modify DB Instance
+
+```bash
+aws rds modify-db-instance \
+--db-instance-identifier prod-db \
+--db-instance-class db.t3.small \
+--apply-immediately
+```
+
+---
+
+# Delete DB Instance
+
+```bash
+aws rds delete-db-instance \
+--db-instance-identifier prod-db \
+--skip-final-snapshot
+```
+
+---
+
+# Create Snapshot
+
+```bash
+aws rds create-db-snapshot \
+--db-instance-identifier prod-db \
+--db-snapshot-identifier prod-db-snapshot
+```
+
+---
+
+# List Snapshots
+
+```bash
+aws rds describe-db-snapshots
+```
+
+---
+
+# Restore from Snapshot
+
+```bash
+aws rds restore-db-instance-from-db-snapshot \
+--db-instance-identifier restored-db \
+--db-snapshot-identifier prod-db-snapshot
+```
+
+---
+
+# Delete Snapshot
+
+```bash
+aws rds delete-db-snapshot \
+--db-snapshot-identifier prod-db-snapshot
+```
+
+---
+
+# List Read Replicas
+
+```bash
+aws rds describe-db-instances \
+--query "DBInstances[?ReadReplicaSourceDBInstanceIdentifier!=null]"
+```
+
+---
+
+# Aurora
+
+---
+
+# List Aurora Clusters
+
+```bash
+aws rds describe-db-clusters
+```
+
+---
+
+# Describe Aurora Cluster
+
+```bash
+aws rds describe-db-clusters \
+--db-cluster-identifier aurora-cluster
+```
+
+---
+
+# Create Aurora Cluster
+
+```bash
+aws rds create-db-cluster \
+--db-cluster-identifier aurora-cluster \
+--engine aurora-mysql \
+--master-username admin \
+--master-user-password Password@123
+```
+
+---
+
+# Delete Aurora Cluster
+
+```bash
+aws rds delete-db-cluster \
+--db-cluster-identifier aurora-cluster \
+--skip-final-snapshot
+```
+
+---
+
+# DynamoDB
+
+---
+
+# List Tables
+
+```bash
+aws dynamodb list-tables
+```
+
+---
+
+# Describe Table
+
+```bash
+aws dynamodb describe-table \
+--table-name Employees
+```
+
+---
+
+# Create Table
+
+```bash
+aws dynamodb create-table \
+--cli-input-json file://table.json
+```
+
+---
+
+# Delete Table
+
+```bash
+aws dynamodb delete-table \
+--table-name Employees
+```
+
+---
+
+# Put Item
+
+```bash
+aws dynamodb put-item \
+--table-name Employees \
+--item file://employee.json
+```
+
+---
+
+# Get Item
+
+```bash
+aws dynamodb get-item \
+--table-name Employees \
+--key file://key.json
+```
+
+---
+
+# Scan Table
+
+```bash
+aws dynamodb scan \
+--table-name Employees
+```
+
+---
+
+# Query Table
+
+```bash
+aws dynamodb query \
+--table-name Employees \
+--key-condition-expression "EmployeeId = :id"
+```
+
+---
+
+# Delete Item
+
+```bash
+aws dynamodb delete-item \
+--table-name Employees \
+--key file://key.json
+```
+
+---
+
+# ElastiCache
+
+---
+
+# List Cache Clusters
+
+```bash
+aws elasticache describe-cache-clusters
+```
+
+---
+
+# Create Redis Cluster
+
+```bash
+aws elasticache create-cache-cluster \
+--cache-cluster-id redis-prod \
+--engine redis \
+--cache-node-type cache.t3.micro \
+--num-cache-nodes 1
+```
+
+---
+
+# Delete Cache Cluster
+
+```bash
+aws elasticache delete-cache-cluster \
+--cache-cluster-id redis-prod
+```
+
+---
+
+# EFS
+
+---
+
+# List File Systems
+
+```bash
+aws efs describe-file-systems
+```
+
+---
+
+# Create File System
+
+```bash
+aws efs create-file-system
+```
+
+---
+
+# Describe Mount Targets
+
+```bash
+aws efs describe-mount-targets
+```
+
+---
+
+# Create Mount Target
+
+```bash
+aws efs create-mount-target \
+--file-system-id fs-xxxxxxxx \
+--subnet-id subnet-xxxxxxxx \
+--security-groups sg-xxxxxxxx
+```
+
+---
+
+# Delete Mount Target
+
+```bash
+aws efs delete-mount-target \
+--mount-target-id fsmt-xxxxxxxx
+```
+
+---
+
+# Delete File System
+
+```bash
+aws efs delete-file-system \
+--file-system-id fs-xxxxxxxx
+```
+
+---
+
+# Amazon FSx
+
+---
+
+# List File Systems
+
+```bash
+aws fsx describe-file-systems
+```
+
+---
+
+# Create Windows FSx
+
+```bash
+aws fsx create-file-system \
+--file-system-type WINDOWS \
+--storage-capacity 32
+```
+
+---
+
+# Delete File System
+
+```bash
+aws fsx delete-file-system \
+--file-system-id fs-xxxxxxxx
+```
+
+---
+
+# AWS Backup
+
+---
+
+# List Backup Vaults
+
+```bash
+aws backup list-backup-vaults
+```
+
+---
+
+# Create Backup Vault
+
+```bash
+aws backup create-backup-vault \
+--backup-vault-name ProductionVault
+```
+
+---
+
+# List Recovery Points
+
+```bash
+aws backup list-recovery-points-by-backup-vault \
+--backup-vault-name ProductionVault
+```
+
+---
+
+# Start Backup Job
+
+```bash
+aws backup start-backup-job \
+--backup-vault-name ProductionVault \
+--resource-arn arn:aws:ec2:...
+```
+
+---
+
+# Start Restore Job
+
+```bash
+aws backup start-restore-job \
+--recovery-point-arn arn:aws:backup:...
+```
+
+---
+
+# Delete Backup Vault
+
+```bash
+aws backup delete-backup-vault \
+--backup-vault-name ProductionVault
+```
+
+---
+
+# AWS DataSync
+
+---
+
+# List Agents
+
+```bash
+aws datasync list-agents
+```
+
+---
+
+# List Locations
+
+```bash
+aws datasync list-locations
+```
+
+---
+
+# List Tasks
+
+```bash
+aws datasync list-tasks
+```
+
+---
+
+# Start Task
+
+```bash
+aws datasync start-task-execution \
+--task-arn arn:aws:datasync:...
+```
+
+---
+
+# Describe Task
+
+```bash
+aws datasync describe-task \
+--task-arn arn:aws:datasync:...
+```
+
+---
+
+# AWS Storage Gateway
+
+---
+
+# List Gateways
+
+```bash
+aws storagegateway list-gateways
+```
+
+---
+
+# Describe Gateway
+
+```bash
+aws storagegateway describe-gateway-information \
+--gateway-arn arn:aws:storagegateway:...
+```
+
+---
+
+# List Volumes
+
+```bash
+aws storagegateway list-volumes
+```
+
+---
+
+# Refresh Cache
+
+```bash
+aws storagegateway refresh-cache \
+--file-share-arn arn:aws:storagegateway:...
+```
+
+---
+
+# AWS Snow Family
+
+---
+
+# List Snow Jobs
+
+```bash
+aws snowball list-jobs
+```
+
+---
+
+# Describe Snow Job
+
+```bash
+aws snowball describe-job \
+--job-id JIDxxxxxxxx
+```
+
+---
+
+# Create Snow Job
+
+```bash
+aws snowball create-job \
+--job-type IMPORT \
+--resources file://resources.json \
+--address-id ADxxxxxxxx
+```
+
+---
+
+# Cancel Snow Job
+
+```bash
+aws snowball cancel-job \
+--job-id JIDxxxxxxxx
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List RDS Identifiers
+
+```bash
+aws rds describe-db-instances \
+--query "DBInstances[].DBInstanceIdentifier"
+```
+
+---
+
+# List DynamoDB Tables
+
+```bash
+aws dynamodb list-tables \
+--query "TableNames"
+```
+
+---
+
+# List EFS IDs
+
+```bash
+aws efs describe-file-systems \
+--query "FileSystems[].FileSystemId"
+```
+
+---
+
+# List Backup Vault Names
+
+```bash
+aws backup list-backup-vaults \
+--query "BackupVaultList[].BackupVaultName"
+```
+
+---
+
+# Best Practices
+
+- Enable Multi-AZ for production RDS databases.
+- Automate RDS snapshots and backups.
+- Use DynamoDB Query instead of Scan whenever possible.
+- Enable encryption for EFS, FSx, and RDS.
+- Use AWS Backup to centralize backup policies.
+- Monitor DataSync task executions for migration jobs.
+- Validate Snow Family jobs before shipping devices.
+- Tag all storage resources consistently for cost allocation.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for Amazon RDS, Aurora, DynamoDB, ElastiCache, EFS, FSx, AWS Backup, DataSync, Storage Gateway, and Snow Family. These commands are commonly used for provisioning, managing, backing up, and migrating AWS database and storage resources.
+
+---
+
