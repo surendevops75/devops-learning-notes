@@ -1185,3 +1185,1473 @@ except ClientError as error:
 
 This section covered Boto3 examples for Amazon VPC, Subnets, Route Tables, Internet Gateways, NAT Gateways, Security Groups, Elastic IPs, Network ACLs, VPC Peering, Transit Gateway, ENIs, VPC Endpoints, waiters, and exception handling. These examples provide practical automation patterns for building and managing AWS networking infrastructure using Python.
 
+---
+
+# IAM
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+iam = boto3.client("iam")
+```
+
+---
+
+# List IAM Users
+
+```python
+response = iam.list_users()
+
+for user in response["Users"]:
+    print(user["UserName"])
+```
+
+---
+
+# Get IAM User
+
+```python
+response = iam.get_user(
+    UserName="devuser"
+)
+
+print(response["User"])
+```
+
+---
+
+# Create IAM User
+
+```python
+response = iam.create_user(
+    UserName="devuser"
+)
+
+print(response["User"]["Arn"])
+```
+
+---
+
+# Delete IAM User
+
+```python
+iam.delete_user(
+    UserName="devuser"
+)
+```
+
+---
+
+# Update IAM User
+
+```python
+iam.update_user(
+    UserName="devuser",
+    NewUserName="developer"
+)
+```
+
+---
+
+# List IAM Groups
+
+```python
+response = iam.list_groups()
+
+for group in response["Groups"]:
+    print(group["GroupName"])
+```
+
+---
+
+# Create IAM Group
+
+```python
+iam.create_group(
+    GroupName="DevOps"
+)
+```
+
+---
+
+# Delete IAM Group
+
+```python
+iam.delete_group(
+    GroupName="DevOps"
+)
+```
+
+---
+
+# Add User to Group
+
+```python
+iam.add_user_to_group(
+    GroupName="DevOps",
+    UserName="devuser"
+)
+```
+
+---
+
+# Remove User from Group
+
+```python
+iam.remove_user_from_group(
+    GroupName="DevOps",
+    UserName="devuser"
+)
+```
+
+---
+
+# List Users in Group
+
+```python
+response = iam.get_group(
+    GroupName="DevOps"
+)
+
+for user in response["Users"]:
+    print(user["UserName"])
+```
+
+---
+
+# IAM Roles
+
+---
+
+# List Roles
+
+```python
+response = iam.list_roles()
+
+for role in response["Roles"]:
+    print(role["RoleName"])
+```
+
+---
+
+# Get Role
+
+```python
+response = iam.get_role(
+    RoleName="EC2Role"
+)
+
+print(response["Role"])
+```
+
+---
+
+# Create Role
+
+```python
+import json
+
+trust_policy = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+
+response = iam.create_role(
+    RoleName="EC2Role",
+    AssumeRolePolicyDocument=json.dumps(trust_policy)
+)
+
+print(response["Role"]["Arn"])
+```
+
+---
+
+# Delete Role
+
+```python
+iam.delete_role(
+    RoleName="EC2Role"
+)
+```
+
+---
+
+# Attach Managed Policy
+
+```python
+iam.attach_role_policy(
+    RoleName="EC2Role",
+    PolicyArn="arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+)
+```
+
+---
+
+# Detach Managed Policy
+
+```python
+iam.detach_role_policy(
+    RoleName="EC2Role",
+    PolicyArn="arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+)
+```
+
+---
+
+# List Attached Policies
+
+```python
+response = iam.list_attached_role_policies(
+    RoleName="EC2Role"
+)
+
+for policy in response["AttachedPolicies"]:
+    print(policy["PolicyName"])
+```
+
+---
+
+# IAM Policies
+
+---
+
+# List Policies
+
+```python
+response = iam.list_policies(
+    Scope="Local"
+)
+
+for policy in response["Policies"]:
+    print(policy["PolicyName"])
+```
+
+---
+
+# Create Policy
+
+```python
+policy_document = {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+response = iam.create_policy(
+    PolicyName="S3ReadOnly",
+    PolicyDocument=json.dumps(policy_document)
+)
+
+print(response["Policy"]["Arn"])
+```
+
+---
+
+# Get Policy
+
+```python
+response = iam.get_policy(
+    PolicyArn="arn:aws:iam::123456789012:policy/S3ReadOnly"
+)
+
+print(response["Policy"])
+```
+
+---
+
+# Delete Policy
+
+```python
+iam.delete_policy(
+    PolicyArn="arn:aws:iam::123456789012:policy/S3ReadOnly"
+)
+```
+
+---
+
+# Access Keys
+
+---
+
+# List Access Keys
+
+```python
+response = iam.list_access_keys(
+    UserName="devuser"
+)
+
+print(response["AccessKeyMetadata"])
+```
+
+---
+
+# Create Access Key
+
+```python
+response = iam.create_access_key(
+    UserName="devuser"
+)
+
+print(response["AccessKey"]["AccessKeyId"])
+```
+
+---
+
+# Delete Access Key
+
+```python
+iam.delete_access_key(
+    UserName="devuser",
+    AccessKeyId="AKIAxxxxxxxx"
+)
+```
+
+---
+
+# Update Access Key
+
+```python
+iam.update_access_key(
+    UserName="devuser",
+    AccessKeyId="AKIAxxxxxxxx",
+    Status="Inactive"
+)
+```
+
+---
+
+# Login Profile
+
+---
+
+# Create Console Password
+
+```python
+iam.create_login_profile(
+    UserName="devuser",
+    Password="Password@123",
+    PasswordResetRequired=True
+)
+```
+
+---
+
+# Delete Login Profile
+
+```python
+iam.delete_login_profile(
+    UserName="devuser"
+)
+```
+
+---
+
+# AWS STS
+
+---
+
+# Import STS Client
+
+```python
+sts = boto3.client("sts")
+```
+
+---
+
+# Get Caller Identity
+
+```python
+response = sts.get_caller_identity()
+
+print(response["Arn"])
+```
+
+---
+
+# Assume Role
+
+```python
+response = sts.assume_role(
+    RoleArn="arn:aws:iam::123456789012:role/AdminRole",
+    RoleSessionName="AutomationSession"
+)
+
+credentials = response["Credentials"]
+```
+
+---
+
+# Get Session Token
+
+```python
+response = sts.get_session_token()
+
+print(response["Credentials"])
+```
+
+---
+
+# AWS KMS
+
+---
+
+# Import KMS Client
+
+```python
+kms = boto3.client("kms")
+```
+
+---
+
+# List Keys
+
+```python
+response = kms.list_keys()
+
+for key in response["Keys"]:
+    print(key["KeyId"])
+```
+
+---
+
+# Create KMS Key
+
+```python
+response = kms.create_key(
+    Description="Production Key"
+)
+
+print(response["KeyMetadata"]["KeyId"])
+```
+
+---
+
+# Describe Key
+
+```python
+response = kms.describe_key(
+    KeyId="alias/aws/s3"
+)
+
+print(response["KeyMetadata"])
+```
+
+---
+
+# Create Alias
+
+```python
+kms.create_alias(
+    AliasName="alias/project-key",
+    TargetKeyId="<key-id>"
+)
+```
+
+---
+
+# Delete Alias
+
+```python
+kms.delete_alias(
+    AliasName="alias/project-key"
+)
+```
+
+---
+
+# Enable Key
+
+```python
+kms.enable_key(
+    KeyId="<key-id>"
+)
+```
+
+---
+
+# Disable Key
+
+```python
+kms.disable_key(
+    KeyId="<key-id>"
+)
+```
+
+---
+
+# Encrypt Data
+
+```python
+response = kms.encrypt(
+    KeyId="alias/project-key",
+    Plaintext=b"My Secret"
+)
+
+ciphertext = response["CiphertextBlob"]
+```
+
+---
+
+# Decrypt Data
+
+```python
+response = kms.decrypt(
+    CiphertextBlob=ciphertext
+)
+
+print(response["Plaintext"])
+```
+
+---
+
+# AWS Secrets Manager
+
+---
+
+# Import Client
+
+```python
+secrets = boto3.client("secretsmanager")
+```
+
+---
+
+# List Secrets
+
+```python
+response = secrets.list_secrets()
+
+for secret in response["SecretList"]:
+    print(secret["Name"])
+```
+
+---
+
+# Create Secret
+
+```python
+secrets.create_secret(
+    Name="db-password",
+    SecretString="Password@123"
+)
+```
+
+---
+
+# Get Secret
+
+```python
+response = secrets.get_secret_value(
+    SecretId="db-password"
+)
+
+print(response["SecretString"])
+```
+
+---
+
+# Update Secret
+
+```python
+secrets.update_secret(
+    SecretId="db-password",
+    SecretString="NewPassword123"
+)
+```
+
+---
+
+# Delete Secret
+
+```python
+secrets.delete_secret(
+    SecretId="db-password"
+)
+```
+
+---
+
+# AWS Certificate Manager (ACM)
+
+---
+
+# Import Client
+
+```python
+acm = boto3.client("acm")
+```
+
+---
+
+# List Certificates
+
+```python
+response = acm.list_certificates()
+
+for cert in response["CertificateSummaryList"]:
+    print(cert["DomainName"])
+```
+
+---
+
+# Describe Certificate
+
+```python
+response = acm.describe_certificate(
+    CertificateArn="arn:aws:acm:..."
+)
+
+print(response["Certificate"])
+```
+
+---
+
+# Request Certificate
+
+```python
+response = acm.request_certificate(
+    DomainName="example.com",
+    ValidationMethod="DNS"
+)
+
+print(response["CertificateArn"])
+```
+
+---
+
+# Delete Certificate
+
+```python
+acm.delete_certificate(
+    CertificateArn="arn:aws:acm:..."
+)
+```
+
+---
+
+# AWS Organizations
+
+---
+
+# Import Client
+
+```python
+org = boto3.client("organizations")
+```
+
+---
+
+# List Accounts
+
+```python
+response = org.list_accounts()
+
+for account in response["Accounts"]:
+    print(account["Name"])
+```
+
+---
+
+# Describe Organization
+
+```python
+response = org.describe_organization()
+
+print(response["Organization"])
+```
+
+---
+
+# List Policies
+
+```python
+response = org.list_policies(
+    Filter="SERVICE_CONTROL_POLICY"
+)
+
+for policy in response["Policies"]:
+    print(policy["Name"])
+```
+
+---
+
+# IAM Identity Center (AWS SSO)
+
+---
+
+# Import Client
+
+```python
+sso = boto3.client("sso-admin")
+```
+
+---
+
+# List Instances
+
+```python
+response = sso.list_instances()
+
+for instance in response["Instances"]:
+    print(instance["InstanceArn"])
+```
+
+---
+
+# List Permission Sets
+
+```python
+response = sso.list_permission_sets(
+    InstanceArn="<instance-arn>"
+)
+
+print(response["PermissionSets"])
+```
+
+---
+
+# Pagination Example
+
+```python
+paginator = iam.get_paginator("list_users")
+
+for page in paginator.paginate():
+    for user in page["Users"]:
+        print(user["UserName"])
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = iam.list_users()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Use IAM Roles instead of IAM Users for AWS workloads.
+- Never hardcode AWS credentials in Python code.
+- Rotate access keys regularly.
+- Store application secrets in AWS Secrets Manager.
+- Use customer-managed KMS keys for sensitive workloads.
+- Apply the principle of least privilege to IAM policies.
+- Use paginators for APIs that return large result sets.
+- Catch and handle `ClientError` exceptions for all AWS API calls.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for IAM Users, Groups, Roles, Policies, Access Keys, Login Profiles, STS, KMS, Secrets Manager, ACM, AWS Organizations, IAM Identity Center, pagination, and exception handling. These examples demonstrate secure identity and access management automation using Python.
+
+---
+
+# Amazon S3
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+s3 = boto3.client("s3")
+```
+
+---
+
+# Create Resource Object
+
+```python
+import boto3
+
+s3_resource = boto3.resource("s3")
+```
+
+---
+
+# List Buckets
+
+```python
+response = s3.list_buckets()
+
+for bucket in response["Buckets"]:
+    print(bucket["Name"])
+```
+
+---
+
+# Create Bucket
+
+```python
+response = s3.create_bucket(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Create Bucket in Specific Region
+
+```python
+response = s3.create_bucket(
+    Bucket="my-demo-bucket",
+    CreateBucketConfiguration={
+        "LocationConstraint": "ap-south-1"
+    }
+)
+```
+
+---
+
+# Delete Bucket
+
+```python
+s3.delete_bucket(
+    Bucket="my-demo-bucket"
+)
+```
+
+---
+
+# Check Bucket Exists
+
+```python
+try:
+    s3.head_bucket(
+        Bucket="my-demo-bucket"
+    )
+    print("Bucket exists")
+
+except Exception:
+    print("Bucket not found")
+```
+
+---
+
+# Upload File
+
+```python
+s3.upload_file(
+    "app.log",
+    "my-demo-bucket",
+    "logs/app.log"
+)
+```
+
+---
+
+# Upload Bytes
+
+```python
+s3.put_object(
+    Bucket="my-demo-bucket",
+    Key="hello.txt",
+    Body=b"Hello AWS"
+)
+```
+
+---
+
+# Upload JSON
+
+```python
+import json
+
+data = {
+    "name": "Surendra",
+    "role": "DevOps"
+}
+
+s3.put_object(
+    Bucket="my-demo-bucket",
+    Key="employee.json",
+    Body=json.dumps(data)
+)
+```
+
+---
+
+# Download File
+
+```python
+s3.download_file(
+    "my-demo-bucket",
+    "logs/app.log",
+    "./app.log"
+)
+```
+
+---
+
+# Download Object
+
+```python
+response = s3.get_object(
+    Bucket="my-demo-bucket",
+    Key="hello.txt"
+)
+
+print(
+    response["Body"].read().decode()
+)
+```
+
+---
+
+# Copy Object
+
+```python
+s3.copy_object(
+    Bucket="destination-bucket",
+    CopySource={
+        "Bucket": "source-bucket",
+        "Key": "app.log"
+    },
+    Key="backup/app.log"
+)
+```
+
+---
+
+# Delete Object
+
+```python
+s3.delete_object(
+    Bucket="my-demo-bucket",
+    Key="hello.txt"
+)
+```
+
+---
+
+# Delete Multiple Objects
+
+```python
+s3.delete_objects(
+    Bucket="my-demo-bucket",
+    Delete={
+        "Objects": [
+            {
+                "Key": "a.txt"
+            },
+            {
+                "Key": "b.txt"
+            }
+        ]
+    }
+)
+```
+
+---
+
+# List Objects
+
+```python
+response = s3.list_objects_v2(
+    Bucket="my-demo-bucket"
+)
+
+for obj in response.get("Contents", []):
+    print(obj["Key"])
+```
+
+---
+
+# List Objects by Prefix
+
+```python
+response = s3.list_objects_v2(
+    Bucket="my-demo-bucket",
+    Prefix="logs/"
+)
+
+for obj in response.get("Contents", []):
+    print(obj["Key"])
+```
+
+---
+
+# Pagination
+
+```python
+paginator = s3.get_paginator(
+    "list_objects_v2"
+)
+
+for page in paginator.paginate(
+    Bucket="my-demo-bucket"
+):
+    for obj in page.get("Contents", []):
+        print(obj["Key"])
+```
+
+---
+
+# Upload Directory
+
+```python
+import os
+
+for root, dirs, files in os.walk("./website"):
+
+    for file in files:
+
+        local_path = os.path.join(root, file)
+
+        s3.upload_file(
+            local_path,
+            "my-demo-bucket",
+            local_path
+        )
+```
+
+---
+
+# Bucket Versioning
+
+---
+
+# Enable Versioning
+
+```python
+s3.put_bucket_versioning(
+    Bucket="my-demo-bucket",
+    VersioningConfiguration={
+        "Status": "Enabled"
+    }
+)
+```
+
+---
+
+# Check Versioning
+
+```python
+response = s3.get_bucket_versioning(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# List Object Versions
+
+```python
+response = s3.list_object_versions(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Bucket Encryption
+
+---
+
+# Enable SSE-S3
+
+```python
+s3.put_bucket_encryption(
+    Bucket="my-demo-bucket",
+    ServerSideEncryptionConfiguration={
+        "Rules": [
+            {
+                "ApplyServerSideEncryptionByDefault": {
+                    "SSEAlgorithm": "AES256"
+                }
+            }
+        ]
+    }
+)
+```
+
+---
+
+# Enable SSE-KMS
+
+```python
+s3.put_bucket_encryption(
+    Bucket="my-demo-bucket",
+    ServerSideEncryptionConfiguration={
+        "Rules": [
+            {
+                "ApplyServerSideEncryptionByDefault": {
+                    "SSEAlgorithm": "aws:kms",
+                    "KMSMasterKeyID": "alias/project-key"
+                }
+            }
+        ]
+    }
+)
+```
+
+---
+
+# Get Encryption
+
+```python
+response = s3.get_bucket_encryption(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Bucket Policy
+
+---
+
+# Apply Bucket Policy
+
+```python
+import json
+
+policy = {
+    "Version": "2012-10-17",
+    "Statement": []
+}
+
+s3.put_bucket_policy(
+    Bucket="my-demo-bucket",
+    Policy=json.dumps(policy)
+)
+```
+
+---
+
+# Get Bucket Policy
+
+```python
+response = s3.get_bucket_policy(
+    Bucket="my-demo-bucket"
+)
+
+print(response["Policy"])
+```
+
+---
+
+# Delete Bucket Policy
+
+```python
+s3.delete_bucket_policy(
+    Bucket="my-demo-bucket"
+)
+```
+
+---
+
+# Public Access Block
+
+---
+
+# Enable Public Access Block
+
+```python
+s3.put_public_access_block(
+    Bucket="my-demo-bucket",
+    PublicAccessBlockConfiguration={
+        "BlockPublicAcls": True,
+        "IgnorePublicAcls": True,
+        "BlockPublicPolicy": True,
+        "RestrictPublicBuckets": True
+    }
+)
+```
+
+---
+
+# Get Public Access Block
+
+```python
+response = s3.get_public_access_block(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Lifecycle Rules
+
+---
+
+# Apply Lifecycle Policy
+
+```python
+s3.put_bucket_lifecycle_configuration(
+    Bucket="my-demo-bucket",
+    LifecycleConfiguration={
+        "Rules": [
+            {
+                "ID": "ArchiveLogs",
+                "Status": "Enabled",
+                "Filter": {
+                    "Prefix": "logs/"
+                },
+                "Transitions": [
+                    {
+                        "Days": 30,
+                        "StorageClass": "GLACIER"
+                    }
+                ]
+            }
+        ]
+    }
+)
+```
+
+---
+
+# Get Lifecycle Configuration
+
+```python
+response = s3.get_bucket_lifecycle_configuration(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Replication
+
+---
+
+# Get Replication
+
+```python
+response = s3.get_bucket_replication(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Presigned URL
+
+---
+
+# Generate Download URL
+
+```python
+url = s3.generate_presigned_url(
+    "get_object",
+    Params={
+        "Bucket": "my-demo-bucket",
+        "Key": "logs/app.log"
+    },
+    ExpiresIn=3600
+)
+
+print(url)
+```
+
+---
+
+# Generate Upload URL
+
+```python
+url = s3.generate_presigned_url(
+    "put_object",
+    Params={
+        "Bucket": "my-demo-bucket",
+        "Key": "upload.txt"
+    },
+    ExpiresIn=1800
+)
+```
+
+---
+
+# Multipart Upload
+
+---
+
+# Create Multipart Upload
+
+```python
+response = s3.create_multipart_upload(
+    Bucket="my-demo-bucket",
+    Key="large.iso"
+)
+
+upload_id = response["UploadId"]
+```
+
+---
+
+# List Multipart Uploads
+
+```python
+response = s3.list_multipart_uploads(
+    Bucket="my-demo-bucket"
+)
+
+print(response)
+```
+
+---
+
+# Abort Multipart Upload
+
+```python
+s3.abort_multipart_upload(
+    Bucket="my-demo-bucket",
+    Key="large.iso",
+    UploadId=upload_id
+)
+```
+
+---
+
+# Object Metadata
+
+---
+
+# Head Object
+
+```python
+response = s3.head_object(
+    Bucket="my-demo-bucket",
+    Key="logs/app.log"
+)
+
+print(response)
+```
+
+---
+
+# Upload Metadata
+
+```python
+s3.copy_object(
+    Bucket="my-demo-bucket",
+    CopySource={
+        "Bucket": "my-demo-bucket",
+        "Key": "logs/app.log"
+    },
+    Key="logs/app.log",
+    Metadata={
+        "Department": "DevOps"
+    },
+    MetadataDirective="REPLACE"
+)
+```
+
+---
+
+# Resource API
+
+---
+
+# List Buckets (Resource)
+
+```python
+for bucket in s3_resource.buckets.all():
+    print(bucket.name)
+```
+
+---
+
+# List Objects (Resource)
+
+```python
+bucket = s3_resource.Bucket(
+    "my-demo-bucket"
+)
+
+for obj in bucket.objects.all():
+    print(obj.key)
+```
+
+---
+
+# Delete All Objects
+
+```python
+bucket = s3_resource.Bucket(
+    "my-demo-bucket"
+)
+
+bucket.objects.all().delete()
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    s3.list_buckets()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Enable Versioning on production buckets.
+- Enable default encryption using SSE-KMS.
+- Block all public access unless required.
+- Use multipart uploads for large files.
+- Use paginators for buckets with millions of objects.
+- Generate presigned URLs for temporary access instead of making objects public.
+- Store application configuration separately from user-generated data.
+- Enable lifecycle rules to optimize storage costs.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for Amazon S3 including bucket management, object operations, uploads, downloads, versioning, encryption, lifecycle policies, replication, presigned URLs, multipart uploads, metadata management, Resource API usage, pagination, and exception handling. These examples represent common production automation tasks for AWS storage management.
+
+---
+
