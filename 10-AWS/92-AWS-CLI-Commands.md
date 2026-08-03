@@ -1120,3 +1120,632 @@ This section covered advanced EC2 administration using the AWS CLI, including Se
 
 ---
 
+# Amazon VPC
+
+---
+
+# List VPCs
+
+```bash
+aws ec2 describe-vpcs
+```
+
+---
+
+# Describe Specific VPC
+
+```bash
+aws ec2 describe-vpcs \
+--vpc-ids vpc-0123456789abcdef0
+```
+
+---
+
+# Create VPC
+
+```bash
+aws ec2 create-vpc \
+--cidr-block 10.0.0.0/16
+```
+
+---
+
+# Delete VPC
+
+```bash
+aws ec2 delete-vpc \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Modify DNS Support
+
+```bash
+aws ec2 modify-vpc-attribute \
+--vpc-id vpc-xxxxxxxx \
+--enable-dns-support
+```
+
+---
+
+# Enable DNS Hostnames
+
+```bash
+aws ec2 modify-vpc-attribute \
+--vpc-id vpc-xxxxxxxx \
+--enable-dns-hostnames
+```
+
+---
+
+# Subnets
+
+---
+
+# List Subnets
+
+```bash
+aws ec2 describe-subnets
+```
+
+---
+
+# Describe Specific Subnet
+
+```bash
+aws ec2 describe-subnets \
+--subnet-ids subnet-xxxxxxxx
+```
+
+---
+
+# Create Subnet
+
+```bash
+aws ec2 create-subnet \
+--vpc-id vpc-xxxxxxxx \
+--cidr-block 10.0.1.0/24 \
+--availability-zone ap-south-1a
+```
+
+---
+
+# Delete Subnet
+
+```bash
+aws ec2 delete-subnet \
+--subnet-id subnet-xxxxxxxx
+```
+
+---
+
+# Enable Auto Assign Public IP
+
+```bash
+aws ec2 modify-subnet-attribute \
+--subnet-id subnet-xxxxxxxx \
+--map-public-ip-on-launch
+```
+
+---
+
+# Route Tables
+
+---
+
+# List Route Tables
+
+```bash
+aws ec2 describe-route-tables
+```
+
+---
+
+# Create Route Table
+
+```bash
+aws ec2 create-route-table \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Associate Route Table
+
+```bash
+aws ec2 associate-route-table \
+--subnet-id subnet-xxxxxxxx \
+--route-table-id rtb-xxxxxxxx
+```
+
+---
+
+# Create Internet Route
+
+```bash
+aws ec2 create-route \
+--route-table-id rtb-xxxxxxxx \
+--destination-cidr-block 0.0.0.0/0 \
+--gateway-id igw-xxxxxxxx
+```
+
+---
+
+# Delete Route
+
+```bash
+aws ec2 delete-route \
+--route-table-id rtb-xxxxxxxx \
+--destination-cidr-block 0.0.0.0/0
+```
+
+---
+
+# Delete Route Table
+
+```bash
+aws ec2 delete-route-table \
+--route-table-id rtb-xxxxxxxx
+```
+
+---
+
+# Internet Gateway
+
+---
+
+# List Internet Gateways
+
+```bash
+aws ec2 describe-internet-gateways
+```
+
+---
+
+# Create Internet Gateway
+
+```bash
+aws ec2 create-internet-gateway
+```
+
+---
+
+# Attach Internet Gateway
+
+```bash
+aws ec2 attach-internet-gateway \
+--internet-gateway-id igw-xxxxxxxx \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Detach Internet Gateway
+
+```bash
+aws ec2 detach-internet-gateway \
+--internet-gateway-id igw-xxxxxxxx \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Delete Internet Gateway
+
+```bash
+aws ec2 delete-internet-gateway \
+--internet-gateway-id igw-xxxxxxxx
+```
+
+---
+
+# NAT Gateway
+
+---
+
+# List NAT Gateways
+
+```bash
+aws ec2 describe-nat-gateways
+```
+
+---
+
+# Create NAT Gateway
+
+```bash
+aws ec2 create-nat-gateway \
+--subnet-id subnet-xxxxxxxx \
+--allocation-id eipalloc-xxxxxxxx
+```
+
+---
+
+# Delete NAT Gateway
+
+```bash
+aws ec2 delete-nat-gateway \
+--nat-gateway-id nat-xxxxxxxx
+```
+
+---
+
+# Network ACL
+
+---
+
+# List Network ACLs
+
+```bash
+aws ec2 describe-network-acls
+```
+
+---
+
+# Create Network ACL
+
+```bash
+aws ec2 create-network-acl \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Create Inbound Rule
+
+```bash
+aws ec2 create-network-acl-entry \
+--network-acl-id acl-xxxxxxxx \
+--rule-number 100 \
+--protocol tcp \
+--port-range From=80,To=80 \
+--cidr-block 0.0.0.0/0 \
+--rule-action allow \
+--ingress
+```
+
+---
+
+# Delete NACL Rule
+
+```bash
+aws ec2 delete-network-acl-entry \
+--network-acl-id acl-xxxxxxxx \
+--rule-number 100 \
+--ingress
+```
+
+---
+
+# Delete Network ACL
+
+```bash
+aws ec2 delete-network-acl \
+--network-acl-id acl-xxxxxxxx
+```
+
+---
+
+# VPC Peering
+
+---
+
+# List Peering Connections
+
+```bash
+aws ec2 describe-vpc-peering-connections
+```
+
+---
+
+# Create Peering Connection
+
+```bash
+aws ec2 create-vpc-peering-connection \
+--vpc-id vpc-aaaa \
+--peer-vpc-id vpc-bbbb
+```
+
+---
+
+# Accept Peering Request
+
+```bash
+aws ec2 accept-vpc-peering-connection \
+--vpc-peering-connection-id pcx-xxxxxxxx
+```
+
+---
+
+# Delete Peering Connection
+
+```bash
+aws ec2 delete-vpc-peering-connection \
+--vpc-peering-connection-id pcx-xxxxxxxx
+```
+
+---
+
+# Transit Gateway
+
+---
+
+# List Transit Gateways
+
+```bash
+aws ec2 describe-transit-gateways
+```
+
+---
+
+# Create Transit Gateway
+
+```bash
+aws ec2 create-transit-gateway
+```
+
+---
+
+# Delete Transit Gateway
+
+```bash
+aws ec2 delete-transit-gateway \
+--transit-gateway-id tgw-xxxxxxxx
+```
+
+---
+
+# List Attachments
+
+```bash
+aws ec2 describe-transit-gateway-attachments
+```
+
+---
+
+# Attach VPC
+
+```bash
+aws ec2 create-transit-gateway-vpc-attachment \
+--transit-gateway-id tgw-xxxxxxxx \
+--vpc-id vpc-xxxxxxxx \
+--subnet-ids subnet-1 subnet-2
+```
+
+---
+
+# Elastic Network Interface (ENI)
+
+---
+
+# List Network Interfaces
+
+```bash
+aws ec2 describe-network-interfaces
+```
+
+---
+
+# Create ENI
+
+```bash
+aws ec2 create-network-interface \
+--subnet-id subnet-xxxxxxxx
+```
+
+---
+
+# Attach ENI
+
+```bash
+aws ec2 attach-network-interface \
+--network-interface-id eni-xxxxxxxx \
+--instance-id i-xxxxxxxx \
+--device-index 1
+```
+
+---
+
+# Detach ENI
+
+```bash
+aws ec2 detach-network-interface \
+--attachment-id eni-attach-xxxxxxxx
+```
+
+---
+
+# Delete ENI
+
+```bash
+aws ec2 delete-network-interface \
+--network-interface-id eni-xxxxxxxx
+```
+
+---
+
+# VPC Endpoints
+
+---
+
+# List VPC Endpoints
+
+```bash
+aws ec2 describe-vpc-endpoints
+```
+
+---
+
+# Create Gateway Endpoint (S3)
+
+```bash
+aws ec2 create-vpc-endpoint \
+--vpc-id vpc-xxxxxxxx \
+--service-name com.amazonaws.ap-south-1.s3 \
+--route-table-ids rtb-xxxxxxxx \
+--vpc-endpoint-type Gateway
+```
+
+---
+
+# Create Interface Endpoint
+
+```bash
+aws ec2 create-vpc-endpoint \
+--vpc-id vpc-xxxxxxxx \
+--service-name com.amazonaws.ap-south-1.ec2 \
+--subnet-ids subnet-xxxxxxxx \
+--security-group-ids sg-xxxxxxxx \
+--vpc-endpoint-type Interface
+```
+
+---
+
+# Delete VPC Endpoint
+
+```bash
+aws ec2 delete-vpc-endpoints \
+--vpc-endpoint-ids vpce-xxxxxxxx
+```
+
+---
+
+# VPN
+
+---
+
+# List VPN Connections
+
+```bash
+aws ec2 describe-vpn-connections
+```
+
+---
+
+# List Customer Gateways
+
+```bash
+aws ec2 describe-customer-gateways
+```
+
+---
+
+# List Virtual Private Gateways
+
+```bash
+aws ec2 describe-vpn-gateways
+```
+
+---
+
+# Direct Connect
+
+---
+
+# List Direct Connect Connections
+
+```bash
+aws directconnect describe-connections
+```
+
+---
+
+# List Virtual Interfaces
+
+```bash
+aws directconnect describe-virtual-interfaces
+```
+
+---
+
+# DHCP Options
+
+---
+
+# List DHCP Option Sets
+
+```bash
+aws ec2 describe-dhcp-options
+```
+
+---
+
+# Create DHCP Option Set
+
+```bash
+aws ec2 create-dhcp-options \
+--dhcp-configurations Key=domain-name,Values=example.internal
+```
+
+---
+
+# Associate DHCP Option Set
+
+```bash
+aws ec2 associate-dhcp-options \
+--dhcp-options-id dopt-xxxxxxxx \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List VPC IDs
+
+```bash
+aws ec2 describe-vpcs \
+--query "Vpcs[].VpcId"
+```
+
+---
+
+# List Public Subnets
+
+```bash
+aws ec2 describe-subnets \
+--filters Name=map-public-ip-on-launch,Values=true
+```
+
+---
+
+# List Route Table IDs
+
+```bash
+aws ec2 describe-route-tables \
+--query "RouteTables[].RouteTableId"
+```
+
+---
+
+# List Internet Gateway IDs
+
+```bash
+aws ec2 describe-internet-gateways \
+--query "InternetGateways[].InternetGatewayId"
+```
+
+---
+
+# Best Practices
+
+- Use private subnets for application and database tiers.
+- Enable DNS support and DNS hostnames in production VPCs.
+- Use NAT Gateways for outbound internet access from private subnets.
+- Prefer Gateway Endpoints for Amazon S3 and DynamoDB to reduce NAT Gateway costs.
+- Use Interface Endpoints (PrivateLink) for private access to AWS services.
+- Keep Network ACLs simple; rely primarily on Security Groups.
+- Use Transit Gateway instead of complex VPC peering for large environments.
+- Tag all networking resources consistently.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for Amazon VPC, Subnets, Route Tables, Internet Gateways, NAT Gateways, Network ACLs, VPC Peering, Transit Gateway, Elastic Network Interfaces (ENIs), VPC Endpoints, VPN, Direct Connect, DHCP Options, and common resource queries. These commands are essential for automating AWS networking in production environments.
+
+---
+
