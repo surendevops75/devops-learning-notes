@@ -478,3 +478,538 @@ Multi-AZ deploys a standby database in another Availability Zone to improve high
 # Summary
 
 This section covered foundational AWS interview questions related to Global Infrastructure, EC2, VPC, IAM, S3, RDS, Auto Scaling, and Elastic Load Balancing. These concepts form the basis of most AWS interviews and are commonly asked in entry-level to intermediate DevOps and Cloud Engineer roles.
+
+---
+
+# VPC & Networking
+
+---
+
+## Question 51
+
+### Explain the components of a VPC.
+
+**Answer**
+
+A VPC consists of
+
+- CIDR Block
+- Subnets
+- Route Tables
+- Internet Gateway
+- NAT Gateway
+- Security Groups
+- Network ACLs
+- Elastic IPs
+
+Architecture
+
+```text
+VPC
+
+↓
+
+Subnets
+
+↓
+
+Route Tables
+
+↓
+
+Internet / NAT Gateway
+
+↓
+
+EC2
+```
+
+---
+
+## Question 52
+
+### What is CIDR?
+
+**Answer**
+
+CIDR (Classless Inter-Domain Routing) defines the IP address range for a VPC or subnet.
+
+Example
+
+```
+10.0.0.0/16
+```
+
+Supports
+
+65,536 IP addresses.
+
+---
+
+## Question 53
+
+### Difference between Internet Gateway and NAT Gateway?
+
+| Internet Gateway | NAT Gateway |
+|------------------|-------------|
+| Public Subnet | Private Subnet |
+| Inbound + Outbound | Outbound Only |
+| Internet Access | Secure Internet Access |
+
+---
+
+## Question 54
+
+### What is VPC Peering?
+
+**Answer**
+
+VPC Peering connects two VPCs privately using AWS's internal network.
+
+Characteristics
+
+- Private Communication
+- No Internet
+- Same or Different Regions
+
+---
+
+## Question 55
+
+### What is AWS Transit Gateway?
+
+**Answer**
+
+Transit Gateway acts as a central networking hub connecting
+
+- VPCs
+- VPNs
+- Direct Connect
+
+Architecture
+
+```text
+Transit Gateway
+
+↓
+
+VPC A
+
+VPC B
+
+VPN
+
+Direct Connect
+```
+
+---
+
+## Question 56
+
+### What is AWS Direct Connect?
+
+**Answer**
+
+AWS Direct Connect provides a dedicated private network connection between an organization's data center and AWS.
+
+Benefits
+
+- Lower Latency
+- Consistent Performance
+- Private Connectivity
+
+---
+
+## Question 57
+
+### Difference between Direct Connect and VPN?
+
+| Direct Connect | VPN |
+|---------------|-----|
+| Dedicated Connection | Internet-Based |
+| Higher Bandwidth | Lower Bandwidth |
+| Lower Latency | Higher Latency |
+| Higher Cost | Lower Cost |
+
+---
+
+## Question 58
+
+### What is Site-to-Site VPN?
+
+**Answer**
+
+Site-to-Site VPN securely connects an on-premises network to an AWS VPC using IPSec tunnels over the internet.
+
+---
+
+## Question 59
+
+### What is AWS Client VPN?
+
+**Answer**
+
+AWS Client VPN allows individual users to securely connect to AWS resources using an encrypted VPN connection.
+
+---
+
+## Question 60
+
+### Explain Route Tables.
+
+**Answer**
+
+Route Tables determine where network traffic is routed.
+
+Example
+
+```
+Destination
+
+↓
+
+Target
+
+↓
+
+Internet Gateway
+
+NAT Gateway
+
+VPC Peering
+```
+
+---
+
+# Route 53
+
+---
+
+## Question 61
+
+### What is Amazon Route 53?
+
+**Answer**
+
+Amazon Route 53 is a scalable DNS and domain registration service.
+
+Capabilities
+
+- Domain Registration
+- DNS Management
+- Health Checks
+- Traffic Routing
+
+---
+
+## Question 62
+
+### What Routing Policies does Route 53 support?
+
+**Answer**
+
+- Simple
+- Weighted
+- Latency
+- Failover
+- Geolocation
+- Geoproximity
+- Multi-Value Answer
+
+---
+
+## Question 63
+
+### What is a Health Check?
+
+**Answer**
+
+A Health Check monitors endpoint availability and automatically redirects traffic if an endpoint becomes unhealthy.
+
+---
+
+## Question 64
+
+### Explain Failover Routing.
+
+**Answer**
+
+Failover Routing directs traffic to a secondary endpoint when the primary endpoint fails health checks.
+
+---
+
+# CloudFront
+
+---
+
+## Question 65
+
+### What is Amazon CloudFront?
+
+**Answer**
+
+Amazon CloudFront is a Content Delivery Network (CDN) that delivers content from Edge Locations close to users.
+
+Benefits
+
+- Lower Latency
+- Faster Content Delivery
+- DDoS Protection
+- Global Reach
+
+---
+
+## Question 66
+
+### What are Edge Locations?
+
+**Answer**
+
+Edge Locations cache content closer to users, reducing latency and improving performance.
+
+---
+
+## Question 67
+
+### Difference between CloudFront and S3?
+
+| CloudFront | Amazon S3 |
+|------------|-----------|
+| CDN | Object Storage |
+| Content Caching | Data Storage |
+| Edge Locations | Regional Storage |
+
+---
+
+# EBS
+
+---
+
+## Question 68
+
+### What is Amazon EBS?
+
+**Answer**
+
+Amazon Elastic Block Store (EBS) provides persistent block-level storage for EC2 instances.
+
+Features
+
+- Persistent Storage
+- Snapshots
+- Encryption
+- High Performance
+
+---
+
+## Question 69
+
+### What EBS Volume Types are available?
+
+**Answer**
+
+- gp3
+- gp2
+- io2
+- io1
+- st1
+- sc1
+
+---
+
+## Question 70
+
+### What are EBS Snapshots?
+
+**Answer**
+
+Snapshots are incremental backups of EBS volumes stored in Amazon S3.
+
+---
+
+# EFS
+
+---
+
+## Question 71
+
+### What is Amazon EFS?
+
+**Answer**
+
+Amazon Elastic File System (EFS) is a managed NFS-based shared file system.
+
+Supports
+
+- Multiple EC2 Instances
+- Linux Workloads
+- Auto Scaling
+
+---
+
+## Question 72
+
+### Difference between EBS and EFS?
+
+| EBS | EFS |
+|-----|-----|
+| Block Storage | File Storage |
+| Single EC2 (typically) | Multiple EC2 Instances |
+| High Performance | Shared Storage |
+
+---
+
+# FSx
+
+---
+
+## Question 73
+
+### What is Amazon FSx?
+
+**Answer**
+
+Amazon FSx provides managed file systems for specialized workloads.
+
+Examples
+
+- FSx for Windows File Server
+- FSx for Lustre
+- FSx for NetApp ONTAP
+- FSx for OpenZFS
+
+---
+
+## Question 74
+
+### When would you choose FSx over EFS?
+
+**Answer**
+
+Use FSx when specialized file systems or Windows-native file sharing are required.
+
+---
+
+# Storage Gateway
+
+---
+
+## Question 75
+
+### What is AWS Storage Gateway?
+
+**Answer**
+
+Storage Gateway connects on-premises storage with AWS cloud storage.
+
+Gateway Types
+
+- File Gateway
+- Volume Gateway
+- Tape Gateway
+
+---
+
+## Question 76
+
+### What is AWS DataSync?
+
+**Answer**
+
+AWS DataSync securely transfers large amounts of data between on-premises storage and AWS storage services.
+
+---
+
+## Question 77
+
+### What is AWS Snow Family?
+
+**Answer**
+
+AWS Snow Family devices transfer large datasets when network connectivity is limited or insufficient.
+
+Services
+
+- Snowcone
+- Snowball Edge
+- Snowmobile
+
+---
+
+# Global Networking
+
+---
+
+## Question 78
+
+### What is AWS Global Accelerator?
+
+**Answer**
+
+AWS Global Accelerator improves application availability and performance using the AWS global network.
+
+---
+
+## Question 79
+
+### Difference between Global Accelerator and CloudFront?
+
+| Global Accelerator | CloudFront |
+|-------------------|------------|
+| TCP/UDP Applications | HTTP/HTTPS Content |
+| Improves Network Path | Content Caching |
+| Static Anycast IP | Edge Caching |
+
+---
+
+## Question 80
+
+### What is AWS PrivateLink?
+
+**Answer**
+
+AWS PrivateLink enables private access to supported AWS services and applications without traversing the public internet.
+
+---
+
+# Rapid Fire
+
+81. What is CIDR?
+82. What is VPC Peering?
+83. What is Transit Gateway?
+84. What is Direct Connect?
+85. What is Site-to-Site VPN?
+86. What is Client VPN?
+87. What is Route Table?
+88. What is Internet Gateway?
+89. What is NAT Gateway?
+90. What is CloudFront?
+91. What is Route 53?
+92. What is EBS?
+93. What is EFS?
+94. What is FSx?
+95. What is Storage Gateway?
+96. What is DataSync?
+97. What is Snow Family?
+98. What is Global Accelerator?
+99. What is AWS PrivateLink?
+100. What is an Edge Location?
+
+---
+
+# Interview Tips
+
+- Draw network architecture diagrams whenever possible.
+- Clearly explain traffic flow through VPC components.
+- Compare similar services (e.g., NAT Gateway vs Internet Gateway, Direct Connect vs VPN).
+- Relate networking concepts to production scenarios.
+- Mention security considerations such as Security Groups, NACLs, and private connectivity.
+
+---
+
+# Summary
+
+This section covered AWS networking and storage interview topics including VPC, Route Tables, Internet Gateway, NAT Gateway, Route 53, CloudFront, EBS, EFS, FSx, Storage Gateway, DataSync, Snow Family, Global Accelerator, and PrivateLink. These services are fundamental for designing secure, scalable, and highly available AWS architectures.
+
+---
+
