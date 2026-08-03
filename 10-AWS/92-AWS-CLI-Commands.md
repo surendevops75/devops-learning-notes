@@ -548,3 +548,575 @@ This section covered AWS CLI fundamentals, configuration, authentication, AWS ST
 
 ---
 
+# Security Groups
+
+---
+
+# List Security Groups
+
+```bash
+aws ec2 describe-security-groups
+```
+
+---
+
+# Describe Specific Security Group
+
+```bash
+aws ec2 describe-security-groups \
+--group-ids sg-0123456789abcdef0
+```
+
+---
+
+# Create Security Group
+
+```bash
+aws ec2 create-security-group \
+--group-name web-sg \
+--description "Web Security Group" \
+--vpc-id vpc-xxxxxxxx
+```
+
+---
+
+# Delete Security Group
+
+```bash
+aws ec2 delete-security-group \
+--group-id sg-xxxxxxxx
+```
+
+---
+
+# Add SSH Rule
+
+```bash
+aws ec2 authorize-security-group-ingress \
+--group-id sg-xxxxxxxx \
+--protocol tcp \
+--port 22 \
+--cidr 0.0.0.0/0
+```
+
+---
+
+# Add HTTP Rule
+
+```bash
+aws ec2 authorize-security-group-ingress \
+--group-id sg-xxxxxxxx \
+--protocol tcp \
+--port 80 \
+--cidr 0.0.0.0/0
+```
+
+---
+
+# Add HTTPS Rule
+
+```bash
+aws ec2 authorize-security-group-ingress \
+--group-id sg-xxxxxxxx \
+--protocol tcp \
+--port 443 \
+--cidr 0.0.0.0/0
+```
+
+---
+
+# Remove Ingress Rule
+
+```bash
+aws ec2 revoke-security-group-ingress \
+--group-id sg-xxxxxxxx \
+--protocol tcp \
+--port 22 \
+--cidr 0.0.0.0/0
+```
+
+---
+
+# Add Outbound Rule
+
+```bash
+aws ec2 authorize-security-group-egress \
+--group-id sg-xxxxxxxx \
+--protocol tcp \
+--port 443 \
+--cidr 0.0.0.0/0
+```
+
+---
+
+# Remove Outbound Rule
+
+```bash
+aws ec2 revoke-security-group-egress \
+--group-id sg-xxxxxxxx \
+--protocol tcp \
+--port 443 \
+--cidr 0.0.0.0/0
+```
+
+---
+
+# Key Pairs
+
+---
+
+# List Key Pairs
+
+```bash
+aws ec2 describe-key-pairs
+```
+
+---
+
+# Create Key Pair
+
+```bash
+aws ec2 create-key-pair \
+--key-name dev-key
+```
+
+---
+
+# Save Private Key
+
+```bash
+aws ec2 create-key-pair \
+--key-name dev-key \
+--query "KeyMaterial" \
+--output text > dev-key.pem
+```
+
+---
+
+# Delete Key Pair
+
+```bash
+aws ec2 delete-key-pair \
+--key-name dev-key
+```
+
+---
+
+# Import Existing Public Key
+
+```bash
+aws ec2 import-key-pair \
+--key-name office-key \
+--public-key-material fileb://id_rsa.pub
+```
+
+---
+
+# Elastic IP
+
+---
+
+# Allocate Elastic IP
+
+```bash
+aws ec2 allocate-address \
+--domain vpc
+```
+
+---
+
+# List Elastic IPs
+
+```bash
+aws ec2 describe-addresses
+```
+
+---
+
+# Associate Elastic IP
+
+```bash
+aws ec2 associate-address \
+--instance-id i-xxxxxxxx \
+--allocation-id eipalloc-xxxxxxxx
+```
+
+---
+
+# Disassociate Elastic IP
+
+```bash
+aws ec2 disassociate-address \
+--association-id eipassoc-xxxxxxxx
+```
+
+---
+
+# Release Elastic IP
+
+```bash
+aws ec2 release-address \
+--allocation-id eipalloc-xxxxxxxx
+```
+
+---
+
+# Launch Templates
+
+---
+
+# List Launch Templates
+
+```bash
+aws ec2 describe-launch-templates
+```
+
+---
+
+# Create Launch Template
+
+```bash
+aws ec2 create-launch-template \
+--launch-template-name web-template \
+--version-description v1 \
+--launch-template-data file://template.json
+```
+
+---
+
+# Describe Launch Template
+
+```bash
+aws ec2 describe-launch-template-versions \
+--launch-template-name web-template
+```
+
+---
+
+# Delete Launch Template
+
+```bash
+aws ec2 delete-launch-template \
+--launch-template-name web-template
+```
+
+---
+
+# Auto Scaling
+
+---
+
+# List Auto Scaling Groups
+
+```bash
+aws autoscaling describe-auto-scaling-groups
+```
+
+---
+
+# Describe Auto Scaling Group
+
+```bash
+aws autoscaling describe-auto-scaling-groups \
+--auto-scaling-group-names web-asg
+```
+
+---
+
+# Create Auto Scaling Group
+
+```bash
+aws autoscaling create-auto-scaling-group \
+--auto-scaling-group-name web-asg \
+--launch-template LaunchTemplateName=web-template \
+--min-size 2 \
+--max-size 5 \
+--desired-capacity 2 \
+--vpc-zone-identifier subnet-1,subnet-2
+```
+
+---
+
+# Update Desired Capacity
+
+```bash
+aws autoscaling set-desired-capacity \
+--auto-scaling-group-name web-asg \
+--desired-capacity 3
+```
+
+---
+
+# Update Auto Scaling Group
+
+```bash
+aws autoscaling update-auto-scaling-group \
+--auto-scaling-group-name web-asg \
+--max-size 10
+```
+
+---
+
+# Delete Auto Scaling Group
+
+```bash
+aws autoscaling delete-auto-scaling-group \
+--auto-scaling-group-name web-asg \
+--force-delete
+```
+
+---
+
+# Scaling Policies
+
+---
+
+# List Scaling Policies
+
+```bash
+aws autoscaling describe-policies
+```
+
+---
+
+# Create Target Tracking Policy
+
+```bash
+aws autoscaling put-scaling-policy \
+--auto-scaling-group-name web-asg \
+--policy-name cpu-policy \
+--policy-type TargetTrackingScaling
+```
+
+---
+
+# Delete Scaling Policy
+
+```bash
+aws autoscaling delete-policy \
+--auto-scaling-group-name web-asg \
+--policy-name cpu-policy
+```
+
+---
+
+# EC2 Tags
+
+---
+
+# List Tags
+
+```bash
+aws ec2 describe-tags
+```
+
+---
+
+# Create Tag
+
+```bash
+aws ec2 create-tags \
+--resources i-xxxxxxxx \
+--tags Key=Environment,Value=Production
+```
+
+---
+
+# Multiple Tags
+
+```bash
+aws ec2 create-tags \
+--resources i-xxxxxxxx \
+--tags \
+Key=Environment,Value=Production \
+Key=Owner,Value=DevOps
+```
+
+---
+
+# Delete Tag
+
+```bash
+aws ec2 delete-tags \
+--resources i-xxxxxxxx \
+--tags Key=Owner
+```
+
+---
+
+# Filter by Tag
+
+```bash
+aws ec2 describe-instances \
+--filters Name=tag:Environment,Values=Production
+```
+
+---
+
+# Placement Groups
+
+---
+
+# List Placement Groups
+
+```bash
+aws ec2 describe-placement-groups
+```
+
+---
+
+# Create Placement Group
+
+```bash
+aws ec2 create-placement-group \
+--group-name hpc-group \
+--strategy cluster
+```
+
+---
+
+# Delete Placement Group
+
+```bash
+aws ec2 delete-placement-group \
+--group-name hpc-group
+```
+
+---
+
+# Spot Instances
+
+---
+
+# Request Spot Instance
+
+```bash
+aws ec2 request-spot-instances \
+--spot-price 0.02 \
+--instance-count 1 \
+--launch-specification file://spot.json
+```
+
+---
+
+# Describe Spot Requests
+
+```bash
+aws ec2 describe-spot-instance-requests
+```
+
+---
+
+# Cancel Spot Request
+
+```bash
+aws ec2 cancel-spot-instance-requests \
+--spot-instance-request-ids sir-xxxxxxxx
+```
+
+---
+
+# Capacity Reservations
+
+---
+
+# List Capacity Reservations
+
+```bash
+aws ec2 describe-capacity-reservations
+```
+
+---
+
+# Create Capacity Reservation
+
+```bash
+aws ec2 create-capacity-reservation \
+--instance-type t3.micro \
+--instance-platform Linux/UNIX \
+--availability-zone ap-south-1a \
+--instance-count 2
+```
+
+---
+
+# Cancel Capacity Reservation
+
+```bash
+aws ec2 cancel-capacity-reservation \
+--capacity-reservation-id cr-xxxxxxxx
+```
+
+---
+
+# Instance Metadata
+
+---
+
+# Get Instance Metadata (Inside EC2)
+
+```bash
+curl http://169.254.169.254/latest/meta-data/
+```
+
+---
+
+# Get Instance ID
+
+```bash
+curl http://169.254.169.254/latest/meta-data/instance-id
+```
+
+---
+
+# Get Availability Zone
+
+```bash
+curl http://169.254.169.254/latest/meta-data/placement/availability-zone
+```
+
+---
+
+# Get IAM Role
+
+```bash
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+```
+
+---
+
+# Get Public IPv4
+
+```bash
+curl http://169.254.169.254/latest/meta-data/public-ipv4
+```
+
+---
+
+# Get Private IPv4
+
+```bash
+curl http://169.254.169.254/latest/meta-data/local-ipv4
+```
+
+---
+
+# Best Practices
+
+- Never allow SSH (22) from `0.0.0.0/0` in production unless absolutely necessary.
+- Use IAM Roles instead of long-lived access keys.
+- Prefer Launch Templates over Launch Configurations.
+- Tag every AWS resource consistently.
+- Use Auto Scaling for production workloads.
+- Prefer Spot Instances for fault-tolerant workloads.
+- Use Placement Groups only when required for specific performance needs.
+- Use IMDSv2 for enhanced instance metadata security.
+
+---
+
+# Summary
+
+This section covered advanced EC2 administration using the AWS CLI, including Security Groups, Key Pairs, Elastic IPs, Launch Templates, Auto Scaling Groups, Scaling Policies, Resource Tagging, Placement Groups, Spot Instances, Capacity Reservations, and EC2 Instance Metadata. These commands are commonly used for infrastructure automation, production operations, and DevOps workflows.
+
+---
+
