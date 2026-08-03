@@ -5866,3 +5866,597 @@ This section covered AWS CLI commands for Route 53, CloudFront, WAF, Shield, Gua
 
 ---
 
+# AWS CLI Advanced Commands
+
+---
+
+# Enable Debug Mode
+
+```bash
+aws ec2 describe-instances --debug
+```
+
+---
+
+# Disable SSL Verification (Testing Only)
+
+```bash
+aws s3 ls --no-verify-ssl
+```
+
+---
+
+# Specify Region
+
+```bash
+aws ec2 describe-instances \
+--region ap-south-1
+```
+
+---
+
+# Use Named Profile
+
+```bash
+aws s3 ls \
+--profile production
+```
+
+---
+
+# Change Output Format
+
+JSON
+
+```bash
+--output json
+```
+
+Table
+
+```bash
+--output table
+```
+
+Text
+
+```bash
+--output text
+```
+
+YAML
+
+```bash
+--output yaml
+```
+
+---
+
+# Pagination
+
+Maximum Items
+
+```bash
+aws s3api list-objects-v2 \
+--bucket my-bucket \
+--max-items 20
+```
+
+Disable Pagination
+
+```bash
+aws ec2 describe-instances \
+--no-paginate
+```
+
+---
+
+# Wait Commands
+
+Wait Until EC2 Running
+
+```bash
+aws ec2 wait instance-running \
+--instance-ids i-0123456789abcdef0
+```
+
+---
+
+Wait Until EC2 Stopped
+
+```bash
+aws ec2 wait instance-stopped \
+--instance-ids i-0123456789abcdef0
+```
+
+---
+
+Wait Until Snapshot Complete
+
+```bash
+aws ec2 wait snapshot-completed \
+--snapshot-ids snap-xxxxxxxx
+```
+
+---
+
+Wait Until Stack Complete
+
+```bash
+aws cloudformation wait stack-create-complete \
+--stack-name production-stack
+```
+
+---
+
+# JMESPath Queries
+
+---
+
+# List Instance IDs
+
+```bash
+aws ec2 describe-instances \
+--query "Reservations[].Instances[].InstanceId"
+```
+
+---
+
+# List Running Instance Names
+
+```bash
+aws ec2 describe-instances \
+--filters Name=instance-state-name,Values=running \
+--query "Reservations[].Instances[].Tags[?Key=='Name'].Value"
+```
+
+---
+
+# List Public IPs
+
+```bash
+aws ec2 describe-instances \
+--query "Reservations[].Instances[].PublicIpAddress"
+```
+
+---
+
+# List Private IPs
+
+```bash
+aws ec2 describe-instances \
+--query "Reservations[].Instances[].PrivateIpAddress"
+```
+
+---
+
+# List Security Groups
+
+```bash
+aws ec2 describe-security-groups \
+--query "SecurityGroups[].GroupName"
+```
+
+---
+
+# List VPC IDs
+
+```bash
+aws ec2 describe-vpcs \
+--query "Vpcs[].VpcId"
+```
+
+---
+
+# List Subnet IDs
+
+```bash
+aws ec2 describe-subnets \
+--query "Subnets[].SubnetId"
+```
+
+---
+
+# List IAM Users
+
+```bash
+aws iam list-users \
+--query "Users[].UserName"
+```
+
+---
+
+# List S3 Buckets
+
+```bash
+aws s3api list-buckets \
+--query "Buckets[].Name"
+```
+
+---
+
+# List Lambda Functions
+
+```bash
+aws lambda list-functions \
+--query "Functions[].FunctionName"
+```
+
+---
+
+# jq Integration
+
+Pretty Print JSON
+
+```bash
+aws ec2 describe-instances | jq
+```
+
+---
+
+Extract Instance IDs
+
+```bash
+aws ec2 describe-instances | jq '.Reservations[].Instances[].InstanceId'
+```
+
+---
+
+Extract Bucket Names
+
+```bash
+aws s3api list-buckets | jq '.Buckets[].Name'
+```
+
+---
+
+# Bash Automation
+
+---
+
+Stop All Running Instances
+
+```bash
+for id in $(aws ec2 describe-instances \
+--filters Name=instance-state-name,Values=running \
+--query "Reservations[].Instances[].InstanceId" \
+--output text)
+do
+    aws ec2 stop-instances --instance-ids $id
+done
+```
+
+---
+
+Start All Stopped Instances
+
+```bash
+for id in $(aws ec2 describe-instances \
+--filters Name=instance-state-name,Values=stopped \
+--query "Reservations[].Instances[].InstanceId" \
+--output text)
+do
+    aws ec2 start-instances --instance-ids $id
+done
+```
+
+---
+
+Delete Empty S3 Buckets
+
+```bash
+for bucket in $(aws s3api list-buckets \
+--query "Buckets[].Name" \
+--output text)
+do
+    aws s3 rb s3://$bucket
+done
+```
+
+---
+
+List Resources by Tag
+
+```bash
+aws resourcegroupstaggingapi get-resources \
+--tag-filters Key=Environment,Values=Production
+```
+
+---
+
+Create Daily Backup
+
+```bash
+aws backup start-backup-job \
+--backup-vault-name DailyVault \
+--resource-arn arn:aws:ec2:...
+```
+
+---
+
+# Common AWS CLI One-Liners
+
+---
+
+Count Running EC2 Instances
+
+```bash
+aws ec2 describe-instances \
+--filters Name=instance-state-name,Values=running \
+--query "length(Reservations[].Instances[])"
+```
+
+---
+
+Count S3 Buckets
+
+```bash
+aws s3 ls | wc -l
+```
+
+---
+
+List EKS Clusters
+
+```bash
+aws eks list-clusters
+```
+
+---
+
+List ECS Clusters
+
+```bash
+aws ecs list-clusters
+```
+
+---
+
+List Lambda Functions
+
+```bash
+aws lambda list-functions
+```
+
+---
+
+List IAM Roles
+
+```bash
+aws iam list-roles
+```
+
+---
+
+List CloudFormation Stacks
+
+```bash
+aws cloudformation list-stacks
+```
+
+---
+
+List CloudWatch Alarms
+
+```bash
+aws cloudwatch describe-alarms
+```
+
+---
+
+List RDS Instances
+
+```bash
+aws rds describe-db-instances
+```
+
+---
+
+List DynamoDB Tables
+
+```bash
+aws dynamodb list-tables
+```
+
+---
+
+# Troubleshooting
+
+---
+
+Verify AWS Identity
+
+```bash
+aws sts get-caller-identity
+```
+
+---
+
+Verify Region
+
+```bash
+aws configure get region
+```
+
+---
+
+Verify Credentials
+
+```bash
+aws configure list
+```
+
+---
+
+List Profiles
+
+```bash
+aws configure list-profiles
+```
+
+---
+
+Check Network Connectivity
+
+```bash
+curl https://sts.amazonaws.com
+```
+
+---
+
+Debug Failed Command
+
+```bash
+aws ec2 describe-instances --debug
+```
+
+---
+
+# AWS CLI Exit Codes
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | Success |
+| 1 | General Error |
+| 2 | Parsing Error |
+| 130 | Interrupted (Ctrl+C) |
+| 255 | AWS CLI or Service Error |
+
+---
+
+# 100 Most Frequently Used Commands
+
+## Compute
+
+- aws ec2 describe-instances
+- aws ec2 run-instances
+- aws ec2 stop-instances
+- aws ec2 start-instances
+- aws ec2 terminate-instances
+- aws ec2 create-image
+- aws ec2 create-snapshot
+- aws ec2 describe-volumes
+- aws ec2 describe-security-groups
+- aws ec2 describe-vpcs
+
+## Storage
+
+- aws s3 ls
+- aws s3 cp
+- aws s3 mv
+- aws s3 rm
+- aws s3 sync
+- aws s3 mb
+- aws s3 rb
+- aws s3 presign
+- aws s3api list-buckets
+- aws s3api get-bucket-policy
+
+## IAM
+
+- aws iam list-users
+- aws iam list-roles
+- aws iam list-policies
+- aws sts get-caller-identity
+- aws iam create-user
+- aws iam create-role
+- aws iam attach-role-policy
+- aws iam create-policy
+
+## Containers
+
+- aws ecr describe-repositories
+- aws ecs list-clusters
+- aws eks list-clusters
+- aws eks update-kubeconfig
+- aws lambda list-functions
+
+## Monitoring
+
+- aws cloudwatch describe-alarms
+- aws logs tail
+- aws cloudtrail lookup-events
+
+## Databases
+
+- aws rds describe-db-instances
+- aws dynamodb list-tables
+- aws elasticache describe-cache-clusters
+
+## Networking
+
+- aws route53 list-hosted-zones
+- aws cloudfront list-distributions
+- aws ec2 describe-route-tables
+- aws ec2 describe-subnets
+
+---
+
+# AWS CLI Interview Cheat Sheet
+
+Know these commands without referring to documentation:
+
+- aws configure
+- aws sts get-caller-identity
+- aws ec2 describe-instances
+- aws s3 sync
+- aws s3 cp
+- aws ecr get-login-password
+- aws eks update-kubeconfig
+- aws cloudformation deploy
+- aws cloudwatch describe-alarms
+- aws logs tail
+- aws iam list-users
+- aws iam list-roles
+- aws lambda invoke
+- aws ecs update-service
+- aws codepipeline start-pipeline-execution
+
+---
+
+# Production Best Practices
+
+- Use IAM Roles instead of access keys.
+- Never hardcode AWS credentials.
+- Use named profiles for multiple environments.
+- Use `--query` to reduce unnecessary output.
+- Enable CloudTrail in every AWS account.
+- Validate infrastructure changes before execution.
+- Prefer automation over manual CLI execution.
+- Use waiters to avoid race conditions in scripts.
+- Store secrets in AWS Secrets Manager or Parameter Store.
+- Tag every resource for governance and cost allocation.
+- Use shell scripts to automate repetitive operations.
+- Test CLI commands in non-production environments first.
+
+---
+
+# Summary
+
+This final section covered advanced AWS CLI usage including JMESPath queries, `jq` integration, waiters, pagination, automation scripts, troubleshooting commands, interview-focused one-liners, and production best practices. Combined with the previous nine parts, this guide provides a comprehensive AWS CLI reference covering compute, networking, storage, databases, containers, serverless, security, monitoring, governance, AI services, and automation.
+
+---
+
+# Guide Statistics
+
+| Category | Coverage |
+|----------|----------:|
+| EC2 & Auto Scaling | ✅ |
+| VPC & Networking | ✅ |
+| IAM & Security | ✅ |
+| Amazon S3 | ✅ |
+| Databases & Storage | ✅ |
+| Containers (ECR/ECS/EKS) | ✅ |
+| Serverless | ✅ |
+| Monitoring & Logging | ✅ |
+| DevOps & CI/CD | ✅ |
+| Governance | ✅ |
+| AI Services | ✅ |
+| Automation & Scripting | ✅ |
+
+**Approximate Coverage**
+
+- **700+ AWS CLI commands and examples**
+- **10 comprehensive sections**
+- **Production-ready command reference**
+- **Interview-oriented cheat sheets**
