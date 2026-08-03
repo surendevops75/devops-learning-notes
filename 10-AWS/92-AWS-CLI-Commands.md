@@ -1749,3 +1749,708 @@ This section covered AWS CLI commands for Amazon VPC, Subnets, Route Tables, Int
 
 ---
 
+# IAM (Identity and Access Management)
+
+---
+
+# Get Current Identity
+
+```bash
+aws sts get-caller-identity
+```
+
+---
+
+# List IAM Users
+
+```bash
+aws iam list-users
+```
+
+---
+
+# Get User Details
+
+```bash
+aws iam get-user \
+--user-name devuser
+```
+
+---
+
+# Create IAM User
+
+```bash
+aws iam create-user \
+--user-name devuser
+```
+
+---
+
+# Delete IAM User
+
+```bash
+aws iam delete-user \
+--user-name devuser
+```
+
+---
+
+# Update IAM User
+
+```bash
+aws iam update-user \
+--user-name devuser \
+--new-user-name developer
+```
+
+---
+
+# List IAM Groups
+
+```bash
+aws iam list-groups
+```
+
+---
+
+# Create IAM Group
+
+```bash
+aws iam create-group \
+--group-name DevOps
+```
+
+---
+
+# Delete IAM Group
+
+```bash
+aws iam delete-group \
+--group-name DevOps
+```
+
+---
+
+# Add User to Group
+
+```bash
+aws iam add-user-to-group \
+--group-name DevOps \
+--user-name devuser
+```
+
+---
+
+# Remove User from Group
+
+```bash
+aws iam remove-user-from-group \
+--group-name DevOps \
+--user-name devuser
+```
+
+---
+
+# List Users in Group
+
+```bash
+aws iam get-group \
+--group-name DevOps
+```
+
+---
+
+# IAM Roles
+
+---
+
+# List Roles
+
+```bash
+aws iam list-roles
+```
+
+---
+
+# Get Role Details
+
+```bash
+aws iam get-role \
+--role-name EC2Role
+```
+
+---
+
+# Create IAM Role
+
+```bash
+aws iam create-role \
+--role-name EC2Role \
+--assume-role-policy-document file://trust-policy.json
+```
+
+---
+
+# Delete IAM Role
+
+```bash
+aws iam delete-role \
+--role-name EC2Role
+```
+
+---
+
+# Attach Managed Policy to Role
+
+```bash
+aws iam attach-role-policy \
+--role-name EC2Role \
+--policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+```
+
+---
+
+# Detach Policy from Role
+
+```bash
+aws iam detach-role-policy \
+--role-name EC2Role \
+--policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+```
+
+---
+
+# List Attached Role Policies
+
+```bash
+aws iam list-attached-role-policies \
+--role-name EC2Role
+```
+
+---
+
+# Policies
+
+---
+
+# List Managed Policies
+
+```bash
+aws iam list-policies
+```
+
+---
+
+# Get Policy
+
+```bash
+aws iam get-policy \
+--policy-arn arn:aws:iam::123456789012:policy/MyPolicy
+```
+
+---
+
+# Get Policy Version
+
+```bash
+aws iam get-policy-version \
+--policy-arn arn:aws:iam::123456789012:policy/MyPolicy \
+--version-id v1
+```
+
+---
+
+# Create Policy
+
+```bash
+aws iam create-policy \
+--policy-name S3ReadOnly \
+--policy-document file://policy.json
+```
+
+---
+
+# Delete Policy
+
+```bash
+aws iam delete-policy \
+--policy-arn arn:aws:iam::123456789012:policy/S3ReadOnly
+```
+
+---
+
+# Attach Policy to User
+
+```bash
+aws iam attach-user-policy \
+--user-name devuser \
+--policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+```
+
+---
+
+# Detach Policy from User
+
+```bash
+aws iam detach-user-policy \
+--user-name devuser \
+--policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+```
+
+---
+
+# Attach Policy to Group
+
+```bash
+aws iam attach-group-policy \
+--group-name DevOps \
+--policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+```
+
+---
+
+# Detach Policy from Group
+
+```bash
+aws iam detach-group-policy \
+--group-name DevOps \
+--policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+```
+
+---
+
+# Access Keys
+
+---
+
+# List Access Keys
+
+```bash
+aws iam list-access-keys \
+--user-name devuser
+```
+
+---
+
+# Create Access Key
+
+```bash
+aws iam create-access-key \
+--user-name devuser
+```
+
+---
+
+# Update Access Key Status
+
+```bash
+aws iam update-access-key \
+--user-name devuser \
+--access-key-id AKIAxxxxxxxx \
+--status Inactive
+```
+
+---
+
+# Delete Access Key
+
+```bash
+aws iam delete-access-key \
+--user-name devuser \
+--access-key-id AKIAxxxxxxxx
+```
+
+---
+
+# Login Profile
+
+---
+
+# Create Console Login
+
+```bash
+aws iam create-login-profile \
+--user-name devuser \
+--password 'TempPassword@123'
+```
+
+---
+
+# Delete Console Login
+
+```bash
+aws iam delete-login-profile \
+--user-name devuser
+```
+
+---
+
+# STS
+
+---
+
+# Get Caller Identity
+
+```bash
+aws sts get-caller-identity
+```
+
+---
+
+# Assume Role
+
+```bash
+aws sts assume-role \
+--role-arn arn:aws:iam::123456789012:role/AdminRole \
+--role-session-name AdminSession
+```
+
+---
+
+# Get Session Token
+
+```bash
+aws sts get-session-token
+```
+
+---
+
+# Decode Authorization Message
+
+```bash
+aws sts decode-authorization-message \
+--encoded-message <message>
+```
+
+---
+
+# KMS
+
+---
+
+# List KMS Keys
+
+```bash
+aws kms list-keys
+```
+
+---
+
+# Describe KMS Key
+
+```bash
+aws kms describe-key \
+--key-id alias/aws/s3
+```
+
+---
+
+# Create KMS Key
+
+```bash
+aws kms create-key
+```
+
+---
+
+# List Key Aliases
+
+```bash
+aws kms list-aliases
+```
+
+---
+
+# Create Alias
+
+```bash
+aws kms create-alias \
+--alias-name alias/project-key \
+--target-key-id <key-id>
+```
+
+---
+
+# Delete Alias
+
+```bash
+aws kms delete-alias \
+--alias-name alias/project-key
+```
+
+---
+
+# Enable Key
+
+```bash
+aws kms enable-key \
+--key-id <key-id>
+```
+
+---
+
+# Disable Key
+
+```bash
+aws kms disable-key \
+--key-id <key-id>
+```
+
+---
+
+# Schedule Key Deletion
+
+```bash
+aws kms schedule-key-deletion \
+--key-id <key-id> \
+--pending-window-in-days 30
+```
+
+---
+
+# Cancel Key Deletion
+
+```bash
+aws kms cancel-key-deletion \
+--key-id <key-id>
+```
+
+---
+
+# Secrets Manager
+
+---
+
+# List Secrets
+
+```bash
+aws secretsmanager list-secrets
+```
+
+---
+
+# Create Secret
+
+```bash
+aws secretsmanager create-secret \
+--name db-password \
+--secret-string "MySecurePassword"
+```
+
+---
+
+# Get Secret Value
+
+```bash
+aws secretsmanager get-secret-value \
+--secret-id db-password
+```
+
+---
+
+# Update Secret
+
+```bash
+aws secretsmanager update-secret \
+--secret-id db-password \
+--secret-string "NewPassword123"
+```
+
+---
+
+# Rotate Secret
+
+```bash
+aws secretsmanager rotate-secret \
+--secret-id db-password
+```
+
+---
+
+# Delete Secret
+
+```bash
+aws secretsmanager delete-secret \
+--secret-id db-password
+```
+
+---
+
+# AWS Certificate Manager (ACM)
+
+---
+
+# List Certificates
+
+```bash
+aws acm list-certificates
+```
+
+---
+
+# Describe Certificate
+
+```bash
+aws acm describe-certificate \
+--certificate-arn arn:aws:acm:...
+```
+
+---
+
+# Request Certificate
+
+```bash
+aws acm request-certificate \
+--domain-name example.com \
+--validation-method DNS
+```
+
+---
+
+# Delete Certificate
+
+```bash
+aws acm delete-certificate \
+--certificate-arn arn:aws:acm:...
+```
+
+---
+
+# AWS Organizations
+
+---
+
+# Describe Organization
+
+```bash
+aws organizations describe-organization
+```
+
+---
+
+# List Accounts
+
+```bash
+aws organizations list-accounts
+```
+
+---
+
+# List Organizational Units
+
+```bash
+aws organizations list-organizational-units-for-parent \
+--parent-id r-xxxx
+```
+
+---
+
+# List Policies
+
+```bash
+aws organizations list-policies \
+--filter SERVICE_CONTROL_POLICY
+```
+
+---
+
+# Describe Policy
+
+```bash
+aws organizations describe-policy \
+--policy-id p-xxxxxxxx
+```
+
+---
+
+# IAM Identity Center (AWS SSO)
+
+---
+
+# List Instances
+
+```bash
+aws sso-admin list-instances
+```
+
+---
+
+# List Permission Sets
+
+```bash
+aws sso-admin list-permission-sets \
+--instance-arn <instance-arn>
+```
+
+---
+
+# Describe Permission Set
+
+```bash
+aws sso-admin describe-permission-set \
+--instance-arn <instance-arn> \
+--permission-set-arn <permission-set-arn>
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List User Names
+
+```bash
+aws iam list-users \
+--query "Users[].UserName"
+```
+
+---
+
+# List Role Names
+
+```bash
+aws iam list-roles \
+--query "Roles[].RoleName"
+```
+
+---
+
+# List Group Names
+
+```bash
+aws iam list-groups \
+--query "Groups[].GroupName"
+```
+
+---
+
+# List Policy Names
+
+```bash
+aws iam list-policies \
+--query "Policies[].PolicyName"
+```
+
+---
+
+# Best Practices
+
+- Use IAM Roles instead of IAM Users whenever possible.
+- Enable MFA for privileged users.
+- Rotate access keys regularly.
+- Follow the Principle of Least Privilege.
+- Store secrets in AWS Secrets Manager instead of configuration files.
+- Use Customer Managed KMS keys for sensitive workloads.
+- Use IAM Identity Center for centralized workforce access.
+- Apply Service Control Policies (SCPs) to enforce organization-wide guardrails.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for IAM Users, Groups, Roles, Policies, Access Keys, Login Profiles, STS, KMS, Secrets Manager, AWS Certificate Manager (ACM), AWS Organizations, IAM Identity Center, and common resource queries. These commands are essential for identity management, security, encryption, and governance in AWS environments.
+
+---
+
