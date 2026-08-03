@@ -5205,3 +5205,664 @@ This section covered AWS CLI commands for CloudFormation, CodeCommit, CodeBuild,
 
 ---
 
+# Amazon Route 53
+
+---
+
+# List Hosted Zones
+
+```bash
+aws route53 list-hosted-zones
+```
+
+---
+
+# Get Hosted Zone
+
+```bash
+aws route53 get-hosted-zone \
+--id Z123456789ABC
+```
+
+---
+
+# Create Hosted Zone
+
+```bash
+aws route53 create-hosted-zone \
+--name example.com \
+--caller-reference $(date +%s)
+```
+
+---
+
+# Delete Hosted Zone
+
+```bash
+aws route53 delete-hosted-zone \
+--id Z123456789ABC
+```
+
+---
+
+# List Record Sets
+
+```bash
+aws route53 list-resource-record-sets \
+--hosted-zone-id Z123456789ABC
+```
+
+---
+
+# Update DNS Records
+
+```bash
+aws route53 change-resource-record-sets \
+--hosted-zone-id Z123456789ABC \
+--change-batch file://records.json
+```
+
+---
+
+# List Health Checks
+
+```bash
+aws route53 list-health-checks
+```
+
+---
+
+# Amazon CloudFront
+
+---
+
+# List Distributions
+
+```bash
+aws cloudfront list-distributions
+```
+
+---
+
+# Get Distribution
+
+```bash
+aws cloudfront get-distribution \
+--id E123456789ABC
+```
+
+---
+
+# Create Distribution
+
+```bash
+aws cloudfront create-distribution \
+--distribution-config file://distribution.json
+```
+
+---
+
+# Create Invalidation
+
+```bash
+aws cloudfront create-invalidation \
+--distribution-id E123456789ABC \
+--paths "/*"
+```
+
+---
+
+# Delete Distribution
+
+```bash
+aws cloudfront delete-distribution \
+--id E123456789ABC \
+--if-match ETAG
+```
+
+---
+
+# AWS WAF
+
+---
+
+# List Web ACLs
+
+```bash
+aws wafv2 list-web-acls \
+--scope REGIONAL
+```
+
+---
+
+# Get Web ACL
+
+```bash
+aws wafv2 get-web-acl \
+--scope REGIONAL \
+--id xxxxxxxx \
+--name ProductionACL
+```
+
+---
+
+# Create Web ACL
+
+```bash
+aws wafv2 create-web-acl \
+--cli-input-json file://webacl.json
+```
+
+---
+
+# Delete Web ACL
+
+```bash
+aws wafv2 delete-web-acl \
+--scope REGIONAL \
+--id xxxxxxxx \
+--name ProductionACL
+```
+
+---
+
+# AWS Shield
+
+---
+
+# Describe Protection
+
+```bash
+aws shield describe-protection \
+--protection-id xxxx
+```
+
+---
+
+# List Protections
+
+```bash
+aws shield list-protections
+```
+
+---
+
+# AWS GuardDuty
+
+---
+
+# List Detectors
+
+```bash
+aws guardduty list-detectors
+```
+
+---
+
+# List Findings
+
+```bash
+aws guardduty list-findings \
+--detector-id detector-id
+```
+
+---
+
+# Get Findings
+
+```bash
+aws guardduty get-findings \
+--detector-id detector-id \
+--finding-ids finding-id
+```
+
+---
+
+# AWS Security Hub
+
+---
+
+# Enable Security Hub
+
+```bash
+aws securityhub enable-security-hub
+```
+
+---
+
+# Get Findings
+
+```bash
+aws securityhub get-findings
+```
+
+---
+
+# List Enabled Standards
+
+```bash
+aws securityhub get-enabled-standards
+```
+
+---
+
+# Amazon Inspector
+
+---
+
+# List Findings
+
+```bash
+aws inspector2 list-findings
+```
+
+---
+
+# List Coverage
+
+```bash
+aws inspector2 list-coverage
+```
+
+---
+
+# Amazon Macie
+
+---
+
+# Enable Macie
+
+```bash
+aws macie2 enable-macie
+```
+
+---
+
+# List Classification Jobs
+
+```bash
+aws macie2 list-classification-jobs
+```
+
+---
+
+# List Findings
+
+```bash
+aws macie2 list-findings
+```
+
+---
+
+# Amazon Detective
+
+---
+
+# List Graphs
+
+```bash
+aws detective list-graphs
+```
+
+---
+
+# List Members
+
+```bash
+aws detective list-members \
+--graph-arn arn:aws:detective:...
+```
+
+---
+
+# Amazon OpenSearch Service
+
+---
+
+# List Domains
+
+```bash
+aws opensearch list-domain-names
+```
+
+---
+
+# Describe Domain
+
+```bash
+aws opensearch describe-domain \
+--domain-name production
+```
+
+---
+
+# Create Domain
+
+```bash
+aws opensearch create-domain \
+--domain-name production
+```
+
+---
+
+# Delete Domain
+
+```bash
+aws opensearch delete-domain \
+--domain-name production
+```
+
+---
+
+# Amazon Managed Prometheus
+
+---
+
+# List Workspaces
+
+```bash
+aws amp list-workspaces
+```
+
+---
+
+# Describe Workspace
+
+```bash
+aws amp describe-workspace \
+--workspace-id ws-xxxxxxxx
+```
+
+---
+
+# Create Workspace
+
+```bash
+aws amp create-workspace \
+--alias production-monitoring
+```
+
+---
+
+# Delete Workspace
+
+```bash
+aws amp delete-workspace \
+--workspace-id ws-xxxxxxxx
+```
+
+---
+
+# Amazon Managed Grafana
+
+---
+
+# List Workspaces
+
+```bash
+aws grafana list-workspaces
+```
+
+---
+
+# Describe Workspace
+
+```bash
+aws grafana describe-workspace \
+--workspace-id g-xxxxxxxx
+```
+
+---
+
+# Create Workspace
+
+```bash
+aws grafana create-workspace \
+--account-access-type CURRENT_ACCOUNT
+```
+
+---
+
+# Delete Workspace
+
+```bash
+aws grafana delete-workspace \
+--workspace-id g-xxxxxxxx
+```
+
+---
+
+# AWS X-Ray
+
+---
+
+# Get Service Graph
+
+```bash
+aws xray get-service-graph
+```
+
+---
+
+# Get Trace Summaries
+
+```bash
+aws xray get-trace-summaries
+```
+
+---
+
+# Batch Get Traces
+
+```bash
+aws xray batch-get-traces \
+--trace-ids trace-id
+```
+
+---
+
+# Amazon Bedrock
+
+---
+
+# List Foundation Models
+
+```bash
+aws bedrock list-foundation-models
+```
+
+---
+
+# Get Foundation Model
+
+```bash
+aws bedrock get-foundation-model \
+--model-identifier amazon.titan-text-express-v1
+```
+
+---
+
+# Amazon Bedrock Runtime
+
+---
+
+# Invoke Model
+
+```bash
+aws bedrock-runtime invoke-model \
+--model-id amazon.titan-text-express-v1 \
+--body file://request.json \
+output.json
+```
+
+---
+
+# Amazon Q Developer
+
+---
+
+# List Applications
+
+```bash
+aws qbusiness list-applications
+```
+
+---
+
+# Get Application
+
+```bash
+aws qbusiness get-application \
+--application-id app-id
+```
+
+---
+
+# Amazon Textract
+
+---
+
+# Detect Document Text
+
+```bash
+aws textract detect-document-text \
+--document fileb://document.png
+```
+
+---
+
+# Analyze Document
+
+```bash
+aws textract analyze-document \
+--feature-types TABLES FORMS \
+--document fileb://document.png
+```
+
+---
+
+# Amazon Rekognition
+
+---
+
+# Detect Labels
+
+```bash
+aws rekognition detect-labels \
+--image '{"S3Object":{"Bucket":"images","Name":"cat.jpg"}}'
+```
+
+---
+
+# Detect Faces
+
+```bash
+aws rekognition detect-faces \
+--image '{"S3Object":{"Bucket":"images","Name":"person.jpg"}}'
+```
+
+---
+
+# Compare Faces
+
+```bash
+aws rekognition compare-faces \
+--source-image file://source.json \
+--target-image file://target.json
+```
+
+---
+
+# Amazon Comprehend
+
+---
+
+# Detect Sentiment
+
+```bash
+aws comprehend detect-sentiment \
+--language-code en \
+--text "AWS is amazing"
+```
+
+---
+
+# Detect Entities
+
+```bash
+aws comprehend detect-entities \
+--language-code en \
+--text "John works at Amazon."
+```
+
+---
+
+# Detect Key Phrases
+
+```bash
+aws comprehend detect-key-phrases \
+--language-code en \
+--text "Cloud computing enables scalability."
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List Route53 Hosted Zones
+
+```bash
+aws route53 list-hosted-zones \
+--query "HostedZones[].Name"
+```
+
+---
+
+# List CloudFront IDs
+
+```bash
+aws cloudfront list-distributions \
+--query "DistributionList.Items[].Id"
+```
+
+---
+
+# List OpenSearch Domains
+
+```bash
+aws opensearch list-domain-names \
+--query "DomainNames[].DomainName"
+```
+
+---
+
+# List Bedrock Models
+
+```bash
+aws bedrock list-foundation-models \
+--query "modelSummaries[].modelId"
+```
+
+---
+
+# Best Practices
+
+- Use Route 53 health checks for failover routing.
+- Create CloudFront invalidations only when necessary to reduce costs.
+- Enable GuardDuty, Security Hub, Inspector, and Macie across all production accounts.
+- Protect internet-facing applications with AWS WAF and Shield.
+- Use Amazon Managed Prometheus and Grafana for Kubernetes observability.
+- Store AI model prompts and responses securely when using Bedrock.
+- Monitor OpenSearch cluster health and storage utilization.
+- Regularly review security findings and remediate high-severity issues.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for Route 53, CloudFront, WAF, Shield, GuardDuty, Security Hub, Inspector, Macie, Detective, OpenSearch Service, Amazon Managed Prometheus, Amazon Managed Grafana, AWS X-Ray, Amazon Bedrock, Amazon Q Developer, Textract, Rekognition, and Comprehend. These services support enterprise networking, security, observability, search, and AI/ML workloads.
+
+---
+
