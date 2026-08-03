@@ -1577,3 +1577,835 @@ Standardize readiness endpoints.
 # Summary
 
 These production scenarios cover VPC networking, Internet Gateway, NAT Gateway, Security Groups, NACLs, Docker, Amazon ECR, Amazon ECS, Amazon EKS, Kubernetes Pods, Services, Load Balancers, and ALB health checks. These are among the most frequently encountered operational issues in enterprise AWS and Kubernetes environments and are commonly discussed in DevOps interviews.
+
+---
+
+# Scenario 26
+
+# Jenkins Pipeline Failed
+
+---
+
+## Problem
+
+CI/CD pipeline fails during execution.
+
+---
+
+## Symptoms
+
+- Build Failed
+- Pipeline Stopped
+- Deployment Not Triggered
+- Artifact Missing
+
+---
+
+## Possible Causes
+
+- Git Authentication
+- Build Error
+- Missing Credentials
+- Agent Offline
+- Jenkins Plugin Issue
+
+---
+
+## Investigation
+
+Check
+
+```text
+Pipeline Console Output
+
+↓
+
+Jenkins Agent
+
+↓
+
+Credentials
+
+↓
+
+Workspace
+
+↓
+
+Build Logs
+```
+
+Commands
+
+```bash
+systemctl status jenkins
+
+journalctl -u jenkins
+
+docker ps
+```
+
+---
+
+## Root Cause
+
+Expired Git credentials.
+
+---
+
+## Resolution
+
+Update Jenkins credentials.
+
+Re-run pipeline.
+
+---
+
+## Prevention
+
+- Rotate credentials
+- Use Secrets Manager
+- Monitor Jenkins health
+
+---
+
+# Scenario 27
+
+# GitHub Actions Workflow Failed
+
+---
+
+## Symptoms
+
+Workflow stops at build stage.
+
+---
+
+## Investigation
+
+Review
+
+- Workflow Logs
+- Secrets
+- Permissions
+- Runner Status
+
+---
+
+## Root Cause
+
+Missing repository secret.
+
+---
+
+## Resolution
+
+Add required secret.
+
+Restart workflow.
+
+---
+
+## Prevention
+
+Validate workflows before merging.
+
+---
+
+# Scenario 28
+
+# Terraform Apply Failed
+
+---
+
+## Symptoms
+
+```bash
+terraform apply
+```
+
+returns error.
+
+---
+
+## Possible Causes
+
+- State Lock
+- IAM
+- Syntax Error
+- Resource Conflict
+- API Limits
+
+---
+
+## Investigation
+
+```bash
+terraform validate
+
+terraform plan
+
+terraform state list
+```
+
+---
+
+## Root Cause
+
+State file locked.
+
+---
+
+## Resolution
+
+```bash
+terraform force-unlock
+```
+
+Retry apply.
+
+---
+
+## Prevention
+
+Use remote backend with locking.
+
+---
+
+# Scenario 29
+
+# Terraform Drift Detected
+
+---
+
+## Symptoms
+
+Resources changed manually.
+
+Terraform wants unexpected updates.
+
+---
+
+## Investigation
+
+```bash
+terraform plan
+```
+
+Compare
+
+AWS
+
+↓
+
+Terraform State
+
+---
+
+## Root Cause
+
+Manual AWS Console changes.
+
+---
+
+## Resolution
+
+- Import resources
+- Update code
+- Remove manual changes
+
+---
+
+## Prevention
+
+Infrastructure as Code only.
+
+---
+
+# Scenario 30
+
+# CloudFormation Stack Failed
+
+---
+
+## Symptoms
+
+Stack status
+
+```text
+ROLLBACK_COMPLETE
+```
+
+---
+
+## Investigation
+
+Review
+
+Events
+
+↓
+
+Failed Resource
+
+↓
+
+CloudFormation Logs
+
+---
+
+## Root Cause
+
+IAM permission missing.
+
+---
+
+## Resolution
+
+Correct permissions.
+
+Delete failed stack.
+
+Redeploy.
+
+---
+
+## Prevention
+
+Validate templates using
+
+```bash
+aws cloudformation validate-template
+```
+
+---
+
+# Scenario 31
+
+# Argo CD Application OutOfSync
+
+---
+
+## Symptoms
+
+Application status
+
+```text
+OutOfSync
+```
+
+---
+
+## Investigation
+
+Check
+
+Git Repository
+
+↓
+
+Manifest
+
+↓
+
+Cluster State
+
+↓
+
+ArgoCD Logs
+
+---
+
+## Root Cause
+
+Manual kubectl changes.
+
+---
+
+## Resolution
+
+```text
+Sync Application
+```
+
+or
+
+Restore Git state.
+
+---
+
+## Prevention
+
+Never modify production manually.
+
+Use GitOps.
+
+---
+
+# Scenario 32
+
+# Helm Upgrade Failed
+
+---
+
+## Symptoms
+
+```bash
+helm upgrade
+```
+
+fails.
+
+---
+
+## Investigation
+
+```bash
+helm history
+
+helm status
+
+kubectl describe pods
+```
+
+---
+
+## Root Cause
+
+Invalid values.yaml
+
+---
+
+## Resolution
+
+Fix configuration.
+
+Rollback
+
+```bash
+helm rollback
+```
+
+---
+
+## Prevention
+
+Validate values before deployment.
+
+---
+
+# Scenario 33
+
+# Prometheus Not Scraping Metrics
+
+---
+
+## Symptoms
+
+No metrics.
+
+Grafana dashboards empty.
+
+---
+
+## Investigation
+
+Check
+
+Targets
+
+↓
+
+ServiceMonitor
+
+↓
+
+Pod Labels
+
+↓
+
+Prometheus Logs
+
+---
+
+## Root Cause
+
+Incorrect Service selector.
+
+---
+
+## Resolution
+
+Update labels.
+
+Restart Prometheus.
+
+---
+
+## Prevention
+
+Standardize Kubernetes labels.
+
+---
+
+# Scenario 34
+
+# Grafana Dashboard Shows No Data
+
+---
+
+## Symptoms
+
+Dashboard empty.
+
+---
+
+## Investigation
+
+Verify
+
+Datasource
+
+↓
+
+Prometheus
+
+↓
+
+Query
+
+↓
+
+Time Range
+
+---
+
+## Root Cause
+
+Datasource disconnected.
+
+---
+
+## Resolution
+
+Reconnect datasource.
+
+Test query.
+
+---
+
+## Prevention
+
+Monitor datasource health.
+
+---
+
+# Scenario 35
+
+# ELK Stack Not Receiving Logs
+
+---
+
+## Symptoms
+
+Logs missing.
+
+---
+
+## Investigation
+
+Check
+
+Fluent Bit
+
+↓
+
+Logstash
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+
+---
+
+## Root Cause
+
+Fluent Bit daemonset failed.
+
+---
+
+## Resolution
+
+Restart Fluent Bit.
+
+Verify configuration.
+
+---
+
+## Prevention
+
+Monitor logging pipeline.
+
+---
+
+# Scenario 36
+
+# Elasticsearch Cluster Red
+
+---
+
+## Symptoms
+
+Cluster Health
+
+```text
+RED
+```
+
+---
+
+## Investigation
+
+Check
+
+- Disk Space
+- Shards
+- Nodes
+- Replicas
+
+---
+
+## Root Cause
+
+Disk full.
+
+---
+
+## Resolution
+
+Increase storage.
+
+Delete old indices.
+
+---
+
+## Prevention
+
+Enable Index Lifecycle Management.
+
+---
+
+# Scenario 37
+
+# CloudWatch Alarm Never Triggers
+
+---
+
+## Symptoms
+
+High CPU.
+
+Alarm remains OK.
+
+---
+
+## Investigation
+
+Check
+
+Metric
+
+↓
+
+Namespace
+
+↓
+
+Threshold
+
+↓
+
+Evaluation Period
+
+---
+
+## Root Cause
+
+Wrong metric selected.
+
+---
+
+## Resolution
+
+Use correct CloudWatch metric.
+
+---
+
+## Prevention
+
+Validate alarms after creation.
+
+---
+
+# Scenario 38
+
+# CloudWatch Logs Missing
+
+---
+
+## Symptoms
+
+No application logs.
+
+---
+
+## Investigation
+
+Check
+
+CloudWatch Agent
+
+↓
+
+IAM Role
+
+↓
+
+Log Group
+
+↓
+
+Network
+
+---
+
+## Root Cause
+
+CloudWatch Agent stopped.
+
+---
+
+## Resolution
+
+```bash
+systemctl restart amazon-cloudwatch-agent
+```
+
+---
+
+## Prevention
+
+Monitor CloudWatch Agent.
+
+---
+
+# Scenario 39
+
+# Route53 Failover Not Working
+
+---
+
+## Symptoms
+
+Primary Region down.
+
+Traffic not switching.
+
+---
+
+## Investigation
+
+Review
+
+Health Check
+
+↓
+
+DNS Record
+
+↓
+
+Routing Policy
+
+---
+
+## Root Cause
+
+Health check misconfigured.
+
+---
+
+## Resolution
+
+Correct health check.
+
+Verify failover policy.
+
+---
+
+## Prevention
+
+Regular DR testing.
+
+---
+
+# Scenario 40
+
+# RDS Multi-AZ Failover
+
+---
+
+## Symptoms
+
+Short database interruption.
+
+---
+
+## Investigation
+
+CloudWatch
+
+↓
+
+RDS Events
+
+↓
+
+Application Logs
+
+---
+
+## Root Cause
+
+Primary database unavailable.
+
+Automatic failover initiated.
+
+---
+
+## Resolution
+
+Wait for failover.
+
+Reconnect application.
+
+---
+
+## Prevention
+
+Implement retry logic.
+
+Use connection pooling.
+
+---
+
+# Summary
+
+These scenarios focus on CI/CD pipelines, Infrastructure as Code, GitOps, observability, logging, monitoring, Route 53 failover, and RDS high availability. They reflect common production incidents in enterprise DevOps environments and demonstrate how structured troubleshooting, automation, and monitoring reduce downtime and improve operational reliability.
+
+---
+
