@@ -2266,3 +2266,534 @@ This section covered Docker, Amazon ECR, ECS, EKS, Fargate, Kubernetes fundament
 
 ---
 
+# CloudWatch
+
+---
+
+## Question 221
+
+### What is Amazon CloudWatch?
+
+**Answer**
+
+Amazon CloudWatch is a monitoring and observability service used to collect metrics, logs, events, and alarms for AWS resources and applications.
+
+Features
+
+- Metrics
+- Logs
+- Dashboards
+- Alarms
+- Events
+- Insights
+
+---
+
+## Question 222
+
+### What are CloudWatch Metrics?
+
+**Answer**
+
+Metrics are time-series data points that measure the performance and health of AWS resources.
+
+Examples
+
+- CPU Utilization
+- Memory Usage (Custom)
+- Disk Read/Write
+- Network In/Out
+
+---
+
+## Question 223
+
+### What are CloudWatch Alarms?
+
+**Answer**
+
+CloudWatch Alarms monitor metrics and trigger actions such as
+
+- SNS Notifications
+- Auto Scaling
+- EC2 Recovery
+- Lambda Invocation
+
+---
+
+## Question 224
+
+### Difference between CloudWatch Logs and CloudTrail?
+
+| CloudWatch Logs | CloudTrail |
+|-----------------|------------|
+| Application & System Logs | AWS API Activity |
+| Monitoring | Auditing |
+| Performance Analysis | Governance |
+
+---
+
+# AWS X-Ray
+
+---
+
+## Question 225
+
+### What is AWS X-Ray?
+
+**Answer**
+
+AWS X-Ray helps trace requests across distributed applications to identify latency and performance bottlenecks.
+
+Benefits
+
+- Distributed Tracing
+- Service Map
+- Performance Analysis
+- Root Cause Identification
+
+---
+
+# Amazon OpenSearch Service
+
+---
+
+## Question 226
+
+### What is Amazon OpenSearch Service?
+
+**Answer**
+
+Amazon OpenSearch Service is a managed search and analytics service used for
+
+- Log Analytics
+- Full-Text Search
+- Application Monitoring
+- Security Analytics
+
+---
+
+## Question 227
+
+### Common OpenSearch use cases?
+
+**Answer**
+
+- ELK Stack
+- Log Aggregation
+- Search Applications
+- Security Monitoring
+
+---
+
+# Amazon Managed Prometheus
+
+---
+
+## Question 228
+
+### What is Amazon Managed Service for Prometheus?
+
+**Answer**
+
+A managed Prometheus service for collecting and storing metrics from Kubernetes and cloud-native applications.
+
+---
+
+# Amazon Managed Grafana
+
+---
+
+## Question 229
+
+### What is Amazon Managed Grafana?
+
+**Answer**
+
+A managed Grafana service used to visualize metrics from
+
+- CloudWatch
+- Prometheus
+- OpenSearch
+- Other supported data sources
+
+---
+
+# AWS Lambda
+
+---
+
+## Question 230
+
+### What is AWS Lambda?
+
+**Answer**
+
+AWS Lambda is a serverless compute service that runs code without provisioning or managing servers.
+
+Features
+
+- Event Driven
+- Automatic Scaling
+- Pay Per Execution
+
+---
+
+## Question 231
+
+### What events can trigger Lambda?
+
+**Answer**
+
+Examples
+
+- S3
+- API Gateway
+- EventBridge
+- SNS
+- SQS
+- CloudWatch
+- DynamoDB Streams
+
+---
+
+## Question 232
+
+### What is a Cold Start?
+
+**Answer**
+
+A Cold Start occurs when Lambda initializes a new execution environment before processing a request.
+
+---
+
+# Amazon API Gateway
+
+---
+
+## Question 233
+
+### What is Amazon API Gateway?
+
+**Answer**
+
+Amazon API Gateway is a managed service for creating, publishing, securing, and monitoring APIs.
+
+Supports
+
+- REST APIs
+- HTTP APIs
+- WebSocket APIs
+
+---
+
+# Amazon SNS
+
+---
+
+## Question 234
+
+### What is Amazon SNS?
+
+**Answer**
+
+Amazon Simple Notification Service (SNS) is a managed publish-subscribe messaging service.
+
+Supported Subscribers
+
+- Email
+- SMS
+- Lambda
+- HTTP/S
+- SQS
+
+---
+
+## Question 235
+
+### What is a Topic in SNS?
+
+**Answer**
+
+A Topic is a communication channel where publishers send messages and subscribers receive notifications.
+
+---
+
+# Amazon SQS
+
+---
+
+## Question 236
+
+### What is Amazon SQS?
+
+**Answer**
+
+Amazon Simple Queue Service (SQS) is a fully managed message queue service for decoupling applications.
+
+---
+
+## Question 237
+
+### Difference between Standard Queue and FIFO Queue?
+
+| Standard | FIFO |
+|-----------|------|
+| Best-Effort Ordering | Strict Ordering |
+| Nearly Unlimited Throughput | Limited Throughput |
+| At-Least-Once Delivery | Exactly-Once Processing (with deduplication) |
+
+---
+
+## Question 238
+
+### What is a Dead Letter Queue (DLQ)?
+
+**Answer**
+
+A Dead Letter Queue stores messages that cannot be processed successfully after the configured retry attempts.
+
+---
+
+# EventBridge
+
+---
+
+## Question 239
+
+### What is Amazon EventBridge?
+
+**Answer**
+
+Amazon EventBridge is a serverless event bus used for routing events between AWS services, SaaS applications, and custom applications.
+
+---
+
+# Step Functions
+
+---
+
+## Question 240
+
+### What are AWS Step Functions?
+
+**Answer**
+
+AWS Step Functions orchestrate multiple AWS services into workflows using state machines.
+
+---
+
+# DynamoDB
+
+---
+
+## Question 241
+
+### What is Amazon DynamoDB?
+
+**Answer**
+
+Amazon DynamoDB is a fully managed NoSQL database service.
+
+Features
+
+- Serverless
+- High Performance
+- Automatic Scaling
+- Global Tables
+
+---
+
+## Question 242
+
+### What is a Partition Key?
+
+**Answer**
+
+The Partition Key determines how data is distributed across DynamoDB partitions.
+
+---
+
+## Question 243
+
+### What is DynamoDB Global Table?
+
+**Answer**
+
+Global Tables replicate DynamoDB tables across multiple AWS Regions for low-latency global access.
+
+---
+
+# Amazon ElastiCache
+
+---
+
+## Question 244
+
+### What is Amazon ElastiCache?
+
+**Answer**
+
+Amazon ElastiCache is a managed in-memory caching service supporting
+
+- Redis
+- Memcached
+
+---
+
+## Question 245
+
+### Why use ElastiCache?
+
+**Answer**
+
+- Reduce Database Load
+- Improve Performance
+- Low Latency
+- Session Storage
+
+---
+
+# Analytics
+
+---
+
+## Question 246
+
+### What is Amazon Athena?
+
+**Answer**
+
+Amazon Athena is a serverless query service that allows SQL queries directly against data stored in Amazon S3.
+
+---
+
+## Question 247
+
+### What is AWS Glue?
+
+**Answer**
+
+AWS Glue is a fully managed ETL (Extract, Transform, Load) service and Data Catalog.
+
+---
+
+## Question 248
+
+### What is Amazon Redshift?
+
+**Answer**
+
+Amazon Redshift is a managed cloud data warehouse designed for analytics and business intelligence workloads.
+
+---
+
+## Question 249
+
+### What is Amazon EMR?
+
+**Answer**
+
+Amazon EMR is a managed big data platform for running Apache Spark, Hadoop, Hive, Flink, and other open-source frameworks.
+
+---
+
+# AI & Machine Learning
+
+---
+
+## Question 250
+
+### What is Amazon Bedrock?
+
+**Answer**
+
+Amazon Bedrock is a fully managed generative AI service that provides API access to foundation models from Amazon and leading AI providers.
+
+---
+
+## Question 251
+
+### What is Amazon Q Developer?
+
+**Answer**
+
+Amazon Q Developer is an AI-powered assistant that helps developers with code generation, AWS guidance, debugging, and DevOps tasks.
+
+---
+
+## Question 252
+
+### What is Amazon Textract?
+
+**Answer**
+
+Amazon Textract extracts text, forms, tables, and structured information from scanned documents and images.
+
+---
+
+## Question 253
+
+### What is Amazon Rekognition?
+
+**Answer**
+
+Amazon Rekognition is a computer vision service that analyzes images and videos for objects, faces, text, moderation, and more.
+
+---
+
+## Question 254
+
+### What is Amazon Comprehend?
+
+**Answer**
+
+Amazon Comprehend is a Natural Language Processing (NLP) service that extracts entities, sentiment, key phrases, languages, and PII from text.
+
+---
+
+# Rapid Fire
+
+255. What is CloudWatch?
+256. What is X-Ray?
+257. What is OpenSearch?
+258. What is Managed Prometheus?
+259. What is Managed Grafana?
+260. What is Lambda?
+261. What is API Gateway?
+262. What is SNS?
+263. What is SQS?
+264. What is FIFO Queue?
+265. What is DLQ?
+266. What is EventBridge?
+267. What is Step Functions?
+268. What is DynamoDB?
+269. What is ElastiCache?
+270. What is Athena?
+271. What is Glue?
+272. What is Redshift?
+273. What is EMR?
+274. What is Bedrock?
+275. What is Amazon Q Developer?
+276. What is Textract?
+277. What is Rekognition?
+278. What is Comprehend?
+
+---
+
+# Interview Tips
+
+- Explain the differences between **CloudWatch, CloudTrail, X-Ray, Prometheus, and Grafana**.
+- Compare **SNS vs SQS** and **Athena vs Redshift vs EMR**.
+- Describe **Lambda event sources** and common serverless architectures.
+- For AI/ML services, focus on the business problem each service solves rather than implementation details.
+- Mention practical production use cases, such as using Athena for S3 log analysis or ElastiCache for reducing database load.
+
+---
+
+# Summary
+
+This section covered monitoring and observability services (CloudWatch, X-Ray, OpenSearch, Managed Prometheus, Managed Grafana), serverless services (Lambda, API Gateway, EventBridge, Step Functions), messaging (SNS, SQS), databases (DynamoDB, ElastiCache), analytics (Athena, Glue, Redshift, EMR), and AI/ML services (Bedrock, Amazon Q Developer, Textract, Rekognition, and Comprehend). These services are commonly discussed in AWS Solutions Architect, DevOps Engineer, and Cloud Engineer interviews.
+
+---
+
