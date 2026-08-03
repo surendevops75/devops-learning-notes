@@ -2454,3 +2454,595 @@ This section covered AWS CLI commands for IAM Users, Groups, Roles, Policies, Ac
 
 ---
 
+# Amazon S3
+
+---
+
+# List All Buckets
+
+```bash
+aws s3 ls
+```
+
+---
+
+# List Bucket Contents
+
+```bash
+aws s3 ls s3://my-bucket
+```
+
+---
+
+# List Bucket Recursively
+
+```bash
+aws s3 ls s3://my-bucket --recursive
+```
+
+---
+
+# Show Bucket Size (Summary)
+
+```bash
+aws s3 ls s3://my-bucket \
+--recursive \
+--human-readable \
+--summarize
+```
+
+---
+
+# Create Bucket
+
+```bash
+aws s3 mb s3://my-bucket
+```
+
+---
+
+# Create Bucket in Specific Region
+
+```bash
+aws s3api create-bucket \
+--bucket my-bucket \
+--region ap-south-1 \
+--create-bucket-configuration LocationConstraint=ap-south-1
+```
+
+---
+
+# Delete Empty Bucket
+
+```bash
+aws s3 rb s3://my-bucket
+```
+
+---
+
+# Delete Bucket with Objects
+
+```bash
+aws s3 rb s3://my-bucket --force
+```
+
+---
+
+# Upload Single File
+
+```bash
+aws s3 cp test.txt s3://my-bucket/
+```
+
+---
+
+# Upload with Different Name
+
+```bash
+aws s3 cp app.log s3://my-bucket/logs/application.log
+```
+
+---
+
+# Upload Entire Directory
+
+```bash
+aws s3 cp ./images s3://my-bucket/images \
+--recursive
+```
+
+---
+
+# Download File
+
+```bash
+aws s3 cp s3://my-bucket/test.txt .
+```
+
+---
+
+# Download Entire Folder
+
+```bash
+aws s3 cp s3://my-bucket/images ./images \
+--recursive
+```
+
+---
+
+# Copy Between Buckets
+
+```bash
+aws s3 cp \
+s3://bucket-a/file.txt \
+s3://bucket-b/file.txt
+```
+
+---
+
+# Move Object
+
+```bash
+aws s3 mv \
+s3://bucket-a/file.txt \
+s3://bucket-a/archive/file.txt
+```
+
+---
+
+# Rename Object
+
+```bash
+aws s3 mv \
+s3://bucket/file.txt \
+s3://bucket/newfile.txt
+```
+
+---
+
+# Delete File
+
+```bash
+aws s3 rm s3://my-bucket/test.txt
+```
+
+---
+
+# Delete Folder
+
+```bash
+aws s3 rm s3://my-bucket/logs \
+--recursive
+```
+
+---
+
+# Sync Local → S3
+
+```bash
+aws s3 sync \
+./website \
+s3://my-bucket
+```
+
+---
+
+# Sync S3 → Local
+
+```bash
+aws s3 sync \
+s3://my-bucket \
+./backup
+```
+
+---
+
+# Sync Between Buckets
+
+```bash
+aws s3 sync \
+s3://bucket-a \
+s3://bucket-b
+```
+
+---
+
+# Sync with Delete
+
+```bash
+aws s3 sync \
+./website \
+s3://my-bucket \
+--delete
+```
+
+---
+
+# Include Specific Files
+
+```bash
+aws s3 sync \
+./logs \
+s3://my-bucket \
+--exclude "*" \
+--include "*.log"
+```
+
+---
+
+# Exclude Files
+
+```bash
+aws s3 sync \
+./website \
+s3://my-bucket \
+--exclude "*.tmp"
+```
+
+---
+
+# Bucket Versioning
+
+---
+
+# Enable Versioning
+
+```bash
+aws s3api put-bucket-versioning \
+--bucket my-bucket \
+--versioning-configuration Status=Enabled
+```
+
+---
+
+# Check Versioning
+
+```bash
+aws s3api get-bucket-versioning \
+--bucket my-bucket
+```
+
+---
+
+# List Object Versions
+
+```bash
+aws s3api list-object-versions \
+--bucket my-bucket
+```
+
+---
+
+# Delete Specific Version
+
+```bash
+aws s3api delete-object \
+--bucket my-bucket \
+--key test.txt \
+--version-id <version-id>
+```
+
+---
+
+# Bucket Encryption
+
+---
+
+# Enable SSE-S3
+
+```bash
+aws s3api put-bucket-encryption \
+--bucket my-bucket \
+--server-side-encryption-configuration \
+'{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+```
+
+---
+
+# Enable SSE-KMS
+
+```bash
+aws s3api put-bucket-encryption \
+--bucket my-bucket \
+--server-side-encryption-configuration \
+'{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"aws:kms","KMSMasterKeyID":"alias/project-key"}}]}'
+```
+
+---
+
+# Check Encryption
+
+```bash
+aws s3api get-bucket-encryption \
+--bucket my-bucket
+```
+
+---
+
+# Bucket Policy
+
+---
+
+# Get Bucket Policy
+
+```bash
+aws s3api get-bucket-policy \
+--bucket my-bucket
+```
+
+---
+
+# Apply Bucket Policy
+
+```bash
+aws s3api put-bucket-policy \
+--bucket my-bucket \
+--policy file://policy.json
+```
+
+---
+
+# Delete Bucket Policy
+
+```bash
+aws s3api delete-bucket-policy \
+--bucket my-bucket
+```
+
+---
+
+# Public Access Block
+
+---
+
+# Enable Public Access Block
+
+```bash
+aws s3api put-public-access-block \
+--bucket my-bucket \
+--public-access-block-configuration \
+BlockPublicAcls=true,\
+IgnorePublicAcls=true,\
+BlockPublicPolicy=true,\
+RestrictPublicBuckets=true
+```
+
+---
+
+# Check Public Access Block
+
+```bash
+aws s3api get-public-access-block \
+--bucket my-bucket
+```
+
+---
+
+# Lifecycle Rules
+
+---
+
+# Apply Lifecycle Policy
+
+```bash
+aws s3api put-bucket-lifecycle-configuration \
+--bucket my-bucket \
+--lifecycle-configuration file://lifecycle.json
+```
+
+---
+
+# Get Lifecycle Policy
+
+```bash
+aws s3api get-bucket-lifecycle-configuration \
+--bucket my-bucket
+```
+
+---
+
+# Delete Lifecycle Policy
+
+```bash
+aws s3api delete-bucket-lifecycle \
+--bucket my-bucket
+```
+
+---
+
+# Replication
+
+---
+
+# Configure Replication
+
+```bash
+aws s3api put-bucket-replication \
+--bucket source-bucket \
+--replication-configuration file://replication.json
+```
+
+---
+
+# View Replication
+
+```bash
+aws s3api get-bucket-replication \
+--bucket source-bucket
+```
+
+---
+
+# Glacier Restore
+
+---
+
+# Restore Glacier Object
+
+```bash
+aws s3api restore-object \
+--bucket archive-bucket \
+--key backup.zip \
+--restore-request Days=7
+```
+
+---
+
+# Check Restore Status
+
+```bash
+aws s3api head-object \
+--bucket archive-bucket \
+--key backup.zip
+```
+
+---
+
+# Presigned URL
+
+---
+
+# Generate Presigned URL
+
+```bash
+aws s3 presign \
+s3://my-bucket/file.txt
+```
+
+---
+
+# Presigned URL (Valid 1 Hour)
+
+```bash
+aws s3 presign \
+s3://my-bucket/file.txt \
+--expires-in 3600
+```
+
+---
+
+# Access Points
+
+---
+
+# List Access Points
+
+```bash
+aws s3control list-access-points \
+--account-id 123456789012
+```
+
+---
+
+# Multipart Upload
+
+---
+
+# Start Multipart Upload
+
+```bash
+aws s3api create-multipart-upload \
+--bucket my-bucket \
+--key large-file.iso
+```
+
+---
+
+# List Multipart Uploads
+
+```bash
+aws s3api list-multipart-uploads \
+--bucket my-bucket
+```
+
+---
+
+# Abort Multipart Upload
+
+```bash
+aws s3api abort-multipart-upload \
+--bucket my-bucket \
+--key large-file.iso \
+--upload-id <upload-id>
+```
+
+---
+
+# Object Metadata
+
+---
+
+# View Object Metadata
+
+```bash
+aws s3api head-object \
+--bucket my-bucket \
+--key app.log
+```
+
+---
+
+# Copy with New Metadata
+
+```bash
+aws s3 cp \
+s3://my-bucket/app.log \
+s3://my-bucket/app.log \
+--metadata Department=DevOps \
+--metadata-directive REPLACE
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List Bucket Names
+
+```bash
+aws s3api list-buckets \
+--query "Buckets[].Name"
+```
+
+---
+
+# List Objects Only
+
+```bash
+aws s3api list-objects-v2 \
+--bucket my-bucket \
+--query "Contents[].Key"
+```
+
+---
+
+# List Objects Larger Than 100 MB
+
+```bash
+aws s3api list-objects-v2 \
+--bucket my-bucket \
+--query "Contents[?Size > \`104857600\`]"
+```
+
+---
+
+# Best Practices
+
+- Enable bucket versioning for production buckets.
+- Block all public access unless explicitly required.
+- Enable default server-side encryption.
+- Use lifecycle rules to move infrequently accessed data to lower-cost storage classes.
+- Prefer `aws s3 sync` over repeated `cp` operations for directories.
+- Use multipart uploads for large files.
+- Enable cross-region replication for critical data.
+- Use presigned URLs for temporary object access instead of making buckets public.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for Amazon S3, including bucket management, object operations, synchronization, versioning, encryption, bucket policies, public access controls, lifecycle rules, replication, Glacier restores, multipart uploads, access points, metadata, presigned URLs, and common resource queries. These commands are essential for storage automation, backups, migrations, and production data management.
+
+---
+
