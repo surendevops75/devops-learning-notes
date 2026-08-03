@@ -511,3 +511,624 @@ Common Industries
 # Summary
 
 Architecture patterns provide standardized approaches for designing scalable, secure, and maintainable systems. Monolithic, Three-Tier, Layered, Client-Server, and SOA each solve different business problems. Choosing the appropriate architecture depends on application size, scalability requirements, operational complexity, and organizational goals.
+
+---
+
+# Microservices Architecture
+
+---
+
+# Introduction
+
+Microservices Architecture is a cloud-native architecture pattern where an application is divided into multiple independent services. Each service owns a specific business capability, has its own codebase, database (where appropriate), deployment pipeline, and lifecycle.
+
+Unlike monolithic applications, every service can be developed, deployed, scaled, and monitored independently.
+
+---
+
+# Architecture
+
+```text
+                    Users
+
+                      │
+
+               Amazon CloudFront
+
+                      │
+
+                 Application Load Balancer
+
+                      │
+
+                 API Gateway / Ingress
+
+                      │
+
+────────────────────────────────────────────────────
+
+│           │             │            │
+
+User      Order      Payment     Inventory
+
+Service   Service     Service      Service
+
+│           │             │            │
+
+DB          DB            DB           DB
+```
+
+---
+
+# Characteristics
+
+- Independent Services
+- Independent Deployment
+- Independent Scaling
+- API Communication
+- Fault Isolation
+- Polyglot Programming
+- Decentralized Data
+
+---
+
+# Communication
+
+Services communicate using
+
+- REST APIs
+- gRPC
+- Message Queues
+- Event Streaming
+
+Example
+
+```text
+Order Service
+
+↓
+
+Payment Service
+
+↓
+
+Inventory Service
+
+↓
+
+Notification Service
+```
+
+---
+
+# Advantages
+
+- Independent Deployment
+- Independent Scaling
+- Technology Flexibility
+- Fault Isolation
+- Faster Releases
+- Smaller Teams
+- Easier Maintenance
+
+---
+
+# Disadvantages
+
+- Operational Complexity
+- Distributed Transactions
+- Service Discovery
+- Monitoring Challenges
+- Increased Network Calls
+- Data Consistency Issues
+
+---
+
+# AWS Example
+
+```text
+CloudFront
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Amazon RDS
+
+Amazon ElastiCache
+
+Amazon SQS
+
+Amazon SNS
+```
+
+---
+
+# When to Use
+
+- Enterprise Applications
+- SaaS Platforms
+- Large Teams
+- Frequently Changing Applications
+- High Scalability Requirements
+
+---
+
+# Event-Driven Architecture
+
+---
+
+# Introduction
+
+Event-Driven Architecture (EDA) is an architecture where services communicate by publishing and consuming events rather than making direct API calls.
+
+Each service reacts to events asynchronously.
+
+---
+
+# Architecture
+
+```text
+Application
+
+↓
+
+Event
+
+↓
+
+Event Bus
+
+↓
+
+Subscriber Services
+```
+
+Example
+
+```text
+Order Created
+
+↓
+
+Amazon EventBridge
+
+↓
+
+Inventory Service
+
+↓
+
+Payment Service
+
+↓
+
+Email Service
+```
+
+---
+
+# Components
+
+- Event Producer
+- Event Bus
+- Event Consumer
+- Event Store
+
+---
+
+# Advantages
+
+- Loose Coupling
+- High Scalability
+- Better Reliability
+- Asynchronous Processing
+
+---
+
+# Disadvantages
+
+- Event Ordering
+- Debugging Complexity
+- Event Duplication
+- Eventual Consistency
+
+---
+
+# AWS Services
+
+- EventBridge
+- SNS
+- SQS
+- Lambda
+- Step Functions
+
+---
+
+# Serverless Architecture
+
+---
+
+# Introduction
+
+Serverless Architecture allows developers to build applications without managing servers.
+
+AWS automatically provisions infrastructure.
+
+---
+
+# Architecture
+
+```text
+Users
+
+↓
+
+API Gateway
+
+↓
+
+Lambda
+
+↓
+
+DynamoDB
+
+↓
+
+S3
+```
+
+---
+
+# Characteristics
+
+- No Server Management
+- Automatic Scaling
+- Pay Per Request
+- Event Driven
+
+---
+
+# Advantages
+
+- Low Cost
+- Automatic Scaling
+- High Availability
+- Minimal Operations
+
+---
+
+# Disadvantages
+
+- Cold Starts
+- Execution Limits
+- Vendor Lock-in
+- Debugging Challenges
+
+---
+
+# Common AWS Services
+
+- Lambda
+- API Gateway
+- DynamoDB
+- S3
+- Step Functions
+- EventBridge
+
+---
+
+# API-First Architecture
+
+---
+
+# Introduction
+
+Every functionality is exposed through APIs before frontend implementation begins.
+
+Architecture
+
+```text
+Frontend
+
+↓
+
+REST API
+
+↓
+
+Backend Services
+```
+
+Advantages
+
+- Easy Integration
+- Independent Development
+- Better Reusability
+
+---
+
+# CQRS (Command Query Responsibility Segregation)
+
+---
+
+# Introduction
+
+CQRS separates write operations from read operations.
+
+Architecture
+
+```text
+Client
+
+↓
+
+Commands
+
+↓
+
+Write Database
+
+↓
+
+Events
+
+↓
+
+Read Database
+
+↓
+
+Queries
+```
+
+Benefits
+
+- Better Performance
+- Independent Scaling
+- Optimized Reads
+
+---
+
+# Event Sourcing
+
+---
+
+# Introduction
+
+Instead of storing only the latest state, every change is stored as an event.
+
+Example
+
+```text
+Account Created
+
+↓
+
+Money Deposited
+
+↓
+
+Money Withdrawn
+
+↓
+
+Current Balance
+```
+
+Advantages
+
+- Complete Audit Trail
+- Easy Recovery
+- Replay Capability
+
+---
+
+# Saga Pattern
+
+---
+
+# Introduction
+
+Saga manages distributed transactions across multiple microservices.
+
+Architecture
+
+```text
+Order Service
+
+↓
+
+Payment Service
+
+↓
+
+Inventory Service
+
+↓
+
+Shipping Service
+```
+
+If any step fails
+
+```text
+Compensation Action
+
+↓
+
+Rollback Previous Steps
+```
+
+Benefits
+
+- Distributed Transactions
+- Failure Recovery
+- Eventual Consistency
+
+---
+
+# Service Mesh
+
+---
+
+# Introduction
+
+A Service Mesh manages communication between microservices.
+
+Responsibilities
+
+- Service Discovery
+- Load Balancing
+- Mutual TLS
+- Traffic Routing
+- Observability
+
+Popular Tools
+
+- Istio
+- Linkerd
+- AWS App Mesh
+
+Architecture
+
+```text
+Service A
+
+↓
+
+Proxy
+
+↓
+
+Proxy
+
+↓
+
+Service B
+```
+
+---
+
+# Sidecar Pattern
+
+---
+
+# Introduction
+
+Each application container has a helper container.
+
+Example
+
+```text
+Pod
+
+├── Application
+
+├── Logging Sidecar
+
+└── Monitoring Sidecar
+```
+
+Common Sidecars
+
+- Fluent Bit
+- Envoy
+- Prometheus Exporter
+
+Benefits
+
+- Logging
+- Security
+- Monitoring
+
+---
+
+# Backend for Frontend (BFF)
+
+---
+
+# Introduction
+
+Each frontend has its own backend.
+
+Architecture
+
+```text
+Mobile App
+
+↓
+
+Mobile Backend
+
+↓
+
+Services
+
+-------------------
+
+Web App
+
+↓
+
+Web Backend
+
+↓
+
+Services
+```
+
+Advantages
+
+- Optimized APIs
+- Better Performance
+- Independent Teams
+
+---
+
+# Comparison
+
+| Pattern | Best Use Case |
+|----------|--------------|
+| Microservices | Enterprise Applications |
+| Event Driven | Async Processing |
+| Serverless | APIs & Automation |
+| API First | Platform Development |
+| CQRS | High Read Workloads |
+| Event Sourcing | Auditing |
+| Saga | Distributed Transactions |
+| Service Mesh | Kubernetes |
+| Sidecar | Observability |
+| Backend for Frontend | Multiple Clients |
+
+---
+
+# Best Practices
+
+- Keep services loosely coupled
+- Design APIs carefully
+- Use asynchronous communication where possible
+- Avoid distributed monoliths
+- Implement centralized logging
+- Use distributed tracing
+- Apply Zero Trust security
+- Automate deployments
+- Monitor every service
+- Use Infrastructure as Code
+
+---
+
+# Summary
+
+Modern cloud-native architectures enable organizations to build highly scalable, resilient, and maintainable applications. Microservices, Event-Driven, Serverless, CQRS, Event Sourcing, Saga, Service Mesh, Sidecar, and Backend-for-Frontend patterns solve different architectural challenges and are widely used in enterprise DevOps environments.
