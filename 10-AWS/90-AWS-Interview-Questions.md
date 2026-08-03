@@ -1013,3 +1013,592 @@ This section covered AWS networking and storage interview topics including VPC, 
 
 ---
 
+# IAM (Identity and Access Management)
+
+---
+
+## Question 101
+
+### What is IAM?
+
+**Answer**
+
+AWS Identity and Access Management (IAM) is a global AWS service used to securely manage authentication and authorization for AWS resources.
+
+IAM enables you to create
+
+- Users
+- Groups
+- Roles
+- Policies
+
+---
+
+## Question 102
+
+### Difference between IAM User, Group and Role?
+
+**Answer**
+
+| IAM User | IAM Group | IAM Role |
+|----------|-----------|----------|
+| Individual Identity | Collection of Users | Temporary Identity |
+| Long-term Credentials | Permission Management | Assumed by Users/Services |
+| Password & Access Keys | No Credentials | Temporary Credentials |
+
+---
+
+## Question 103
+
+### What is an IAM Policy?
+
+**Answer**
+
+An IAM Policy is a JSON document that defines permissions.
+
+Example
+
+```json
+{
+  "Effect": "Allow",
+  "Action": "s3:GetObject",
+  "Resource": "*"
+}
+```
+
+---
+
+## Question 104
+
+### What are IAM Roles?
+
+**Answer**
+
+IAM Roles provide temporary credentials to AWS services or users.
+
+Common Uses
+
+- EC2
+- Lambda
+- ECS
+- EKS
+- Cross-Account Access
+
+---
+
+## Question 105
+
+### What is the Principle of Least Privilege?
+
+**Answer**
+
+Grant only the minimum permissions required to perform a task.
+
+---
+
+## Question 106
+
+### What is a Trust Policy?
+
+**Answer**
+
+A Trust Policy defines who or what can assume an IAM Role using `sts:AssumeRole`.
+
+---
+
+## Question 107
+
+### What is Cross-Account Access?
+
+**Answer**
+
+Cross-account access allows users or services in one AWS account to access resources in another AWS account by assuming an IAM Role.
+
+---
+
+## Question 108
+
+### What is an IAM Permission Boundary?
+
+**Answer**
+
+A Permission Boundary sets the maximum permissions an IAM User or Role can receive.
+
+---
+
+## Question 109
+
+### What are Access Keys?
+
+**Answer**
+
+Access Keys consist of
+
+- Access Key ID
+- Secret Access Key
+
+Used for programmatic access through AWS CLI and SDKs.
+
+---
+
+## Question 110
+
+### What is AWS STS?
+
+**Answer**
+
+AWS Security Token Service (STS) provides temporary security credentials for IAM Roles and federated users.
+
+---
+
+# AWS KMS
+
+---
+
+## Question 111
+
+### What is AWS KMS?
+
+**Answer**
+
+AWS Key Management Service (KMS) is a managed encryption service used to create and manage cryptographic keys.
+
+---
+
+## Question 112
+
+### Difference between AWS Managed Key and Customer Managed Key (CMK)?
+
+| AWS Managed Key | Customer Managed Key |
+|-----------------|----------------------|
+| Managed by AWS | Managed by Customer |
+| Limited Control | Full Control |
+| Automatic Creation | Manual Creation |
+
+---
+
+## Question 113
+
+### What is Envelope Encryption?
+
+**Answer**
+
+Envelope Encryption encrypts data using a Data Key, while the Data Key itself is encrypted using a KMS Key.
+
+---
+
+## Question 114
+
+### Difference between Data Key and CMK?
+
+| Data Key | CMK |
+|-----------|-----|
+| Encrypts Data | Encrypts Data Keys |
+| Temporary | Long-lived |
+
+---
+
+# Secrets Manager
+
+---
+
+## Question 115
+
+### What is AWS Secrets Manager?
+
+**Answer**
+
+Secrets Manager securely stores and manages sensitive information such as
+
+- Database Passwords
+- API Keys
+- Tokens
+- Credentials
+
+Supports automatic secret rotation.
+
+---
+
+## Question 116
+
+### Difference between Secrets Manager and Parameter Store?
+
+| Secrets Manager | Parameter Store |
+|----------------|-----------------|
+| Automatic Rotation | No Native Rotation |
+| Designed for Secrets | General Configuration |
+| Additional Cost | Standard Tier Available |
+
+---
+
+# CloudTrail
+
+---
+
+## Question 117
+
+### What is AWS CloudTrail?
+
+**Answer**
+
+CloudTrail records AWS API activity for governance, auditing, and troubleshooting.
+
+Captures
+
+- Console Actions
+- CLI Commands
+- SDK Calls
+- Service Events
+
+---
+
+## Question 118
+
+### Difference between CloudTrail and CloudWatch?
+
+| CloudTrail | CloudWatch |
+|------------|------------|
+| API Auditing | Monitoring & Metrics |
+| Governance | Performance Monitoring |
+| Event History | Logs & Alarms |
+
+---
+
+# GuardDuty
+
+---
+
+## Question 119
+
+### What is Amazon GuardDuty?
+
+**Answer**
+
+Amazon GuardDuty is an intelligent threat detection service that continuously monitors AWS accounts for suspicious activity using machine learning and threat intelligence.
+
+---
+
+## Question 120
+
+### What data sources does GuardDuty analyze?
+
+**Answer**
+
+- CloudTrail
+- VPC Flow Logs
+- DNS Logs
+- EKS Audit Logs (optional)
+- S3 Protection (optional)
+- Malware Protection (supported integrations)
+
+---
+
+# Security Hub
+
+---
+
+## Question 121
+
+### What is AWS Security Hub?
+
+**Answer**
+
+AWS Security Hub centralizes security findings from AWS services and partner tools into a single dashboard.
+
+---
+
+## Question 122
+
+### Difference between GuardDuty and Security Hub?
+
+| GuardDuty | Security Hub |
+|------------|--------------|
+| Threat Detection | Security Dashboard |
+| Generates Findings | Aggregates Findings |
+| Continuous Monitoring | Compliance Reporting |
+
+---
+
+# AWS Inspector
+
+---
+
+## Question 123
+
+### What is Amazon Inspector?
+
+**Answer**
+
+Amazon Inspector automatically scans AWS workloads for software vulnerabilities and unintended network exposure.
+
+---
+
+## Question 124
+
+### What resources can Inspector scan?
+
+**Answer**
+
+- EC2
+- Amazon ECR Container Images
+- AWS Lambda Functions
+
+---
+
+# AWS Macie
+
+---
+
+## Question 125
+
+### What is Amazon Macie?
+
+**Answer**
+
+Amazon Macie uses machine learning to discover, classify, and protect sensitive data stored in Amazon S3.
+
+---
+
+## Question 126
+
+### What type of information can Macie detect?
+
+**Answer**
+
+Examples
+
+- Personally Identifiable Information (PII)
+- Financial Data
+- Credentials
+- Personal Records
+
+---
+
+# AWS Detective
+
+---
+
+## Question 127
+
+### What is Amazon Detective?
+
+**Answer**
+
+Amazon Detective helps investigate security incidents by analyzing relationships between AWS resources, users, and activities.
+
+---
+
+## Question 128
+
+### Difference between GuardDuty and Detective?
+
+| GuardDuty | Detective |
+|------------|-----------|
+| Detects Threats | Investigates Threats |
+| Generates Findings | Root Cause Analysis |
+
+---
+
+# AWS WAF
+
+---
+
+## Question 129
+
+### What is AWS WAF?
+
+**Answer**
+
+AWS Web Application Firewall (WAF) protects web applications from common web attacks.
+
+Examples
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- IP Blocking
+- Rate Limiting
+
+---
+
+## Question 130
+
+### Where can AWS WAF be attached?
+
+**Answer**
+
+- Application Load Balancer
+- Amazon CloudFront
+- Amazon API Gateway
+- AWS AppSync
+
+---
+
+# AWS Shield
+
+---
+
+## Question 131
+
+### What is AWS Shield?
+
+**Answer**
+
+AWS Shield provides managed protection against Distributed Denial of Service (DDoS) attacks.
+
+---
+
+## Question 132
+
+### Difference between Shield Standard and Shield Advanced?
+
+| Shield Standard | Shield Advanced |
+|-----------------|-----------------|
+| Free | Paid |
+| Basic DDoS Protection | Advanced DDoS Protection |
+| Automatic | Additional Detection & Support |
+
+---
+
+# AWS Certificate Manager
+
+---
+
+## Question 133
+
+### What is AWS Certificate Manager (ACM)?
+
+**Answer**
+
+AWS Certificate Manager provisions, manages, and renews SSL/TLS certificates for AWS resources.
+
+---
+
+## Question 134
+
+### Which AWS services integrate with ACM?
+
+**Answer**
+
+- Application Load Balancer
+- CloudFront
+- API Gateway
+
+---
+
+# AWS Organizations
+
+---
+
+## Question 135
+
+### What is AWS Organizations?
+
+**Answer**
+
+AWS Organizations enables centralized management of multiple AWS accounts.
+
+---
+
+## Question 136
+
+### What are Organizational Units (OUs)?
+
+**Answer**
+
+Organizational Units (OUs) are logical containers used to organize AWS accounts within AWS Organizations.
+
+---
+
+## Question 137
+
+### What are Service Control Policies (SCPs)?
+
+**Answer**
+
+SCPs define the maximum permissions available to AWS accounts within an AWS Organization.
+
+---
+
+# AWS Control Tower
+
+---
+
+## Question 138
+
+### What is AWS Control Tower?
+
+**Answer**
+
+AWS Control Tower automates the setup and governance of secure multi-account AWS environments using AWS Organizations.
+
+---
+
+# IAM Identity Center
+
+---
+
+## Question 139
+
+### What is IAM Identity Center?
+
+**Answer**
+
+IAM Identity Center (formerly AWS Single Sign-On) provides centralized identity management and single sign-on access to multiple AWS accounts and applications.
+
+---
+
+# AWS Directory Service
+
+---
+
+## Question 140
+
+### What is AWS Directory Service?
+
+**Answer**
+
+AWS Directory Service enables AWS resources to use Microsoft Active Directory and other directory services for authentication and identity management.
+
+---
+
+# Rapid Fire
+
+141. What is IAM?
+142. What is an IAM Role?
+143. What is STS?
+144. What is a Trust Policy?
+145. What is KMS?
+146. What is Envelope Encryption?
+147. What is Secrets Manager?
+148. What is CloudTrail?
+149. What is GuardDuty?
+150. What is Security Hub?
+151. What is Inspector?
+152. What is Macie?
+153. What is Detective?
+154. What is AWS WAF?
+155. What is AWS Shield?
+156. What is ACM?
+157. What is AWS Organizations?
+158. What is an SCP?
+159. What is Control Tower?
+160. What is IAM Identity Center?
+
+---
+
+# Interview Tips
+
+- Always explain the difference between authentication (who you are) and authorization (what you can do).
+- Mention the Principle of Least Privilege whenever discussing IAM.
+- Compare security services (e.g., GuardDuty vs Security Hub vs Inspector).
+- Explain real-world use cases such as using Secrets Manager for database credentials or KMS for encrypting EBS volumes.
+- For senior interviews, discuss multi-account governance with AWS Organizations and SCPs.
+
+---
+
+# Summary
+
+This section covered AWS security and identity services including IAM, KMS, Secrets Manager, CloudTrail, GuardDuty, Security Hub, Inspector, Macie, Detective, WAF, Shield, ACM, AWS Organizations, Control Tower, IAM Identity Center, and Directory Service. These services form the foundation of securing AWS environments and are frequently discussed in DevOps, Cloud Engineer, and Solutions Architect interviews.
+
+---
+
