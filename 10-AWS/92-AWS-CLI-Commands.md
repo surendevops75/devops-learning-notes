@@ -4504,3 +4504,704 @@ This section covered AWS CLI commands for Amazon ECR, ECS, EKS, Lambda, API Gate
 
 ---
 
+# AWS CloudFormation
+
+---
+
+# List Stacks
+
+```bash
+aws cloudformation list-stacks
+```
+
+---
+
+# Describe Stacks
+
+```bash
+aws cloudformation describe-stacks
+```
+
+---
+
+# Describe Specific Stack
+
+```bash
+aws cloudformation describe-stacks \
+--stack-name production-stack
+```
+
+---
+
+# Create Stack
+
+```bash
+aws cloudformation create-stack \
+--stack-name production-stack \
+--template-body file://template.yaml
+```
+
+---
+
+# Update Stack
+
+```bash
+aws cloudformation update-stack \
+--stack-name production-stack \
+--template-body file://template.yaml
+```
+
+---
+
+# Delete Stack
+
+```bash
+aws cloudformation delete-stack \
+--stack-name production-stack
+```
+
+---
+
+# Validate Template
+
+```bash
+aws cloudformation validate-template \
+--template-body file://template.yaml
+```
+
+---
+
+# Estimate Template Cost
+
+```bash
+aws cloudformation estimate-template-cost \
+--template-body file://template.yaml
+```
+
+---
+
+# List Stack Resources
+
+```bash
+aws cloudformation list-stack-resources \
+--stack-name production-stack
+```
+
+---
+
+# Get Stack Events
+
+```bash
+aws cloudformation describe-stack-events \
+--stack-name production-stack
+```
+
+---
+
+# Detect Stack Drift
+
+```bash
+aws cloudformation detect-stack-drift \
+--stack-name production-stack
+```
+
+---
+
+# Describe Drift Detection Status
+
+```bash
+aws cloudformation describe-stack-drift-detection-status \
+--stack-drift-detection-id <drift-id>
+```
+
+---
+
+# AWS CodeCommit
+
+---
+
+# List Repositories
+
+```bash
+aws codecommit list-repositories
+```
+
+---
+
+# Create Repository
+
+```bash
+aws codecommit create-repository \
+--repository-name devops-repo
+```
+
+---
+
+# Get Repository
+
+```bash
+aws codecommit get-repository \
+--repository-name devops-repo
+```
+
+---
+
+# Delete Repository
+
+```bash
+aws codecommit delete-repository \
+--repository-name devops-repo
+```
+
+---
+
+# AWS CodeBuild
+
+---
+
+# List Projects
+
+```bash
+aws codebuild list-projects
+```
+
+---
+
+# Describe Project
+
+```bash
+aws codebuild batch-get-projects \
+--names my-build
+```
+
+---
+
+# Create Build Project
+
+```bash
+aws codebuild create-project \
+--cli-input-json file://project.json
+```
+
+---
+
+# Start Build
+
+```bash
+aws codebuild start-build \
+--project-name my-build
+```
+
+---
+
+# Stop Build
+
+```bash
+aws codebuild stop-build \
+--id <build-id>
+```
+
+---
+
+# List Build IDs
+
+```bash
+aws codebuild list-builds
+```
+
+---
+
+# Batch Get Builds
+
+```bash
+aws codebuild batch-get-builds \
+--ids <build-id>
+```
+
+---
+
+# AWS CodeDeploy
+
+---
+
+# List Applications
+
+```bash
+aws deploy list-applications
+```
+
+---
+
+# Create Application
+
+```bash
+aws deploy create-application \
+--application-name web-app
+```
+
+---
+
+# List Deployment Groups
+
+```bash
+aws deploy list-deployment-groups \
+--application-name web-app
+```
+
+---
+
+# Create Deployment
+
+```bash
+aws deploy create-deployment \
+--application-name web-app \
+--deployment-group-name production
+```
+
+---
+
+# Get Deployment
+
+```bash
+aws deploy get-deployment \
+--deployment-id d-XXXXXXXX
+```
+
+---
+
+# Stop Deployment
+
+```bash
+aws deploy stop-deployment \
+--deployment-id d-XXXXXXXX
+```
+
+---
+
+# AWS CodePipeline
+
+---
+
+# List Pipelines
+
+```bash
+aws codepipeline list-pipelines
+```
+
+---
+
+# Get Pipeline
+
+```bash
+aws codepipeline get-pipeline \
+--name production-pipeline
+```
+
+---
+
+# Create Pipeline
+
+```bash
+aws codepipeline create-pipeline \
+--cli-input-json file://pipeline.json
+```
+
+---
+
+# Start Pipeline
+
+```bash
+aws codepipeline start-pipeline-execution \
+--name production-pipeline
+```
+
+---
+
+# Get Pipeline State
+
+```bash
+aws codepipeline get-pipeline-state \
+--name production-pipeline
+```
+
+---
+
+# Delete Pipeline
+
+```bash
+aws codepipeline delete-pipeline \
+--name production-pipeline
+```
+
+---
+
+# AWS CodeArtifact
+
+---
+
+# List Domains
+
+```bash
+aws codeartifact list-domains
+```
+
+---
+
+# List Repositories
+
+```bash
+aws codeartifact list-repositories
+```
+
+---
+
+# Create Repository
+
+```bash
+aws codeartifact create-repository \
+--domain my-domain \
+--repository devops-packages
+```
+
+---
+
+# Get Authorization Token
+
+```bash
+aws codeartifact get-authorization-token \
+--domain my-domain
+```
+
+---
+
+# Delete Repository
+
+```bash
+aws codeartifact delete-repository \
+--domain my-domain \
+--repository devops-packages
+```
+
+---
+
+# AWS CloudTrail
+
+---
+
+# List Trails
+
+```bash
+aws cloudtrail describe-trails
+```
+
+---
+
+# Get Trail Status
+
+```bash
+aws cloudtrail get-trail-status \
+--name organization-trail
+```
+
+---
+
+# Create Trail
+
+```bash
+aws cloudtrail create-trail \
+--name organization-trail \
+--s3-bucket-name audit-logs
+```
+
+---
+
+# Start Logging
+
+```bash
+aws cloudtrail start-logging \
+--name organization-trail
+```
+
+---
+
+# Stop Logging
+
+```bash
+aws cloudtrail stop-logging \
+--name organization-trail
+```
+
+---
+
+# Lookup Events
+
+```bash
+aws cloudtrail lookup-events
+```
+
+---
+
+# AWS Config
+
+---
+
+# List Configuration Recorders
+
+```bash
+aws configservice describe-configuration-recorders
+```
+
+---
+
+# List Config Rules
+
+```bash
+aws configservice describe-config-rules
+```
+
+---
+
+# Get Compliance
+
+```bash
+aws configservice get-compliance-summary-by-config-rule
+```
+
+---
+
+# AWS Systems Manager (SSM)
+
+---
+
+# Describe Instances
+
+```bash
+aws ssm describe-instance-information
+```
+
+---
+
+# Start Session
+
+```bash
+aws ssm start-session \
+--target i-0123456789abcdef0
+```
+
+---
+
+# Send Command
+
+```bash
+aws ssm send-command \
+--document-name AWS-RunShellScript \
+--targets Key=instanceids,Values=i-0123456789abcdef0 \
+--parameters commands="uptime"
+```
+
+---
+
+# List Commands
+
+```bash
+aws ssm list-commands
+```
+
+---
+
+# Get Command Invocation
+
+```bash
+aws ssm get-command-invocation \
+--command-id <command-id> \
+--instance-id i-0123456789abcdef0
+```
+
+---
+
+# AWS Parameter Store
+
+---
+
+# List Parameters
+
+```bash
+aws ssm describe-parameters
+```
+
+---
+
+# Create Parameter
+
+```bash
+aws ssm put-parameter \
+--name /prod/db/password \
+--value Password123 \
+--type SecureString
+```
+
+---
+
+# Get Parameter
+
+```bash
+aws ssm get-parameter \
+--name /prod/db/password \
+--with-decryption
+```
+
+---
+
+# Get Multiple Parameters
+
+```bash
+aws ssm get-parameters \
+--names /prod/db/password /prod/api/url
+```
+
+---
+
+# Delete Parameter
+
+```bash
+aws ssm delete-parameter \
+--name /prod/db/password
+```
+
+---
+
+# OpsCenter
+
+---
+
+# List OpsItems
+
+```bash
+aws ssm list-ops-items
+```
+
+---
+
+# Get OpsItem
+
+```bash
+aws ssm get-ops-item \
+--ops-item-id oi-xxxxxxxx
+```
+
+---
+
+# Create OpsItem
+
+```bash
+aws ssm create-ops-item \
+--title "Production Alert"
+```
+
+---
+
+# Resource Explorer
+
+---
+
+# Search Resources
+
+```bash
+aws resource-explorer-2 search \
+--query-string "region:ap-south-1"
+```
+
+---
+
+# Resource Groups
+
+---
+
+# List Resource Groups
+
+```bash
+aws resource-groups list-groups
+```
+
+---
+
+# Create Resource Group
+
+```bash
+aws resource-groups create-group \
+--name Production
+```
+
+---
+
+# Tagging API
+
+---
+
+# Get Tagged Resources
+
+```bash
+aws resourcegroupstaggingapi get-resources
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List CloudFormation Stacks
+
+```bash
+aws cloudformation list-stacks \
+--query "StackSummaries[].StackName"
+```
+
+---
+
+# List CodeBuild Projects
+
+```bash
+aws codebuild list-projects \
+--query "projects"
+```
+
+---
+
+# List CodePipeline Names
+
+```bash
+aws codepipeline list-pipelines \
+--query "pipelines[].name"
+```
+
+---
+
+# List SSM Managed Instances
+
+```bash
+aws ssm describe-instance-information \
+--query "InstanceInformationList[].InstanceId"
+```
+
+---
+
+# Best Practices
+
+- Validate CloudFormation templates before deployment.
+- Enable CloudTrail organization-wide for auditing.
+- Use Systems Manager Session Manager instead of SSH where possible.
+- Store configuration values in Parameter Store or Secrets Manager.
+- Use CodePipeline for repeatable CI/CD workflows.
+- Monitor build failures in CodeBuild.
+- Enable AWS Config rules for compliance monitoring.
+- Use tagging consistently for governance and cost allocation.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for CloudFormation, CodeCommit, CodeBuild, CodeDeploy, CodePipeline, CodeArtifact, CloudTrail, AWS Config, Systems Manager (SSM), Parameter Store, OpsCenter, Resource Groups, and Tagging APIs. These services are fundamental for Infrastructure as Code, CI/CD automation, operational management, auditing, and governance in AWS.
+
+---
+
