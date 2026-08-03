@@ -1132,3 +1132,812 @@ Advantages
 # Summary
 
 Modern cloud-native architectures enable organizations to build highly scalable, resilient, and maintainable applications. Microservices, Event-Driven, Serverless, CQRS, Event Sourcing, Saga, Service Mesh, Sidecar, and Backend-for-Frontend patterns solve different architectural challenges and are widely used in enterprise DevOps environments.
+
+---
+
+# Kubernetes Architecture
+
+---
+
+# Introduction
+
+Kubernetes Architecture is designed to deploy, manage, scale, and recover containerized applications automatically.
+
+The architecture separates the control plane from worker nodes to provide high availability, scalability, and fault tolerance.
+
+---
+
+# Architecture
+
+```text
+                Users
+
+                  │
+
+          Application Load Balancer
+
+                  │
+
+          Kubernetes Ingress
+
+                  │
+
+─────────────────────────────────────
+
+        Kubernetes Cluster
+
+─────────────────────────────────────
+
+        Control Plane
+
+ ├── API Server
+
+ ├── Scheduler
+
+ ├── Controller Manager
+
+ └── etcd
+
+─────────────────────────────────────
+
+Worker Node 1
+
+├── kubelet
+
+├── kube-proxy
+
+└── Pods
+
+─────────────────────────────────────
+
+Worker Node 2
+
+├── kubelet
+
+├── kube-proxy
+
+└── Pods
+```
+
+---
+
+# Advantages
+
+- High Availability
+- Auto Scaling
+- Self Healing
+- Rolling Updates
+- Service Discovery
+- Resource Management
+
+---
+
+# Multi-Account AWS Architecture
+
+---
+
+# Introduction
+
+Large organizations separate workloads into multiple AWS accounts.
+
+Typical Accounts
+
+- Management
+- Development
+- Testing
+- Staging
+- Production
+- Security
+- Logging
+- Shared Services
+
+---
+
+# Architecture
+
+```text
+AWS Organization
+
+        │
+
+Management Account
+
+        │
+
+────────────────────────────────────
+
+│          │          │
+
+Dev      Test      Production
+
+│          │          │
+
+Separate AWS Accounts
+```
+
+---
+
+# Benefits
+
+- Security Isolation
+- Billing Separation
+- Compliance
+- Least Privilege
+- Independent Environments
+
+---
+
+# AWS Services
+
+- AWS Organizations
+- Control Tower
+- IAM Identity Center
+- SCPs
+
+---
+
+# Multi-Region Architecture
+
+---
+
+# Introduction
+
+Applications are deployed across multiple AWS Regions.
+
+Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Region A
+
+↓
+
+Region B
+
+↓
+
+Region C
+```
+
+---
+
+# Benefits
+
+- Disaster Recovery
+- Global Availability
+- Low Latency
+- Business Continuity
+
+---
+
+# High Availability (HA)
+
+---
+
+# Definition
+
+High Availability minimizes downtime by removing single points of failure.
+
+Architecture
+
+```text
+Users
+
+↓
+
+ALB
+
+↓
+
+Auto Scaling
+
+↓
+
+EC2
+
+↓
+
+RDS Multi-AZ
+```
+
+Techniques
+
+- Load Balancing
+- Multi-AZ
+- Auto Scaling
+- Redundant Components
+
+---
+
+# Disaster Recovery (DR)
+
+---
+
+# Objective
+
+Recover workloads after major failures.
+
+---
+
+# DR Strategies
+
+### Backup & Restore
+
+Lowest Cost
+
+Highest Recovery Time
+
+---
+
+### Pilot Light
+
+Critical systems always running.
+
+---
+
+### Warm Standby
+
+Small production environment always running.
+
+---
+
+### Multi-Site Active/Active
+
+Full production in multiple regions.
+
+Lowest Recovery Time
+
+Highest Cost
+
+---
+
+# Recovery Objectives
+
+RPO
+
+Recovery Point Objective
+
+Maximum acceptable data loss.
+
+Example
+
+```text
+RPO = 15 Minutes
+```
+
+---
+
+RTO
+
+Recovery Time Objective
+
+Maximum acceptable downtime.
+
+Example
+
+```text
+RTO = 30 Minutes
+```
+
+---
+
+# Active-Active Architecture
+
+Both environments actively serve traffic.
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Region A
+
+↓
+
+Region B
+```
+
+Advantages
+
+- High Availability
+- Load Distribution
+- Fast Recovery
+
+Disadvantages
+
+- Higher Cost
+- Complex Synchronization
+
+---
+
+# Active-Passive Architecture
+
+Only one environment serves production traffic.
+
+```text
+Primary Region
+
+↓
+
+Failure
+
+↓
+
+Secondary Region
+```
+
+Advantages
+
+- Lower Cost
+- Simpler Design
+
+Disadvantages
+
+- Failover Delay
+- Underutilized Resources
+
+---
+
+# Blue-Green Deployment
+
+Two identical environments.
+
+```text
+Blue
+
+↓
+
+Production
+
+Green
+
+↓
+
+New Version
+```
+
+Deployment
+
+```text
+Switch Traffic
+
+↓
+
+Blue → Green
+```
+
+Benefits
+
+- Zero Downtime
+- Easy Rollback
+- Safe Releases
+
+---
+
+# Canary Deployment
+
+Deploy to a small percentage of users first.
+
+```text
+5%
+
+↓
+
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Benefits
+
+- Lower Risk
+- Production Validation
+- Easy Rollback
+
+---
+
+# Rolling Deployment
+
+Replace instances gradually.
+
+```text
+Pod 1 Updated
+
+↓
+
+Pod 2 Updated
+
+↓
+
+Pod 3 Updated
+```
+
+Benefits
+
+- Continuous Availability
+- Controlled Updates
+
+---
+
+# GitOps Architecture
+
+---
+
+# Introduction
+
+Git becomes the single source of truth.
+
+Architecture
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Kubernetes Cluster
+```
+
+Advantages
+
+- Version Control
+- Rollback
+- Drift Detection
+- Audit Trail
+
+---
+
+# Enterprise DevSecOps Architecture
+
+```text
+Developer
+
+↓
+
+Git
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Build
+
+↓
+
+Docker Image
+
+↓
+
+ECR
+
+↓
+
+ArgoCD
+
+↓
+
+EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+```
+
+Security
+
+- IAM
+- Secrets Manager
+- KMS
+- WAF
+- Security Hub
+- GuardDuty
+
+---
+
+# AWS Well-Architected Framework
+
+---
+
+# Six Pillars
+
+### Operational Excellence
+
+- Automation
+- Monitoring
+- Continuous Improvement
+
+---
+
+### Security
+
+- IAM
+- Encryption
+- Logging
+- Incident Response
+
+---
+
+### Reliability
+
+- Auto Scaling
+- Multi-AZ
+- Backup
+- Disaster Recovery
+
+---
+
+### Performance Efficiency
+
+- Right Sizing
+- Caching
+- CDN
+- Scaling
+
+---
+
+### Cost Optimization
+
+- Spot Instances
+- Savings Plans
+- Monitoring
+- Resource Cleanup
+
+---
+
+### Sustainability
+
+- Efficient Resource Usage
+- Auto Scaling
+- Managed Services
+- Reduced Waste
+
+---
+
+# Enterprise Architecture Example
+
+```text
+                   Users
+
+                     │
+
+               Route53
+
+                     │
+
+               CloudFront
+
+                     │
+
+          AWS WAF + Shield
+
+                     │
+
+             Application LB
+
+                     │
+
+──────────────────────────────────────────
+
+Amazon EKS Cluster
+
+├── Frontend Pods
+
+├── User Service
+
+├── Order Service
+
+├── Payment Service
+
+├── Inventory Service
+
+├── Notification Service
+
+──────────────────────────────────────────
+
+        Amazon RDS Aurora
+
+        Amazon ElastiCache
+
+        Amazon SQS
+
+        Amazon SNS
+
+──────────────────────────────────────────
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+
+↓
+
+CloudWatch
+
+↓
+
+CloudTrail
+
+──────────────────────────────────────────
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker
+
+↓
+
+Amazon ECR
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Architecture Selection Guide
+
+| Requirement | Recommended Pattern |
+|-------------|---------------------|
+| Small Application | Monolithic |
+| Enterprise Application | Three-Tier |
+| Large SaaS Platform | Microservices |
+| Real-Time Events | Event-Driven |
+| Lightweight APIs | Serverless |
+| Kubernetes Platform | GitOps |
+| Banking Systems | Multi-Region |
+| Enterprise Security | DevSecOps |
+| Global Applications | Active-Active |
+| Zero Downtime Deployment | Blue-Green |
+
+---
+
+# Best Practices
+
+- Design for failure
+- Eliminate single points of failure
+- Automate infrastructure
+- Implement Infrastructure as Code
+- Monitor everything
+- Centralize logging
+- Encrypt data in transit and at rest
+- Apply Zero Trust security
+- Follow least-privilege IAM
+- Use GitOps for Kubernetes
+- Implement CI/CD automation
+- Test disaster recovery regularly
+- Use Multi-AZ for production
+- Implement cost optimization
+- Review architecture periodically
+
+---
+
+# Common Mistakes
+
+- Tight coupling between services
+- Single-region deployments
+- No disaster recovery plan
+- Manual infrastructure provisioning
+- Hardcoded secrets
+- No monitoring
+- Poor IAM practices
+- Ignoring backups
+- No rollback strategy
+- No infrastructure documentation
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is High Availability?
+2. What is Disaster Recovery?
+3. Explain Multi-AZ.
+4. Explain Blue-Green Deployment.
+5. Explain Canary Deployment.
+6. What is GitOps?
+7. What is Active-Active Architecture?
+8. What is Active-Passive Architecture?
+9. What is Multi-Region Architecture?
+10. What is the AWS Well-Architected Framework?
+
+---
+
+## Intermediate
+
+11. Explain Kubernetes architecture.
+12. Explain Multi-Account AWS Architecture.
+13. Explain RPO and RTO.
+14. Explain GitOps architecture.
+15. Explain DevSecOps architecture.
+16. Explain Blue-Green vs Canary.
+17. Explain Active-Active vs Active-Passive.
+18. Explain disaster recovery strategies.
+19. Explain enterprise monitoring architecture.
+20. Explain production deployment strategies.
+
+---
+
+## Advanced
+
+21. Design a highly available banking platform.
+22. Design a multi-region e-commerce platform.
+23. Design an enterprise Kubernetes platform.
+24. Explain large-scale GitOps architecture.
+25. Design a secure DevSecOps pipeline.
+26. Explain enterprise AWS Organizations.
+27. Design global disaster recovery.
+28. Explain production architecture best practices.
+29. Design a zero-downtime deployment platform.
+30. Explain the AWS Well-Architected Framework in enterprise production.
+
+---
+
+# Summary
+
+Enterprise DevOps architectures combine Kubernetes, Microservices, GitOps, DevSecOps, Multi-Account AWS, Multi-Region deployments, High Availability, Disaster Recovery, Blue-Green deployments, Canary releases, and the AWS Well-Architected Framework to build secure, scalable, resilient, and highly available cloud platforms. These patterns reduce operational risk, improve deployment velocity, enable business continuity, and represent the standard approach for modern cloud-native applications.
