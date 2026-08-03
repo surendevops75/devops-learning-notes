@@ -1681,3 +1681,715 @@ Purpose
 # Summary
 
 These diagrams illustrate serverless architectures, event-driven systems, messaging services, observability stacks, centralized logging, distributed tracing, security controls, IAM, secrets management, multi-account governance, and disaster recovery. These patterns are widely used in modern AWS production environments to build secure, resilient, and observable cloud-native applications.
+
+---
+
+# Diagram 46
+
+# Enterprise Multi-Account Landing Zone
+
+```text
+                     AWS Organization
+
+                            │
+
+                  Management Account
+
+                            │
+
+────────────────────────────────────────────────────
+
+│            │            │             │
+
+Security   Shared      Networking    Log Archive
+
+Account    Services      Account       Account
+
+                            │
+
+────────────────────────────────────────────────────
+
+│            │            │
+
+Development  Testing   Production
+
+Account      Account     Account
+```
+
+Purpose
+
+- Enterprise Governance
+- Account Isolation
+- Centralized Management
+
+---
+
+# Diagram 47
+
+# Multi-Region Architecture
+
+```text
+                 Route53
+
+                    │
+
+────────────┬─────────────────┬────────────
+
+            │                 │
+
+Region A            Region B
+
+│                   │
+
+ALB                 ALB
+
+│                   │
+
+Amazon EKS      Amazon EKS
+
+│                   │
+
+Aurora Global Database
+```
+
+Purpose
+
+- Global Applications
+- Disaster Recovery
+- Low Latency
+
+---
+
+# Diagram 48
+
+# Active-Active Architecture
+
+```text
+Users
+
+↓
+
+Route53 Latency Routing
+
+↓
+
+───────────────┬───────────────
+
+│                              │
+
+Region A                  Region B
+
+│                              │
+
+Application              Application
+
+│                              │
+
+Database Replication
+```
+
+Purpose
+
+- Maximum Availability
+- Global Traffic Distribution
+
+---
+
+# Diagram 49
+
+# Active-Passive Architecture
+
+```text
+Users
+
+↓
+
+Route53 Failover
+
+↓
+
+Primary Region
+
+↓
+
+Production
+
+↓
+
+Failure
+
+↓
+
+Secondary Region
+
+↓
+
+Recovery
+```
+
+Purpose
+
+- Disaster Recovery
+- Lower Cost
+
+---
+
+# Diagram 50
+
+# Enterprise Microservices Platform
+
+```text
+Internet
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+├── User Service
+
+├── Product Service
+
+├── Order Service
+
+├── Payment Service
+
+├── Inventory Service
+
+├── Notification Service
+
+↓
+
+Amazon Aurora
+
+↓
+
+Amazon ElastiCache
+```
+
+Purpose
+
+- Enterprise Microservices
+- Kubernetes Platform
+
+---
+
+# Diagram 51
+
+# Enterprise Data Lake
+
+```text
+Data Sources
+
+↓
+
+AWS DataSync
+
+↓
+
+Amazon S3 Data Lake
+
+↓
+
+AWS Glue
+
+↓
+
+AWS Lake Formation
+
+↓
+
+Amazon Athena
+
+↓
+
+Amazon Redshift
+
+↓
+
+BI Dashboards
+```
+
+Purpose
+
+- Centralized Analytics
+- Data Warehousing
+
+---
+
+# Diagram 52
+
+# AI / ML Platform
+
+```text
+Applications
+
+↓
+
+Amazon API Gateway
+
+↓
+
+AWS Lambda
+
+↓
+
+Amazon Bedrock
+
+↓
+
+Amazon S3
+
+↓
+
+Amazon DynamoDB
+
+↓
+
+Users
+```
+
+Purpose
+
+- Generative AI
+- AI-Powered Applications
+
+---
+
+# Diagram 53
+
+# DevSecOps Enterprise Platform
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Amazon OpenSearch Service
+```
+
+Purpose
+
+- Secure Software Delivery
+- Continuous Compliance
+
+---
+
+# Diagram 54
+
+# Banking Application Architecture
+
+```text
+Customers
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon Aurora Multi-AZ
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+AWS KMS
+
+↓
+
+AWS Backup
+```
+
+Purpose
+
+- Financial Applications
+- High Security
+- High Availability
+
+---
+
+# Diagram 55
+
+# SaaS Multi-Tenant Architecture
+
+```text
+Customers
+
+↓
+
+CloudFront
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Tenant Router
+
+├── Tenant A
+
+├── Tenant B
+
+├── Tenant C
+
+↓
+
+Shared Services
+
+↓
+
+Amazon Aurora
+```
+
+Purpose
+
+- SaaS Applications
+- Multi-Tenant Platforms
+
+---
+
+# Diagram 56
+
+# Enterprise Monitoring Platform
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Amazon Managed Prometheus
+
+↓
+
+Amazon Managed Grafana
+
+↓
+
+AlertManager
+
+↓
+
+Amazon SNS
+
+↓
+
+Operations Team
+```
+
+Purpose
+
+- Centralized Monitoring
+- Alert Management
+
+---
+
+# Diagram 57
+
+# Centralized Logging Platform
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Amazon OpenSearch Service
+
+↓
+
+Dashboards
+
+↓
+
+Security Team
+
+↓
+
+Operations Team
+```
+
+Purpose
+
+- Enterprise Log Management
+- Operational Visibility
+
+---
+
+# Diagram 58
+
+# Backup & Disaster Recovery
+
+```text
+Production
+
+↓
+
+AWS Backup
+
+↓
+
+Backup Vault
+
+↓
+
+Cross-Region Backup
+
+↓
+
+Recovery Vault
+
+↓
+
+Disaster Recovery
+```
+
+Purpose
+
+- Backup Automation
+- Cross-Region Recovery
+
+---
+
+# Diagram 59
+
+# AWS Well-Architected Reference Design
+
+```text
+Applications
+
+↓
+
+Operational Excellence
+
+↓
+
+Security
+
+↓
+
+Reliability
+
+↓
+
+Performance
+
+↓
+
+Cost Optimization
+
+↓
+
+Sustainability
+```
+
+Purpose
+
+- Cloud Best Practices
+- Architecture Reviews
+
+---
+
+# Diagram 60
+
+# Enterprise Cloud Platform
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Amazon Aurora
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Amazon S3
+
+──────────────────────────────
+
+Monitoring
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+CloudWatch
+
+↓
+
+Amazon OpenSearch Service
+
+──────────────────────────────
+
+CI/CD
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+```
+
+Purpose
+
+- Complete Enterprise AWS Platform
+- Production Reference Architecture
+
+---
+
+# Best Practices
+
+- Use AWS Organizations for multi-account governance.
+- Design workloads across multiple Regions for critical applications.
+- Prefer Active-Active for global, mission-critical systems.
+- Implement GitOps and DevSecOps for secure deployments.
+- Centralize monitoring and logging.
+- Use Data Lakes for analytics workloads.
+- Apply the AWS Well-Architected Framework to all production architectures.
+- Regularly test backup and disaster recovery procedures.
+
+---
+
+# Summary
+
+These enterprise architecture diagrams illustrate production-ready AWS reference designs for multi-account governance, global deployments, microservices, AI/ML platforms, SaaS applications, DevSecOps, monitoring, logging, disaster recovery, and enterprise cloud platforms. These patterns are widely adopted in large organizations to achieve scalability, resilience, security, and operational excellence.
+
+---
+
