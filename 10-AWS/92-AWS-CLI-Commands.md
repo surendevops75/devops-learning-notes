@@ -3669,3 +3669,838 @@ This section covered AWS CLI commands for Amazon RDS, Aurora, DynamoDB, ElastiCa
 
 ---
 
+# Amazon ECR
+
+---
+
+# List Repositories
+
+```bash
+aws ecr describe-repositories
+```
+
+---
+
+# Create Repository
+
+```bash
+aws ecr create-repository \
+--repository-name my-app
+```
+
+---
+
+# Delete Repository
+
+```bash
+aws ecr delete-repository \
+--repository-name my-app \
+--force
+```
+
+---
+
+# List Images
+
+```bash
+aws ecr list-images \
+--repository-name my-app
+```
+
+---
+
+# Describe Images
+
+```bash
+aws ecr describe-images \
+--repository-name my-app
+```
+
+---
+
+# Delete Image
+
+```bash
+aws ecr batch-delete-image \
+--repository-name my-app \
+--image-ids imageTag=latest
+```
+
+---
+
+# Get Login Password
+
+```bash
+aws ecr get-login-password
+```
+
+---
+
+# Docker Login to ECR
+
+```bash
+aws ecr get-login-password | docker login \
+--username AWS \
+--password-stdin \
+123456789012.dkr.ecr.ap-south-1.amazonaws.com
+```
+
+---
+
+# Start Image Scan
+
+```bash
+aws ecr start-image-scan \
+--repository-name my-app \
+--image-id imageTag=latest
+```
+
+---
+
+# Get Image Scan Results
+
+```bash
+aws ecr describe-image-scan-findings \
+--repository-name my-app \
+--image-id imageTag=latest
+```
+
+---
+
+# Amazon ECS
+
+---
+
+# List Clusters
+
+```bash
+aws ecs list-clusters
+```
+
+---
+
+# Describe Cluster
+
+```bash
+aws ecs describe-clusters \
+--clusters production
+```
+
+---
+
+# Create Cluster
+
+```bash
+aws ecs create-cluster \
+--cluster-name production
+```
+
+---
+
+# Delete Cluster
+
+```bash
+aws ecs delete-cluster \
+--cluster production
+```
+
+---
+
+# List Services
+
+```bash
+aws ecs list-services \
+--cluster production
+```
+
+---
+
+# Describe Service
+
+```bash
+aws ecs describe-services \
+--cluster production \
+--services web
+```
+
+---
+
+# Update Service
+
+```bash
+aws ecs update-service \
+--cluster production \
+--service web \
+--desired-count 3
+```
+
+---
+
+# Force New Deployment
+
+```bash
+aws ecs update-service \
+--cluster production \
+--service web \
+--force-new-deployment
+```
+
+---
+
+# List Tasks
+
+```bash
+aws ecs list-tasks \
+--cluster production
+```
+
+---
+
+# Stop Task
+
+```bash
+aws ecs stop-task \
+--cluster production \
+--task <task-id>
+```
+
+---
+
+# Register Task Definition
+
+```bash
+aws ecs register-task-definition \
+--cli-input-json file://task-definition.json
+```
+
+---
+
+# List Task Definitions
+
+```bash
+aws ecs list-task-definitions
+```
+
+---
+
+# Amazon EKS
+
+---
+
+# List Clusters
+
+```bash
+aws eks list-clusters
+```
+
+---
+
+# Describe Cluster
+
+```bash
+aws eks describe-cluster \
+--name production
+```
+
+---
+
+# Create Cluster
+
+```bash
+aws eks create-cluster \
+--cli-input-json file://cluster.json
+```
+
+---
+
+# Delete Cluster
+
+```bash
+aws eks delete-cluster \
+--name production
+```
+
+---
+
+# Update kubeconfig
+
+```bash
+aws eks update-kubeconfig \
+--region ap-south-1 \
+--name production
+```
+
+---
+
+# List Node Groups
+
+```bash
+aws eks list-nodegroups \
+--cluster-name production
+```
+
+---
+
+# Describe Node Group
+
+```bash
+aws eks describe-nodegroup \
+--cluster-name production \
+--nodegroup-name workers
+```
+
+---
+
+# Create Node Group
+
+```bash
+aws eks create-nodegroup \
+--cli-input-json file://nodegroup.json
+```
+
+---
+
+# Delete Node Group
+
+```bash
+aws eks delete-nodegroup \
+--cluster-name production \
+--nodegroup-name workers
+```
+
+---
+
+# AWS Lambda
+
+---
+
+# List Functions
+
+```bash
+aws lambda list-functions
+```
+
+---
+
+# Get Function
+
+```bash
+aws lambda get-function \
+--function-name processOrders
+```
+
+---
+
+# Create Function
+
+```bash
+aws lambda create-function \
+--cli-input-json file://lambda.json
+```
+
+---
+
+# Update Function Code
+
+```bash
+aws lambda update-function-code \
+--function-name processOrders \
+--zip-file fileb://lambda.zip
+```
+
+---
+
+# Invoke Function
+
+```bash
+aws lambda invoke \
+--function-name processOrders \
+output.json
+```
+
+---
+
+# Delete Function
+
+```bash
+aws lambda delete-function \
+--function-name processOrders
+```
+
+---
+
+# List Event Source Mappings
+
+```bash
+aws lambda list-event-source-mappings
+```
+
+---
+
+# API Gateway
+
+---
+
+# List REST APIs
+
+```bash
+aws apigateway get-rest-apis
+```
+
+---
+
+# Get API Details
+
+```bash
+aws apigateway get-rest-api \
+--rest-api-id abc123
+```
+
+---
+
+# Create REST API
+
+```bash
+aws apigateway create-rest-api \
+--name OrdersAPI
+```
+
+---
+
+# Delete REST API
+
+```bash
+aws apigateway delete-rest-api \
+--rest-api-id abc123
+```
+
+---
+
+# List Stages
+
+```bash
+aws apigateway get-stages \
+--rest-api-id abc123
+```
+
+---
+
+# Amazon EventBridge
+
+---
+
+# List Event Buses
+
+```bash
+aws events list-event-buses
+```
+
+---
+
+# List Rules
+
+```bash
+aws events list-rules
+```
+
+---
+
+# Create Rule
+
+```bash
+aws events put-rule \
+--name OrderEvents
+```
+
+---
+
+# Delete Rule
+
+```bash
+aws events delete-rule \
+--name OrderEvents
+```
+
+---
+
+# Put Event
+
+```bash
+aws events put-events \
+--entries file://events.json
+```
+
+---
+
+# Amazon SNS
+
+---
+
+# List Topics
+
+```bash
+aws sns list-topics
+```
+
+---
+
+# Create Topic
+
+```bash
+aws sns create-topic \
+--name alerts
+```
+
+---
+
+# Publish Message
+
+```bash
+aws sns publish \
+--topic-arn arn:aws:sns:... \
+--message "Deployment Successful"
+```
+
+---
+
+# Subscribe Endpoint
+
+```bash
+aws sns subscribe \
+--topic-arn arn:aws:sns:... \
+--protocol email \
+--notification-endpoint admin@example.com
+```
+
+---
+
+# Delete Topic
+
+```bash
+aws sns delete-topic \
+--topic-arn arn:aws:sns:...
+```
+
+---
+
+# Amazon SQS
+
+---
+
+# List Queues
+
+```bash
+aws sqs list-queues
+```
+
+---
+
+# Create Queue
+
+```bash
+aws sqs create-queue \
+--queue-name orders
+```
+
+---
+
+# Get Queue URL
+
+```bash
+aws sqs get-queue-url \
+--queue-name orders
+```
+
+---
+
+# Send Message
+
+```bash
+aws sqs send-message \
+--queue-url https://sqs.ap-south-1.amazonaws.com/... \
+--message-body "Order Created"
+```
+
+---
+
+# Receive Message
+
+```bash
+aws sqs receive-message \
+--queue-url https://sqs.ap-south-1.amazonaws.com/...
+```
+
+---
+
+# Delete Message
+
+```bash
+aws sqs delete-message \
+--queue-url https://sqs.ap-south-1.amazonaws.com/... \
+--receipt-handle <receipt-handle>
+```
+
+---
+
+# Purge Queue
+
+```bash
+aws sqs purge-queue \
+--queue-url https://sqs.ap-south-1.amazonaws.com/...
+```
+
+---
+
+# AWS Step Functions
+
+---
+
+# List State Machines
+
+```bash
+aws stepfunctions list-state-machines
+```
+
+---
+
+# Describe State Machine
+
+```bash
+aws stepfunctions describe-state-machine \
+--state-machine-arn arn:aws:states:...
+```
+
+---
+
+# Create State Machine
+
+```bash
+aws stepfunctions create-state-machine \
+--cli-input-json file://state-machine.json
+```
+
+---
+
+# Start Execution
+
+```bash
+aws stepfunctions start-execution \
+--state-machine-arn arn:aws:states:... \
+--input file://input.json
+```
+
+---
+
+# List Executions
+
+```bash
+aws stepfunctions list-executions \
+--state-machine-arn arn:aws:states:...
+```
+
+---
+
+# CloudWatch
+
+---
+
+# List Metrics
+
+```bash
+aws cloudwatch list-metrics
+```
+
+---
+
+# Get Metric Statistics
+
+```bash
+aws cloudwatch get-metric-statistics \
+--namespace AWS/EC2 \
+--metric-name CPUUtilization
+```
+
+---
+
+# Put Metric Alarm
+
+```bash
+aws cloudwatch put-metric-alarm \
+--alarm-name HighCPU
+```
+
+---
+
+# Describe Alarms
+
+```bash
+aws cloudwatch describe-alarms
+```
+
+---
+
+# Delete Alarm
+
+```bash
+aws cloudwatch delete-alarms \
+--alarm-names HighCPU
+```
+
+---
+
+# CloudWatch Logs
+
+---
+
+# List Log Groups
+
+```bash
+aws logs describe-log-groups
+```
+
+---
+
+# List Log Streams
+
+```bash
+aws logs describe-log-streams \
+--log-group-name /aws/lambda/processOrders
+```
+
+---
+
+# Get Log Events
+
+```bash
+aws logs get-log-events \
+--log-group-name /aws/lambda/processOrders \
+--log-stream-name stream-name
+```
+
+---
+
+# Tail Logs
+
+```bash
+aws logs tail \
+/aws/lambda/processOrders \
+--follow
+```
+
+---
+
+# Create Log Group
+
+```bash
+aws logs create-log-group \
+--log-group-name application-logs
+```
+
+---
+
+# Delete Log Group
+
+```bash
+aws logs delete-log-group \
+--log-group-name application-logs
+```
+
+---
+
+# AWS App Runner
+
+---
+
+# List Services
+
+```bash
+aws apprunner list-services
+```
+
+---
+
+# Describe Service
+
+```bash
+aws apprunner describe-service \
+--service-arn arn:aws:apprunner:...
+```
+
+---
+
+# Create Service
+
+```bash
+aws apprunner create-service \
+--cli-input-json file://service.json
+```
+
+---
+
+# Delete Service
+
+```bash
+aws apprunner delete-service \
+--service-arn arn:aws:apprunner:...
+```
+
+---
+
+# Resource Queries
+
+---
+
+# List EKS Cluster Names
+
+```bash
+aws eks list-clusters \
+--query "clusters"
+```
+
+---
+
+# List Lambda Function Names
+
+```bash
+aws lambda list-functions \
+--query "Functions[].FunctionName"
+```
+
+---
+
+# List ECS Cluster ARNs
+
+```bash
+aws ecs list-clusters \
+--query "clusterArns"
+```
+
+---
+
+# List SNS Topic ARNs
+
+```bash
+aws sns list-topics \
+--query "Topics[].TopicArn"
+```
+
+---
+
+# Best Practices
+
+- Use Amazon ECR image scanning before deployments.
+- Update kubeconfig using `aws eks update-kubeconfig` instead of editing kubeconfig manually.
+- Use CloudWatch alarms with SNS notifications for production monitoring.
+- Configure Dead Letter Queues (DLQs) for Lambda and SQS where appropriate.
+- Use EventBridge for event-driven integrations instead of polling.
+- Force ECS deployments only when required to minimize unnecessary restarts.
+- Store Lambda deployment packages in version-controlled artifacts.
+
+---
+
+# Summary
+
+This section covered AWS CLI commands for Amazon ECR, ECS, EKS, Lambda, API Gateway, EventBridge, SNS, SQS, Step Functions, CloudWatch, CloudWatch Logs, and App Runner. These commands are frequently used by DevOps engineers for container orchestration, serverless deployments, messaging, event processing, monitoring, and production operations.
+
+---
+
