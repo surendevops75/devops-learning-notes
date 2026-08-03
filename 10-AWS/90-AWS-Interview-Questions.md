@@ -2797,3 +2797,1618 @@ This section covered monitoring and observability services (CloudWatch, X-Ray, O
 
 ---
 
+# High Availability
+
+---
+
+## Question 279
+
+### What is High Availability (HA)?
+
+**Answer**
+
+High Availability is the ability of a system to remain operational even if one or more components fail.
+
+Techniques
+
+- Multi-AZ Deployment
+- Load Balancers
+- Auto Scaling
+- Database Replication
+- Health Checks
+
+Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+Auto Scaling Group
+
+↓
+
+EC2 Instances
+
+↓
+
+RDS Multi-AZ
+```
+
+---
+
+## Question 280
+
+### How do you design a highly available web application on AWS?
+
+**Answer**
+
+Architecture
+
+```text
+Users
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Auto Scaling Group
+
+↓
+
+Amazon RDS Multi-AZ
+
+↓
+
+Amazon S3
+```
+
+Key Features
+
+- Multi-AZ Deployment
+- Auto Scaling
+- Health Checks
+- CDN
+- Secure Storage
+
+---
+
+# Disaster Recovery
+
+---
+
+## Question 281
+
+### What is Disaster Recovery (DR)?
+
+**Answer**
+
+Disaster Recovery ensures workloads can recover after major failures.
+
+Objectives
+
+- Business Continuity
+- Data Protection
+- Fast Recovery
+
+---
+
+## Question 282
+
+### Explain RPO and RTO.
+
+**Answer**
+
+**Recovery Point Objective (RPO)**
+
+Maximum acceptable data loss.
+
+Example
+
+```
+15 Minutes
+```
+
+**Recovery Time Objective (RTO)**
+
+Maximum acceptable downtime.
+
+Example
+
+```
+30 Minutes
+```
+
+---
+
+## Question 283
+
+### What are the AWS Disaster Recovery strategies?
+
+**Answer**
+
+- Backup & Restore
+- Pilot Light
+- Warm Standby
+- Multi-Site Active-Active
+
+---
+
+# Multi-Region
+
+---
+
+## Question 284
+
+### Why deploy applications in multiple AWS Regions?
+
+**Answer**
+
+Benefits
+
+- Disaster Recovery
+- Low Latency
+- Global Availability
+- Fault Isolation
+
+---
+
+## Question 285
+
+### Active-Active vs Active-Passive?
+
+| Active-Active | Active-Passive |
+|---------------|----------------|
+| Both Regions Serve Traffic | One Region Active |
+| Better Availability | Lower Cost |
+| Higher Complexity | Simpler |
+
+---
+
+# Scalability
+
+---
+
+## Question 286
+
+### Vertical Scaling vs Horizontal Scaling?
+
+| Vertical | Horizontal |
+|-----------|------------|
+| Bigger Server | More Servers |
+| Limited Growth | Nearly Unlimited |
+| Easier | More Resilient |
+
+---
+
+## Question 287
+
+### What AWS services support horizontal scaling?
+
+**Answer**
+
+- Auto Scaling
+- ECS
+- EKS
+- Lambda
+- DynamoDB
+- Aurora
+
+---
+
+# Caching
+
+---
+
+## Question 288
+
+### Why use caching?
+
+**Answer**
+
+Benefits
+
+- Reduce Database Load
+- Faster Response
+- Lower Latency
+- Better Scalability
+
+---
+
+## Question 289
+
+### Where would you use ElastiCache?
+
+**Answer**
+
+- Session Storage
+- Frequently Accessed Data
+- API Responses
+- Database Query Results
+
+---
+
+# Database Design
+
+---
+
+## Question 290
+
+### RDS vs DynamoDB?
+
+| RDS | DynamoDB |
+|-----|----------|
+| Relational | NoSQL |
+| SQL | Key-Value |
+| ACID Transactions | Massive Scale |
+
+---
+
+## Question 291
+
+### Aurora vs RDS?
+
+**Answer**
+
+Aurora provides
+
+- Better Performance
+- Faster Failover
+- Distributed Storage
+- Higher Availability
+
+---
+
+# Security Architecture
+
+---
+
+## Question 292
+
+### How do you secure an AWS production environment?
+
+**Answer**
+
+- IAM Least Privilege
+- MFA
+- Security Groups
+- Network ACLs
+- AWS WAF
+- Shield
+- KMS Encryption
+- Secrets Manager
+- CloudTrail
+- GuardDuty
+- Security Hub
+
+---
+
+## Question 293
+
+### How do you secure secrets?
+
+**Answer**
+
+Use
+
+- AWS Secrets Manager
+- IAM Roles
+- KMS Encryption
+- Automatic Rotation
+
+Never hardcode credentials.
+
+---
+
+# Networking Design
+
+---
+
+## Question 294
+
+### Design a secure VPC.
+
+**Answer**
+
+Architecture
+
+```text
+Internet
+
+↓
+
+Internet Gateway
+
+↓
+
+Public Subnet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Subnet
+
+↓
+
+EC2
+
+↓
+
+Private Subnet
+
+↓
+
+RDS
+```
+
+---
+
+## Question 295
+
+### Why should databases be placed in private subnets?
+
+**Answer**
+
+Benefits
+
+- No Internet Access
+- Better Security
+- Reduced Attack Surface
+
+---
+
+# Kubernetes Architecture
+
+---
+
+## Question 296
+
+### Explain a production EKS architecture.
+
+**Answer**
+
+```text
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Ingress
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+
+↓
+
+ElastiCache
+```
+
+---
+
+## Question 297
+
+### How would you deploy microservices on Kubernetes?
+
+**Answer**
+
+Each microservice should have
+
+- Deployment
+- Service
+- Horizontal Pod Autoscaler
+- ConfigMap
+- Secret
+- Ingress Rules
+- Monitoring
+
+---
+
+# DevOps Architecture
+
+---
+
+## Question 298
+
+### Explain a CI/CD pipeline.
+
+**Answer**
+
+```text
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Build
+
+↓
+
+Docker
+
+↓
+
+Amazon ECR
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+## Question 299
+
+### Why use GitOps?
+
+**Answer**
+
+Benefits
+
+- Git as Source of Truth
+- Automatic Deployment
+- Rollback
+- Drift Detection
+- Audit Trail
+
+---
+
+# Cost Optimization
+
+---
+
+## Question 300
+
+### How would you reduce AWS costs?
+
+**Answer**
+
+- Right Sizing
+- Auto Scaling
+- Spot Instances
+- Savings Plans
+- Reserved Instances
+- S3 Lifecycle Policies
+- Delete Unused Resources
+- Monitor with Cost Explorer
+
+---
+
+# System Design Scenarios
+
+---
+
+## Question 301
+
+### Design a highly available e-commerce platform.
+
+**Answer**
+
+Components
+
+- CloudFront
+- Route53
+- WAF
+- ALB
+- Auto Scaling
+- EKS
+- Aurora Multi-AZ
+- ElastiCache
+- SQS
+- SNS
+- CloudWatch
+
+---
+
+## Question 302
+
+### Design a secure banking application.
+
+**Answer**
+
+Requirements
+
+- Multi-AZ
+- Multi-Region DR
+- IAM
+- KMS
+- Secrets Manager
+- GuardDuty
+- Security Hub
+- CloudTrail
+- WAF
+
+---
+
+## Question 303
+
+### Design a global media streaming platform.
+
+**Answer**
+
+Components
+
+- CloudFront
+- S3
+- Route53
+- Auto Scaling
+- Global Accelerator
+- Multi-Region
+
+---
+
+## Question 304
+
+### Design an enterprise Kubernetes platform.
+
+**Answer**
+
+Components
+
+- Amazon EKS
+- Argo CD
+- Helm
+- Prometheus
+- Grafana
+- ELK
+- IAM Roles for Service Accounts
+- AWS Load Balancer Controller
+
+---
+
+## Question 305
+
+### Design a serverless application.
+
+**Answer**
+
+Architecture
+
+```text
+API Gateway
+
+↓
+
+Lambda
+
+↓
+
+DynamoDB
+
+↓
+
+S3
+
+↓
+
+SNS
+```
+
+---
+
+# Production Scenarios
+
+---
+
+## Question 306
+
+### CPU usage is low but application response time is high. What would you investigate?
+
+**Answer**
+
+- Database Performance
+- Network Latency
+- Disk I/O
+- External APIs
+- Thread Pools
+- Connection Pools
+
+---
+
+## Question 307
+
+### Kubernetes Pods are healthy, but users cannot access the application.
+
+**Answer**
+
+Check
+
+- Service
+- Ingress
+- ALB
+- DNS
+- Security Groups
+
+---
+
+## Question 308
+
+### Application suddenly returns HTTP 500.
+
+**Answer**
+
+Investigate
+
+- Application Logs
+- Database
+- Environment Variables
+- Secrets
+- Recent Deployment
+
+---
+
+## Question 309
+
+### CloudWatch Alarm never triggers.
+
+**Answer**
+
+Check
+
+- Metric
+- Namespace
+- Threshold
+- Alarm State
+- Evaluation Period
+
+---
+
+## Question 310
+
+### Terraform shows infrastructure drift.
+
+**Answer**
+
+Possible Causes
+
+- Manual Console Changes
+- State Mismatch
+- Imported Resources
+
+Resolution
+
+- Import Resources
+- Update IaC
+- Remove Manual Changes
+
+---
+
+# Architecture Rapid Fire
+
+311. How do you design High Availability?
+312. What is RPO?
+313. What is RTO?
+314. What is Active-Active?
+315. What is Active-Passive?
+316. Vertical vs Horizontal Scaling?
+317. RDS vs DynamoDB?
+318. Aurora vs RDS?
+319. How do you secure AWS?
+320. How do you reduce AWS costs?
+321. Design EKS architecture.
+322. Design CI/CD.
+323. Design a serverless application.
+324. Design an e-commerce platform.
+325. Design a banking platform.
+326. Design a media streaming platform.
+327. Design a monitoring platform.
+328. Design disaster recovery.
+329. Design multi-region architecture.
+330. Design a secure production environment.
+
+---
+
+# Interview Tips
+
+- Draw architecture diagrams while answering design questions.
+- Clearly explain trade-offs (e.g., Active-Active vs Active-Passive, RDS vs DynamoDB).
+- Justify service choices based on business requirements.
+- Include security, monitoring, scalability, and disaster recovery in every architecture discussion.
+- When discussing production designs, mention automation, Infrastructure as Code, and observability.
+
+---
+
+# Summary
+
+This section covered advanced AWS architecture concepts including High Availability, Disaster Recovery, Multi-Region deployments, scalability, caching, database design, security architecture, networking, Kubernetes, CI/CD, cost optimization, and production system design scenarios. These questions are common in senior DevOps Engineer, Cloud Engineer, and Solutions Architect interviews.
+
+---
+
+# Production Troubleshooting
+
+---
+
+## Question 331
+
+### An EC2 instance is running, but the application is not accessible. How would you troubleshoot?
+
+**Answer**
+
+Check in this order
+
+```text
+EC2 Running
+
+↓
+
+Security Group
+
+↓
+
+NACL
+
+↓
+
+Route Table
+
+↓
+
+Application Service
+
+↓
+
+Application Logs
+
+↓
+
+CloudWatch Metrics
+```
+
+Commands
+
+```bash
+systemctl status nginx
+
+ss -tulnp
+
+curl localhost
+
+journalctl -xe
+```
+
+---
+
+## Question 332
+
+### Users report intermittent application failures. What would you investigate?
+
+**Answer**
+
+Check
+
+- Load Balancer
+- Auto Scaling
+- Database Connections
+- CPU & Memory
+- Network Latency
+- CloudWatch Metrics
+- Recent Deployments
+
+---
+
+## Question 333
+
+### ALB returns HTTP 503. What could be the reason?
+
+**Answer**
+
+Possible causes
+
+- No Healthy Targets
+- Failed Health Checks
+- Wrong Target Group Port
+- Application Down
+- Security Group Blocking
+
+---
+
+## Question 334
+
+### EC2 CPU is 100%. How do you investigate?
+
+**Answer**
+
+Commands
+
+```bash
+top
+
+htop
+
+ps -ef
+
+vmstat
+
+iostat
+```
+
+Investigate
+
+- High CPU Process
+- Infinite Loops
+- Memory Pressure
+- Background Jobs
+
+---
+
+## Question 335
+
+### SSH is not working. What should you verify?
+
+**Answer**
+
+Check
+
+- EC2 Running
+- Security Group Port 22
+- NACL
+- Route Table
+- Public IP
+- Internet Gateway
+- SSH Service
+
+---
+
+# Networking
+
+---
+
+## Question 336
+
+### Private EC2 cannot access the Internet.
+
+How would you troubleshoot?
+
+**Answer**
+
+Verify
+
+```text
+Private Subnet
+
+↓
+
+Route Table
+
+↓
+
+NAT Gateway
+
+↓
+
+Elastic IP
+
+↓
+
+Internet Gateway
+```
+
+---
+
+## Question 337
+
+### DNS resolution is failing.
+
+What should you investigate?
+
+**Answer**
+
+Check
+
+- Route53
+- DNS Records
+- TTL
+- Resolver
+- Security Groups
+- Network
+
+---
+
+## Question 338
+
+### Security Groups look correct, but traffic is blocked.
+
+What else would you check?
+
+**Answer**
+
+- Network ACL
+- Route Table
+- Application Firewall
+- OS Firewall
+- Target Service
+
+---
+
+## Question 339
+
+### Explain how you troubleshoot VPC connectivity issues.
+
+**Answer**
+
+Verify
+
+- Subnet
+- Route Table
+- Internet Gateway
+- NAT Gateway
+- VPC Peering
+- Transit Gateway
+- Security Groups
+- NACLs
+
+---
+
+## Question 340
+
+### Why is Route53 failover not working?
+
+**Answer**
+
+Check
+
+- Health Check
+- Routing Policy
+- DNS TTL
+- Primary Endpoint
+- Secondary Endpoint
+
+---
+
+# Kubernetes
+
+---
+
+## Question 341
+
+### Pod status shows CrashLoopBackOff.
+
+How would you troubleshoot?
+
+**Answer**
+
+Commands
+
+```bash
+kubectl logs
+
+kubectl logs --previous
+
+kubectl describe pod
+
+kubectl get events
+```
+
+Possible Causes
+
+- Application Crash
+- Missing Secret
+- ConfigMap Error
+- Database Failure
+- Incorrect Environment Variables
+
+---
+
+## Question 342
+
+### Pod remains Pending.
+
+What could be the reason?
+
+**Answer**
+
+Check
+
+- Available Nodes
+- CPU
+- Memory
+- Taints
+- Tolerations
+- PVC
+- Scheduler Events
+
+---
+
+## Question 343
+
+### ImagePullBackOff error occurs.
+
+How would you investigate?
+
+**Answer**
+
+Verify
+
+- Image Name
+- Image Tag
+- Registry Access
+- Pull Secret
+- ECR Authentication
+
+---
+
+## Question 344
+
+### Kubernetes Service is not reachable.
+
+**Answer**
+
+Check
+
+```bash
+kubectl get svc
+
+kubectl describe svc
+
+kubectl get endpoints
+```
+
+Verify
+
+- Labels
+- Selectors
+- Pod Status
+- Network Policy
+
+---
+
+## Question 345
+
+### Ingress returns 404.
+
+What should you check?
+
+**Answer**
+
+- Ingress Rules
+- Host
+- Path
+- Service
+- Backend
+- ALB Controller
+
+---
+
+# CI/CD
+
+---
+
+## Question 346
+
+### Jenkins pipeline suddenly fails.
+
+How would you troubleshoot?
+
+**Answer**
+
+Review
+
+- Console Output
+- Agent Status
+- Credentials
+- Workspace
+- Build Logs
+
+---
+
+## Question 347
+
+### GitHub Actions pipeline fails after merging.
+
+What would you verify?
+
+**Answer**
+
+- Workflow File
+- Repository Secrets
+- Branch Protection
+- Runner Status
+- Permissions
+
+---
+
+## Question 348
+
+### Argo CD shows OutOfSync.
+
+How do you resolve it?
+
+**Answer**
+
+Check
+
+- Git Repository
+- Cluster State
+- Manual Changes
+- Synchronization Status
+
+---
+
+## Question 349
+
+### Helm deployment fails.
+
+How would you debug it?
+
+**Answer**
+
+Commands
+
+```bash
+helm history
+
+helm status
+
+helm rollback
+```
+
+Review
+
+- values.yaml
+- Templates
+- Kubernetes Events
+
+---
+
+## Question 350
+
+### Docker container continuously restarts.
+
+What are the common causes?
+
+**Answer**
+
+- Application Crash
+- Missing Environment Variables
+- Wrong Command
+- Memory Limit
+- Port Conflict
+
+---
+
+# Terraform
+
+---
+
+## Question 351
+
+### Terraform Apply failed.
+
+What should you investigate?
+
+**Answer**
+
+- State Lock
+- IAM
+- Provider
+- Syntax
+- Resource Conflict
+
+Commands
+
+```bash
+terraform validate
+
+terraform plan
+```
+
+---
+
+## Question 352
+
+### Terraform detects unexpected changes.
+
+Why?
+
+**Answer**
+
+Possible Causes
+
+- Infrastructure Drift
+- Manual AWS Console Changes
+- State File Mismatch
+
+---
+
+## Question 353
+
+### Terraform State is corrupted.
+
+What would you do?
+
+**Answer**
+
+- Restore Backup
+- Review Remote Backend
+- Validate State
+- Import Missing Resources
+
+---
+
+# Databases
+
+---
+
+## Question 354
+
+### RDS connections are timing out.
+
+What should you investigate?
+
+**Answer**
+
+- Security Groups
+- Connection Pool
+- Database CPU
+- Slow Queries
+- Network
+
+---
+
+## Question 355
+
+### Aurora failover occurred.
+
+What happens?
+
+**Answer**
+
+Aurora automatically promotes a replica to become the new primary with minimal downtime.
+
+---
+
+# Monitoring
+
+---
+
+## Question 356
+
+### CloudWatch Alarm never triggers.
+
+**Answer**
+
+Check
+
+- Metric
+- Threshold
+- Namespace
+- Evaluation Period
+- Alarm State
+
+---
+
+## Question 357
+
+### Prometheus shows no metrics.
+
+**Answer**
+
+Verify
+
+- Targets
+- ServiceMonitor
+- Labels
+- Exporters
+- Prometheus Pods
+
+---
+
+## Question 358
+
+### Grafana dashboard shows no data.
+
+**Answer**
+
+Check
+
+- Datasource
+- Queries
+- Time Range
+- Prometheus Connectivity
+
+---
+
+## Question 359
+
+### ELK Stack is not receiving logs.
+
+**Answer**
+
+Verify
+
+- Fluent Bit
+- Logstash
+- Elasticsearch
+- Kibana
+- Storage
+
+---
+
+## Question 360
+
+### CloudWatch Logs are missing.
+
+**Answer**
+
+Check
+
+- Agent
+- IAM Role
+- Log Group
+- Network
+- Disk Space
+
+---
+
+# Security
+
+---
+
+## Question 361
+
+### Application suddenly receives AccessDenied.
+
+**Answer**
+
+Review
+
+- IAM Policy
+- Resource Policy
+- SCP
+- Permission Boundary
+- KMS Policy
+
+---
+
+## Question 362
+
+### GuardDuty reports a High Severity finding.
+
+What should you do?
+
+**Answer**
+
+- Review Finding
+- Check CloudTrail
+- Rotate Credentials
+- Isolate Resource
+- Investigate Logs
+
+---
+
+## Question 363
+
+### KMS Decrypt fails.
+
+Possible reasons?
+
+**Answer**
+
+- Missing IAM Permission
+- Key Policy
+- Wrong Region
+- Disabled Key
+
+---
+
+## Question 364
+
+### Secret rotation failed.
+
+What should you investigate?
+
+**Answer**
+
+- Rotation Lambda
+- IAM
+- Database
+- Secret Configuration
+
+---
+
+# Cost Optimization
+
+---
+
+## Question 365
+
+### AWS bill suddenly doubled.
+
+How do you investigate?
+
+**Answer**
+
+Review
+
+- Cost Explorer
+- Budgets
+- CUR
+- Resource Inventory
+- Recent Deployments
+
+---
+
+# Architecture
+
+---
+
+## Question 366
+
+### Users from Europe report high latency.
+
+How would you improve performance?
+
+**Answer**
+
+- CloudFront
+- Multi-Region
+- Global Accelerator
+- Route53 Latency Routing
+
+---
+
+## Question 367
+
+### Single Availability Zone fails.
+
+How should the application continue running?
+
+**Answer**
+
+Use
+
+- Multi-AZ
+- Auto Scaling
+- Load Balancer
+- Health Checks
+
+---
+
+## Question 368
+
+### Database is the application bottleneck.
+
+Possible solutions?
+
+**Answer**
+
+- Read Replicas
+- ElastiCache
+- Query Optimization
+- Aurora
+- Connection Pooling
+
+---
+
+## Question 369
+
+### Explain your troubleshooting methodology during a Sev1 incident.
+
+**Answer**
+
+```text
+Assess Impact
+
+↓
+
+Check Monitoring
+
+↓
+
+Review Logs
+
+↓
+
+Identify Recent Changes
+
+↓
+
+Find Root Cause
+
+↓
+
+Restore Service
+
+↓
+
+Validate Recovery
+
+↓
+
+Perform RCA
+```
+
+---
+
+## Question 370
+
+### What is the most important skill of a DevOps Engineer during production incidents?
+
+**Answer**
+
+A structured troubleshooting approach based on logs, metrics, monitoring, networking, infrastructure, and root cause analysis rather than assumptions.
+
+---
+
+# Rapid Fire
+
+371. CrashLoopBackOff?
+372. Pending Pod?
+373. ImagePullBackOff?
+374. ALB 503?
+375. Route53 Failover?
+376. Terraform Drift?
+377. Jenkins Failure?
+378. GitOps Drift?
+379. High CPU?
+380. AWS Cost Spike?
+
+---
+
+# Interview Tips
+
+- Always answer production questions with a **step-by-step troubleshooting process** rather than guessing the cause.
+- Mention the AWS services and tools you would use (CloudWatch, CloudTrail, kubectl, Terraform, Jenkins, etc.).
+- Explain both the **immediate fix** and the **long-term prevention**.
+- If discussing Kubernetes, start with `kubectl describe`, `kubectl logs`, and events.
+- Emphasize Root Cause Analysis (RCA) and post-incident improvements.
+
+---
+
+# Summary
+
+This section focused on real-world production troubleshooting scenarios involving EC2, networking, Kubernetes, CI/CD, Terraform, databases, monitoring, security, cost optimization, and architecture. These scenario-based questions are common in senior DevOps, SRE, Platform Engineering, and Cloud Engineer interviews, where interviewers evaluate structured problem-solving rather than memorized definitions.
+
+---
+
