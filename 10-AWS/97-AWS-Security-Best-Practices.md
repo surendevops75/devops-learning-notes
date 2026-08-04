@@ -2330,3 +2330,642 @@ This section covered VPC security, Security Groups, Network ACLs, VPC Endpoints,
 
 ---
 
+# Continuous Security Monitoring
+
+---
+
+# Introduction
+
+Continuous security monitoring enables organizations to detect threats, investigate suspicious activity, automate responses, and maintain compliance across AWS environments.
+
+Objectives
+
+- Detect threats
+- Monitor configuration changes
+- Investigate incidents
+- Automate response
+- Improve security posture
+
+---
+
+# Security Monitoring Workflow
+
+```text
+AWS Resources
+
+↓
+
+Logs & Events
+
+↓
+
+Threat Detection
+
+↓
+
+Security Findings
+
+↓
+
+Investigation
+
+↓
+
+Response
+
+↓
+
+Recovery
+```
+
+---
+
+# Amazon GuardDuty
+
+Purpose
+
+Intelligent threat detection service using machine learning, anomaly detection, and AWS threat intelligence.
+
+---
+
+# GuardDuty Data Sources
+
+Analyzes
+
+- CloudTrail Events
+- VPC Flow Logs
+- DNS Logs
+- Kubernetes Audit Logs
+- EKS Runtime Monitoring
+- S3 Data Events
+- RDS Login Activity
+
+---
+
+# Common GuardDuty Findings
+
+- Cryptocurrency mining
+- IAM credential compromise
+- Port scanning
+- SSH brute force
+- EC2 malware
+- Suspicious API activity
+- DNS exfiltration
+- S3 data exposure
+
+---
+
+# GuardDuty Workflow
+
+```text
+AWS Activity
+
+↓
+
+GuardDuty
+
+↓
+
+Threat Detection
+
+↓
+
+Security Finding
+
+↓
+
+Security Team
+```
+
+---
+
+# Multi-Account GuardDuty
+
+Recommended
+
+```text
+Management Account
+
+↓
+
+Security Account
+
+↓
+
+GuardDuty Administrator
+
+↓
+
+Member Accounts
+```
+
+---
+
+# Amazon Inspector
+
+Purpose
+
+Automatically identifies software vulnerabilities and unintended network exposure.
+
+---
+
+# Inspector Supports
+
+- Amazon EC2
+- Amazon ECR
+- AWS Lambda
+
+---
+
+# Inspector Scans
+
+- CVEs
+- Operating Systems
+- Installed Packages
+- Container Images
+- Lambda Packages
+- Network Exposure
+
+---
+
+# Vulnerability Workflow
+
+```text
+Resource
+
+↓
+
+Inspector Scan
+
+↓
+
+Vulnerability
+
+↓
+
+Prioritize
+
+↓
+
+Patch
+
+↓
+
+Rescan
+```
+
+---
+
+# Amazon Security Hub
+
+Purpose
+
+Centralizes security findings from AWS services and third-party security tools.
+
+---
+
+# Security Hub Integrations
+
+- GuardDuty
+- Inspector
+- IAM Access Analyzer
+- AWS Config
+- Firewall Manager
+- Macie
+- Partner Security Products
+
+---
+
+# Security Standards
+
+Supports
+
+- CIS AWS Foundations Benchmark
+- AWS Foundational Security Best Practices
+- PCI DSS
+- NIST
+
+---
+
+# Security Hub Workflow
+
+```text
+Security Findings
+
+↓
+
+Security Hub
+
+↓
+
+Central Dashboard
+
+↓
+
+Investigation
+
+↓
+
+Remediation
+```
+
+---
+
+# Amazon Detective
+
+Purpose
+
+Investigates security incidents using relationships between AWS resources and activities.
+
+---
+
+# Detective Analysis
+
+Investigate
+
+- IAM users
+- EC2 instances
+- API activity
+- Network traffic
+- Resource relationships
+
+---
+
+# Investigation Workflow
+
+```text
+GuardDuty Finding
+
+↓
+
+Detective
+
+↓
+
+Root Cause Analysis
+
+↓
+
+Affected Resources
+
+↓
+
+Incident Response
+```
+
+---
+
+# AWS Config
+
+Purpose
+
+Tracks AWS resource configuration and evaluates compliance.
+
+---
+
+# AWS Config Components
+
+- Configuration Recorder
+- Delivery Channel
+- Config Rules
+- Conformance Packs
+
+---
+
+# Config Rules
+
+Examples
+
+- Encrypted EBS volumes
+- Public S3 buckets
+- Root MFA enabled
+- Security Group compliance
+- Required tags
+
+---
+
+# Conformance Packs
+
+Examples
+
+- CIS Benchmark
+- PCI DSS
+- NIST
+- Operational Best Practices
+
+---
+
+# AWS CloudTrail
+
+Purpose
+
+Records AWS API activity.
+
+---
+
+# CloudTrail Records
+
+- Console Logins
+- CLI Commands
+- SDK Calls
+- IAM Changes
+- Resource Changes
+
+---
+
+# CloudTrail Best Practices
+
+- Enable organization trails.
+- Enable log file validation.
+- Store logs in dedicated logging accounts.
+- Encrypt logs.
+- Enable multi-region trails.
+
+---
+
+# CloudTrail Workflow
+
+```text
+AWS API
+
+↓
+
+CloudTrail
+
+↓
+
+Amazon S3
+
+↓
+
+Security Analysis
+```
+
+---
+
+# CloudWatch Security Monitoring
+
+Monitor
+
+- Unauthorized API calls
+- Failed logins
+- IAM changes
+- Network changes
+- Resource deletion
+
+---
+
+# EventBridge Security Automation
+
+Workflow
+
+```text
+Security Finding
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+SNS
+
+↓
+
+Security Team
+```
+
+---
+
+# Automated Remediation
+
+Examples
+
+- Remove public S3 access
+- Quarantine EC2 instance
+- Disable IAM user
+- Revoke access keys
+- Block malicious IP
+
+---
+
+# Security Findings Lifecycle
+
+```text
+Detection
+
+↓
+
+Classification
+
+↓
+
+Investigation
+
+↓
+
+Containment
+
+↓
+
+Remediation
+
+↓
+
+Recovery
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Centralized Logging
+
+Collect
+
+- CloudTrail
+- VPC Flow Logs
+- DNS Logs
+- Application Logs
+- WAF Logs
+- Firewall Logs
+
+Store in
+
+```text
+Dedicated Log Archive Account
+```
+
+---
+
+# Security Dashboards
+
+Display
+
+- Critical findings
+- Vulnerabilities
+- Compliance score
+- IAM risks
+- Network threats
+- Patch status
+- Open incidents
+
+---
+
+# Security Operations Center (SOC)
+
+Workflow
+
+```text
+Alert
+
+↓
+
+SOC Analyst
+
+↓
+
+Investigation
+
+↓
+
+Incident
+
+↓
+
+Containment
+
+↓
+
+Recovery
+```
+
+---
+
+# Severity Classification
+
+Critical
+
+- Credential compromise
+- Active malware
+- Data exfiltration
+
+---
+
+High
+
+- Public exposure
+- Privilege escalation
+- Critical vulnerabilities
+
+---
+
+Medium
+
+- Configuration drift
+- Missing encryption
+- Policy violations
+
+---
+
+Low
+
+- Informational findings
+- Best practice recommendations
+
+---
+
+# Security Metrics
+
+Track
+
+- Open findings
+- Critical findings
+- Mean Time to Detect (MTTD)
+- Mean Time to Respond (MTTR)
+- Patch compliance
+- Vulnerability count
+- Compliance score
+- Incident count
+
+---
+
+# Daily Security Review
+
+Review
+
+- GuardDuty findings
+- Security Hub findings
+- CloudTrail events
+- Failed logins
+- IAM changes
+- Public resources
+
+---
+
+# Weekly Security Review
+
+Review
+
+- Inspector vulnerabilities
+- Config compliance
+- WAF activity
+- Firewall logs
+- Network exposure
+
+---
+
+# Monthly Security Review
+
+Review
+
+- Compliance reports
+- Incident trends
+- Threat intelligence
+- Security posture
+- Policy updates
+
+---
+
+# Common Monitoring Mistakes
+
+- CloudTrail disabled
+- No centralized logging
+- Ignoring GuardDuty findings
+- Delayed vulnerability patching
+- No Config Rules
+- Missing Security Hub
+- No automated remediation
+- Unreviewed IAM changes
+- Missing log retention
+- No incident metrics
+
+---
+
+# Best Practices
+
+- Enable GuardDuty organization-wide.
+- Centralize findings using Security Hub.
+- Continuously scan workloads using Amazon Inspector.
+- Enable AWS Config with Conformance Packs.
+- Enable organization-wide CloudTrail.
+- Store logs in a dedicated Log Archive account.
+- Automate remediation using EventBridge and Lambda.
+- Review security findings daily.
+- Track security KPIs and incident response metrics.
+- Integrate security monitoring into enterprise SOC processes.
+
+---
+
+# Summary
+
+This section covered Amazon GuardDuty, Amazon Inspector, AWS Security Hub, Amazon Detective, AWS Config, AWS CloudTrail, CloudWatch security monitoring, EventBridge automation, centralized logging, vulnerability management, and continuous security monitoring. Together, these services provide comprehensive threat detection, compliance monitoring, and enterprise security operations across AWS environments.
+
+---
+
