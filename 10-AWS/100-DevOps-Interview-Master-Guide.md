@@ -3510,3 +3510,748 @@ This section covered Route 53, CloudFront, RDS, ElastiCache, EKS, ECS, Lambda, C
 
 ---
 
+# Docker Interview Questions (Basic → Advanced)
+
+---
+
+# Introduction
+
+Docker is one of the core technologies in modern DevOps. Interviewers expect candidates to understand containerization, Docker architecture, image creation, networking, storage, security, optimization, and production troubleshooting.
+
+This section covers:
+
+- Docker Fundamentals
+- Docker Architecture
+- Images & Containers
+- Dockerfile
+- Volumes
+- Networking
+- Docker Compose
+- Multi-stage Builds
+- Container Security
+- Production Scenarios
+- Follow-up Questions
+
+---
+
+# Question 1
+
+## What is Docker?
+
+### Answer
+
+Docker is an open-source containerization platform that packages an application and all its dependencies into lightweight, portable containers.
+
+Benefits
+
+- Portability
+- Consistent environments
+- Fast deployment
+- Resource efficiency
+- Easy scaling
+
+---
+
+### Production Example
+
+Package a Java Spring Boot application with all dependencies and deploy the same image across Development, QA, Staging, and Production.
+
+---
+
+# Question 2
+
+## Why Docker?
+
+### Answer
+
+Before Docker
+
+- Environment inconsistencies
+- Dependency conflicts
+- Manual installations
+- Slow deployments
+
+After Docker
+
+- Standardized deployments
+- Immutable infrastructure
+- Faster releases
+- Better scalability
+
+---
+
+# Question 3
+
+## Virtual Machine vs Docker Container
+
+| Virtual Machine | Docker Container |
+|-----------------|------------------|
+| Hypervisor | Docker Engine |
+| Guest OS required | Shares host kernel |
+| Heavy | Lightweight |
+| Slow startup | Fast startup |
+| Higher resource usage | Lower resource usage |
+
+---
+
+### Interview Tip
+
+Docker containers share the host operating system kernel, while virtual machines run their own guest operating system.
+
+---
+
+# Question 4
+
+## Docker Architecture
+
+### Components
+
+- Docker Client
+- Docker Engine
+- Docker Daemon
+- Docker Registry
+- Images
+- Containers
+
+---
+
+### Workflow
+
+```text
+Docker CLI
+
+↓
+
+Docker Daemon
+
+↓
+
+Docker Engine
+
+↓
+
+Container
+```
+
+---
+
+# Question 5
+
+## What is a Docker Image?
+
+### Answer
+
+A Docker image is a read-only template used to create containers.
+
+Contains
+
+- Application code
+- Runtime
+- Libraries
+- Dependencies
+- Configuration
+
+---
+
+### Example
+
+```bash
+docker pull nginx
+```
+
+---
+
+# Question 6
+
+## What is a Docker Container?
+
+### Answer
+
+A running instance of a Docker image.
+
+Workflow
+
+```text
+Docker Image
+
+↓
+
+docker run
+
+↓
+
+Container
+```
+
+---
+
+# Question 7
+
+## Image vs Container
+
+| Image | Container |
+|--------|-----------|
+| Read-only | Running instance |
+| Template | Executable |
+| Immutable | Mutable during runtime |
+
+---
+
+# Question 8
+
+## Docker Lifecycle
+
+```text
+Build
+
+↓
+
+Image
+
+↓
+
+Run
+
+↓
+
+Container
+
+↓
+
+Stop
+
+↓
+
+Start
+
+↓
+
+Remove
+```
+
+---
+
+# Question 9
+
+## Dockerfile
+
+### Answer
+
+A Dockerfile is a text file containing instructions to build an image.
+
+---
+
+### Example
+
+```dockerfile
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+COPY app.jar .
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","app.jar"]
+```
+
+---
+
+# Question 10
+
+## Common Dockerfile Instructions
+
+| Instruction | Purpose |
+|--------------|----------|
+| FROM | Base image |
+| WORKDIR | Working directory |
+| COPY | Copy files |
+| ADD | Copy with extra capabilities |
+| RUN | Execute build commands |
+| CMD | Default command |
+| ENTRYPOINT | Main executable |
+| ENV | Environment variables |
+| EXPOSE | Document container port |
+| USER | Run as non-root |
+
+---
+
+# Question 11
+
+## CMD vs ENTRYPOINT
+
+| CMD | ENTRYPOINT |
+|------|------------|
+| Default command | Main executable |
+| Can be overridden easily | More fixed |
+| Optional | Preferred for executable containers |
+
+---
+
+### Production Example
+
+ENTRYPOINT launches the application, while CMD supplies default runtime arguments.
+
+---
+
+# Question 12
+
+## COPY vs ADD
+
+| COPY | ADD |
+|------|-----|
+| Simple file copy | Copy + archive extraction + remote URL support |
+| Preferred | Use only when extra functionality is required |
+
+---
+
+# Question 13
+
+## Docker Build
+
+```bash
+docker build -t app:v1 .
+```
+
+---
+
+# Question 14
+
+## Docker Run
+
+```bash
+docker run app:v1
+```
+
+Common Options
+
+```bash
+-d
+
+-p
+
+-v
+
+--name
+
+-e
+
+--restart
+```
+
+---
+
+# Question 15
+
+## Docker PS
+
+Running containers
+
+```bash
+docker ps
+```
+
+All containers
+
+```bash
+docker ps -a
+```
+
+---
+
+# Question 16
+
+## Docker Logs
+
+```bash
+docker logs container
+
+docker logs -f container
+```
+
+---
+
+### Production Example
+
+Investigate application startup failures.
+
+---
+
+# Question 17
+
+## Docker Exec
+
+Access container shell
+
+```bash
+docker exec -it container bash
+```
+
+---
+
+# Question 18
+
+## Docker Stop vs Kill
+
+| Stop | Kill |
+|------|------|
+| Graceful | Immediate |
+| Sends SIGTERM | Sends SIGKILL |
+
+---
+
+# Question 19
+
+## Docker Volumes
+
+### Answer
+
+Volumes provide persistent storage independent of container lifecycle.
+
+---
+
+### Workflow
+
+```text
+Container
+
+↓
+
+Volume
+
+↓
+
+Persistent Data
+```
+
+---
+
+### Example
+
+```bash
+docker volume create app-data
+```
+
+---
+
+# Question 20
+
+## Bind Mount vs Volume
+
+| Bind Mount | Docker Volume |
+|------------|---------------|
+| Host directory | Docker-managed |
+| Good for development | Preferred in production |
+| Depends on host path | Portable |
+
+---
+
+# Question 21
+
+## Docker Networking
+
+Network Types
+
+- bridge
+- host
+- none
+- overlay
+- macvlan
+
+---
+
+### Default Network
+
+```text
+bridge
+```
+
+---
+
+# Question 22
+
+## Bridge Network
+
+Used for communication between containers on a single Docker host.
+
+---
+
+# Question 23
+
+## Host Network
+
+Container shares the host's network namespace.
+
+Advantages
+
+- Better performance
+
+Trade-off
+
+- Reduced isolation
+
+---
+
+# Question 24
+
+## Overlay Network
+
+Used for multi-host container communication.
+
+Commonly used with Docker Swarm.
+
+---
+
+# Question 25
+
+## Docker Compose
+
+Purpose
+
+Define and run multi-container applications.
+
+---
+
+### Example
+
+```yaml
+version: "3.9"
+
+services:
+
+  app:
+    image: app:v1
+
+  mysql:
+    image: mysql:8
+```
+
+---
+
+# Question 26
+
+## Docker Compose Commands
+
+```bash
+docker compose up
+
+docker compose down
+
+docker compose ps
+
+docker compose logs
+```
+
+---
+
+# Question 27
+
+## Multi-stage Build
+
+Purpose
+
+Reduce image size.
+
+---
+
+### Example
+
+```dockerfile
+FROM maven:3.9 AS build
+
+WORKDIR /src
+
+COPY . .
+
+RUN mvn clean package
+
+FROM eclipse-temurin:21-jre
+
+COPY --from=build /src/target/app.jar /app.jar
+
+ENTRYPOINT ["java","-jar","/app.jar"]
+```
+
+---
+
+### Benefits
+
+- Smaller images
+- Faster deployment
+- Better security
+- Reduced attack surface
+
+---
+
+# Question 28
+
+## Docker Registry
+
+Examples
+
+- Docker Hub
+- Amazon ECR
+- GitHub Container Registry (GHCR)
+- JFrog Artifactory
+
+---
+
+# Question 29
+
+## Docker Image Optimization
+
+Best Practices
+
+- Use minimal base images
+- Multi-stage builds
+- Remove unnecessary packages
+- Combine RUN commands where appropriate
+- Use `.dockerignore`
+- Pin image versions
+- Run as non-root user
+
+---
+
+# Question 30
+
+## Docker Security
+
+Implement
+
+- Non-root user
+- Image scanning
+- Minimal images
+- Secrets management
+- Read-only filesystem (where applicable)
+- Resource limits
+
+---
+
+# Production Scenario 1
+
+Container exits immediately after starting.
+
+### Investigation
+
+```bash
+docker ps -a
+
+docker logs container
+
+docker inspect container
+```
+
+Verify
+
+- ENTRYPOINT
+- CMD
+- Application startup logs
+
+---
+
+# Production Scenario 2
+
+Application cannot connect to the database.
+
+### Investigation
+
+Check
+
+- Container network
+- Environment variables
+- Database hostname
+- DNS resolution
+- Firewall rules
+
+Commands
+
+```bash
+docker network ls
+
+docker network inspect network-name
+
+docker exec -it app ping database
+```
+
+---
+
+# Production Scenario 3
+
+Docker host disk is full.
+
+### Investigation
+
+```bash
+docker system df
+
+docker images
+
+docker ps -a
+
+docker volume ls
+```
+
+Cleanup
+
+```bash
+docker system prune
+```
+
+Review carefully before deleting unused resources.
+
+---
+
+# Production Scenario 4
+
+Container restarts continuously.
+
+### Investigation
+
+```bash
+docker logs container
+
+docker inspect container
+```
+
+Check
+
+- Health checks
+- Resource limits
+- Application configuration
+- Startup dependencies
+
+---
+
+# FAANG-Style Docker Questions
+
+- Explain Docker internals.
+- How do Linux namespaces work?
+- What are cgroups?
+- Explain Union File Systems.
+- How are Docker images layered?
+- How would you reduce image size?
+- Explain container security best practices.
+- How do you troubleshoot a crashing container?
+- Difference between Docker Compose and Kubernetes.
+- How does Docker networking work internally?
+
+---
+
+# Docker Interview Tips
+
+Answer each Docker question in this order:
+
+1. Definition
+2. Architecture
+3. Command or configuration
+4. Production use case
+5. Troubleshooting approach
+6. Best practice
+
+This demonstrates practical, production-oriented knowledge.
+
+---
+
+# Summary
+
+This section covered Docker fundamentals, architecture, images, containers, Dockerfiles, Docker Compose, networking, volumes, registries, multi-stage builds, security, production troubleshooting, and FAANG-style interview questions. These topics form the foundation of Docker interviews for DevOps engineers.
