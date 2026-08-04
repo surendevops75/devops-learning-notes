@@ -2911,3 +2911,602 @@ This section covered AWS fundamentals, Global Infrastructure, EC2, AMIs, EBS, IA
 
 ---
 
+# AWS Interview Questions (Intermediate → Advanced)
+
+---
+
+# Introduction
+
+This section covers advanced AWS services commonly used in enterprise DevOps environments, including networking, databases, containers, monitoring, security, and production troubleshooting.
+
+---
+
+# Question 21
+
+## What is Amazon Route 53?
+
+### Answer
+
+Amazon Route 53 is a highly available and scalable DNS service.
+
+Functions
+
+- Domain Registration
+- DNS Resolution
+- Health Checks
+- Traffic Routing
+
+---
+
+### Routing Policies
+
+- Simple
+- Weighted
+- Latency
+- Failover
+- Geolocation
+- Geoproximity
+- Multi-Value Answer
+
+---
+
+### Production Example
+
+Use Failover Routing to redirect traffic to a secondary region when the primary region becomes unavailable.
+
+---
+
+# Question 22
+
+## What is Amazon CloudFront?
+
+### Answer
+
+CloudFront is AWS's Content Delivery Network (CDN).
+
+Benefits
+
+- Low latency
+- Edge caching
+- DDoS protection
+- Reduced origin load
+- Global content delivery
+
+---
+
+### Production Example
+
+Serve static React application and images from CloudFront while APIs are routed through an Application Load Balancer.
+
+---
+
+# Question 23
+
+## What is Amazon RDS?
+
+### Answer
+
+Amazon RDS is a managed relational database service.
+
+Supported Databases
+
+- MySQL
+- PostgreSQL
+- MariaDB
+- Oracle
+- SQL Server
+
+---
+
+### Benefits
+
+- Automated backups
+- Multi-AZ
+- Read Replicas
+- Automatic patching
+- Monitoring
+
+---
+
+# Question 24
+
+## Multi-AZ vs Read Replica
+
+| Multi-AZ | Read Replica |
+|-----------|--------------|
+| High Availability | Read Scaling |
+| Synchronous replication | Asynchronous replication |
+| Automatic failover | No automatic failover |
+| Disaster recovery | Performance improvement |
+
+---
+
+### Interview Tip
+
+This is one of the most frequently asked AWS database questions.
+
+---
+
+# Question 25
+
+## What is Amazon ElastiCache?
+
+### Answer
+
+Managed in-memory caching service.
+
+Engines
+
+- Redis
+- Memcached
+
+---
+
+### Production Use Cases
+
+- Session storage
+- API caching
+- Database query caching
+- Rate limiting
+
+---
+
+# Question 26
+
+## What is Amazon EKS?
+
+### Answer
+
+Amazon Elastic Kubernetes Service (EKS) is a managed Kubernetes service.
+
+AWS manages
+
+- Control Plane
+- API Server
+- etcd
+- Scheduler
+
+Customer manages
+
+- Worker Nodes
+- Applications
+- Networking
+- Storage
+
+---
+
+### Production Architecture
+
+```text
+Route53
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+```
+
+---
+
+# Question 27
+
+## Amazon ECS vs Amazon EKS
+
+| ECS | EKS |
+|------|-----|
+| AWS-native container orchestration | Managed Kubernetes |
+| Simpler | More flexible |
+| Lower learning curve | CNCF ecosystem |
+| AWS-focused | Multi-cloud compatible |
+
+---
+
+# Question 28
+
+## What is AWS Lambda?
+
+### Answer
+
+AWS Lambda is a serverless compute service.
+
+Characteristics
+
+- Event-driven
+- No server management
+- Automatic scaling
+- Pay per execution
+
+---
+
+### Production Use Cases
+
+- Image processing
+- File validation
+- Scheduled jobs
+- Event automation
+
+---
+
+# Question 29
+
+## What is Amazon CloudWatch?
+
+### Answer
+
+CloudWatch provides monitoring for AWS resources and applications.
+
+Features
+
+- Metrics
+- Logs
+- Dashboards
+- Alarms
+- Events
+
+---
+
+### Production Example
+
+Trigger an Auto Scaling policy when CPU utilization exceeds 70%.
+
+---
+
+# Question 30
+
+## What is AWS CloudTrail?
+
+### Answer
+
+CloudTrail records AWS API activity.
+
+Uses
+
+- Security auditing
+- Compliance
+- Change tracking
+- Incident investigation
+
+---
+
+### Example
+
+Identify which IAM user deleted an EC2 instance.
+
+---
+
+# Question 31
+
+## CloudWatch vs CloudTrail
+
+| CloudWatch | CloudTrail |
+|------------|------------|
+| Monitoring | Auditing |
+| Metrics & Logs | API activity |
+| Performance | Security |
+| Alarms | Compliance |
+
+---
+
+# Question 32
+
+## What is AWS Systems Manager (SSM)?
+
+### Answer
+
+AWS Systems Manager simplifies management of EC2 instances.
+
+Capabilities
+
+- Session Manager
+- Run Command
+- Patch Manager
+- Automation
+- Parameter Store
+
+---
+
+### Production Example
+
+Access private EC2 instances securely using Session Manager without opening SSH port 22.
+
+---
+
+# Question 33
+
+## AWS Secrets Manager vs Parameter Store
+
+| Secrets Manager | Parameter Store |
+|-----------------|-----------------|
+| Secret rotation | Manual rotation (advanced options available) |
+| Database credentials | Configuration values |
+| Encrypted secrets | Secure parameters |
+| Designed for secrets | General configuration management |
+
+---
+
+# Question 34
+
+## What is AWS KMS?
+
+### Answer
+
+AWS Key Management Service manages encryption keys.
+
+Used For
+
+- EBS encryption
+- S3 encryption
+- RDS encryption
+- Secrets Manager
+- EKS secret encryption
+
+---
+
+# Question 35
+
+## Customer Managed Key vs AWS Managed Key
+
+| Customer Managed | AWS Managed |
+|------------------|-------------|
+| Full control | Managed by AWS |
+| Custom policies | Limited customization |
+| Rotation control | AWS managed |
+
+---
+
+# Question 36
+
+## What is AWS Organizations?
+
+### Answer
+
+AWS Organizations centrally manages multiple AWS accounts.
+
+Features
+
+- Organizational Units (OUs)
+- Service Control Policies (SCPs)
+- Consolidated Billing
+- Central governance
+
+---
+
+### Production Example
+
+Separate accounts for
+
+- Development
+- Testing
+- Production
+- Security
+- Shared Services
+
+---
+
+# Question 37
+
+## Cross-Account IAM Role
+
+### Answer
+
+Allows one AWS account to securely access resources in another account using AssumeRole.
+
+---
+
+### Production Example
+
+CI/CD account deploys infrastructure into Production account using an IAM Role.
+
+---
+
+# Question 38
+
+## What is an Application Load Balancer?
+
+### Answer
+
+Layer 7 load balancer.
+
+Supports
+
+- HTTP
+- HTTPS
+- Path-based routing
+- Host-based routing
+- WebSockets
+- gRPC
+
+---
+
+### Production Example
+
+```text
+/api
+
+↓
+
+Backend Service
+
+----------------
+
+/images
+
+↓
+
+Image Service
+```
+
+---
+
+# Question 39
+
+## What is a Network Load Balancer?
+
+### Answer
+
+Layer 4 load balancer.
+
+Supports
+
+- TCP
+- UDP
+- TLS
+
+Best suited for
+
+- High throughput
+- Low latency
+- Static IP requirements
+
+---
+
+# Question 40
+
+## Explain AWS Shared Responsibility Model
+
+### AWS Responsibility
+
+- Physical security
+- Hardware
+- Networking infrastructure
+- Hypervisor
+
+---
+
+### Customer Responsibility
+
+- IAM
+- Applications
+- Operating System (EC2)
+- Security Groups
+- Data
+- Encryption
+- Patching (where applicable)
+
+---
+
+# Production Scenario 1
+
+Application running on EKS cannot access Amazon S3.
+
+### Investigation
+
+Verify
+
+- IAM Role (IRSA or node role)
+- S3 bucket policy
+- VPC endpoint (if applicable)
+- Network connectivity
+- Application logs
+
+---
+
+# Production Scenario 2
+
+CloudFront serves stale content.
+
+### Investigation
+
+Check
+
+- Cache behavior
+- TTL settings
+- Cache invalidation
+- Origin response headers
+
+---
+
+# Production Scenario 3
+
+RDS CPU utilization is consistently high.
+
+### Investigation
+
+Review
+
+- Slow query logs
+- Performance Insights
+- Database connections
+- Missing indexes
+- Read replica usage
+
+---
+
+# Production Scenario 4
+
+Auto Scaling is not launching new instances.
+
+### Investigation
+
+Verify
+
+- CloudWatch alarms
+- Auto Scaling Group limits
+- Launch Template
+- IAM permissions
+- EC2 capacity availability
+
+---
+
+# Production Scenario 5
+
+An EC2 instance is unreachable.
+
+### Investigation
+
+1. Verify instance state.
+2. Check Security Groups.
+3. Check Network ACLs.
+4. Verify Route Tables.
+5. Review system status checks.
+6. Use Systems Manager Session Manager (if configured).
+
+---
+
+# FAANG-Style AWS Questions
+
+- Design a highly available web application on AWS.
+- Explain multi-region architecture.
+- How would you secure an AWS production account?
+- Design a logging platform using AWS services.
+- Explain cross-account deployments.
+- Design a disaster recovery strategy.
+- How would you optimize AWS costs?
+- Design a secure Kubernetes platform on AWS.
+- Explain AWS networking for a multi-account environment.
+- Design an enterprise CI/CD platform on AWS.
+
+---
+
+# AWS Interview Tips
+
+Answer every AWS question using this framework:
+
+1. Define the service.
+2. Explain how it works.
+3. Describe where you've used it.
+4. Discuss security considerations.
+5. Explain monitoring and troubleshooting.
+6. Mention best practices and common pitfalls.
+
+This demonstrates practical production experience rather than memorized definitions.
+
+---
+
+# Summary
+
+This section covered Route 53, CloudFront, RDS, ElastiCache, EKS, ECS, Lambda, CloudWatch, CloudTrail, Systems Manager, Secrets Manager, KMS, AWS Organizations, cross-account IAM, advanced load balancing, the Shared Responsibility Model, production troubleshooting scenarios, and FAANG-style AWS interview questions. These topics are commonly asked in intermediate and senior DevOps interviews.
+
+---
+
