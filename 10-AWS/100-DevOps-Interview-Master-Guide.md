@@ -8247,3 +8247,852 @@ This section covered DevSecOps concepts, SonarQube, Trivy, Veracode, Prometheus,
 
 ---
 
+# DevOps Scenario-Based Interview Questions (Real Production Cases)
+
+---
+
+# Introduction
+
+Senior DevOps interviews focus heavily on production scenarios rather than tool definitions. Interviewers want to evaluate your troubleshooting approach, decision-making, communication, and understanding of distributed systems.
+
+When answering scenario-based questions, always follow a structured methodology.
+
+---
+
+# Production Troubleshooting Framework
+
+```text
+Understand Problem
+
+↓
+
+Check Impact
+
+↓
+
+Collect Logs
+
+↓
+
+Check Metrics
+
+↓
+
+Identify Root Cause
+
+↓
+
+Implement Fix
+
+↓
+
+Validate
+
+↓
+
+Monitor
+
+↓
+
+Prevent Recurrence
+```
+
+---
+
+# Scenario 1
+
+## Kubernetes Pods are in CrashLoopBackOff
+
+### Interview Question
+
+Several Pods are continuously restarting in production. How would you troubleshoot?
+
+### Answer
+
+Step 1
+
+Check Pod status
+
+```bash
+kubectl get pods
+```
+
+---
+
+Step 2
+
+Describe Pod
+
+```bash
+kubectl describe pod pod-name
+```
+
+Review
+
+- Events
+- Scheduling
+- Image pull
+- Resource issues
+
+---
+
+Step 3
+
+Previous logs
+
+```bash
+kubectl logs pod-name --previous
+```
+
+---
+
+Step 4
+
+Verify
+
+- ConfigMaps
+- Secrets
+- Environment variables
+- Startup command
+- Database connectivity
+
+---
+
+Step 5
+
+Check probes
+
+```yaml
+livenessProbe
+
+readinessProbe
+```
+
+---
+
+Possible Root Causes
+
+- Wrong configuration
+- Missing Secret
+- Memory limit exceeded
+- Incorrect startup command
+- Dependency unavailable
+
+---
+
+# Scenario 2
+
+## Pods Remain Pending
+
+### Investigation
+
+```bash
+kubectl describe pod
+
+kubectl get nodes
+
+kubectl top nodes
+```
+
+Verify
+
+- Available CPU
+- Available Memory
+- Node readiness
+- Taints
+- PVC availability
+
+---
+
+Likely Causes
+
+- Cluster capacity exhausted
+- Resource requests too high
+- Unsatisfied scheduling constraints
+- Storage unavailable
+
+---
+
+# Scenario 3
+
+## Application Cannot Reach Database
+
+### Investigation
+
+Application
+
+↓
+
+DNS
+
+↓
+
+Security Groups
+
+↓
+
+Network
+
+↓
+
+Credentials
+
+↓
+
+Database
+
+---
+
+Commands
+
+```bash
+kubectl exec -it pod-name -- nslookup database
+
+kubectl exec -it pod-name -- ping database
+```
+
+Review
+
+- Connection string
+- Secret values
+- Database status
+- Firewall rules
+
+---
+
+# Scenario 4
+
+## Website Returns 502 Bad Gateway
+
+### Investigation
+
+```text
+ALB
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pod
+```
+
+Verify
+
+```bash
+kubectl get ingress
+
+kubectl get svc
+
+kubectl get endpoints
+```
+
+Possible Causes
+
+- Pods not Ready
+- Wrong Service selector
+- Application crash
+- Port mismatch
+
+---
+
+# Scenario 5
+
+## Jenkins Pipeline Suddenly Fails
+
+### Investigation
+
+Review
+
+- Git changes
+- Build logs
+- Agent availability
+- Credentials
+- Plugin updates
+- External dependencies
+
+---
+
+Check
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+Identify the stage where failure occurred.
+
+---
+
+# Scenario 6
+
+## Argo CD Shows OutOfSync
+
+### Investigation
+
+Verify
+
+- Git repository
+- Kubernetes resources
+- Manual cluster changes
+- Sync status
+
+Possible Causes
+
+- Manual kubectl edits
+- Failed sync
+- Repository changes
+- Incorrect manifests
+
+---
+
+# Scenario 7
+
+## High CPU Usage on Kubernetes Nodes
+
+### Investigation
+
+```bash
+kubectl top node
+
+kubectl top pod
+```
+
+Linux
+
+```bash
+top
+
+vmstat
+```
+
+Review
+
+- Runaway processes
+- Autoscaler status
+- HPA metrics
+
+---
+
+# Scenario 8
+
+## High Memory Usage
+
+### Investigation
+
+```bash
+kubectl top pod
+
+free -h
+```
+
+Review
+
+- Memory limits
+- Memory requests
+- OOMKilled events
+- Heap usage
+
+---
+
+# Scenario 9
+
+## Disk Space 100% Full
+
+### Investigation
+
+```bash
+df -h
+
+du -sh /var/*
+
+find / -size +1G
+```
+
+Review
+
+- Logs
+- Docker images
+- Temporary files
+- Backups
+
+---
+
+# Scenario 10
+
+## Docker Container Keeps Restarting
+
+### Investigation
+
+```bash
+docker ps -a
+
+docker logs container
+
+docker inspect container
+```
+
+Review
+
+- ENTRYPOINT
+- CMD
+- Health check
+- Environment variables
+
+---
+
+# Scenario 11
+
+## SSL Certificate Expired
+
+### Investigation
+
+Verify
+
+- Certificate expiration
+- Certificate renewal
+- Load Balancer
+- Ingress
+- DNS
+
+---
+
+Impact
+
+- HTTPS unavailable
+- Browser security warnings
+- Failed API communication
+
+---
+
+# Scenario 12
+
+## AWS Auto Scaling Not Launching Instances
+
+### Investigation
+
+Review
+
+- CloudWatch alarms
+- Launch Template
+- Auto Scaling Group
+- IAM permissions
+- EC2 quotas
+
+---
+
+# Scenario 13
+
+## Terraform Apply Fails
+
+### Investigation
+
+Run
+
+```bash
+terraform validate
+
+terraform plan
+```
+
+Review
+
+- Syntax
+- Provider configuration
+- Credentials
+- IAM permissions
+- Existing resources
+
+---
+
+# Scenario 14
+
+## Terraform State Drift
+
+### Investigation
+
+Run
+
+```bash
+terraform plan
+
+terraform state list
+```
+
+Review
+
+- Manual AWS Console changes
+- Imported resources
+- State consistency
+
+---
+
+# Scenario 15
+
+## EKS Worker Node Becomes NotReady
+
+### Investigation
+
+```bash
+kubectl describe node
+
+journalctl -u kubelet
+```
+
+Check
+
+- kubelet
+- Container runtime
+- Disk pressure
+- Memory pressure
+- Network
+
+---
+
+# Scenario 16
+
+## ImagePullBackOff
+
+### Investigation
+
+```bash
+kubectl describe pod
+```
+
+Review
+
+- Image name
+- Registry authentication
+- Image tag
+- Registry availability
+
+---
+
+# Scenario 17
+
+## Deployment Stuck During Rollout
+
+### Investigation
+
+```bash
+kubectl rollout status deployment app
+
+kubectl describe deployment app
+```
+
+Review
+
+- Readiness probe
+- Image pull
+- Scheduling
+- Resource limits
+
+---
+
+# Scenario 18
+
+## Database CPU is 100%
+
+### Investigation
+
+Review
+
+- Slow queries
+- Missing indexes
+- Long-running transactions
+- Connection pool
+- Read replicas
+
+---
+
+# Scenario 19
+
+## Application Latency Suddenly Increased
+
+### Investigation
+
+Review
+
+- CPU
+- Memory
+- Database latency
+- External APIs
+- Cache hit ratio
+- Network latency
+
+---
+
+# Scenario 20
+
+## DNS Resolution Failure
+
+### Investigation
+
+Linux
+
+```bash
+nslookup
+
+dig
+```
+
+Kubernetes
+
+```bash
+kubectl exec -it pod -- nslookup service-name
+```
+
+Verify
+
+- CoreDNS
+- Route53
+- Network
+- Service
+
+---
+
+# Scenario 21
+
+## Prometheus Stops Collecting Metrics
+
+### Investigation
+
+Review
+
+- Prometheus targets
+- ServiceMonitor / PodMonitor (if used)
+- Exporters
+- Network
+- Metrics endpoint
+
+---
+
+# Scenario 22
+
+## ELK Logs Missing
+
+### Investigation
+
+Check
+
+- Fluent Bit
+- Elasticsearch
+- Kibana
+- Log ingestion
+- Disk usage
+
+---
+
+# Scenario 23
+
+## API Returns HTTP 500
+
+### Investigation
+
+Review
+
+- Application logs
+- Database
+- Secrets
+- ConfigMaps
+- Recent deployments
+
+---
+
+# Scenario 24
+
+## HPA Not Scaling
+
+### Investigation
+
+Verify
+
+```bash
+kubectl describe hpa
+
+kubectl top pod
+```
+
+Check
+
+- Metrics Server
+- CPU requests
+- Resource metrics
+- HPA configuration
+
+---
+
+# Scenario 25
+
+## Production Deployment Failed
+
+### Answer Framework
+
+```text
+Identify Failure
+
+↓
+
+Rollback
+
+↓
+
+Restore Service
+
+↓
+
+Investigate
+
+↓
+
+Fix
+
+↓
+
+Redeploy
+
+↓
+
+Monitor
+```
+
+---
+
+# Root Cause Analysis (RCA) Template
+
+## Incident
+
+What happened?
+
+---
+
+## Impact
+
+Who was affected?
+
+---
+
+## Timeline
+
+- Detection
+- Investigation
+- Resolution
+
+---
+
+## Root Cause
+
+Technical explanation.
+
+---
+
+## Resolution
+
+Immediate fix.
+
+---
+
+## Preventive Actions
+
+- Automation
+- Monitoring
+- Documentation
+- Testing
+- Process improvements
+
+---
+
+# STAR Method for Scenario Questions
+
+Situation
+
+↓
+
+Task
+
+↓
+
+Action
+
+↓
+
+Result
+
+---
+
+# Communication During Incidents
+
+Good Practice
+
+- Acknowledge issue quickly
+- Keep stakeholders informed
+- Share verified facts
+- Avoid speculation
+- Document actions
+- Conduct a post-incident review
+
+---
+
+# FAANG-Style Scenario Questions
+
+- Your Kubernetes cluster is unavailable. How do you restore service?
+- A deployment caused a global outage. What is your response?
+- AWS Region becomes unavailable. How do you recover?
+- CI/CD pipeline is blocked before a critical release. What do you do?
+- Database replication has stopped. How do you investigate?
+- Customers report intermittent API failures. How do you debug?
+- HPA is not scaling during peak traffic. What steps do you take?
+- How would you troubleshoot increasing latency over several hours?
+- A security scan blocks production deployment. What is your process?
+- Design an incident response workflow for a 24x7 production platform.
+
+---
+
+# Enterprise Troubleshooting Best Practices
+
+- Start with user impact before diving into technical details.
+- Collect logs, metrics, and events before making changes.
+- Validate hypotheses with evidence instead of assumptions.
+- Roll back quickly if customer impact is high.
+- Avoid making multiple production changes simultaneously.
+- Document every action during the incident.
+- Perform a blameless Root Cause Analysis.
+- Automate detection and recovery where possible.
+- Update runbooks after every significant incident.
+- Continuously improve monitoring and alerting.
+
+---
+
+# Interview Tips
+
+For every scenario, explain:
+
+1. How you detected the issue.
+2. What evidence you collected.
+3. How you isolated the root cause.
+4. How you restored service.
+5. How you prevented the issue from recurring.
+
+Interviewers are evaluating your troubleshooting methodology more than whether you immediately guess the correct root cause.
+
+---
+
+# Summary
+
+This section covered real-world production scenarios across Kubernetes, AWS, Docker, Terraform, CI/CD, monitoring, networking, databases, and security. It also introduced a structured troubleshooting framework, RCA template, incident communication strategy, and FAANG-style production interview questions. These scenarios closely resemble what senior DevOps engineers face in production environments.
