@@ -4114,3 +4114,742 @@ This section covered Terraform examples for Amazon CloudWatch, CloudWatch Logs, 
 
 ---
 
+# Amazon Route 53
+
+---
+
+# Public Hosted Zone
+
+```hcl
+resource "aws_route53_zone" "public" {
+
+  name = "example.com"
+
+}
+```
+
+---
+
+# Private Hosted Zone
+
+```hcl
+resource "aws_route53_zone" "private" {
+
+  name = "internal.local"
+
+  vpc {
+
+    vpc_id = aws_vpc.main.id
+
+  }
+
+}
+```
+
+---
+
+# A Record
+
+```hcl
+resource "aws_route53_record" "app" {
+
+  zone_id = aws_route53_zone.public.zone_id
+
+  name = "app"
+
+  type = "A"
+
+  ttl = 300
+
+  records = [
+
+    aws_instance.web.public_ip
+
+  ]
+
+}
+```
+
+---
+
+# Alias Record
+
+```hcl
+resource "aws_route53_record" "alb" {
+
+  zone_id = aws_route53_zone.public.zone_id
+
+  name = "www"
+
+  type = "A"
+
+  alias {
+
+    name = aws_lb.app.dns_name
+
+    zone_id = aws_lb.app.zone_id
+
+    evaluate_target_health = true
+
+  }
+
+}
+```
+
+---
+
+# CNAME Record
+
+```hcl
+resource "aws_route53_record" "api" {
+
+  zone_id = aws_route53_zone.public.zone_id
+
+  name = "api"
+
+  type = "CNAME"
+
+  ttl = 300
+
+  records = [
+
+    aws_lb.app.dns_name
+
+  ]
+
+}
+```
+
+---
+
+# MX Record
+
+```hcl
+resource "aws_route53_record" "mail" {
+
+  zone_id = aws_route53_zone.public.zone_id
+
+  name = "example.com"
+
+  type = "MX"
+
+  ttl = 300
+
+  records = [
+
+    "10 mail.example.com"
+
+  ]
+
+}
+```
+
+---
+
+# TXT Record
+
+```hcl
+resource "aws_route53_record" "spf" {
+
+  zone_id = aws_route53_zone.public.zone_id
+
+  name = "example.com"
+
+  type = "TXT"
+
+  ttl = 300
+
+  records = [
+
+    "\"v=spf1 include:_spf.google.com ~all\""
+
+  ]
+
+}
+```
+
+---
+
+# Health Check
+
+```hcl
+resource "aws_route53_health_check" "app" {
+
+  fqdn = "app.example.com"
+
+  port = 443
+
+  type = "HTTPS"
+
+}
+```
+
+---
+
+# Failover Record
+
+```hcl
+resource "aws_route53_record" "primary" {
+
+  zone_id = aws_route53_zone.public.zone_id
+
+  name = "app"
+
+  type = "A"
+
+  set_identifier = "primary"
+
+  failover_routing_policy {
+
+    type = "PRIMARY"
+
+  }
+
+}
+```
+
+---
+
+# Amazon CloudFront
+
+---
+
+# Distribution
+
+```hcl
+resource "aws_cloudfront_distribution" "cdn" {
+
+  enabled = true
+
+  default_root_object = "index.html"
+
+}
+```
+
+---
+
+# Origin Access Control
+
+```hcl
+resource "aws_cloudfront_origin_access_control" "oac" {
+
+  name = "s3-origin"
+
+  origin_access_control_origin_type = "s3"
+
+  signing_behavior = "always"
+
+  signing_protocol = "sigv4"
+
+}
+```
+
+---
+
+# Cache Policy
+
+```hcl
+resource "aws_cloudfront_cache_policy" "default" {
+
+  name = "ApplicationCache"
+
+}
+```
+
+---
+
+# Response Headers Policy
+
+```hcl
+resource "aws_cloudfront_response_headers_policy" "security" {
+
+  name = "SecurityHeaders"
+
+}
+```
+
+---
+
+# Origin Request Policy
+
+```hcl
+resource "aws_cloudfront_origin_request_policy" "main" {
+
+  name = "OriginPolicy"
+
+}
+```
+
+---
+
+# AWS WAF
+
+---
+
+# Web ACL
+
+```hcl
+resource "aws_wafv2_web_acl" "main" {
+
+  name = "ProductionACL"
+
+  scope = "REGIONAL"
+
+  default_action {
+
+    allow {}
+
+  }
+
+  visibility_config {
+
+    cloudwatch_metrics_enabled = true
+
+    metric_name = "ProductionACL"
+
+    sampled_requests_enabled = true
+
+  }
+
+}
+```
+
+---
+
+# Managed Rule Group
+
+```hcl
+rule {
+
+  name = "AWSManagedRulesCommonRuleSet"
+
+  priority = 1
+
+}
+```
+
+---
+
+# Associate WAF with ALB
+
+```hcl
+resource "aws_wafv2_web_acl_association" "alb" {
+
+  resource_arn = aws_lb.app.arn
+
+  web_acl_arn = aws_wafv2_web_acl.main.arn
+
+}
+```
+
+---
+
+# AWS Shield Advanced
+
+---
+
+# Protection
+
+```hcl
+resource "aws_shield_protection" "alb" {
+
+  name = "ALBProtection"
+
+  resource_arn = aws_lb.app.arn
+
+}
+```
+
+---
+
+# Protection Group
+
+```hcl
+resource "aws_shield_protection_group" "main" {
+
+  protection_group_id = "production"
+
+  aggregation = "SUM"
+
+}
+```
+
+---
+
+# AWS Global Accelerator
+
+---
+
+# Accelerator
+
+```hcl
+resource "aws_globalaccelerator_accelerator" "main" {
+
+  name = "production"
+
+  enabled = true
+
+}
+```
+
+---
+
+# Listener
+
+```hcl
+resource "aws_globalaccelerator_listener" "https" {
+
+  accelerator_arn = aws_globalaccelerator_accelerator.main.id
+
+  protocol = "TCP"
+
+}
+```
+
+---
+
+# Endpoint Group
+
+```hcl
+resource "aws_globalaccelerator_endpoint_group" "alb" {
+
+  listener_arn = aws_globalaccelerator_listener.https.id
+
+  endpoint_group_region = "ap-south-1"
+
+}
+```
+
+---
+
+# AWS Direct Connect
+
+---
+
+# Connection
+
+```hcl
+resource "aws_dx_connection" "main" {
+
+  name = "PrimaryDX"
+
+  bandwidth = "1Gbps"
+
+  location = "EqDC2"
+
+}
+```
+
+---
+
+# Private Virtual Interface
+
+```hcl
+resource "aws_dx_private_virtual_interface" "private" {
+
+  connection_id = aws_dx_connection.main.id
+
+  vlan = 101
+
+}
+```
+
+---
+
+# Gateway
+
+```hcl
+resource "aws_dx_gateway" "main" {
+
+  name = "ProductionGateway"
+
+}
+```
+
+---
+
+# Site-to-Site VPN
+
+---
+
+# Customer Gateway
+
+```hcl
+resource "aws_customer_gateway" "main" {
+
+  bgp_asn = 65000
+
+  ip_address = "203.0.113.10"
+
+  type = "ipsec.1"
+
+}
+```
+
+---
+
+# VPN Gateway
+
+```hcl
+resource "aws_vpn_gateway" "main" {
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# VPN Connection
+
+```hcl
+resource "aws_vpn_connection" "main" {
+
+  vpn_gateway_id = aws_vpn_gateway.main.id
+
+  customer_gateway_id = aws_customer_gateway.main.id
+
+  type = "ipsec.1"
+
+}
+```
+
+---
+
+# VPN Gateway Attachment
+
+```hcl
+resource "aws_vpn_gateway_attachment" "main" {
+
+  vpn_gateway_id = aws_vpn_gateway.main.id
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# AWS Client VPN
+
+---
+
+# Client VPN Endpoint
+
+```hcl
+resource "aws_ec2_client_vpn_endpoint" "main" {
+
+  description = "Remote Access"
+
+  server_certificate_arn = aws_acm_certificate.vpn.arn
+
+  client_cidr_block = "172.16.0.0/22"
+
+}
+```
+
+---
+
+# Client VPN Network Association
+
+```hcl
+resource "aws_ec2_client_vpn_network_association" "private" {
+
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
+
+  subnet_id = aws_subnet.private.id
+
+}
+```
+
+---
+
+# Authorization Rule
+
+```hcl
+resource "aws_ec2_client_vpn_authorization_rule" "main" {
+
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
+
+  target_network_cidr = aws_vpc.main.cidr_block
+
+  authorize_all_groups = true
+
+}
+```
+
+---
+
+# Transit Gateway Route Table
+
+```hcl
+resource "aws_ec2_transit_gateway_route_table" "main" {
+
+  transit_gateway_id = aws_ec2_transit_gateway.main.id
+
+}
+```
+
+---
+
+# Transit Gateway Route
+
+```hcl
+resource "aws_ec2_transit_gateway_route" "private" {
+
+  destination_cidr_block = "10.1.0.0/16"
+
+  transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.main.id
+
+}
+```
+
+---
+
+# AWS Network Firewall
+
+---
+
+# Firewall Policy
+
+```hcl
+resource "aws_networkfirewall_firewall_policy" "main" {
+
+  name = "ProductionPolicy"
+
+}
+```
+
+---
+
+# Firewall
+
+```hcl
+resource "aws_networkfirewall_firewall" "main" {
+
+  name = "ProductionFirewall"
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# Rule Group
+
+```hcl
+resource "aws_networkfirewall_rule_group" "stateful" {
+
+  capacity = 100
+
+  name = "StatefulRules"
+
+  type = "STATEFUL"
+
+}
+```
+
+---
+
+# AWS Private CA
+
+---
+
+# Certificate Authority
+
+```hcl
+resource "aws_acmpca_certificate_authority" "main" {
+
+  type = "ROOT"
+
+}
+```
+
+---
+
+# CA Certificate
+
+```hcl
+resource "aws_acmpca_certificate" "root" {
+
+  certificate_authority_arn = aws_acmpca_certificate_authority.main.arn
+
+}
+```
+
+---
+
+# RAM Resource Share
+
+```hcl
+resource "aws_ram_resource_share" "network" {
+
+  name = "SharedNetworking"
+
+  allow_external_principals = false
+
+}
+```
+
+---
+
+# Share Transit Gateway
+
+```hcl
+resource "aws_ram_resource_association" "tgw" {
+
+  resource_arn = aws_ec2_transit_gateway.main.arn
+
+  resource_share_arn = aws_ram_resource_share.network.arn
+
+}
+```
+
+---
+
+# Outputs
+
+```hcl
+output "cloudfront_domain" {
+
+  value = aws_cloudfront_distribution.cdn.domain_name
+
+}
+
+output "hosted_zone_id" {
+
+  value = aws_route53_zone.public.zone_id
+
+}
+
+output "global_accelerator_dns" {
+
+  value = aws_globalaccelerator_accelerator.main.dns_name
+
+}
+```
+
+---
+
+# Best Practices
+
+- Use Route53 Alias records for AWS resources.
+- Enable Route53 health checks for failover.
+- Protect CloudFront and ALBs using AWS WAF.
+- Use AWS Shield Advanced for internet-facing production workloads.
+- Enable Origin Access Control (OAC) for CloudFront S3 origins.
+- Use Global Accelerator for globally distributed applications.
+- Prefer Direct Connect for consistent hybrid connectivity.
+- Use Site-to-Site VPN as a backup to Direct Connect.
+- Use AWS Network Firewall for centralized traffic inspection.
+- Protect internal PKI with AWS Private CA.
+
+---
+
+# Summary
+
+This section covered Terraform examples for Amazon Route53, CloudFront, AWS WAF, Shield Advanced, Global Accelerator, Direct Connect, Site-to-Site VPN, Client VPN, Transit Gateway routing, AWS Network Firewall, Private CA, and AWS RAM resource sharing. These examples provide production-ready patterns for enterprise networking, hybrid connectivity, CDN, and edge security.
+
+---
+
