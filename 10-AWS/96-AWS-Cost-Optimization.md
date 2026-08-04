@@ -1557,3 +1557,590 @@ This section covered AWS Budgets, Budget Actions, Cost & Usage Reports (CUR), AW
 
 ---
 
+# Savings Plans
+
+---
+
+# Introduction
+
+AWS Savings Plans provide flexible pricing based on a committed hourly spend over a 1-year or 3-year term.
+
+Benefits
+
+- Lower compute costs
+- Flexible usage
+- Automatic discount application
+- Simpler than Reserved Instances
+
+---
+
+# Savings Plans Workflow
+
+```text
+Analyze Usage
+
+↓
+
+Purchase Savings Plan
+
+↓
+
+Hourly Commitment
+
+↓
+
+Automatic Discounts
+
+↓
+
+Reduced AWS Bill
+```
+
+---
+
+# Savings Plans Types
+
+## Compute Savings Plans
+
+Supports
+
+- Amazon EC2
+- AWS Lambda
+- AWS Fargate
+
+Benefits
+
+- Maximum flexibility
+- Works across instance families
+- Works across regions
+- Supports operating system changes
+
+---
+
+## EC2 Instance Savings Plans
+
+Applies to
+
+- Specific instance family
+- Specific AWS Region
+
+Provides higher discounts than Compute Savings Plans.
+
+---
+
+## SageMaker Savings Plans
+
+Supports
+
+- SageMaker Training
+- SageMaker Inference
+- SageMaker Processing
+
+---
+
+# Savings Plans Terms
+
+Available commitments
+
+- 1 Year
+- 3 Years
+
+Payment options
+
+- No Upfront
+- Partial Upfront
+- All Upfront
+
+---
+
+# Savings Plans Coverage
+
+Measures
+
+```text
+Eligible Usage
+
+↓
+
+Covered Usage
+
+↓
+
+Coverage %
+```
+
+Higher coverage generally results in greater savings.
+
+---
+
+# Savings Plans Utilization
+
+Measures
+
+```text
+Purchased Commitment
+
+↓
+
+Actual Usage
+
+↓
+
+Utilization %
+```
+
+Unused commitment represents lost savings opportunities.
+
+---
+
+# Savings Plans Recommendation Workflow
+
+```text
+Historical Usage
+
+↓
+
+AWS Recommendation
+
+↓
+
+Review
+
+↓
+
+Purchase
+
+↓
+
+Monitor Utilization
+```
+
+---
+
+# Reserved Instances (RI)
+
+---
+
+# Introduction
+
+Reserved Instances provide discounted pricing for predictable EC2 workloads.
+
+---
+
+# RI Types
+
+## Standard Reserved Instances
+
+Benefits
+
+- Highest discount
+- Fixed configuration
+- Limited flexibility
+
+---
+
+## Convertible Reserved Instances
+
+Benefits
+
+- Exchange supported
+- Flexible
+- Lower discount than Standard RI
+
+---
+
+# Regional Reserved Instances
+
+Benefits
+
+- Capacity flexibility
+- Size flexibility
+- Availability Zone flexibility
+
+---
+
+# Zonal Reserved Instances
+
+Benefits
+
+- Capacity reservation
+- Fixed Availability Zone
+- Fixed capacity
+
+---
+
+# RI Terms
+
+Available
+
+- 1 Year
+- 3 Years
+
+Payment options
+
+- No Upfront
+- Partial Upfront
+- All Upfront
+
+---
+
+# RI Coverage
+
+Review
+
+- Covered hours
+- Remaining On-Demand usage
+- Uncovered workloads
+
+---
+
+# RI Utilization
+
+Review
+
+- Utilized reservations
+- Idle reservations
+- Expiring reservations
+
+---
+
+# Reserved Instance Recommendation
+
+```text
+Historical Usage
+
+↓
+
+AWS Recommendation
+
+↓
+
+Review
+
+↓
+
+Purchase RI
+
+↓
+
+Monitor Usage
+```
+
+---
+
+# Savings Plans vs Reserved Instances
+
+| Feature | Savings Plans | Reserved Instances |
+|----------|---------------|-------------------|
+| Flexibility | High | Medium |
+| Instance Family Change | Yes (Compute SP) | Limited |
+| Region Change | Compute SP Only | Regional RI Only |
+| Capacity Reservation | No | Zonal RI |
+| Discount | High | Highest |
+
+---
+
+# Spot Instances
+
+---
+
+# Introduction
+
+Spot Instances use spare AWS capacity and can provide discounts of up to 90% compared to On-Demand pricing.
+
+---
+
+# Best Use Cases
+
+- Batch processing
+- CI/CD builds
+- Kubernetes worker nodes
+- Big data processing
+- Rendering
+- Machine Learning training
+- Fault-tolerant applications
+
+---
+
+# Avoid Spot For
+
+- Critical databases
+- Stateful applications
+- Long-running critical jobs
+- Single-instance production workloads
+
+---
+
+# Spot Interruption
+
+AWS may reclaim Spot capacity with a two-minute interruption notice.
+
+Workflow
+
+```text
+Spot Instance
+
+↓
+
+Interruption Notice
+
+↓
+
+Drain Workload
+
+↓
+
+Launch Replacement
+
+↓
+
+Continue Processing
+```
+
+---
+
+# Spot Fleet
+
+Provides
+
+- Multiple instance types
+- Multiple Availability Zones
+- Lowest cost selection
+- Automatic diversification
+
+---
+
+# EC2 Fleet
+
+Supports
+
+- On-Demand
+- Reserved
+- Spot
+
+Example
+
+```text
+20%
+
+On-Demand
+
+↓
+
+80%
+
+Spot
+```
+
+---
+
+# Mixed Instance Policy
+
+Example
+
+```text
+Auto Scaling Group
+
+↓
+
+On-Demand Base Capacity
+
+↓
+
+Spot Capacity
+
+↓
+
+Multiple Instance Types
+```
+
+---
+
+# Capacity Rebalancing
+
+Automatically launches replacement Spot Instances before interruption occurs.
+
+---
+
+# Spot Allocation Strategies
+
+Available strategies
+
+- Price Capacity Optimized
+- Capacity Optimized
+- Lowest Price
+
+Production recommendation
+
+- Capacity Optimized
+- Price Capacity Optimized
+
+---
+
+# Spot Cost Optimization Workflow
+
+```text
+Identify Fault-Tolerant Workloads
+
+↓
+
+Launch Spot Instances
+
+↓
+
+Monitor Interruptions
+
+↓
+
+Auto Scaling
+
+↓
+
+Reduce Costs
+```
+
+---
+
+# Purchase Recommendation Workflow
+
+```text
+Analyze Usage
+
+↓
+
+Review Cost Explorer
+
+↓
+
+Savings Plans Recommendation
+
+↓
+
+RI Recommendation
+
+↓
+
+Spot Opportunity
+
+↓
+
+Optimize Architecture
+```
+
+---
+
+# Example Workload Strategy
+
+Production API
+
+```text
+Savings Plans
+```
+
+---
+
+Development Environment
+
+```text
+Spot Instances
+```
+
+---
+
+Batch Processing
+
+```text
+Spot Fleet
+```
+
+---
+
+Database
+
+```text
+Reserved Instances
+```
+
+---
+
+Lambda
+
+```text
+Compute Savings Plans
+```
+
+---
+
+# Decision Matrix
+
+| Workload | Recommended Option |
+|----------|--------------------|
+| Predictable EC2 | Reserved Instances |
+| Flexible Compute | Compute Savings Plans |
+| Lambda | Compute Savings Plans |
+| Fargate | Compute Savings Plans |
+| Temporary Batch Jobs | Spot Instances |
+| CI/CD Agents | Spot Instances |
+| Development | Spot Instances |
+| Production Database | Reserved Instances |
+
+---
+
+# Common Mistakes
+
+- Purchasing Savings Plans without usage analysis.
+- Buying Standard RIs for changing workloads.
+- Running production databases entirely on Spot Instances.
+- Ignoring RI expiration.
+- Low Savings Plans utilization.
+- Running all workloads On-Demand.
+- Not diversifying Spot instance types.
+- Ignoring interruption handling.
+- Not reviewing recommendations regularly.
+
+---
+
+# Review Schedule
+
+Weekly
+
+- Spot interruptions
+- Spot utilization
+- Savings Plans utilization
+
+Monthly
+
+- RI utilization
+- Coverage reports
+- Purchase recommendations
+- Expiring commitments
+
+Quarterly
+
+- Re-evaluate purchasing strategy
+- Optimize commitments
+- Review architecture changes
+
+---
+
+# Best Practices
+
+- Purchase Compute Savings Plans for flexible production workloads.
+- Use EC2 Instance Savings Plans for stable workloads in a single Region.
+- Purchase Reserved Instances only for predictable long-term workloads.
+- Diversify Spot workloads across multiple instance families and Availability Zones.
+- Enable Capacity Rebalancing for Spot Auto Scaling Groups.
+- Review Savings Plans and RI utilization monthly.
+- Mix On-Demand and Spot Instances using Auto Scaling Groups.
+- Follow AWS purchase recommendations instead of guessing commitment levels.
+- Continuously monitor commitment coverage and utilization.
+- Match purchasing strategy to workload characteristics.
+
+---
+
+# Summary
+
+This section covered AWS Savings Plans, Reserved Instances, Spot Instances, Spot Fleet, EC2 Fleet, Capacity Rebalancing, mixed instance policies, purchasing recommendations, workload decision matrices, and production optimization strategies. These pricing models are fundamental for reducing AWS compute costs while maintaining application performance and availability.
+
+---
+
