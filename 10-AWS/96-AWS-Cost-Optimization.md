@@ -4689,3 +4689,688 @@ This section covered automation techniques for AWS cost optimization using Event
 
 ---
 
+# Production Cost Optimization
+
+---
+
+# Introduction
+
+Production cost optimization focuses on reducing AWS spending while maintaining:
+
+- High Availability
+- Security
+- Performance
+- Scalability
+- Reliability
+
+The objective is **maximize business value**, not simply minimize cost.
+
+---
+
+# Startup Cost Optimization
+
+Architecture
+
+```text
+CloudFront
+
+↓
+
+Application Load Balancer
+
+↓
+
+Auto Scaling Group
+
+↓
+
+RDS
+
+↓
+
+Amazon S3
+```
+
+Optimization
+
+- Compute Savings Plans
+- Spot Instances for CI/CD
+- S3 Lifecycle Policies
+- CloudFront caching
+- gp3 EBS volumes
+- Lambda for scheduled tasks
+
+Result
+
+```text
+30–50%
+
+Infrastructure Savings
+```
+
+---
+
+# Enterprise Cost Optimization
+
+Architecture
+
+```text
+AWS Organizations
+
+↓
+
+Management Account
+
+↓
+
+Shared Services
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+Optimization
+
+- Consolidated Billing
+- Cost Allocation Tags
+- Chargeback
+- Showback
+- CUR
+- Budgets
+- Savings Plans
+
+---
+
+# Kubernetes (Amazon EKS)
+
+Architecture
+
+```text
+Users
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Managed Node Groups
+
+↓
+
+RDS
+```
+
+Optimization
+
+- Karpenter
+- Cluster Autoscaler
+- Spot Worker Nodes
+- Graviton Instances
+- Resource Requests/Limits
+- Namespace Quotas
+- Remove idle clusters
+
+Example
+
+```text
+Before
+
+20 Nodes
+
+↓
+
+After
+
+12 Nodes
+
+↓
+
+40% Lower Compute Cost
+```
+
+---
+
+# ECS Cost Optimization
+
+Optimization
+
+- ECS Fargate Spot
+- Auto Scaling
+- Right-sized Tasks
+- Image cleanup
+- Service scaling
+
+---
+
+# Lambda Optimization
+
+Review
+
+- Memory allocation
+- Duration
+- Cold starts
+- Package size
+
+Optimization
+
+```text
+512 MB
+
+↓
+
+256 MB
+
+↓
+
+Lower Cost
+```
+
+---
+
+# Database Optimization
+
+RDS
+
+- Reserved Instances
+- Storage Autoscaling
+- Right sizing
+
+Aurora
+
+- Reader optimization
+- Serverless v2
+- Auto Pause (where applicable)
+
+DynamoDB
+
+- Auto Scaling
+- TTL
+- On-Demand billing
+
+---
+
+# Storage Optimization
+
+Amazon S3
+
+Workflow
+
+```text
+Standard
+
+↓
+
+Standard-IA
+
+↓
+
+Glacier Instant Retrieval
+
+↓
+
+Glacier Flexible Retrieval
+
+↓
+
+Deep Archive
+```
+
+---
+
+Amazon EBS
+
+Optimization
+
+- gp2 → gp3
+- Delete unattached volumes
+- Archive snapshots
+
+---
+
+Amazon EFS
+
+Optimization
+
+- Lifecycle Management
+- Intelligent Tiering
+
+---
+
+# Networking Optimization
+
+Review
+
+- NAT Gateway
+- Data Transfer
+- Transit Gateway
+- Elastic IP
+- Load Balancer
+
+Optimization
+
+- Gateway Endpoints
+- Interface Endpoints
+- CloudFront
+- Consolidate ALBs
+
+---
+
+# Logging Optimization
+
+Review
+
+- CloudWatch Logs
+- Log Retention
+- OpenSearch Storage
+
+Optimization
+
+- Retention Policies
+- Archive Logs
+- Delete obsolete Log Groups
+
+---
+
+# Multi-Account Cost Management
+
+Architecture
+
+```text
+Management
+
+↓
+
+Security
+
+↓
+
+Networking
+
+↓
+
+Development
+
+↓
+
+Production
+```
+
+Optimization
+
+- Consolidated Billing
+- Budget per Account
+- Department Reporting
+- Cost Categories
+
+---
+
+# Multi-Region Optimization
+
+Review
+
+- Cross-region replication
+- Data transfer
+- Duplicate resources
+- Disaster Recovery
+
+Optimization
+
+- Remove unnecessary replicas
+- Right-size standby environments
+- Review replication policies
+
+---
+
+# Development Environment Scheduling
+
+Workflow
+
+```text
+08:00
+
+Start
+
+↓
+
+19:00
+
+Stop
+
+↓
+
+Weekend Shutdown
+
+↓
+
+Monthly Savings
+```
+
+---
+
+# Batch Processing
+
+Recommended
+
+```text
+Spot Fleet
+
+↓
+
+Batch Jobs
+
+↓
+
+Automatic Scaling
+
+↓
+
+Lower Cost
+```
+
+---
+
+# CI/CD Cost Optimization
+
+Review
+
+- Build frequency
+- Build duration
+- Runner size
+- Artifact retention
+
+Optimization
+
+- Spot runners
+- Auto-clean artifacts
+- Right-size build agents
+- Remove unused pipelines
+
+---
+
+# Monitoring Cost Optimization
+
+Review
+
+- Metrics
+- Dashboards
+- Logs
+- Alarms
+
+Optimization
+
+- Reduce retention
+- Remove unused dashboards
+- Delete obsolete metrics
+
+---
+
+# Backup Cost Optimization
+
+Review
+
+- Snapshot retention
+- Cross-region copies
+- Duplicate backups
+
+Optimization
+
+- Lifecycle Policies
+- Archive
+- Delete expired backups
+
+---
+
+# Monthly Cost Review Workflow
+
+```text
+Billing
+
+↓
+
+Cost Explorer
+
+↓
+
+Trusted Advisor
+
+↓
+
+Compute Optimizer
+
+↓
+
+Budgets
+
+↓
+
+Optimization Plan
+
+↓
+
+Implementation
+```
+
+---
+
+# Cost Optimization KPIs
+
+Track
+
+- Monthly AWS spend
+- Cost per application
+- Cost per deployment
+- Savings achieved
+- Resource utilization
+- Idle resources
+- Savings Plans coverage
+- RI utilization
+- Budget variance
+- Cost anomalies
+
+---
+
+# ROI Example
+
+Investment
+
+```text
+Savings Plan
+
+↓
+
+$10,000 Commitment
+```
+
+Savings
+
+```text
+$18,000 Annual Savings
+
+↓
+
+Positive ROI
+```
+
+---
+
+# Common Architecture Patterns
+
+## Production Web Application
+
+```text
+CloudFront
+
+↓
+
+WAF
+
+↓
+
+ALB
+
+↓
+
+Auto Scaling
+
+↓
+
+RDS Multi-AZ
+
+↓
+
+S3
+```
+
+---
+
+## Event-Driven Architecture
+
+```text
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+SQS
+
+↓
+
+SNS
+```
+
+---
+
+## Container Platform
+
+```text
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Spot Nodes
+
+↓
+
+Managed Node Groups
+
+↓
+
+Amazon ECR
+```
+
+---
+
+## Analytics Platform
+
+```text
+Amazon S3
+
+↓
+
+Glue
+
+↓
+
+Athena
+
+↓
+
+QuickSight
+```
+
+---
+
+# Common Cost Optimization Mistakes
+
+- Leaving development environments running 24×7
+- Purchasing Savings Plans without usage analysis
+- Ignoring Cost Explorer recommendations
+- No tagging strategy
+- Large CloudWatch log retention
+- Idle NAT Gateways
+- Overprovisioned RDS instances
+- Keeping unattached EBS volumes
+- Running everything On-Demand
+- Ignoring Spot opportunities
+
+---
+
+# Enterprise Cost Review Checklist
+
+## Daily
+
+- Cost anomalies
+- Budget alerts
+- Unexpected spikes
+
+---
+
+## Weekly
+
+- Idle resources
+- Tag compliance
+- Trusted Advisor findings
+
+---
+
+## Monthly
+
+- Savings Plans review
+- RI utilization
+- Executive reports
+- Architecture review
+- Cleanup activities
+
+---
+
+## Quarterly
+
+- Purchasing strategy
+- FinOps review
+- Multi-account governance
+- Disaster Recovery cost review
+
+---
+
+# Best Practices
+
+- Optimize based on utilization data, not assumptions.
+- Review Cost Explorer and Trusted Advisor regularly.
+- Combine Savings Plans with Spot Instances where appropriate.
+- Schedule non-production resources.
+- Apply lifecycle policies to storage services.
+- Track KPIs and measure realized savings.
+- Review architecture as workloads evolve.
+- Automate repetitive optimization tasks.
+- Maintain strong tagging and governance policies.
+- Treat cost optimization as a continuous operational process.
+
+---
+
+# Summary
+
+This section presented production cost optimization case studies, architecture patterns, real-world optimization scenarios, ROI examples, operational KPIs, and enterprise review processes. These patterns demonstrate how organizations can systematically reduce AWS costs while maintaining secure, scalable, and highly available production environments.
+
+---
+
