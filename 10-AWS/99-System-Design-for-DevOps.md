@@ -613,3 +613,769 @@ Verify
 # Summary
 
 This section introduced system design fundamentals, functional and non-functional requirements, scalability, high availability, fault tolerance, CAP theorem, distributed systems, architecture patterns, bottleneck analysis, capacity planning, and production design principles. These concepts form the foundation for designing enterprise-scale cloud-native systems.
+
+---
+
+# Load Balancing, Traffic Management & Scaling
+
+---
+
+# Introduction
+
+Load balancing distributes incoming traffic across multiple servers or services to improve availability, scalability, fault tolerance, and performance.
+
+Objectives
+
+- Prevent server overload
+- Improve availability
+- Increase scalability
+- Enable fault tolerance
+- Support zero-downtime deployments
+
+---
+
+# Traffic Flow
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+Load Balancer
+
+↓
+
+Application Servers
+
+↓
+
+Database
+```
+
+---
+
+# What is Load Balancing?
+
+Definition
+
+Distributes incoming client requests across multiple backend servers.
+
+Benefits
+
+- High Availability
+- Scalability
+- Fault Tolerance
+- Better Resource Utilization
+- Zero Downtime Maintenance
+
+---
+
+# Load Balancer Types
+
+## Layer 4 (Transport Layer)
+
+Works with
+
+- TCP
+- UDP
+
+Routes traffic based on
+
+- IP Address
+- Port
+
+Examples
+
+- AWS Network Load Balancer (NLB)
+- HAProxy (TCP Mode)
+
+---
+
+## Layer 7 (Application Layer)
+
+Works with
+
+- HTTP
+- HTTPS
+- gRPC
+
+Routes traffic based on
+
+- URL Path
+- Host Header
+- Cookies
+- HTTP Headers
+
+Examples
+
+- AWS Application Load Balancer (ALB)
+- NGINX
+- Traefik
+
+---
+
+# Layer 4 vs Layer 7
+
+| Feature | Layer 4 | Layer 7 |
+|----------|---------|---------|
+| Protocol | TCP/UDP | HTTP/HTTPS |
+| Speed | Faster | Slightly Slower |
+| Content Awareness | No | Yes |
+| Path Routing | No | Yes |
+| Host Routing | No | Yes |
+| SSL Termination | Limited | Supported |
+
+---
+
+# AWS Load Balancers
+
+Application Load Balancer (ALB)
+
+Best For
+
+- Web applications
+- REST APIs
+- Kubernetes Ingress
+- Microservices
+
+---
+
+Network Load Balancer (NLB)
+
+Best For
+
+- TCP Applications
+- Low latency
+- High throughput
+- Static IP
+
+---
+
+Gateway Load Balancer (GWLB)
+
+Best For
+
+- Firewalls
+- IDS/IPS
+- Security Appliances
+- Traffic Inspection
+
+---
+
+# AWS Load Balancer Selection
+
+```text
+HTTP/HTTPS
+
+↓
+
+ALB
+
+----------------------
+
+TCP/UDP
+
+↓
+
+NLB
+
+----------------------
+
+Network Appliances
+
+↓
+
+GWLB
+```
+
+---
+
+# Reverse Proxy
+
+Definition
+
+Receives client requests and forwards them to backend servers.
+
+Examples
+
+- NGINX
+- HAProxy
+- Traefik
+- Envoy
+
+---
+
+# Reverse Proxy Architecture
+
+```text
+Client
+
+↓
+
+NGINX
+
+↓
+
+Application Servers
+```
+
+---
+
+# Load Balancing Algorithms
+
+Round Robin
+
+```text
+Server1
+
+↓
+
+Server2
+
+↓
+
+Server3
+
+↓
+
+Repeat
+```
+
+---
+
+Least Connections
+
+Route traffic to the server with the fewest active connections.
+
+---
+
+Least Response Time
+
+Choose the backend with the fastest response time.
+
+---
+
+Weighted Round Robin
+
+Assign more traffic to higher-capacity servers.
+
+Example
+
+```text
+Server A
+
+Weight 5
+
+Server B
+
+Weight 2
+
+Server C
+
+Weight 1
+```
+
+---
+
+# Sticky Sessions
+
+Definition
+
+Routes a user's requests to the same backend server.
+
+Advantages
+
+- Session persistence
+
+Disadvantages
+
+- Uneven traffic distribution
+- Harder horizontal scaling
+
+Prefer stateless applications where possible.
+
+---
+
+# Health Checks
+
+Purpose
+
+Detect unhealthy backend servers automatically.
+
+---
+
+# Health Check Workflow
+
+```text
+Load Balancer
+
+↓
+
+Health Check
+
+↓
+
+Healthy?
+
+↓
+
+Yes → Route Traffic
+
+No → Remove Target
+```
+
+---
+
+# Health Check Parameters
+
+Configure
+
+- Protocol
+- Port
+- Path
+- Interval
+- Timeout
+- Healthy Threshold
+- Unhealthy Threshold
+
+---
+
+# Auto Scaling
+
+Purpose
+
+Automatically adjust infrastructure based on demand.
+
+---
+
+# Auto Scaling Workflow
+
+```text
+Traffic Increase
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+Auto Scaling
+
+↓
+
+Launch Instance
+
+↓
+
+Register with Load Balancer
+```
+
+---
+
+# Scale-In Workflow
+
+```text
+Low Utilization
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+Auto Scaling
+
+↓
+
+Drain Connections
+
+↓
+
+Terminate Instance
+```
+
+---
+
+# Connection Draining
+
+Purpose
+
+Allow existing requests to complete before removing an instance.
+
+Benefits
+
+- Zero downtime
+- Graceful shutdown
+- Better user experience
+
+---
+
+# Service Discovery
+
+Purpose
+
+Allow applications to dynamically discover backend services.
+
+Examples
+
+- Kubernetes DNS
+- AWS Cloud Map
+- Consul
+
+---
+
+# Kubernetes Service Discovery
+
+```text
+Pod
+
+↓
+
+Service
+
+↓
+
+CoreDNS
+
+↓
+
+Destination Pod
+```
+
+---
+
+# DNS-Based Load Balancing
+
+Methods
+
+- Round Robin DNS
+- Weighted Routing
+- Latency-Based Routing
+- Geolocation Routing
+- Failover Routing
+
+---
+
+# Amazon Route 53 Routing Policies
+
+Supports
+
+- Simple Routing
+- Weighted Routing
+- Latency Routing
+- Geolocation Routing
+- Geoproximity Routing
+- Failover Routing
+- Multi-Value Answer Routing
+
+---
+
+# Global Traffic Management
+
+Architecture
+
+```text
+Users
+
+↓
+
+Route 53
+
+↓
+
+Nearest Region
+
+↓
+
+Regional Load Balancer
+
+↓
+
+Application
+```
+
+---
+
+# Content Delivery Network (CDN)
+
+Purpose
+
+Deliver static content from edge locations closer to users.
+
+Benefits
+
+- Lower latency
+- Reduced origin load
+- Faster page loads
+- DDoS mitigation
+
+---
+
+# Amazon CloudFront
+
+Supports
+
+- Static Content
+- Dynamic Content
+- API Acceleration
+- Video Streaming
+
+---
+
+# CloudFront Architecture
+
+```text
+Users
+
+↓
+
+Edge Location
+
+↓
+
+CloudFront
+
+↓
+
+Origin
+
+↓
+
+Application
+```
+
+---
+
+# API Gateway
+
+Purpose
+
+Acts as a single entry point for APIs.
+
+Features
+
+- Authentication
+- Authorization
+- Rate Limiting
+- Request Validation
+- Monitoring
+- API Versioning
+
+---
+
+# API Gateway Workflow
+
+```text
+Client
+
+↓
+
+API Gateway
+
+↓
+
+Authentication
+
+↓
+
+Microservice
+
+↓
+
+Response
+```
+
+---
+
+# Rate Limiting
+
+Purpose
+
+Protect applications from excessive requests.
+
+Methods
+
+- Requests per second
+- Burst limits
+- User quotas
+- API keys
+
+---
+
+# Circuit Breaker Pattern
+
+Workflow
+
+```text
+Healthy
+
+↓
+
+Failures Increase
+
+↓
+
+Circuit Opens
+
+↓
+
+Requests Blocked
+
+↓
+
+Recovery Check
+
+↓
+
+Circuit Closes
+```
+
+Benefits
+
+- Prevents cascading failures
+- Improves system resilience
+
+---
+
+# Traffic Routing Strategies
+
+Blue/Green
+
+```text
+Blue
+
+↓
+
+Green
+
+↓
+
+Switch Traffic
+```
+
+---
+
+Canary
+
+```text
+5%
+
+↓
+
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+---
+
+A/B Testing
+
+Split traffic between different application versions for comparison.
+
+---
+
+# Session Management
+
+Preferred
+
+```text
+External Session Store
+
+↓
+
+Redis
+```
+
+Avoid storing sessions on individual application servers.
+
+---
+
+# Load Balancing Metrics
+
+Monitor
+
+- Request Rate
+- Response Time
+- Active Connections
+- Error Rate
+- Healthy Targets
+- Throughput
+- Latency
+
+---
+
+# Common Traffic Bottlenecks
+
+- Single Load Balancer
+- Slow Database
+- DNS latency
+- Backend overload
+- Network congestion
+- SSL handshake delays
+- Missing caching
+
+---
+
+# Production Traffic Checklist
+
+Verify
+
+- Load Balancer healthy
+- Health checks passing
+- Targets registered
+- Auto Scaling active
+- CloudFront operational
+- Route 53 healthy
+- DNS resolving
+- SSL certificates valid
+- Monitoring enabled
+
+---
+
+# Common Design Mistakes
+
+- Single application server
+- Missing health checks
+- Sticky sessions for stateless apps
+- No Auto Scaling
+- No CDN
+- Incorrect routing policy
+- Missing connection draining
+- No failover strategy
+- Ignoring latency metrics
+- No traffic testing
+
+---
+
+# Best Practices
+
+- Use ALB for HTTP/HTTPS applications and NLB for TCP/UDP workloads.
+- Configure meaningful health checks for every backend service.
+- Enable Auto Scaling with CloudWatch alarms.
+- Use CloudFront to reduce latency and protect origins.
+- Prefer stateless services to simplify scaling.
+- Implement connection draining during scale-in operations.
+- Use Route 53 routing policies for global traffic management.
+- Store user sessions in external systems such as Redis.
+- Monitor traffic patterns continuously and plan capacity accordingly.
+- Test failover, scaling, and deployment strategies regularly.
+
+---
+
+# Summary
+
+This section covered load balancing fundamentals, Layer 4 vs Layer 7 load balancing, AWS ALB, NLB, and GWLB, reverse proxies, load balancing algorithms, health checks, Auto Scaling, service discovery, Route 53 routing policies, CloudFront, API Gateway, traffic routing strategies, and production traffic management. These concepts provide the foundation for building scalable, highly available cloud-native systems.
+
+---
+
