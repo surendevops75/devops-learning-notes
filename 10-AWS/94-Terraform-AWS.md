@@ -583,3 +583,686 @@ This section covered Terraform fundamentals, providers, variables, outputs, EC2 
 
 ---
 
+# Amazon VPC
+
+---
+
+# Create VPC
+
+```hcl
+resource "aws_vpc" "main" {
+
+  cidr_block = "10.0.0.0/16"
+
+  enable_dns_support = true
+
+  enable_dns_hostnames = true
+
+  tags = {
+
+    Name = "production-vpc"
+
+  }
+
+}
+```
+
+---
+
+# DHCP Options
+
+```hcl
+resource "aws_vpc_dhcp_options" "main" {
+
+  domain_name = "ec2.internal"
+
+  domain_name_servers = [
+
+    "AmazonProvidedDNS"
+
+  ]
+
+}
+```
+
+---
+
+# Associate DHCP Options
+
+```hcl
+resource "aws_vpc_dhcp_options_association" "main" {
+
+  vpc_id = aws_vpc.main.id
+
+  dhcp_options_id = aws_vpc_dhcp_options.main.id
+
+}
+```
+
+---
+
+# Internet Gateway
+
+```hcl
+resource "aws_internet_gateway" "igw" {
+
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+
+    Name = "production-igw"
+
+  }
+
+}
+```
+
+---
+
+# Public Subnet
+
+```hcl
+resource "aws_subnet" "public" {
+
+  vpc_id = aws_vpc.main.id
+
+  cidr_block = "10.0.1.0/24"
+
+  availability_zone = "ap-south-1a"
+
+  map_public_ip_on_launch = true
+
+  tags = {
+
+    Name = "public-subnet"
+
+  }
+
+}
+```
+
+---
+
+# Private Subnet
+
+```hcl
+resource "aws_subnet" "private" {
+
+  vpc_id = aws_vpc.main.id
+
+  cidr_block = "10.0.2.0/24"
+
+  availability_zone = "ap-south-1a"
+
+  tags = {
+
+    Name = "private-subnet"
+
+  }
+
+}
+```
+
+---
+
+# Multiple Public Subnets
+
+```hcl
+resource "aws_subnet" "public" {
+
+  count = 3
+
+  vpc_id = aws_vpc.main.id
+
+  cidr_block = cidrsubnet(
+
+    aws_vpc.main.cidr_block,
+
+    8,
+
+    count.index
+
+  )
+
+  availability_zone = element(
+
+    [
+
+      "ap-south-1a",
+
+      "ap-south-1b",
+
+      "ap-south-1c"
+
+    ],
+
+    count.index
+
+  )
+
+  map_public_ip_on_launch = true
+
+}
+```
+
+---
+
+# Route Table
+
+```hcl
+resource "aws_route_table" "public" {
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# Internet Route
+
+```hcl
+resource "aws_route" "internet" {
+
+  route_table_id = aws_route_table.public.id
+
+  destination_cidr_block = "0.0.0.0/0"
+
+  gateway_id = aws_internet_gateway.igw.id
+
+}
+```
+
+---
+
+# Route Table Association
+
+```hcl
+resource "aws_route_table_association" "public" {
+
+  subnet_id = aws_subnet.public.id
+
+  route_table_id = aws_route_table.public.id
+
+}
+```
+
+---
+
+# Elastic IP
+
+```hcl
+resource "aws_eip" "nat" {
+
+  domain = "vpc"
+
+}
+```
+
+---
+
+# NAT Gateway
+
+```hcl
+resource "aws_nat_gateway" "nat" {
+
+  allocation_id = aws_eip.nat.id
+
+  subnet_id = aws_subnet.public.id
+
+  depends_on = [
+
+    aws_internet_gateway.igw
+
+  ]
+
+}
+```
+
+---
+
+# Private Route Table
+
+```hcl
+resource "aws_route_table" "private" {
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# NAT Route
+
+```hcl
+resource "aws_route" "nat" {
+
+  route_table_id = aws_route_table.private.id
+
+  destination_cidr_block = "0.0.0.0/0"
+
+  nat_gateway_id = aws_nat_gateway.nat.id
+
+}
+```
+
+---
+
+# Associate Private Route Table
+
+```hcl
+resource "aws_route_table_association" "private" {
+
+  subnet_id = aws_subnet.private.id
+
+  route_table_id = aws_route_table.private.id
+
+}
+```
+
+---
+
+# Security Group
+
+```hcl
+resource "aws_security_group" "web" {
+
+  name = "web"
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# SSH Rule
+
+```hcl
+resource "aws_vpc_security_group_ingress_rule" "ssh" {
+
+  security_group_id = aws_security_group.web.id
+
+  cidr_ipv4 = "0.0.0.0/0"
+
+  from_port = 22
+
+  to_port = 22
+
+  ip_protocol = "tcp"
+
+}
+```
+
+---
+
+# HTTP Rule
+
+```hcl
+resource "aws_vpc_security_group_ingress_rule" "http" {
+
+  security_group_id = aws_security_group.web.id
+
+  cidr_ipv4 = "0.0.0.0/0"
+
+  from_port = 80
+
+  to_port = 80
+
+  ip_protocol = "tcp"
+
+}
+```
+
+---
+
+# HTTPS Rule
+
+```hcl
+resource "aws_vpc_security_group_ingress_rule" "https" {
+
+  security_group_id = aws_security_group.web.id
+
+  cidr_ipv4 = "0.0.0.0/0"
+
+  from_port = 443
+
+  to_port = 443
+
+  ip_protocol = "tcp"
+
+}
+```
+
+---
+
+# Egress Rule
+
+```hcl
+resource "aws_vpc_security_group_egress_rule" "all" {
+
+  security_group_id = aws_security_group.web.id
+
+  cidr_ipv4 = "0.0.0.0/0"
+
+  ip_protocol = "-1"
+
+}
+```
+
+---
+
+# Network ACL
+
+```hcl
+resource "aws_network_acl" "public" {
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# NACL Inbound Rule
+
+```hcl
+resource "aws_network_acl_rule" "http" {
+
+  network_acl_id = aws_network_acl.public.id
+
+  rule_number = 100
+
+  egress = false
+
+  protocol = "tcp"
+
+  rule_action = "allow"
+
+  cidr_block = "0.0.0.0/0"
+
+  from_port = 80
+
+  to_port = 80
+
+}
+```
+
+---
+
+# NACL Outbound Rule
+
+```hcl
+resource "aws_network_acl_rule" "egress" {
+
+  network_acl_id = aws_network_acl.public.id
+
+  rule_number = 100
+
+  egress = true
+
+  protocol = "-1"
+
+  rule_action = "allow"
+
+  cidr_block = "0.0.0.0/0"
+
+  from_port = 0
+
+  to_port = 0
+
+}
+```
+
+---
+
+# VPC Peering
+
+```hcl
+resource "aws_vpc_peering_connection" "peer" {
+
+  vpc_id = aws_vpc.main.id
+
+  peer_vpc_id = "vpc-xxxxxxxx"
+
+  auto_accept = true
+
+}
+```
+
+---
+
+# Transit Gateway
+
+```hcl
+resource "aws_ec2_transit_gateway" "main" {
+
+  description = "Production Transit Gateway"
+
+}
+```
+
+---
+
+# Transit Gateway Attachment
+
+```hcl
+resource "aws_ec2_transit_gateway_vpc_attachment" "main" {
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+  transit_gateway_id = aws_ec2_transit_gateway.main.id
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# Elastic Network Interface
+
+```hcl
+resource "aws_network_interface" "eni" {
+
+  subnet_id = aws_subnet.private.id
+
+}
+```
+
+---
+
+# Attach ENI
+
+```hcl
+resource "aws_network_interface_attachment" "attach" {
+
+  instance_id = aws_instance.web.id
+
+  network_interface_id = aws_network_interface.eni.id
+
+  device_index = 1
+
+}
+```
+
+---
+
+# VPC Endpoint (Gateway)
+
+```hcl
+resource "aws_vpc_endpoint" "s3" {
+
+  vpc_id = aws_vpc.main.id
+
+  service_name = "com.amazonaws.ap-south-1.s3"
+
+  vpc_endpoint_type = "Gateway"
+
+  route_table_ids = [
+
+    aws_route_table.private.id
+
+  ]
+
+}
+```
+
+---
+
+# Interface Endpoint
+
+```hcl
+resource "aws_vpc_endpoint" "ssm" {
+
+  vpc_id = aws_vpc.main.id
+
+  service_name = "com.amazonaws.ap-south-1.ssm"
+
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+  security_group_ids = [
+
+    aws_security_group.web.id
+
+  ]
+
+}
+```
+
+---
+
+# Route53 Private Hosted Zone
+
+```hcl
+resource "aws_route53_zone" "private" {
+
+  name = "internal.local"
+
+  vpc {
+
+    vpc_id = aws_vpc.main.id
+
+  }
+
+}
+```
+
+---
+
+# Route53 Record
+
+```hcl
+resource "aws_route53_record" "app" {
+
+  zone_id = aws_route53_zone.private.zone_id
+
+  name = "app"
+
+  type = "A"
+
+  ttl = 300
+
+  records = [
+
+    aws_instance.web.private_ip
+
+  ]
+
+}
+```
+
+---
+
+# Default Security Group
+
+```hcl
+resource "aws_default_security_group" "default" {
+
+  vpc_id = aws_vpc.main.id
+
+}
+```
+
+---
+
+# Default Route Table
+
+```hcl
+resource "aws_default_route_table" "default" {
+
+  default_route_table_id = aws_vpc.main.default_route_table_id
+
+}
+```
+
+---
+
+# Default Network ACL
+
+```hcl
+resource "aws_default_network_acl" "default" {
+
+  default_network_acl_id = aws_vpc.main.default_network_acl_id
+
+}
+```
+
+---
+
+# Networking Outputs
+
+```hcl
+output "vpc_id" {
+
+  value = aws_vpc.main.id
+
+}
+
+output "public_subnet" {
+
+  value = aws_subnet.public.id
+
+}
+
+output "private_subnet" {
+
+  value = aws_subnet.private.id
+
+}
+```
+
+---
+
+# Best Practices
+
+- Use separate public and private subnets.
+- Deploy resources across multiple Availability Zones.
+- Use NAT Gateway only for private subnet internet access.
+- Prefer Interface/Gateway Endpoints over NAT Gateway where applicable.
+- Keep Security Groups restrictive.
+- Use Network ACLs only when subnet-level filtering is required.
+- Enable DNS hostnames and DNS support.
+- Tag all networking resources consistently.
+- Use Route53 private hosted zones for internal services.
+- Avoid using the default VPC in production.
+
+---
+
+# Summary
+
+This section covered Terraform examples for Amazon VPC, Subnets, Route Tables, Internet Gateway, NAT Gateway, Security Groups, Network ACLs, VPC Peering, Transit Gateway, ENIs, VPC Endpoints, Route53 integration, and networking outputs. These examples provide production-ready patterns for building secure, scalable AWS networking infrastructure.
+
+---
+
