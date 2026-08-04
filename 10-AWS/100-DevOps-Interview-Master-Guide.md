@@ -9892,3 +9892,931 @@ This section covered Bash scripting, Python fundamentals, file handling, JSON, R
 
 ---
 
+# System Design & DevOps Architecture Interview Questions
+
+---
+
+# Introduction
+
+Senior DevOps, Platform Engineering, SRE, and FAANG interviews usually include one or more system design rounds.
+
+Interviewers evaluate
+
+- Architecture thinking
+- Scalability
+- Reliability
+- High Availability
+- Disaster Recovery
+- Security
+- Cost Optimization
+- Operational Excellence
+
+They are not looking for one perfect answer—they want to understand your reasoning and trade-offs.
+
+---
+
+# System Design Answer Framework
+
+Always answer in this order:
+
+```text
+Requirements
+
+↓
+
+Scale Estimation
+
+↓
+
+High-Level Architecture
+
+↓
+
+Database
+
+↓
+
+Caching
+
+↓
+
+Messaging
+
+↓
+
+Security
+
+↓
+
+Monitoring
+
+↓
+
+High Availability
+
+↓
+
+Disaster Recovery
+
+↓
+
+Trade-offs
+```
+
+---
+
+# Question 1
+
+## Design an Enterprise CI/CD Platform
+
+### Functional Requirements
+
+- Build applications
+- Run tests
+- Scan code
+- Build Docker images
+- Push artifacts
+- Deploy automatically
+- Rollback support
+
+---
+
+### High-Level Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Artifact Repository
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+### Key Components
+
+- GitHub
+- Jenkins
+- SonarQube
+- Trivy
+- Amazon ECR
+- Argo CD
+- Kubernetes
+- Prometheus
+- Grafana
+
+---
+
+### Follow-up Questions
+
+- How would you secure the pipeline?
+- How would you reduce pipeline time?
+- How would you support multiple environments?
+
+---
+
+# Question 2
+
+## Design a Kubernetes Platform
+
+### Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+ALB
+
+↓
+
+Ingress
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+```
+
+---
+
+### Components
+
+- EKS
+- Worker Nodes
+- HPA
+- Cluster Autoscaler
+- Ingress
+- Prometheus
+- Grafana
+- ELK
+
+---
+
+### High Availability
+
+- Multi-AZ worker nodes
+- Multiple replicas
+- Auto Scaling
+- Rolling updates
+
+---
+
+# Question 3
+
+## Design GitOps Deployment Architecture
+
+### Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Git Repository
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+---
+
+### Benefits
+
+- Declarative deployments
+- Drift detection
+- Easy rollback
+- Git as source of truth
+
+---
+
+# Question 4
+
+## Design an Observability Platform
+
+### Architecture
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Grafana
+
+--------------------
+
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+### Monitor
+
+- Infrastructure
+- Applications
+- Kubernetes
+- Business metrics
+
+---
+
+# Question 5
+
+## Design a Highly Available Web Application
+
+### Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Auto Scaling Group
+
+↓
+
+Application
+
+↓
+
+Amazon RDS Multi-AZ
+
+↓
+
+Read Replica
+```
+
+---
+
+### HA Features
+
+- Multi-AZ
+- Auto Scaling
+- Health checks
+- Read replicas
+
+---
+
+# Question 6
+
+## Design a Multi-Region Platform
+
+### Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Primary Region
+
+↓
+
+Secondary Region
+
+↓
+
+Database Replication
+```
+
+---
+
+### Disaster Recovery
+
+- Cross-region backups
+- Failover
+- Health checks
+
+---
+
+# Question 7
+
+## Design a Secure DevSecOps Pipeline
+
+### Workflow
+
+```text
+Git
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Artifact Repository
+
+↓
+
+Argo CD
+
+↓
+
+Production
+```
+
+---
+
+### Security Controls
+
+- IAM
+- Secrets Manager
+- Image scanning
+- Least privilege
+- RBAC
+
+---
+
+# Question 8
+
+## Design a Logging Platform
+
+### Architecture
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+### Features
+
+- Centralized logs
+- Search
+- Dashboards
+- Alerting
+
+---
+
+# Question 9
+
+## Design a Monitoring Platform
+
+### Architecture
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Grafana
+```
+
+---
+
+### Alerts
+
+- CPU
+- Memory
+- Disk
+- API failures
+- Pod restarts
+
+---
+
+# Question 10
+
+## Design an Enterprise Terraform Platform
+
+### Workflow
+
+```text
+Git
+
+↓
+
+Terraform
+
+↓
+
+Remote Backend
+
+↓
+
+AWS
+```
+
+---
+
+### Best Practices
+
+- Remote state
+- Modules
+- Code review
+- CI/CD integration
+
+---
+
+# Question 11
+
+## Design an Enterprise Docker Platform
+
+### Architecture
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+---
+
+### Best Practices
+
+- Multi-stage builds
+- Image scanning
+- Version tagging
+- Minimal base images
+
+---
+
+# Question 12
+
+## Design a Secure Kubernetes Cluster
+
+### Security
+
+- RBAC
+- Network Policies
+- Secrets
+- IAM Roles for Service Accounts (IRSA)
+- Pod Security Standards
+- Image scanning
+
+---
+
+# Question 13
+
+## Design a Blue-Green Deployment
+
+```text
+Blue
+
+↓
+
+Green
+
+↓
+
+Traffic Switch
+```
+
+---
+
+### Rollback
+
+Switch traffic back to Blue.
+
+---
+
+# Question 14
+
+## Design a Canary Deployment
+
+```text
+5%
+
+↓
+
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Monitor at each stage before increasing traffic.
+
+---
+
+# Question 15
+
+## Design a Production Backup Strategy
+
+Protect
+
+- Databases
+- Terraform state
+- Kubernetes manifests
+- Object storage
+- Configuration
+
+---
+
+### Recovery
+
+- Automated backups
+- Point-in-Time Recovery (PITR)
+- Cross-region replication
+- Regular restore testing
+
+---
+
+# Question 16
+
+## Design Disaster Recovery
+
+### Recovery Models
+
+| Strategy | Characteristics |
+|-----------|-----------------|
+| Backup & Restore | Lowest cost, longest recovery |
+| Pilot Light | Core services always available |
+| Warm Standby | Partially running environment |
+| Active-Active | Highest availability and cost |
+
+---
+
+# Question 17
+
+## Design High Availability
+
+### Components
+
+- Load Balancer
+- Auto Scaling
+- Multi-AZ
+- Read Replicas
+- Health Checks
+
+---
+
+# Question 18
+
+## Design for Scalability
+
+Scale
+
+- Stateless services
+- Pods
+- Worker nodes
+- Databases
+- Message queues
+- Cache
+
+---
+
+# Question 19
+
+## Design a Messaging Platform
+
+### Architecture
+
+```text
+Producer
+
+↓
+
+Kafka
+
+↓
+
+Consumer
+```
+
+---
+
+### Benefits
+
+- Loose coupling
+- High throughput
+- Asynchronous processing
+
+---
+
+# Question 20
+
+## Design an Enterprise Authentication Platform
+
+### Components
+
+- Identity Provider
+- IAM
+- MFA
+- RBAC
+- Audit Logging
+
+---
+
+# Capacity Planning Questions
+
+## How do you estimate infrastructure?
+
+Estimate
+
+- Daily users
+- Concurrent users
+- Requests/sec
+- CPU
+- Memory
+- Storage
+- Network bandwidth
+
+---
+
+## Example
+
+```text
+10 Million Users
+
+↓
+
+500,000 Concurrent Users
+
+↓
+
+100,000 Requests/sec
+```
+
+Estimate
+
+- Number of Pods
+- Number of Nodes
+- Database capacity
+- Cache capacity
+
+---
+
+# Trade-Off Questions
+
+## SQL vs NoSQL
+
+| SQL | NoSQL |
+|------|--------|
+| Strong consistency | Flexible schema |
+| ACID | Horizontal scalability |
+| Complex queries | High throughput |
+
+---
+
+## Monolith vs Microservices
+
+| Monolith | Microservices |
+|-----------|---------------|
+| Simpler | Independent services |
+| Easier initial development | Better scalability |
+| Tight coupling | Loose coupling |
+
+---
+
+## Kubernetes vs ECS
+
+| Kubernetes | ECS |
+|-------------|-----|
+| Portable | AWS-native |
+| Rich ecosystem | Simpler management |
+| More operational complexity | Lower operational overhead |
+
+---
+
+## Synchronous vs Asynchronous
+
+| Synchronous | Asynchronous |
+|-------------|--------------|
+| Immediate response | Queue-based |
+| Higher coupling | Loose coupling |
+
+---
+
+# System Design Follow-up Questions
+
+Interviewers often ask:
+
+- Why did you choose this database?
+- Why Kubernetes instead of ECS?
+- Why Redis?
+- Why Kafka?
+- How do you scale?
+- What happens if a Region fails?
+- How do you secure the platform?
+- How do you monitor it?
+- How do you reduce costs?
+- What are the trade-offs?
+
+Always explain the reasoning behind your choices.
+
+---
+
+# Enterprise Architecture Checklist
+
+Functional
+
+- Business requirements
+- APIs
+- Storage
+
+---
+
+Non-Functional
+
+- Scalability
+- Availability
+- Performance
+- Reliability
+
+---
+
+Operations
+
+- Monitoring
+- Logging
+- Alerts
+- Runbooks
+
+---
+
+Security
+
+- IAM
+- RBAC
+- TLS
+- Secrets
+- Encryption
+
+---
+
+Recovery
+
+- Backups
+- RPO
+- RTO
+- Disaster Recovery
+
+---
+
+# FAANG-Style System Design Questions
+
+- Design Netflix.
+- Design YouTube.
+- Design an online banking platform.
+- Design Uber.
+- Design WhatsApp.
+- Design a Kubernetes platform for 10,000 Pods.
+- Design a global CI/CD platform.
+- Design GitHub Actions at scale.
+- Design an enterprise observability platform.
+- Design a secure multi-account AWS environment.
+
+---
+
+# Interview Tips
+
+For every system design interview:
+
+1. Clarify requirements first.
+2. Estimate scale before choosing technology.
+3. Draw a simple architecture.
+4. Discuss availability and scalability.
+5. Explain security and monitoring.
+6. Cover disaster recovery.
+7. Discuss trade-offs.
+8. Summarize the design.
+
+Interviewers care more about your structured thinking than memorizing specific services.
+
+---
+
+# Summary
+
+This section covered enterprise system design interviews, CI/CD architecture, Kubernetes platforms, GitOps, observability, high availability, disaster recovery, scalability, messaging, security, capacity planning, trade-offs, and FAANG-style architecture questions. These are common topics for senior DevOps, Platform Engineering, and SRE interviews.
