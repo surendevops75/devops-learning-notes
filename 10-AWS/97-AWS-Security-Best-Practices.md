@@ -1125,3 +1125,582 @@ This section covered AWS Organizations, Organizational Units (OUs), Service Cont
 
 ---
 
+# Data Protection
+
+---
+
+# Introduction
+
+Data protection in AWS focuses on securing data throughout its lifecycle using encryption, key management, secrets management, certificates, and secure communication.
+
+Goals
+
+- Confidentiality
+- Integrity
+- Availability
+- Compliance
+- Secure Key Management
+
+---
+
+# Data States
+
+Protect data
+
+- At Rest
+- In Transit
+- In Use
+
+---
+
+# Encryption at Rest
+
+Examples
+
+- Amazon S3
+- Amazon EBS
+- Amazon RDS
+- Amazon EFS
+- Amazon DynamoDB
+- Amazon OpenSearch
+
+Recommended
+
+```text
+AWS KMS
+```
+
+---
+
+# Encryption in Transit
+
+Use
+
+- HTTPS
+- TLS 1.2+
+- SSH
+- VPN
+- Direct Connect MACsec (where supported)
+
+---
+
+# AWS Key Management Service (KMS)
+
+Purpose
+
+Centralized encryption key management.
+
+Supports
+
+- Symmetric Keys
+- Asymmetric Keys
+- HMAC Keys
+
+---
+
+# KMS Components
+
+- Customer Managed Keys (CMKs)
+- AWS Managed Keys
+- AWS Owned Keys
+- Key Policies
+- Grants
+- Aliases
+
+---
+
+# Customer Managed Keys (CMKs)
+
+Benefits
+
+- Full control
+- Key rotation
+- Key policies
+- Audit logging
+- Cross-account access
+
+---
+
+# AWS Managed Keys
+
+Characteristics
+
+- Automatically created
+- Managed by AWS
+- Used by AWS services
+- Limited customization
+
+---
+
+# AWS Owned Keys
+
+Used internally by AWS services.
+
+Not visible or manageable by customers.
+
+---
+
+# KMS Workflow
+
+```text
+Application
+
+↓
+
+AWS KMS
+
+↓
+
+Encrypt Data Key
+
+↓
+
+Encrypt Data
+
+↓
+
+Store Ciphertext
+```
+
+---
+
+# Envelope Encryption
+
+Workflow
+
+```text
+Plaintext
+
+↓
+
+Generate Data Key
+
+↓
+
+Encrypt Data
+
+↓
+
+Encrypt Data Key
+
+↓
+
+Store Both
+```
+
+Benefits
+
+- High performance
+- Secure key management
+- Scalable encryption
+
+---
+
+# Data Key
+
+Purpose
+
+Encrypt application data.
+
+Protected using a KMS Key.
+
+---
+
+# Key Policies
+
+Control
+
+- Who can use keys
+- Who can administer keys
+- Cross-account permissions
+
+---
+
+# IAM vs Key Policy
+
+IAM Policy
+
+- Controls IAM permissions
+
+Key Policy
+
+- Controls KMS key usage
+
+Both may be required for access.
+
+---
+
+# Key Rotation
+
+Recommended
+
+Enable automatic rotation for Customer Managed symmetric keys.
+
+Benefits
+
+- Improved security
+- Compliance
+- Reduced key exposure
+
+---
+
+# Key Aliases
+
+Example
+
+```text
+alias/production
+
+alias/database
+
+alias/payment
+```
+
+Avoid using Key IDs directly in applications.
+
+---
+
+# Key Deletion
+
+Workflow
+
+```text
+Schedule Deletion
+
+↓
+
+Waiting Period
+
+↓
+
+Delete Key
+```
+
+Default waiting period
+
+```text
+7–30 Days
+```
+
+---
+
+# Cross-Account KMS
+
+Requirements
+
+- Key Policy
+- IAM Policy
+- Resource Permissions
+
+---
+
+# AWS Secrets Manager
+
+Purpose
+
+Securely store and rotate secrets.
+
+Examples
+
+- Database Passwords
+- API Keys
+- OAuth Tokens
+- Application Secrets
+
+---
+
+# Secrets Manager Workflow
+
+```text
+Application
+
+↓
+
+Secrets Manager
+
+↓
+
+Retrieve Secret
+
+↓
+
+Temporary Use
+
+↓
+
+Application
+```
+
+---
+
+# Automatic Rotation
+
+Supported
+
+- Amazon RDS
+- Aurora
+- Custom Lambda Rotation
+
+---
+
+# Secret Types
+
+Store
+
+- Passwords
+- Tokens
+- Certificates
+- SSH Keys
+- API Credentials
+
+---
+
+# Secrets Manager Best Practices
+
+- Enable automatic rotation.
+- Use IAM Roles.
+- Never hardcode secrets.
+- Audit secret access.
+
+---
+
+# Systems Manager Parameter Store
+
+Purpose
+
+Store
+
+- Configuration
+- Secure Parameters
+- Application Settings
+
+---
+
+# Parameter Types
+
+- String
+- StringList
+- SecureString
+
+---
+
+# SecureString
+
+Uses AWS KMS for encryption.
+
+Ideal for
+
+- Passwords
+- Tokens
+- Sensitive configuration
+
+---
+
+# Parameter Store vs Secrets Manager
+
+| Feature | Parameter Store | Secrets Manager |
+|----------|-----------------|-----------------|
+| Configuration | ✅ | Limited |
+| Secret Rotation | No | Yes |
+| Cost | Lower | Higher |
+| API Keys | Yes | Yes |
+| Database Credentials | Basic | Recommended |
+
+---
+
+# AWS CloudHSM
+
+Purpose
+
+Dedicated Hardware Security Module (HSM).
+
+Use Cases
+
+- Regulatory compliance
+- Customer-controlled cryptography
+- PKI
+- Certificate authorities
+
+---
+
+# AWS Certificate Manager (ACM)
+
+Purpose
+
+Manage SSL/TLS certificates.
+
+Supports
+
+- Public Certificates
+- Private Certificates (with ACM PCA)
+
+---
+
+# ACM Benefits
+
+- Automatic renewal
+- AWS integration
+- No certificate management overhead
+
+---
+
+# AWS Private CA
+
+Use Cases
+
+- Internal services
+- Mutual TLS (mTLS)
+- Enterprise PKI
+
+---
+
+# Secure Communication
+
+Recommended Protocols
+
+- HTTPS
+- TLS 1.2+
+- TLS 1.3
+- SSH
+- IPSec VPN
+
+Avoid
+
+- HTTP
+- FTP
+- Telnet
+- SSLv3
+
+---
+
+# S3 Encryption
+
+Options
+
+- SSE-S3
+- SSE-KMS
+- SSE-C
+- Client-Side Encryption
+
+Production Recommendation
+
+```text
+SSE-KMS
+```
+
+---
+
+# EBS Encryption
+
+Encrypt
+
+- Volumes
+- Snapshots
+- AMIs
+
+Use KMS.
+
+---
+
+# RDS Encryption
+
+Encrypt
+
+- Database
+- Snapshots
+- Read Replicas
+
+---
+
+# DynamoDB Encryption
+
+Enabled by default.
+
+Supports AWS KMS.
+
+---
+
+# EFS Encryption
+
+Enable
+
+- Encryption at Rest
+- Encryption in Transit
+
+---
+
+# Lambda Environment Variables
+
+Store sensitive values using
+
+- KMS encryption
+- Secrets Manager
+- Parameter Store
+
+Avoid plaintext environment variables.
+
+---
+
+# Encryption Audit
+
+Review
+
+- Unencrypted storage
+- Disabled key rotation
+- Public certificates
+- Expiring certificates
+- Secret rotation status
+
+---
+
+# Data Protection Checklist
+
+- Encryption enabled
+- KMS key rotation enabled
+- Secrets stored securely
+- TLS enforced
+- Certificates managed
+- Key policies reviewed
+- Secrets rotated
+- SecureString used
+- CloudTrail logging enabled
+- Access monitored
+
+---
+
+# Common Mistakes
+
+- Hardcoding secrets
+- Sharing KMS keys unnecessarily
+- Disabling key rotation
+- Using HTTP
+- Unencrypted S3 buckets
+- Public secrets
+- Plaintext passwords
+- Poor key policies
+- Ignoring certificate expiration
+- Reusing secrets indefinitely
+
+---
+
+# Best Practices
+
+- Encrypt all sensitive data at rest using AWS KMS.
+- Enforce TLS for all network communications.
+- Use Customer Managed Keys for production workloads.
+- Enable automatic key rotation where supported.
+- Store secrets in AWS Secrets Manager.
+- Store application configuration in Parameter Store.
+- Avoid hardcoding secrets in code or CI/CD pipelines.
+- Use ACM for certificate lifecycle management.
+- Audit key usage and secret access regularly.
+- Review encryption posture as part of security assessments.
+
+---
+
+# Summary
+
+This section covered AWS KMS, Customer Managed Keys, AWS Managed Keys, envelope encryption, Secrets Manager, Systems Manager Parameter Store, CloudHSM, ACM, encryption at rest, encryption in transit, and enterprise data protection best practices. These capabilities provide the foundation for protecting sensitive data and cryptographic assets across AWS environments.
+
+---
+
