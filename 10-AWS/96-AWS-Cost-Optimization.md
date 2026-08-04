@@ -3994,3 +3994,698 @@ This section covered FinOps principles, chargeback, showback, cost allocation, t
 
 ---
 
+# Cost Optimization Automation
+
+---
+
+# Introduction
+
+Automation reduces cloud costs by automatically detecting, scheduling, optimizing, and removing unnecessary resources.
+
+Benefits
+
+- Lower operational costs
+- Reduced manual effort
+- Consistent governance
+- Faster remediation
+- Continuous optimization
+
+---
+
+# Automation Workflow
+
+```text
+Monitor
+
+↓
+
+Detect Waste
+
+↓
+
+Trigger Automation
+
+↓
+
+Optimize Resource
+
+↓
+
+Notify Team
+
+↓
+
+Verify Savings
+```
+
+---
+
+# Amazon EventBridge Scheduling
+
+---
+
+# Common Schedules
+
+Examples
+
+```text
+08:00
+
+Start Development Environment
+
+↓
+
+19:00
+
+Stop Development Environment
+
+↓
+
+Weekend
+
+Shutdown Non-Production
+
+↓
+
+Month End
+
+Generate Cost Report
+```
+
+---
+
+# AWS Lambda Automation
+
+Common Tasks
+
+- Stop idle EC2 instances
+- Start development servers
+- Delete unattached EBS volumes
+- Remove old snapshots
+- Clean ECR repositories
+- Delete unused AMIs
+
+---
+
+# Systems Manager Automation
+
+Automate
+
+- Start instances
+- Stop instances
+- Patch systems
+- Run scripts
+- Collect inventory
+- Restart services
+
+---
+
+# Instance Scheduler
+
+Use Cases
+
+- Development
+- QA
+- Testing
+- Training
+- Sandbox
+
+Workflow
+
+```text
+Business Hours
+
+↓
+
+Start Instances
+
+↓
+
+Working Hours
+
+↓
+
+Stop Instances
+
+↓
+
+Savings
+```
+
+---
+
+# Auto Scaling Schedules
+
+Example
+
+```text
+Business Hours
+
+Minimum Capacity = 5
+
+↓
+
+Night
+
+Minimum Capacity = 2
+
+↓
+
+Weekend
+
+Minimum Capacity = 1
+```
+
+---
+
+# Lambda Cleanup Automation
+
+Examples
+
+Automatically delete
+
+- Old snapshots
+- Detached volumes
+- Old AMIs
+- Unused ECR images
+- Expired backups
+
+---
+
+# Idle Resource Detection
+
+Monitor
+
+- CPU utilization
+- Network traffic
+- Memory usage
+- Disk activity
+
+Identify
+
+- Idle EC2
+- Idle RDS
+- Idle Load Balancers
+- Idle NAT Gateways
+
+---
+
+# CloudWatch Automation
+
+Workflow
+
+```text
+CloudWatch Alarm
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+Stop Resource
+
+↓
+
+Notify Team
+```
+
+---
+
+# EBS Cleanup
+
+Review
+
+- Available volumes
+- Unattached volumes
+- Old snapshots
+
+Automation
+
+```text
+Identify
+
+↓
+
+Notify
+
+↓
+
+Approval
+
+↓
+
+Delete
+```
+
+---
+
+# S3 Lifecycle Automation
+
+Workflow
+
+```text
+Standard
+
+↓
+
+Standard-IA
+
+↓
+
+Glacier Instant Retrieval
+
+↓
+
+Glacier Flexible Retrieval
+
+↓
+
+Deep Archive
+
+↓
+
+Delete
+```
+
+---
+
+# ECR Lifecycle Automation
+
+Automatically remove
+
+- Untagged images
+- Images older than 90 days
+- Images exceeding retention limit
+
+---
+
+# CloudWatch Logs Automation
+
+Automatically
+
+- Set retention periods
+- Archive logs
+- Delete expired log groups
+
+---
+
+# Backup Lifecycle Automation
+
+Automatically
+
+- Create backups
+- Archive backups
+- Delete expired backups
+
+---
+
+# AWS Backup Automation
+
+Policies
+
+- Daily backup
+- Weekly backup
+- Monthly backup
+- Yearly archive
+
+---
+
+# Resource Expiration
+
+Apply Tags
+
+```text
+Owner
+
+Environment
+
+ExpiryDate
+
+Project
+```
+
+Workflow
+
+```text
+Expiry Date
+
+↓
+
+Lambda Check
+
+↓
+
+Notification
+
+↓
+
+Approval
+
+↓
+
+Delete Resource
+```
+
+---
+
+# Budget Automation
+
+Workflow
+
+```text
+Budget Threshold
+
+↓
+
+SNS
+
+↓
+
+Lambda
+
+↓
+
+Restrict IAM
+
+↓
+
+Stop Resources
+```
+
+---
+
+# Cost Anomaly Automation
+
+Workflow
+
+```text
+Cost Anomaly
+
+↓
+
+SNS
+
+↓
+
+Lambda
+
+↓
+
+Create Incident
+
+↓
+
+Notify Teams
+```
+
+---
+
+# Auto Scaling Optimization
+
+Automatically
+
+- Increase capacity during peak hours
+- Decrease capacity during low demand
+- Replace Spot interruptions
+- Launch right-sized instances
+
+---
+
+# Karpenter Automation
+
+Workflow
+
+```text
+Pending Pods
+
+↓
+
+Karpenter
+
+↓
+
+Launch Right-Sized Node
+
+↓
+
+Run Workload
+
+↓
+
+Terminate Idle Node
+```
+
+---
+
+# Spot Automation
+
+Automatically
+
+- Detect interruption notice
+- Launch replacement
+- Drain Kubernetes nodes
+- Resume workload
+
+---
+
+# Intelligent Recommendations
+
+Sources
+
+- Trusted Advisor
+- Compute Optimizer
+- Cost Explorer
+- Cost Anomaly Detection
+
+Workflow
+
+```text
+Recommendation
+
+↓
+
+Review
+
+↓
+
+Approve
+
+↓
+
+Automate Change
+```
+
+---
+
+# Infrastructure Scheduling
+
+Examples
+
+Development
+
+```text
+08:00–19:00
+```
+
+---
+
+QA
+
+```text
+08:00–18:00
+```
+
+---
+
+Training
+
+```text
+On Demand
+```
+
+---
+
+Production
+
+```text
+24 × 7
+```
+
+---
+
+# Monthly Cleanup Workflow
+
+```text
+Review Resources
+
+↓
+
+Unused Resources
+
+↓
+
+Approval
+
+↓
+
+Delete
+
+↓
+
+Generate Report
+```
+
+---
+
+# Cost Optimization Playbook
+
+Step 1
+
+Review Cost Explorer
+
+↓
+
+Step 2
+
+Review Trusted Advisor
+
+↓
+
+Step 3
+
+Review Compute Optimizer
+
+↓
+
+Step 4
+
+Review Budgets
+
+↓
+
+Step 5
+
+Automate Cleanup
+
+↓
+
+Step 6
+
+Measure Savings
+
+---
+
+# Enterprise Automation Pipeline
+
+```text
+CloudWatch
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+Systems Manager
+
+↓
+
+AWS APIs
+
+↓
+
+Optimization
+
+↓
+
+SNS Notification
+```
+
+---
+
+# KPIs
+
+Track
+
+- Resources scheduled
+- Resources cleaned
+- Monthly savings
+- Automation success rate
+- Manual interventions
+- Resource utilization
+- Idle resource count
+- Cost reduction percentage
+
+---
+
+# Common Automation Targets
+
+Compute
+
+- EC2
+- ECS
+- EKS
+
+---
+
+Storage
+
+- EBS
+- S3
+- Snapshots
+
+---
+
+Database
+
+- RDS
+- Aurora
+
+---
+
+Networking
+
+- NAT Gateway
+- Elastic IP
+- Load Balancer
+
+---
+
+Monitoring
+
+- CloudWatch Logs
+- Dashboards
+- Metrics
+
+---
+
+# Best Practices
+
+- Automate shutdown of non-production environments.
+- Schedule development resources based on business hours.
+- Use Lambda for lightweight cleanup tasks.
+- Automate snapshot and backup lifecycle management.
+- Apply expiration tags to temporary resources.
+- Use EventBridge for scheduled automation.
+- Integrate Cost Anomaly Detection with automated notifications.
+- Review automation success metrics regularly.
+- Require approval for destructive actions in production.
+- Continuously improve automation based on operational feedback.
+
+---
+
+# Summary
+
+This section covered automation techniques for AWS cost optimization using EventBridge, Lambda, Systems Manager, Auto Scaling, lifecycle policies, cleanup automation, intelligent recommendations, and enterprise scheduling strategies. These automation patterns reduce manual effort, improve governance, and deliver continuous cost savings across AWS environments.
+
+---
+
