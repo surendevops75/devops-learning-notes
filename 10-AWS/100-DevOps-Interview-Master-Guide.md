@@ -2253,3 +2253,6 @@ This demonstrates both theoretical knowledge and practical experience.
 # Summary
 
 This section covered Linux permissions, users and groups, hard and soft links, inode, process management, signals, services, SSH, networking, disk and memory management, environment variables, production troubleshooting scenarios, and FAANG-style Linux interview questions. These topics are commonly asked in intermediate and advanced DevOps interviews.
+
+---
+
