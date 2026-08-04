@@ -4244,3 +4244,834 @@ This section covered CloudFormation templates for CloudWatch, CloudWatch Logs, E
 
 ---
 
+# Amazon Route 53
+
+---
+
+# Public Hosted Zone
+
+```yaml
+Resources:
+
+  PublicHostedZone:
+
+    Type: AWS::Route53::HostedZone
+
+    Properties:
+
+      Name: example.com
+```
+
+---
+
+# Private Hosted Zone
+
+```yaml
+Resources:
+
+  PrivateHostedZone:
+
+    Type: AWS::Route53::HostedZone
+
+    Properties:
+
+      Name: internal.local
+
+      VPCs:
+
+        - VPCId: !Ref VPC
+
+          VPCRegion: !Ref AWS::Region
+```
+
+---
+
+# A Record
+
+```yaml
+Resources:
+
+  AppRecord:
+
+    Type: AWS::Route53::RecordSet
+
+    Properties:
+
+      HostedZoneId: !Ref PublicHostedZone
+
+      Name: app.example.com
+
+      Type: A
+
+      TTL: 300
+
+      ResourceRecords:
+
+        - 203.0.113.10
+```
+
+---
+
+# Alias Record
+
+```yaml
+Resources:
+
+  ALBAlias:
+
+    Type: AWS::Route53::RecordSet
+
+    Properties:
+
+      HostedZoneId: !Ref PublicHostedZone
+
+      Name: www.example.com
+
+      Type: A
+
+      AliasTarget:
+
+        DNSName: !GetAtt ALB.DNSName
+
+        HostedZoneId: !GetAtt ALB.CanonicalHostedZoneID
+```
+
+---
+
+# CNAME Record
+
+```yaml
+Resources:
+
+  APIRecord:
+
+    Type: AWS::Route53::RecordSet
+
+    Properties:
+
+      HostedZoneId: !Ref PublicHostedZone
+
+      Name: api.example.com
+
+      Type: CNAME
+
+      TTL: 300
+
+      ResourceRecords:
+
+        - alb.example.com
+```
+
+---
+
+# MX Record
+
+```yaml
+Resources:
+
+  MailRecord:
+
+    Type: AWS::Route53::RecordSet
+
+    Properties:
+
+      HostedZoneId: !Ref PublicHostedZone
+
+      Name: example.com
+
+      Type: MX
+
+      TTL: 300
+
+      ResourceRecords:
+
+        - 10 mail.example.com
+```
+
+---
+
+# TXT Record
+
+```yaml
+Resources:
+
+  SPFRecord:
+
+    Type: AWS::Route53::RecordSet
+
+    Properties:
+
+      HostedZoneId: !Ref PublicHostedZone
+
+      Name: example.com
+
+      Type: TXT
+
+      TTL: 300
+
+      ResourceRecords:
+
+        - '"v=spf1 include:_spf.google.com ~all"'
+```
+
+---
+
+# Health Check
+
+```yaml
+Resources:
+
+  AppHealthCheck:
+
+    Type: AWS::Route53::HealthCheck
+
+    Properties:
+
+      HealthCheckConfig:
+
+        Type: HTTPS
+
+        FullyQualifiedDomainName: app.example.com
+
+        Port: 443
+```
+
+---
+
+# Failover Record
+
+```yaml
+Resources:
+
+  PrimaryRecord:
+
+    Type: AWS::Route53::RecordSet
+
+    Properties:
+
+      SetIdentifier: Primary
+
+      Failover: PRIMARY
+```
+
+---
+
+# Amazon CloudFront
+
+---
+
+# Distribution
+
+```yaml
+Resources:
+
+  CDN:
+
+    Type: AWS::CloudFront::Distribution
+
+    Properties:
+
+      DistributionConfig:
+
+        Enabled: true
+
+        DefaultRootObject: index.html
+```
+
+---
+
+# Origin Access Control
+
+```yaml
+Resources:
+
+  OriginAccessControl:
+
+    Type: AWS::CloudFront::OriginAccessControl
+
+    Properties:
+
+      OriginAccessControlConfig:
+
+        Name: S3Origin
+
+        OriginAccessControlOriginType: s3
+
+        SigningBehavior: always
+
+        SigningProtocol: sigv4
+```
+
+---
+
+# Cache Policy
+
+```yaml
+Resources:
+
+  CachePolicy:
+
+    Type: AWS::CloudFront::CachePolicy
+
+    Properties:
+
+      CachePolicyConfig:
+
+        Name: ProductionCache
+```
+
+---
+
+# Origin Request Policy
+
+```yaml
+Resources:
+
+  OriginRequestPolicy:
+
+    Type: AWS::CloudFront::OriginRequestPolicy
+
+    Properties:
+
+      OriginRequestPolicyConfig:
+
+        Name: DefaultOriginPolicy
+```
+
+---
+
+# Response Headers Policy
+
+```yaml
+Resources:
+
+  SecurityHeaders:
+
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+
+    Properties:
+
+      ResponseHeadersPolicyConfig:
+
+        Name: SecurityHeaders
+```
+
+---
+
+# AWS WAF
+
+---
+
+# Web ACL
+
+```yaml
+Resources:
+
+  WebACL:
+
+    Type: AWS::WAFv2::WebACL
+
+    Properties:
+
+      Name: ProductionACL
+
+      Scope: REGIONAL
+
+      DefaultAction:
+
+        Allow: {}
+
+      VisibilityConfig:
+
+        CloudWatchMetricsEnabled: true
+
+        MetricName: ProductionACL
+
+        SampledRequestsEnabled: true
+```
+
+---
+
+# Managed Rule Group
+
+```yaml
+Rules:
+
+  - Name: AWSManagedRulesCommonRuleSet
+
+    Priority: 1
+
+    OverrideAction:
+
+      None: {}
+```
+
+---
+
+# Associate WAF
+
+```yaml
+Resources:
+
+  WAFAssociation:
+
+    Type: AWS::WAFv2::WebACLAssociation
+
+    Properties:
+
+      ResourceArn: !Ref ALBArn
+
+      WebACLArn: !GetAtt WebACL.Arn
+```
+
+---
+
+# AWS Shield Advanced
+
+---
+
+# Shield Protection
+
+```yaml
+Resources:
+
+  ShieldProtection:
+
+    Type: AWS::Shield::Protection
+
+    Properties:
+
+      Name: ALBProtection
+
+      ResourceArn: !Ref ALBArn
+```
+
+---
+
+# Protection Group
+
+```yaml
+Resources:
+
+  ProtectionGroup:
+
+    Type: AWS::Shield::ProtectionGroup
+
+    Properties:
+
+      ProtectionGroupId: production
+
+      Aggregation: SUM
+```
+
+---
+
+# AWS Global Accelerator
+
+---
+
+# Accelerator
+
+```yaml
+Resources:
+
+  Accelerator:
+
+    Type: AWS::GlobalAccelerator::Accelerator
+
+    Properties:
+
+      Name: Production
+
+      Enabled: true
+```
+
+---
+
+# Listener
+
+```yaml
+Resources:
+
+  HTTPSListener:
+
+    Type: AWS::GlobalAccelerator::Listener
+
+    Properties:
+
+      AcceleratorArn: !Ref Accelerator
+
+      Protocol: TCP
+```
+
+---
+
+# Endpoint Group
+
+```yaml
+Resources:
+
+  EndpointGroup:
+
+    Type: AWS::GlobalAccelerator::EndpointGroup
+
+    Properties:
+
+      ListenerArn: !Ref HTTPSListener
+
+      EndpointGroupRegion: ap-south-1
+```
+
+---
+
+# AWS Direct Connect
+
+---
+
+# Direct Connect Gateway
+
+```yaml
+Resources:
+
+  DXGateway:
+
+    Type: AWS::DirectConnect::Gateway
+
+    Properties:
+
+      AmazonSideAsn: 64512
+```
+
+---
+
+# Gateway Association
+
+```yaml
+Resources:
+
+  DXGatewayAssociation:
+
+    Type: AWS::DirectConnect::GatewayAssociation
+
+    Properties:
+
+      AssociatedGatewayId: dx-gateway-id
+
+      GatewayId: !Ref DXGateway
+```
+
+---
+
+# Site-to-Site VPN
+
+---
+
+# Customer Gateway
+
+```yaml
+Resources:
+
+  CustomerGateway:
+
+    Type: AWS::EC2::CustomerGateway
+
+    Properties:
+
+      BgpAsn: 65000
+
+      IpAddress: 203.0.113.10
+
+      Type: ipsec.1
+```
+
+---
+
+# VPN Gateway
+
+```yaml
+Resources:
+
+  VPNGateway:
+
+    Type: AWS::EC2::VPNGateway
+
+    Properties:
+
+      Type: ipsec.1
+```
+
+---
+
+# VPN Attachment
+
+```yaml
+Resources:
+
+  VPNAttachment:
+
+    Type: AWS::EC2::VPCGatewayAttachment
+
+    Properties:
+
+      VpcId: !Ref VPC
+
+      VpnGatewayId: !Ref VPNGateway
+```
+
+---
+
+# VPN Connection
+
+```yaml
+Resources:
+
+  VPNConnection:
+
+    Type: AWS::EC2::VPNConnection
+
+    Properties:
+
+      Type: ipsec.1
+
+      CustomerGatewayId: !Ref CustomerGateway
+
+      VpnGatewayId: !Ref VPNGateway
+```
+
+---
+
+# AWS Client VPN
+
+---
+
+# Client VPN Endpoint
+
+```yaml
+Resources:
+
+  ClientVPN:
+
+    Type: AWS::EC2::ClientVpnEndpoint
+
+    Properties:
+
+      Description: RemoteAccess
+
+      ClientCidrBlock: 172.16.0.0/22
+
+      ServerCertificateArn: arn:aws:acm:certificate
+```
+
+---
+
+# Network Association
+
+```yaml
+Resources:
+
+  ClientVPNAssociation:
+
+    Type: AWS::EC2::ClientVpnTargetNetworkAssociation
+
+    Properties:
+
+      ClientVpnEndpointId: !Ref ClientVPN
+
+      SubnetId: !Ref PrivateSubnet
+```
+
+---
+
+# Authorization Rule
+
+```yaml
+Resources:
+
+  VPNAuthorization:
+
+    Type: AWS::EC2::ClientVpnAuthorizationRule
+
+    Properties:
+
+      ClientVpnEndpointId: !Ref ClientVPN
+
+      TargetNetworkCidr: 10.0.0.0/16
+
+      AuthorizeAllGroups: true
+```
+
+---
+
+# AWS Network Firewall
+
+---
+
+# Firewall Policy
+
+```yaml
+Resources:
+
+  FirewallPolicy:
+
+    Type: AWS::NetworkFirewall::FirewallPolicy
+
+    Properties:
+
+      FirewallPolicyName: ProductionPolicy
+```
+
+---
+
+# Firewall
+
+```yaml
+Resources:
+
+  NetworkFirewall:
+
+    Type: AWS::NetworkFirewall::Firewall
+
+    Properties:
+
+      FirewallName: ProductionFirewall
+
+      VpcId: !Ref VPC
+```
+
+---
+
+# Rule Group
+
+```yaml
+Resources:
+
+  StatefulRules:
+
+    Type: AWS::NetworkFirewall::RuleGroup
+
+    Properties:
+
+      Capacity: 100
+
+      Type: STATEFUL
+```
+
+---
+
+# AWS Private CA
+
+---
+
+# Certificate Authority
+
+```yaml
+Resources:
+
+  PrivateCA:
+
+    Type: AWS::ACMPCA::CertificateAuthority
+
+    Properties:
+
+      Type: ROOT
+```
+
+---
+
+# Certificate
+
+```yaml
+Resources:
+
+  RootCertificate:
+
+    Type: AWS::ACMPCA::Certificate
+
+    Properties:
+
+      CertificateAuthorityArn: !Ref PrivateCA
+```
+
+---
+
+# AWS RAM
+
+---
+
+# Resource Share
+
+```yaml
+Resources:
+
+  NetworkShare:
+
+    Type: AWS::RAM::ResourceShare
+
+    Properties:
+
+      Name: SharedNetworking
+
+      AllowExternalPrincipals: false
+```
+
+---
+
+# Resource Association
+
+```yaml
+Resources:
+
+  TGWAssociation:
+
+    Type: AWS::RAM::ResourceAssociation
+
+    Properties:
+
+      ResourceArn: arn:aws:ec2:transit-gateway
+
+      ResourceShareArn: !Ref NetworkShare
+```
+
+---
+
+# Outputs
+
+```yaml
+Outputs:
+
+  HostedZoneId:
+
+    Value: !Ref PublicHostedZone
+
+  CloudFrontDomain:
+
+    Value: !GetAtt CDN.DomainName
+
+  AcceleratorDNS:
+
+    Value: !GetAtt Accelerator.DnsName
+```
+
+---
+
+# Best Practices
+
+- Use Route53 Alias records for AWS resources.
+- Enable Route53 Health Checks for failover.
+- Protect CloudFront and ALBs with AWS WAF.
+- Enable AWS Shield Advanced for internet-facing production workloads.
+- Use Origin Access Control (OAC) for S3-backed CloudFront distributions.
+- Prefer Direct Connect for dedicated hybrid connectivity.
+- Configure Site-to-Site VPN as backup connectivity.
+- Deploy AWS Network Firewall for centralized traffic inspection.
+- Use AWS Private CA for internal PKI.
+- Share networking resources securely using AWS RAM.
+
+---
+
+# Summary
+
+This section covered CloudFormation templates for Route53, CloudFront, AWS WAF, Shield Advanced, Global Accelerator, Direct Connect, Site-to-Site VPN, Client VPN, AWS Network Firewall, Private CA, and AWS RAM. These templates provide production-ready patterns for DNS, CDN, hybrid connectivity, edge security, and enterprise networking using AWS CloudFormation.
+
+---
+
