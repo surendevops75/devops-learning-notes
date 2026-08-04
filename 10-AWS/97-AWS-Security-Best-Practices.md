@@ -4107,3 +4107,626 @@ This section covered the AWS Well-Architected Security Pillar, CIS AWS Foundatio
 
 ---
 
+# Security Incident Response
+
+---
+
+# Introduction
+
+Security Incident Response (IR) is the structured process of detecting, analyzing, containing, eradicating, recovering from, and documenting security incidents.
+
+Objectives
+
+- Minimize business impact
+- Reduce recovery time
+- Preserve evidence
+- Restore operations safely
+- Improve future defenses
+
+---
+
+# Incident Response Lifecycle
+
+```text
+Preparation
+
+↓
+
+Detection
+
+↓
+
+Analysis
+
+↓
+
+Containment
+
+↓
+
+Eradication
+
+↓
+
+Recovery
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Preparation Phase
+
+Prepare
+
+- Incident Response Plan
+- Runbooks
+- Contact Lists
+- IAM Emergency Roles
+- Logging
+- Monitoring
+- Backups
+- Disaster Recovery Plans
+
+---
+
+# Security Operations Center (SOC)
+
+Responsibilities
+
+- Monitor alerts
+- Investigate incidents
+- Coordinate response
+- Communicate status
+- Document findings
+
+---
+
+# Incident Classification
+
+## Critical
+
+Examples
+
+- Ransomware
+- Credential compromise
+- Data breach
+- Production compromise
+
+---
+
+## High
+
+Examples
+
+- Privilege escalation
+- Malware detection
+- Public data exposure
+- Active exploitation
+
+---
+
+## Medium
+
+Examples
+
+- Configuration drift
+- Unauthorized login attempts
+- Policy violations
+
+---
+
+## Low
+
+Examples
+
+- Informational alerts
+- Best practice recommendations
+
+---
+
+# Detection Sources
+
+Monitor
+
+- GuardDuty
+- Security Hub
+- CloudTrail
+- AWS Config
+- CloudWatch
+- VPC Flow Logs
+- WAF Logs
+- Network Firewall Logs
+
+---
+
+# Detection Workflow
+
+```text
+Security Event
+
+↓
+
+Alert
+
+↓
+
+SOC Review
+
+↓
+
+Incident Created
+
+↓
+
+Investigation
+```
+
+---
+
+# Incident Triage
+
+Determine
+
+- Severity
+- Scope
+- Affected Resources
+- Business Impact
+- Required Response
+
+---
+
+# Evidence Collection
+
+Collect
+
+- CloudTrail Logs
+- VPC Flow Logs
+- CloudWatch Logs
+- EC2 Console Output
+- EBS Snapshots
+- Memory Dumps (if applicable)
+- IAM Activity
+- API History
+
+---
+
+# Preserve Evidence
+
+Never modify original evidence.
+
+Recommended
+
+```text
+Affected Volume
+
+↓
+
+Create Snapshot
+
+↓
+
+Forensic Analysis
+
+↓
+
+Preserve Original
+```
+
+---
+
+# Containment
+
+Examples
+
+- Isolate EC2 instance
+- Block malicious IP
+- Disable IAM credentials
+- Restrict Security Groups
+- Stop compromised workloads
+
+---
+
+# Isolation Workflow
+
+```text
+Compromised EC2
+
+↓
+
+Quarantine Security Group
+
+↓
+
+Capture Evidence
+
+↓
+
+Investigate
+```
+
+---
+
+# IAM Credential Compromise
+
+Immediate Actions
+
+- Disable access keys
+- Reset passwords
+- Revoke active sessions
+- Rotate credentials
+- Review CloudTrail activity
+
+---
+
+# Public S3 Bucket Response
+
+Actions
+
+- Remove public access
+- Review bucket policy
+- Review object access logs
+- Rotate exposed credentials if necessary
+
+---
+
+# Malware Response
+
+Workflow
+
+```text
+Detect Malware
+
+↓
+
+Isolate Instance
+
+↓
+
+Snapshot Volume
+
+↓
+
+Analyze
+
+↓
+
+Terminate or Rebuild
+```
+
+---
+
+# Eradication
+
+Activities
+
+- Remove malware
+- Patch vulnerabilities
+- Delete malicious users
+- Remove backdoors
+- Update security controls
+
+---
+
+# Recovery
+
+Activities
+
+- Restore clean resources
+- Validate functionality
+- Monitor closely
+- Re-enable production traffic
+
+---
+
+# Post-Incident Review
+
+Review
+
+- Root Cause
+- Timeline
+- Impact
+- Response Effectiveness
+- Improvements
+
+---
+
+# Lessons Learned
+
+Document
+
+- Attack vector
+- Detection quality
+- Response gaps
+- Preventive controls
+- Updated runbooks
+
+---
+
+# AWS Backup
+
+Best Practices
+
+- Automated backups
+- Cross-Region backups
+- Cross-Account backups
+- Immutable backup strategy
+- Backup testing
+
+---
+
+# Disaster Recovery (DR)
+
+Objectives
+
+- Recover applications
+- Restore data
+- Minimize downtime
+- Meet business RTO/RPO
+
+---
+
+# RTO & RPO
+
+## Recovery Time Objective (RTO)
+
+Maximum acceptable downtime.
+
+---
+
+## Recovery Point Objective (RPO)
+
+Maximum acceptable data loss.
+
+---
+
+# Disaster Recovery Strategies
+
+## Backup & Restore
+
+Lowest cost
+
+Highest recovery time
+
+---
+
+## Pilot Light
+
+Critical services always running.
+
+---
+
+## Warm Standby
+
+Scaled-down production environment.
+
+---
+
+## Multi-Site Active/Active
+
+Highest availability
+
+Highest cost
+
+---
+
+# Disaster Recovery Architecture
+
+```text
+Primary Region
+
+↓
+
+AWS Backup
+
+↓
+
+Cross-Region Replication
+
+↓
+
+Secondary Region
+
+↓
+
+Disaster Recovery
+```
+
+---
+
+# Business Continuity Planning (BCP)
+
+Include
+
+- Business Impact Analysis
+- Recovery Procedures
+- Communication Plan
+- Recovery Teams
+- Testing Schedule
+
+---
+
+# Ransomware Recovery
+
+Workflow
+
+```text
+Detect
+
+↓
+
+Isolate
+
+↓
+
+Restore Clean Backup
+
+↓
+
+Validate
+
+↓
+
+Resume Operations
+```
+
+---
+
+# Security Automation (SOAR)
+
+Examples
+
+- Auto-create incidents
+- Disable compromised IAM users
+- Quarantine EC2 instances
+- Block malicious IPs
+- Notify security teams
+
+---
+
+# Automated Response Workflow
+
+```text
+GuardDuty Finding
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+Quarantine Resource
+
+↓
+
+SNS Notification
+```
+
+---
+
+# Communication Plan
+
+Notify
+
+- SOC Team
+- Cloud Team
+- Management
+- Compliance Team
+- Legal (if required)
+- Customers (if required)
+
+---
+
+# Security Runbooks
+
+Maintain runbooks for
+
+- IAM compromise
+- EC2 compromise
+- S3 exposure
+- Ransomware
+- Malware
+- Data breach
+- DDoS attacks
+- Credential leakage
+
+---
+
+# Incident Metrics
+
+Track
+
+- Mean Time to Detect (MTTD)
+- Mean Time to Respond (MTTR)
+- Mean Time to Recover (MTTRc)
+- Incident count
+- Root causes
+- Repeat incidents
+- SLA compliance
+
+---
+
+# Incident Response Checklist
+
+## Detection
+
+- Alert received
+- Incident created
+- Severity assigned
+
+---
+
+## Investigation
+
+- Evidence collected
+- Timeline created
+- Root cause identified
+
+---
+
+## Response
+
+- Resource isolated
+- Credentials rotated
+- Threat removed
+
+---
+
+## Recovery
+
+- Services restored
+- Monitoring enabled
+- Validation completed
+
+---
+
+## Review
+
+- Lessons documented
+- Runbooks updated
+- Preventive actions assigned
+
+---
+
+# Common Incident Response Mistakes
+
+- Deleting evidence too early
+- Restarting compromised systems before investigation
+- Not rotating compromised credentials
+- Missing CloudTrail logs
+- No communication plan
+- No recovery testing
+- No incident documentation
+- Weak backup strategy
+- Ignoring post-incident reviews
+- Manual response without automation
+
+---
+
+# Best Practices
+
+- Prepare incident response runbooks before incidents occur.
+- Enable comprehensive logging across all AWS accounts.
+- Preserve forensic evidence before making changes.
+- Automate common response actions using EventBridge and Lambda.
+- Test disaster recovery plans regularly.
+- Store backups in separate accounts and Regions.
+- Monitor recovery metrics such as RTO and RPO.
+- Conduct post-incident reviews after every major incident.
+- Continuously improve playbooks based on lessons learned.
+- Integrate incident response with enterprise SOC processes.
+
+---
+
+# Summary
+
+This section covered AWS incident response, evidence collection, containment, eradication, recovery, disaster recovery strategies, business continuity planning, ransomware recovery, SOAR automation, operational runbooks, incident metrics, and enterprise security operations. These practices enable organizations to respond quickly to security incidents while minimizing operational and business impact.
+
+---
+
