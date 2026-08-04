@@ -7410,3 +7410,840 @@ This section covered CI/CD fundamentals, Jenkins architecture, Pipelines, GitHub
 
 ---
 
+# DevSecOps, Monitoring, Networking & Production Troubleshooting Interview Questions
+
+---
+
+# Introduction
+
+Senior DevOps interviews often focus on production support, security, observability, and troubleshooting rather than tool definitions. Interviewers expect you to explain how you diagnose incidents, secure CI/CD pipelines, and monitor distributed systems.
+
+This section covers
+
+- DevSecOps
+- SonarQube
+- Trivy
+- Veracode
+- Prometheus
+- Grafana
+- ELK Stack
+- Networking
+- DNS
+- HTTP/HTTPS
+- SSL/TLS
+- Load Balancing
+- Production Incidents
+- Root Cause Analysis (RCA)
+
+---
+
+# DevSecOps
+
+# Question 1
+
+## What is DevSecOps?
+
+### Answer
+
+DevSecOps integrates security into every stage of the software delivery lifecycle.
+
+Workflow
+
+```text
+Developer
+
+↓
+
+Code Commit
+
+↓
+
+Build
+
+↓
+
+Static Analysis
+
+↓
+
+Dependency Scan
+
+↓
+
+Container Scan
+
+↓
+
+Deploy
+
+↓
+
+Runtime Monitoring
+```
+
+Benefits
+
+- Shift-left security
+- Faster vulnerability detection
+- Automated compliance
+- Reduced production risk
+
+---
+
+# Question 2
+
+## What is SonarQube?
+
+### Answer
+
+SonarQube performs Static Application Security Testing (SAST) and code quality analysis.
+
+Detects
+
+- Bugs
+- Vulnerabilities
+- Code smells
+- Duplicate code
+- Maintainability issues
+
+---
+
+### Production Example
+
+Run SonarQube after the build stage and fail the pipeline if the Quality Gate does not pass.
+
+---
+
+# Question 3
+
+## What is a Quality Gate?
+
+### Answer
+
+A Quality Gate defines the minimum quality standards that code must satisfy before progressing in the pipeline.
+
+Examples
+
+- No blocker vulnerabilities
+- Coverage threshold
+- Reliability rating
+- Security rating
+
+---
+
+# Question 4
+
+## What is Trivy?
+
+### Answer
+
+Trivy is a vulnerability scanner for
+
+- Container images
+- Filesystems
+- Git repositories
+- Kubernetes manifests
+
+---
+
+### Production Example
+
+```text
+Build Docker Image
+
+↓
+
+Trivy Scan
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+```
+
+Only publish images that meet organizational security policies.
+
+---
+
+# Question 5
+
+## What is Veracode?
+
+### Answer
+
+Veracode is an application security platform used for
+
+- Static Analysis (SAST)
+- Dynamic Analysis (DAST)
+- Software Composition Analysis (SCA)
+
+---
+
+# Question 6
+
+## SAST vs DAST vs SCA
+
+| SAST | DAST | SCA |
+|------|------|-----|
+| Source code | Running application | Third-party libraries |
+| Early detection | Runtime testing | Dependency risks |
+
+---
+
+# Question 7
+
+## Why Scan Container Images?
+
+### Answer
+
+To detect
+
+- Critical vulnerabilities
+- Outdated packages
+- Known CVEs
+- Misconfigurations
+
+---
+
+# Monitoring
+
+# Question 8
+
+## What is Prometheus?
+
+### Answer
+
+Prometheus is an open-source monitoring system designed for collecting and querying time-series metrics.
+
+Components
+
+- Prometheus Server
+- Exporters
+- Alertmanager
+- PromQL
+
+---
+
+# Question 9
+
+## Prometheus Workflow
+
+```text
+Application
+
+↓
+
+Metrics Endpoint
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Grafana
+```
+
+---
+
+# Question 10
+
+## What is Grafana?
+
+### Answer
+
+Grafana visualizes metrics collected from monitoring systems.
+
+Data Sources
+
+- Prometheus
+- Elasticsearch
+- CloudWatch
+- PostgreSQL
+
+---
+
+# Question 11
+
+## What is Alertmanager?
+
+### Answer
+
+Alertmanager receives alerts from Prometheus and routes notifications.
+
+Examples
+
+- Slack
+- Email
+- PagerDuty
+
+---
+
+# Question 12
+
+## What is ELK Stack?
+
+### Answer
+
+ELK consists of
+
+- Elasticsearch
+- Logstash
+- Kibana
+
+Many modern deployments also use Fluent Bit or Filebeat as log shippers.
+
+---
+
+### Workflow
+
+```text
+Application
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+# Question 13
+
+## Structured Logging
+
+### Answer
+
+Structured logs use consistent key-value formats (commonly JSON) to simplify searching and analysis.
+
+Example
+
+```json
+{
+  "timestamp": "",
+  "service": "",
+  "level": "",
+  "message": "",
+  "trace_id": ""
+}
+```
+
+---
+
+# Question 14
+
+## Golden Signals
+
+Monitor
+
+- Latency
+- Traffic
+- Errors
+- Saturation
+
+---
+
+# Question 15
+
+## RED Method
+
+Monitor
+
+- Request Rate
+- Error Rate
+- Duration
+
+---
+
+# Networking
+
+# Question 16
+
+## What is DNS?
+
+### Answer
+
+DNS (Domain Name System) translates domain names into IP addresses.
+
+Workflow
+
+```text
+Browser
+
+↓
+
+DNS
+
+↓
+
+IP Address
+
+↓
+
+Server
+```
+
+---
+
+# Question 17
+
+## TCP vs UDP
+
+| TCP | UDP |
+|------|-----|
+| Connection-oriented | Connectionless |
+| Reliable | Best effort |
+| Ordered delivery | No ordering guarantee |
+| Higher overhead | Lower overhead |
+
+---
+
+# Question 18
+
+## HTTP vs HTTPS
+
+| HTTP | HTTPS |
+|-------|--------|
+| Plain text | Encrypted |
+| Port 80 | Port 443 |
+| No TLS | TLS enabled |
+
+---
+
+# Question 19
+
+## SSL/TLS
+
+### Answer
+
+TLS encrypts communication between clients and servers, providing confidentiality and integrity.
+
+Benefits
+
+- Encryption
+- Authentication
+- Data integrity
+
+---
+
+# Question 20
+
+## Load Balancer
+
+### Answer
+
+Distributes traffic across multiple backend servers.
+
+Types
+
+- Layer 4
+- Layer 7
+
+Benefits
+
+- High availability
+- Scalability
+- Fault tolerance
+
+---
+
+# Production Troubleshooting
+
+# Question 21
+
+## Pod is in CrashLoopBackOff
+
+### Investigation
+
+```bash
+kubectl describe pod pod-name
+
+kubectl logs pod-name --previous
+
+kubectl get events
+```
+
+Check
+
+- Application startup
+- Environment variables
+- ConfigMaps
+- Secrets
+- Resource limits
+- Health probes
+
+---
+
+# Question 22
+
+## High CPU Usage
+
+### Investigation
+
+Linux
+
+```bash
+top
+
+ps -ef
+
+vmstat
+```
+
+Kubernetes
+
+```bash
+kubectl top pod
+
+kubectl top node
+```
+
+Cloud
+
+Review monitoring dashboards and scaling metrics.
+
+---
+
+# Question 23
+
+## Memory Leak
+
+### Investigation
+
+Check
+
+- Memory usage trends
+- Heap dumps (where applicable)
+- Garbage collection logs
+- Application metrics
+
+Monitor
+
+- OOMKilled events
+- Memory limits
+- Restart counts
+
+---
+
+# Question 24
+
+## Disk Full
+
+### Investigation
+
+```bash
+df -h
+
+du -sh *
+
+find / -size +1G
+```
+
+Check
+
+- Logs
+- Docker images
+- Temporary files
+- Backups
+
+---
+
+# Question 25
+
+## Service Unavailable
+
+### Investigation
+
+Verify
+
+- Pods
+- Service
+- Endpoints
+- Ingress
+- Load Balancer
+- DNS
+- Application logs
+
+---
+
+# Question 26
+
+## Database Connectivity Failure
+
+### Investigation
+
+Check
+
+- Database availability
+- Security Groups / Firewalls
+- Credentials
+- DNS
+- Network
+- Connection pool
+- Application logs
+
+---
+
+# Question 27
+
+## Slow Application
+
+### Investigation
+
+Review
+
+- CPU
+- Memory
+- Disk IO
+- Database queries
+- External APIs
+- Thread pools
+- Cache hit ratio
+
+---
+
+# Question 28
+
+## SSL Certificate Expired
+
+### Investigation
+
+Check
+
+- Certificate validity
+- Ingress/Load Balancer configuration
+- Certificate renewal process
+- DNS
+
+---
+
+# Question 29
+
+## Kubernetes Deployment Failed
+
+### Investigation
+
+```bash
+kubectl rollout status deployment app
+
+kubectl describe deployment app
+
+kubectl get rs
+```
+
+Review
+
+- Image pull
+- Readiness probe
+- Scheduling
+- Resources
+
+---
+
+# Question 30
+
+## CI/CD Pipeline Failure
+
+### Investigation
+
+Check
+
+- Build logs
+- Test failures
+- Security scans
+- Registry authentication
+- Deployment logs
+- Rollback status
+
+---
+
+# Root Cause Analysis (RCA)
+
+# Question 31
+
+## What is RCA?
+
+### Answer
+
+Root Cause Analysis identifies the underlying reason for an incident and defines preventive actions.
+
+---
+
+### RCA Workflow
+
+```text
+Incident
+
+↓
+
+Investigation
+
+↓
+
+Evidence
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Preventive Action
+```
+
+---
+
+# Sample RCA
+
+Problem
+
+Deployment failed.
+
+Root Cause
+
+Incorrect Kubernetes Secret.
+
+Resolution
+
+Updated Secret and restarted deployment.
+
+Preventive Action
+
+Validate Secrets during CI/CD before deployment.
+
+---
+
+# Production Incident Question
+
+## Describe a Production Incident
+
+Answer Structure
+
+```text
+Problem
+
+↓
+
+Impact
+
+↓
+
+Investigation
+
+↓
+
+Root Cause
+
+↓
+
+Resolution
+
+↓
+
+Lessons Learned
+```
+
+---
+
+# Incident Communication
+
+During incidents
+
+- Acknowledge quickly
+- Share impact
+- Provide regular updates
+- Explain mitigation
+- Publish post-incident summary
+
+---
+
+# FAANG-Style Troubleshooting Questions
+
+- How do you troubleshoot a Kubernetes production outage?
+- Explain your RCA process.
+- How would you debug intermittent latency?
+- Design an enterprise monitoring platform.
+- Explain observability.
+- How do you troubleshoot DNS failures?
+- How do you investigate memory leaks?
+- Explain SSL handshake failures.
+- How would you troubleshoot a failed deployment?
+- Explain how you reduce MTTR.
+
+---
+
+# Enterprise Best Practices
+
+- Automate security scanning in every CI/CD pipeline.
+- Monitor applications, infrastructure, and business metrics together.
+- Use structured logging with correlation IDs.
+- Define meaningful alerts to reduce alert fatigue.
+- Perform Root Cause Analysis after major incidents.
+- Document runbooks for common production issues.
+- Continuously review vulnerabilities and patch dependencies.
+- Test incident response procedures regularly.
+- Monitor SLIs, SLOs, and error budgets where applicable.
+- Treat production incidents as opportunities to improve systems.
+
+---
+
+# Interview Tips
+
+For troubleshooting questions, always answer using this framework:
+
+```text
+Understand Problem
+
+↓
+
+Collect Evidence
+
+↓
+
+Analyze Logs & Metrics
+
+↓
+
+Identify Root Cause
+
+↓
+
+Implement Fix
+
+↓
+
+Validate
+
+↓
+
+Prevent Recurrence
+```
+
+Interviewers are evaluating your thought process as much as the final answer.
+
+---
+
+# Summary
+
+This section covered DevSecOps concepts, SonarQube, Trivy, Veracode, Prometheus, Grafana, ELK Stack, networking fundamentals, SSL/TLS, production troubleshooting, Root Cause Analysis, and enterprise incident response. These topics are heavily emphasized in senior DevOps and SRE interviews.
+
+---
+
