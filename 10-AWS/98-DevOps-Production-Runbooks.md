@@ -1294,3 +1294,678 @@ This section covered Jenkins production incident handling, service failures, age
 
 ---
 
+# Kubernetes & Amazon EKS Production Runbooks
+
+---
+
+# Introduction
+
+Kubernetes production incidents can affect application availability, scalability, networking, and deployments. A structured troubleshooting approach minimizes downtime and accelerates recovery.
+
+---
+
+# Kubernetes Troubleshooting Workflow
+
+```text
+Alert
+
+↓
+
+Check Cluster Health
+
+↓
+
+Check Nodes
+
+↓
+
+Check Pods
+
+↓
+
+Review Events
+
+↓
+
+Review Logs
+
+↓
+
+Identify Root Cause
+
+↓
+
+Mitigate
+
+↓
+
+Recover
+```
+
+---
+
+# Cluster Health Check
+
+```bash
+kubectl cluster-info
+
+kubectl get componentstatuses
+
+kubectl version
+
+kubectl get nodes
+```
+
+---
+
+# Node Health
+
+```bash
+kubectl get nodes -o wide
+
+kubectl describe node <node-name>
+
+kubectl top nodes
+```
+
+---
+
+# Pod Health
+
+```bash
+kubectl get pods -A
+
+kubectl get pods -o wide
+
+kubectl describe pod <pod>
+
+kubectl logs <pod>
+
+kubectl logs <pod> --previous
+```
+
+---
+
+# Kubernetes Events
+
+```bash
+kubectl get events --sort-by=.metadata.creationTimestamp
+
+kubectl get events -A
+```
+
+Always review Events before restarting workloads.
+
+---
+
+# Pods Stuck in Pending
+
+## Symptoms
+
+```text
+STATUS
+
+Pending
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod <pod>
+```
+
+Check
+
+- Insufficient CPU
+- Insufficient Memory
+- Node Selector
+- Taints
+- Affinity Rules
+- PVC binding
+- Scheduler Events
+
+---
+
+## Resolution
+
+- Add cluster capacity
+- Scale worker nodes
+- Fix scheduling rules
+- Verify Persistent Volumes
+
+---
+
+# CrashLoopBackOff
+
+## Symptoms
+
+```text
+STATUS
+
+CrashLoopBackOff
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl logs <pod> --previous
+
+kubectl describe pod <pod>
+
+kubectl get events
+```
+
+Review
+
+- Application logs
+- Environment variables
+- Secrets
+- ConfigMaps
+- Startup scripts
+- Health probes
+
+---
+
+## Common Causes
+
+- Application crash
+- Missing configuration
+- Invalid Secrets
+- Database unavailable
+- Incorrect image
+
+---
+
+# ImagePullBackOff
+
+## Symptoms
+
+```text
+Failed to pull image
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod
+
+kubectl get events
+```
+
+Verify
+
+- Image name
+- Image tag
+- Amazon ECR access
+- ImagePullSecrets
+- IAM permissions
+
+---
+
+## Resolution
+
+- Push image
+- Correct image tag
+- Fix registry credentials
+- Verify repository permissions
+
+---
+
+# ErrImagePull
+
+Common Causes
+
+- Typo in image name
+- Repository missing
+- Authentication failure
+- Network connectivity issue
+
+---
+
+# OOMKilled
+
+## Symptoms
+
+```text
+Reason
+
+OOMKilled
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod
+
+kubectl top pod
+```
+
+Review
+
+- Memory limits
+- Memory requests
+- Application memory usage
+
+---
+
+## Resolution
+
+- Increase memory limit
+- Optimize application
+- Fix memory leak
+- Right-size resources
+
+---
+
+# Node NotReady
+
+## Symptoms
+
+```text
+STATUS
+
+NotReady
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl describe node
+
+systemctl status kubelet
+```
+
+Check
+
+- kubelet
+- Disk pressure
+- Memory pressure
+- Network
+- Container runtime
+
+---
+
+## Resolution
+
+```bash
+systemctl restart kubelet
+```
+
+Investigate underlying infrastructure before restarting.
+
+---
+
+# Pod Evicted
+
+Common Reasons
+
+- Disk Pressure
+- Memory Pressure
+- Node Maintenance
+
+---
+
+## Investigation
+
+```bash
+kubectl describe pod
+```
+
+---
+
+# Deployment Failure
+
+## Check
+
+```bash
+kubectl rollout status deployment/<deployment>
+
+kubectl rollout history deployment/<deployment>
+
+kubectl describe deployment
+```
+
+---
+
+## Rollback
+
+```bash
+kubectl rollout undo deployment/<deployment>
+```
+
+---
+
+# ReplicaSet Issues
+
+```bash
+kubectl get rs
+
+kubectl describe rs
+```
+
+Verify desired and available replicas.
+
+---
+
+# Service Issues
+
+## Investigation
+
+```bash
+kubectl get svc
+
+kubectl describe svc
+
+kubectl get endpoints
+```
+
+Verify
+
+- Labels
+- Selectors
+- TargetPort
+- Endpoints
+
+---
+
+# DNS Resolution Failure
+
+## Investigation
+
+```bash
+kubectl exec -it <pod> -- nslookup kubernetes.default
+
+kubectl get pods -n kube-system
+```
+
+Check
+
+- CoreDNS
+- Network
+- DNS Config
+
+---
+
+# Ingress Issues
+
+## Verify
+
+```bash
+kubectl get ingress
+
+kubectl describe ingress
+```
+
+Check
+
+- Rules
+- Backend services
+- ALB status
+- Certificates
+
+---
+
+# AWS Load Balancer Controller
+
+Verify
+
+```bash
+kubectl get pods -n kube-system
+
+kubectl logs deployment/aws-load-balancer-controller -n kube-system
+```
+
+---
+
+# Persistent Volume Issues
+
+## Investigation
+
+```bash
+kubectl get pv
+
+kubectl get pvc
+
+kubectl describe pvc
+```
+
+Check
+
+- StorageClass
+- Volume binding
+- Access modes
+- Capacity
+
+---
+
+# ConfigMap Issues
+
+```bash
+kubectl describe configmap
+
+kubectl get configmap
+```
+
+Verify
+
+- Mounted correctly
+- Updated values
+- Namespace
+
+---
+
+# Secret Issues
+
+```bash
+kubectl get secrets
+
+kubectl describe secret
+```
+
+Verify
+
+- Namespace
+- Mount
+- Environment variables
+
+---
+
+# HPA Issues
+
+```bash
+kubectl get hpa
+
+kubectl describe hpa
+```
+
+Check
+
+- Metrics Server
+- CPU metrics
+- Memory metrics
+- Scaling events
+
+---
+
+# Cluster Autoscaler
+
+Verify
+
+```bash
+kubectl logs deployment/cluster-autoscaler -n kube-system
+```
+
+Review
+
+- Scale-up failures
+- Scale-down events
+- AWS permissions
+
+---
+
+# Amazon EKS Control Plane
+
+Review
+
+- API Server availability
+- IAM authentication
+- Cluster endpoint
+- Node registration
+
+---
+
+# Worker Node Issues
+
+Check
+
+```bash
+kubectl get nodes
+
+systemctl status kubelet
+
+journalctl -u kubelet
+```
+
+---
+
+# Container Runtime
+
+Verify
+
+```bash
+systemctl status containerd
+
+crictl ps
+```
+
+---
+
+# Namespace Issues
+
+```bash
+kubectl get ns
+
+kubectl describe ns
+```
+
+---
+
+# Network Policies
+
+Review
+
+```bash
+kubectl get networkpolicy
+
+kubectl describe networkpolicy
+```
+
+---
+
+# Resource Quotas
+
+```bash
+kubectl get resourcequota
+
+kubectl describe resourcequota
+```
+
+---
+
+# Production Health Checklist
+
+Verify
+
+- Nodes Ready
+- Pods Running
+- Services Healthy
+- Ingress Working
+- Storage Mounted
+- DNS Working
+- Metrics Available
+- HPA Healthy
+
+---
+
+# Common Kubernetes Production Issues
+
+- Pending Pods
+- CrashLoopBackOff
+- OOMKilled
+- ImagePullBackOff
+- Node NotReady
+- Failed Deployment
+- DNS Failure
+- PVC Pending
+- ALB Ingress Failure
+- Cluster Autoscaler Failure
+
+---
+
+# Recovery Workflow
+
+```text
+Incident
+
+↓
+
+Identify Component
+
+↓
+
+Collect Logs
+
+↓
+
+Review Events
+
+↓
+
+Mitigate
+
+↓
+
+Validate
+
+↓
+
+Monitor
+
+↓
+
+Document RCA
+```
+
+---
+
+# Best Practices
+
+- Always review `kubectl describe` before restarting Pods.
+- Check Events before making configuration changes.
+- Preserve logs using `--previous` for restarted containers.
+- Configure resource requests and limits for all workloads.
+- Monitor cluster health continuously using Prometheus and Grafana.
+- Enable Cluster Autoscaler or Karpenter for Amazon EKS.
+- Test deployment rollbacks regularly.
+- Use readiness and liveness probes correctly.
+- Verify Ingress and DNS after every deployment.
+- Document production incidents and update runbooks after every RCA.
+
+---
+
+# Summary
+
+This section covered production troubleshooting for Kubernetes and Amazon EKS, including Pending Pods, CrashLoopBackOff, ImagePullBackOff, OOMKilled, Node NotReady, Deployments, Services, Ingress, DNS, Persistent Volumes, HPA, Cluster Autoscaler, and recovery workflows. These runbooks provide a structured approach to diagnosing and resolving the most common Kubernetes production incidents.
+
+---
+
