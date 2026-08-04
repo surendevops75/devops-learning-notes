@@ -2839,3 +2839,555 @@ This section covered service-level cost optimization techniques for Amazon EC2, 
 
 ---
 
+# AWS Trusted Advisor
+
+---
+
+# Introduction
+
+AWS Trusted Advisor analyzes AWS resources and provides recommendations to improve:
+
+- Cost Optimization
+- Performance
+- Security
+- Fault Tolerance
+- Service Limits
+- Operational Excellence
+
+---
+
+# Trusted Advisor Workflow
+
+```text
+AWS Resources
+
+↓
+
+Trusted Advisor
+
+↓
+
+Recommendations
+
+↓
+
+Review
+
+↓
+
+Implement Fixes
+
+↓
+
+Reduce Cost
+```
+
+---
+
+# Cost Optimization Checks
+
+Examples
+
+- Idle EC2 Instances
+- Underutilized EC2
+- Low Utilization EBS Volumes
+- Idle Load Balancers
+- Idle NAT Gateways
+- Unassociated Elastic IPs
+- Amazon RDS Idle Instances
+- S3 Incomplete Multipart Uploads
+
+---
+
+# Performance Checks
+
+Review
+
+- High CPU
+- Network throughput
+- EBS performance
+- Load Balancer health
+
+---
+
+# Security Checks
+
+Review
+
+- IAM usage
+- Security Groups
+- MFA
+- Public buckets
+- Root account
+
+---
+
+# Fault Tolerance Checks
+
+Examples
+
+- Multi-AZ databases
+- Auto Scaling
+- Backup configuration
+- Health checks
+
+---
+
+# Service Limits
+
+Review
+
+- EC2 limits
+- VPC limits
+- EBS limits
+- IAM limits
+- Lambda limits
+
+---
+
+# Operational Excellence
+
+Review
+
+- Monitoring
+- Logging
+- Automation
+- Governance
+
+---
+
+# Trusted Advisor Priority
+
+```text
+High
+
+↓
+
+Medium
+
+↓
+
+Low
+```
+
+---
+
+# Weekly Review
+
+Review
+
+- New recommendations
+- Fixed recommendations
+- Cost savings
+- Resource growth
+
+---
+
+# AWS Compute Optimizer
+
+---
+
+# Introduction
+
+AWS Compute Optimizer analyzes resource utilization and recommends optimal configurations using machine learning.
+
+Supports
+
+- EC2
+- Auto Scaling Groups
+- EBS
+- Lambda
+- ECS Services
+
+---
+
+# Compute Optimizer Workflow
+
+```text
+CloudWatch Metrics
+
+↓
+
+Machine Learning
+
+↓
+
+Recommendation
+
+↓
+
+Review
+
+↓
+
+Resize
+
+↓
+
+Save Money
+```
+
+---
+
+# EC2 Recommendations
+
+Review
+
+- CPU utilization
+- Memory utilization
+- Network throughput
+- Disk throughput
+
+Example
+
+```text
+Current
+
+m5.2xlarge
+
+↓
+
+Recommended
+
+m7i.large
+```
+
+---
+
+# Auto Scaling Recommendations
+
+Optimize
+
+- Minimum capacity
+- Maximum capacity
+- Desired capacity
+
+---
+
+# EBS Recommendations
+
+Review
+
+- Volume type
+- IOPS
+- Throughput
+- Capacity
+
+Example
+
+```text
+gp2
+
+↓
+
+gp3
+```
+
+---
+
+# Lambda Recommendations
+
+Review
+
+- Memory allocation
+- Execution duration
+- Cost
+- Performance
+
+---
+
+# ECS Recommendations
+
+Review
+
+- CPU
+- Memory
+- Task sizing
+
+---
+
+# Recommendation Categories
+
+- Over-provisioned
+- Under-provisioned
+- Optimized
+
+---
+
+# Savings Estimate
+
+Example
+
+```text
+Current Cost
+
+↓
+
+Recommended Cost
+
+↓
+
+Monthly Savings
+```
+
+---
+
+# AWS Resource Explorer
+
+---
+
+# Benefits
+
+- Find AWS resources
+- Search across Regions
+- Resource inventory
+- Governance support
+
+---
+
+# Resource Groups
+
+Examples
+
+```text
+Production
+
+Development
+
+Networking
+
+Databases
+
+Security
+```
+
+---
+
+# Tag-Based Resource Groups
+
+Example
+
+```text
+Environment=Production
+
+Project=Payments
+```
+
+---
+
+# AWS Health Dashboard
+
+---
+
+# Review
+
+- Scheduled maintenance
+- Service events
+- Regional issues
+- Resource health
+
+---
+
+# AWS Personal Health Dashboard
+
+Provides
+
+- Account-specific events
+- Maintenance notifications
+- Service disruptions
+
+---
+
+# Optimization Workflow
+
+```text
+Trusted Advisor
+
+↓
+
+Compute Optimizer
+
+↓
+
+Resource Explorer
+
+↓
+
+Review Findings
+
+↓
+
+Optimize Resources
+
+↓
+
+Measure Savings
+```
+
+---
+
+# Operational Review
+
+Daily
+
+- Health events
+- Critical recommendations
+
+---
+
+Weekly
+
+- Trusted Advisor findings
+- Compute Optimizer recommendations
+- Resource inventory
+
+---
+
+Monthly
+
+- Resource cleanup
+- Cost savings report
+- Governance review
+
+---
+
+# Enterprise Governance
+
+Include
+
+- Resource ownership
+- Tag compliance
+- Budget compliance
+- Cost allocation
+- Optimization review
+- Executive reporting
+
+---
+
+# Automated Optimization
+
+Examples
+
+- Stop idle EC2 instances
+- Delete unattached EBS volumes
+- Remove unused Elastic IPs
+- Archive old snapshots
+- Delete old ECR images
+
+---
+
+# Example Automation Workflow
+
+```text
+CloudWatch Event
+
+↓
+
+Lambda
+
+↓
+
+Check Resource
+
+↓
+
+Delete or Stop
+
+↓
+
+Notify Team
+```
+
+---
+
+# Resource Cleanup Checklist
+
+Compute
+
+- Idle EC2
+- Old AMIs
+- Auto Scaling review
+
+---
+
+Storage
+
+- Unused EBS
+- Old snapshots
+- S3 lifecycle
+
+---
+
+Networking
+
+- Idle NAT Gateway
+- Elastic IP
+- Load Balancer
+
+---
+
+Containers
+
+- Old ECR images
+- Idle ECS services
+- Unused EKS clusters
+
+---
+
+Monitoring
+
+- Old log groups
+- Custom metrics
+- Dashboards
+
+---
+
+# KPIs
+
+Track
+
+- Monthly cloud spend
+- Cost per application
+- Savings achieved
+- Resource utilization
+- Idle resource count
+- Tag compliance
+- Budget adherence
+- Recommendation completion rate
+
+---
+
+# Common Findings
+
+- Oversized EC2 instances
+- Detached EBS volumes
+- Idle Elastic IPs
+- Low-utilization Load Balancers
+- Large CloudWatch log retention
+- Old snapshots
+- Unused AMIs
+- Underutilized ECS services
+
+---
+
+# Best Practices
+
+- Review Trusted Advisor recommendations weekly.
+- Review Compute Optimizer recommendations monthly.
+- Enable enhanced infrastructure metrics where supported.
+- Use consistent resource tagging for governance.
+- Automate cleanup of unused resources.
+- Review AWS Health Dashboard regularly.
+- Prioritize high-impact optimization recommendations.
+- Track realized savings after implementing changes.
+- Measure optimization KPIs over time.
+- Make optimization reviews part of regular operational processes.
+
+---
+
+# Summary
+
+This section covered AWS Trusted Advisor, Compute Optimizer, Resource Explorer, Resource Groups, AWS Health Dashboard, automated optimization workflows, governance practices, resource cleanup strategies, and optimization KPIs. These services help identify waste, improve resource utilization, automate remediation, and maintain a cost-efficient AWS environment.
+
+---
+
