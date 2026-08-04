@@ -5006,3 +5006,833 @@ This section covered Kubernetes fundamentals, architecture, Pods, ReplicaSets, D
 
 ---
 
+# Kubernetes Interview Questions (Advanced → Enterprise)
+
+---
+
+# Introduction
+
+This section focuses on enterprise Kubernetes concepts that are commonly asked in senior DevOps, Platform Engineering, SRE, and FAANG interviews.
+
+Topics include
+
+- Stateful Workloads
+- Storage
+- Scheduling
+- Autoscaling
+- Security
+- RBAC
+- Helm
+- Amazon EKS
+- GitOps
+- Enterprise Troubleshooting
+
+---
+
+# Question 31
+
+## What is a StatefulSet?
+
+### Answer
+
+A StatefulSet manages stateful applications.
+
+Features
+
+- Stable Pod names
+- Stable network identity
+- Persistent storage
+- Ordered deployment
+- Ordered termination
+
+---
+
+### Production Examples
+
+- PostgreSQL
+- MySQL
+- Kafka
+- Elasticsearch
+
+---
+
+### Deployment vs StatefulSet
+
+| Deployment | StatefulSet |
+|------------|-------------|
+| Stateless | Stateful |
+| Random Pod names | Fixed Pod names |
+| Shared storage | Dedicated storage |
+| Parallel creation | Ordered creation |
+
+---
+
+# Question 32
+
+## What is a DaemonSet?
+
+### Answer
+
+A DaemonSet ensures one Pod runs on every worker node.
+
+---
+
+### Production Examples
+
+- Fluent Bit
+- Node Exporter
+- Filebeat
+- Falco
+- Security Agents
+
+---
+
+### Workflow
+
+```text
+Worker Node 1
+
+↓
+
+Fluent Bit
+
+-------------------
+
+Worker Node 2
+
+↓
+
+Fluent Bit
+
+-------------------
+
+Worker Node 3
+
+↓
+
+Fluent Bit
+```
+
+---
+
+# Question 33
+
+## What is a Job?
+
+### Answer
+
+A Job runs one-time tasks until completion.
+
+Examples
+
+- Database migration
+- Batch processing
+- Data import
+
+---
+
+# Question 34
+
+## What is a CronJob?
+
+### Answer
+
+Runs scheduled tasks.
+
+Example
+
+```text
+Daily Backup
+
+↓
+
+02:00 AM
+
+↓
+
+CronJob
+
+↓
+
+Job
+```
+
+---
+
+### Production Examples
+
+- Database backups
+- Cleanup jobs
+- Report generation
+
+---
+
+# Question 35
+
+## Persistent Volume (PV)
+
+### Answer
+
+A Persistent Volume provides storage independent of Pod lifecycle.
+
+---
+
+### Workflow
+
+```text
+Storage
+
+↓
+
+Persistent Volume
+
+↓
+
+Persistent Volume Claim
+
+↓
+
+Pod
+```
+
+---
+
+# Question 36
+
+## Persistent Volume Claim (PVC)
+
+### Answer
+
+A PVC requests storage from available Persistent Volumes or StorageClasses.
+
+---
+
+# Question 37
+
+## StorageClass
+
+### Answer
+
+Defines how storage is dynamically provisioned.
+
+Production Example
+
+On Amazon EKS, StorageClasses commonly provision Amazon EBS volumes for block storage.
+
+---
+
+# Question 38
+
+## Access Modes
+
+| Mode | Description |
+|------|-------------|
+| ReadWriteOnce (RWO) | One node can read/write |
+| ReadOnlyMany (ROX) | Multiple nodes read only |
+| ReadWriteMany (RWX) | Multiple nodes read/write |
+
+---
+
+# Question 39
+
+## Horizontal Pod Autoscaler (HPA)
+
+### Answer
+
+Automatically scales Pods based on metrics.
+
+Metrics
+
+- CPU
+- Memory
+- Custom Metrics
+
+---
+
+### Workflow
+
+```text
+High CPU
+
+↓
+
+HPA
+
+↓
+
+Increase Pods
+```
+
+---
+
+# Question 40
+
+## Vertical Pod Autoscaler (VPA)
+
+### Answer
+
+Adjusts Pod resource requests and recommendations based on observed usage.
+
+Best suited for workloads with changing resource requirements.
+
+---
+
+# Question 41
+
+## Cluster Autoscaler
+
+### Answer
+
+Automatically adjusts the number of worker nodes based on unschedulable Pods and cluster utilization.
+
+---
+
+### Workflow
+
+```text
+Pending Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+Launch Node
+
+↓
+
+Schedule Pods
+```
+
+---
+
+# Question 42
+
+## Taints
+
+### Answer
+
+Prevent Pods from being scheduled onto specific nodes.
+
+Example
+
+```text
+NoSchedule
+```
+
+---
+
+# Question 43
+
+## Tolerations
+
+### Answer
+
+Allow Pods to be scheduled onto tainted nodes.
+
+---
+
+### Taint vs Toleration
+
+```text
+Node
+
+↓
+
+Taint
+
+↓
+
+Pod
+
+↓
+
+Toleration
+
+↓
+
+Scheduled
+```
+
+---
+
+# Question 44
+
+## Node Selector
+
+### Answer
+
+Schedules Pods onto nodes with specific labels.
+
+Example
+
+```yaml
+nodeSelector:
+  disktype: ssd
+```
+
+---
+
+# Question 45
+
+## Node Affinity
+
+### Answer
+
+Provides advanced scheduling rules based on node labels.
+
+Supports
+
+- Required rules
+- Preferred rules
+
+---
+
+# Question 46
+
+## Pod Affinity
+
+### Answer
+
+Schedules Pods close together.
+
+Production Example
+
+Application Pod and Cache Pod in the same Availability Zone.
+
+---
+
+# Question 47
+
+## Pod Anti-Affinity
+
+### Answer
+
+Ensures Pods are scheduled apart.
+
+Production Example
+
+Multiple replicas distributed across worker nodes.
+
+---
+
+# Question 48
+
+## Resource Quotas
+
+### Answer
+
+Limit resource consumption within a Namespace.
+
+Controls
+
+- CPU
+- Memory
+- Pods
+- Storage
+
+---
+
+# Question 49
+
+## LimitRange
+
+### Answer
+
+Defines default and maximum resource requests and limits for containers in a Namespace.
+
+---
+
+# Question 50
+
+## RBAC
+
+### Answer
+
+Role-Based Access Control manages permissions in Kubernetes.
+
+Components
+
+- Role
+- ClusterRole
+- RoleBinding
+- ClusterRoleBinding
+
+---
+
+### Workflow
+
+```text
+User
+
+↓
+
+Role
+
+↓
+
+RoleBinding
+
+↓
+
+Permission
+```
+
+---
+
+# Question 51
+
+## Role vs ClusterRole
+
+| Role | ClusterRole |
+|------|-------------|
+| Namespace scoped | Cluster scoped |
+| Limited access | Cluster-wide access |
+
+---
+
+# Question 52
+
+## Network Policy
+
+### Answer
+
+Controls Pod-to-Pod network communication.
+
+Examples
+
+- Allow frontend → backend
+- Block all other traffic
+
+---
+
+### Benefits
+
+- Micro-segmentation
+- Zero Trust networking
+- Improved security
+
+---
+
+# Question 53
+
+## Helm
+
+### Answer
+
+Helm is the package manager for Kubernetes.
+
+Package format
+
+```text
+Chart
+```
+
+---
+
+### Benefits
+
+- Reusable templates
+- Parameterized deployments
+- Versioning
+- Easier upgrades
+
+---
+
+# Question 54
+
+## Helm Chart Structure
+
+```text
+Chart.yaml
+
+values.yaml
+
+templates/
+
+charts/
+```
+
+---
+
+# Question 55
+
+## Amazon EKS Architecture
+
+### Answer
+
+Components
+
+- Managed Control Plane
+- Managed or Self-managed Nodes
+- Amazon VPC
+- CoreDNS
+- kube-proxy
+- VPC CNI
+
+---
+
+### Production Architecture
+
+```text
+Route53
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+```
+
+---
+
+# Question 56
+
+## What is IRSA?
+
+### Answer
+
+IAM Roles for Service Accounts (IRSA) allows Kubernetes Pods to assume AWS IAM Roles without storing AWS access keys.
+
+---
+
+### Production Example
+
+Application Pod securely accesses Amazon S3 using an IAM Role associated with its ServiceAccount.
+
+---
+
+# Question 57
+
+## GitOps
+
+### Answer
+
+Git is the single source of truth for deployments.
+
+Workflow
+
+```text
+Git
+
+↓
+
+Argo CD
+
+↓
+
+Kubernetes
+```
+
+---
+
+# Question 58
+
+## Argo CD
+
+### Answer
+
+Argo CD continuously synchronizes Kubernetes clusters with the desired state stored in Git.
+
+Features
+
+- Automatic Sync
+- Drift Detection
+- Rollback
+- Self-Healing
+
+---
+
+# Question 59
+
+## Rolling Update
+
+Workflow
+
+```text
+Old Pods
+
+↓
+
+New Pods
+
+↓
+
+Traffic Shift
+
+↓
+
+Old Pods Removed
+```
+
+---
+
+# Question 60
+
+## Rollback
+
+Command
+
+```bash
+kubectl rollout undo deployment app
+```
+
+---
+
+# Production Scenario 1
+
+Node becomes NotReady.
+
+### Investigation
+
+```bash
+kubectl get nodes
+
+kubectl describe node node-name
+
+journalctl -u kubelet
+```
+
+Check
+
+- kubelet
+- Container runtime
+- Network
+- Disk pressure
+- Memory pressure
+
+---
+
+# Production Scenario 2
+
+Persistent Volume cannot be mounted.
+
+### Investigation
+
+```bash
+kubectl describe pvc
+
+kubectl get pv
+
+kubectl describe pod
+```
+
+Verify
+
+- StorageClass
+- Access mode
+- Volume availability
+- CSI driver
+
+---
+
+# Production Scenario 3
+
+Pods cannot communicate.
+
+### Investigation
+
+```bash
+kubectl get svc
+
+kubectl get endpoints
+
+kubectl get networkpolicy
+```
+
+Check
+
+- Service selectors
+- DNS
+- Network Policies
+- Namespace
+
+---
+
+# Production Scenario 4
+
+Deployment stuck during rollout.
+
+### Investigation
+
+```bash
+kubectl rollout status deployment app
+
+kubectl describe deployment app
+
+kubectl get rs
+```
+
+Review
+
+- Probe failures
+- Image pull issues
+- Scheduling failures
+- Resource limits
+
+---
+
+# Production Scenario 5
+
+Application cannot access AWS resources.
+
+### Investigation
+
+Verify
+
+- ServiceAccount
+- IRSA configuration
+- IAM Role
+- Trust policy
+- Application logs
+
+---
+
+# FAANG-Style Kubernetes Questions
+
+- Explain kube-scheduler internals.
+- How does etcd maintain consistency?
+- Explain the Kubernetes reconciliation loop.
+- How does the Controller Manager work?
+- Explain Kubernetes admission controllers.
+- Design a multi-cluster Kubernetes platform.
+- Explain GitOps architecture.
+- How would you secure an enterprise Kubernetes cluster?
+- Design Kubernetes for 10,000 Pods.
+- Explain Kubernetes upgrade strategy.
+
+---
+
+# Kubernetes Interview Tips
+
+For senior interviews always include
+
+1. Architecture
+2. Production use case
+3. Security
+4. High Availability
+5. Scaling
+6. Monitoring
+7. Troubleshooting
+
+This demonstrates enterprise-level experience.
+
+---
+
+# Summary
+
+This section covered StatefulSets, DaemonSets, Jobs, CronJobs, Persistent Volumes, StorageClasses, HPA, VPA, Cluster Autoscaler, scheduling, RBAC, Network Policies, Helm, Amazon EKS, IRSA, GitOps, Argo CD, enterprise troubleshooting, and FAANG-style Kubernetes interview questions.
+
+---
+
