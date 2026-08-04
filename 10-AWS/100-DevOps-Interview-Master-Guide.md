@@ -562,3 +562,803 @@ This section covered interview strategy, HR preparation, self-introduction, beha
 
 ---
 
+# Linux Interview Questions (Basic → Intermediate)
+
+---
+
+# Introduction
+
+Linux is one of the most important topics in every DevOps interview. Almost every interviewer starts with Linux because it forms the foundation of cloud infrastructure, containers, Kubernetes worker nodes, CI/CD servers, and automation.
+
+This section covers:
+
+- Basic Linux
+- File System
+- Users & Groups
+- Permissions
+- Process Management
+- Networking
+- Services
+- Package Management
+- Production Scenarios
+- Follow-up Questions
+
+---
+
+# Question 1
+
+## What is Linux?
+
+### Answer
+
+Linux is an open-source Unix-like operating system kernel created by Linus Torvalds. It is widely used in servers, cloud platforms, containers, networking devices, and embedded systems.
+
+Major Linux distributions include:
+
+- Ubuntu
+- Red Hat Enterprise Linux (RHEL)
+- Rocky Linux
+- AlmaLinux
+- Debian
+- Amazon Linux
+
+---
+
+### Follow-up Questions
+
+- What is a Linux distribution?
+- Difference between Linux and Unix?
+- Which Linux distributions have you worked on?
+
+---
+
+# Question 2
+
+## What is the Linux File System?
+
+### Answer
+
+Linux stores everything as files.
+
+Directory hierarchy starts from:
+
+```text
+/
+```
+
+Important directories:
+
+| Directory | Purpose |
+|------------|----------|
+| / | Root directory |
+| /home | User home directories |
+| /root | Root user's home |
+| /etc | Configuration files |
+| /var | Logs & variable data |
+| /tmp | Temporary files |
+| /opt | Optional software |
+| /usr | User applications |
+| /bin | Essential binaries |
+| /sbin | System binaries |
+| /dev | Device files |
+| /proc | Process information |
+| /sys | Kernel information |
+
+---
+
+### Follow-up
+
+Where are application logs stored?
+
+Answer:
+
+```text
+/var/log
+```
+
+---
+
+# Question 3
+
+## Difference Between Root and Home Directory
+
+### Answer
+
+Root Directory
+
+```text
+/
+```
+
+Top-most directory.
+
+---
+
+Root User Home
+
+```text
+/root
+```
+
+Home directory for root user.
+
+---
+
+Normal User Home
+
+```text
+/home/username
+```
+
+---
+
+# Question 4
+
+## pwd Command
+
+### Answer
+
+Displays current working directory.
+
+```bash
+pwd
+```
+
+---
+
+Follow-up
+
+Difference between:
+
+```bash
+pwd
+```
+
+and
+
+```bash
+echo $PWD
+```
+
+---
+
+# Question 5
+
+## ls Command
+
+### Answer
+
+Lists files and directories.
+
+Examples
+
+```bash
+ls
+
+ls -l
+
+ls -a
+
+ls -lh
+
+ls -ltr
+```
+
+---
+
+Important Options
+
+| Option | Meaning |
+|---------|----------|
+| -l | Long listing |
+| -a | Hidden files |
+| -h | Human readable |
+| -r | Reverse |
+| -t | Sort by time |
+
+---
+
+# Question 6
+
+## cd Command
+
+### Answer
+
+Changes directory.
+
+Examples
+
+```bash
+cd
+
+cd /
+
+cd ..
+
+cd ~
+
+cd -
+```
+
+---
+
+Follow-up
+
+Difference between
+
+```bash
+cd ~
+
+cd /
+```
+
+---
+
+# Question 7
+
+## mkdir Command
+
+### Answer
+
+Creates directories.
+
+```bash
+mkdir demo
+
+mkdir -p a/b/c
+```
+
+---
+
+Follow-up
+
+Purpose of
+
+```bash
+-p
+```
+
+---
+
+# Question 8
+
+## touch Command
+
+### Answer
+
+Creates empty files.
+
+```bash
+touch file.txt
+```
+
+Also updates timestamps.
+
+---
+
+# Question 9
+
+## cp Command
+
+### Answer
+
+Copies files/directories.
+
+```bash
+cp a.txt b.txt
+
+cp -r folder backup
+```
+
+---
+
+Follow-up
+
+Purpose of
+
+```bash
+-r
+```
+
+---
+
+# Question 10
+
+## mv Command
+
+### Answer
+
+Moves or renames files.
+
+```bash
+mv old.txt new.txt
+
+mv file.txt /tmp
+```
+
+---
+
+# Question 11
+
+## rm Command
+
+### Answer
+
+Deletes files.
+
+```bash
+rm file.txt
+```
+
+Delete directory
+
+```bash
+rm -r folder
+```
+
+Force delete
+
+```bash
+rm -rf folder
+```
+
+---
+
+⚠ Never use
+
+```bash
+rm -rf /
+```
+
+---
+
+Follow-up
+
+Difference between
+
+```bash
+rmdir
+
+rm -r
+```
+
+---
+
+# Question 12
+
+## cat Command
+
+### Answer
+
+Displays file contents.
+
+```bash
+cat file.txt
+```
+
+Concatenate files
+
+```bash
+cat file1 file2
+```
+
+---
+
+Follow-up
+
+Difference between
+
+```bash
+cat
+
+less
+
+more
+```
+
+---
+
+# Question 13
+
+## head Command
+
+### Answer
+
+Displays first 10 lines.
+
+```bash
+head file.txt
+
+head -20 file.txt
+```
+
+---
+
+# Question 14
+
+## tail Command
+
+### Answer
+
+Displays last 10 lines.
+
+```bash
+tail file.txt
+
+tail -20 file.txt
+```
+
+Live monitoring
+
+```bash
+tail -f logfile
+```
+
+---
+
+Production Example
+
+Monitor application logs.
+
+---
+
+# Question 15
+
+## grep Command
+
+### Answer
+
+Searches text.
+
+```bash
+grep ERROR app.log
+
+grep -i error app.log
+
+grep -v INFO app.log
+
+grep -n Exception app.log
+```
+
+---
+
+Production Example
+
+Find failed login attempts.
+
+```bash
+grep "Failed" /var/log/secure
+```
+
+---
+
+# Question 16
+
+## find Command
+
+### Answer
+
+Search files.
+
+```bash
+find / -name "*.log"
+
+find . -type f
+
+find . -size +100M
+```
+
+---
+
+Production Example
+
+Find files larger than 1 GB.
+
+```bash
+find / -size +1G
+```
+
+---
+
+# Question 17
+
+## locate Command
+
+### Answer
+
+Searches files quickly using an indexed database.
+
+```bash
+locate nginx.conf
+```
+
+Update database
+
+```bash
+updatedb
+```
+
+---
+
+Follow-up
+
+Difference between
+
+```bash
+find
+
+locate
+```
+
+---
+
+# Question 18
+
+## wc Command
+
+### Answer
+
+Counts
+
+- Lines
+- Words
+- Characters
+
+```bash
+wc file.txt
+
+wc -l file.txt
+```
+
+---
+
+# Question 19
+
+## sort Command
+
+### Answer
+
+Sorts data.
+
+```bash
+sort file.txt
+
+sort -n numbers.txt
+```
+
+---
+
+# Question 20
+
+## uniq Command
+
+### Answer
+
+Removes duplicate adjacent lines.
+
+```bash
+sort file.txt | uniq
+```
+
+Count duplicates
+
+```bash
+sort file.txt | uniq -c
+```
+
+---
+
+# Question 21
+
+## cut Command
+
+### Answer
+
+Extract specific fields.
+
+```bash
+cut -d: -f1 /etc/passwd
+```
+
+---
+
+# Question 22
+
+## awk Command
+
+### Answer
+
+Powerful text-processing tool.
+
+Example
+
+```bash
+awk '{print $1}' file.txt
+```
+
+Print usernames
+
+```bash
+awk -F: '{print $1}' /etc/passwd
+```
+
+---
+
+Production Example
+
+Display disk usage.
+
+```bash
+df -h | awk '{print $5}'
+```
+
+---
+
+# Question 23
+
+## sed Command
+
+### Answer
+
+Stream editor for text replacement.
+
+Replace text
+
+```bash
+sed 's/devops/DEVOPS/g' file.txt
+```
+
+---
+
+Production Example
+
+Update configuration values.
+
+---
+
+# Question 24
+
+## Pipe ( | )
+
+### Answer
+
+Pass output of one command as input to another.
+
+Example
+
+```bash
+ps -ef | grep java
+```
+
+---
+
+Production Example
+
+```bash
+kubectl get pods | grep CrashLoopBackOff
+```
+
+---
+
+# Question 25
+
+## Redirection
+
+Overwrite
+
+```bash
+>
+```
+
+Append
+
+```bash
+>>
+```
+
+Input
+
+```bash
+<
+```
+
+Error
+
+```bash
+2>
+```
+
+Both stdout & stderr
+
+```bash
+&>
+```
+
+---
+
+Example
+
+```bash
+ls > output.txt
+
+echo "DevOps" >> output.txt
+```
+
+---
+
+# Production Scenario 1
+
+Application logs are growing rapidly and consuming disk space.
+
+How would you investigate?
+
+### Sample Answer
+
+1. Check filesystem usage
+
+```bash
+df -h
+```
+
+2. Identify large directories
+
+```bash
+du -sh /var/*
+```
+
+3. Find large log files
+
+```bash
+find /var/log -type f -size +500M
+```
+
+4. Verify log rotation
+
+```bash
+logrotate -d /etc/logrotate.conf
+```
+
+5. Archive or rotate logs after confirming retention requirements.
+
+---
+
+# Production Scenario 2
+
+A developer reports that a configuration file cannot be found.
+
+Investigation
+
+```bash
+pwd
+
+find / -name "*.conf"
+
+locate application.conf
+```
+
+Verify permissions before making changes.
+
+---
+
+# Linux Interview Tips
+
+Interviewers usually ask follow-up questions after every command.
+
+Don't just explain what the command does.
+
+Also explain:
+
+- Real-world usage
+- Production examples
+- Common options
+- Common mistakes
+- Troubleshooting scenarios
+
+---
+
+# Summary
+
+This section covered the first 25 Linux interview questions, including Linux basics, filesystem structure, navigation commands, file operations, text processing, search utilities, pipes, redirection, and production scenarios. These questions form the foundation of Linux interviews for DevOps engineers.
+
+---
+
