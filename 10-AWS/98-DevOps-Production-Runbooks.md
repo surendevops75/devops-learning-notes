@@ -1969,3 +1969,1341 @@ This section covered production troubleshooting for Kubernetes and Amazon EKS, i
 
 ---
 
+# Docker & Container Production Runbooks
+
+---
+
+# Introduction
+
+Docker is the foundation for modern containerized applications. Production issues can impact deployments, Kubernetes workloads, CI/CD pipelines, and application availability.
+
+This runbook provides a structured approach to troubleshooting Docker and container runtime issues.
+
+---
+
+# Docker Troubleshooting Workflow
+
+```text
+Alert
+
+↓
+
+Check Docker Service
+
+↓
+
+Check Containers
+
+↓
+
+Review Logs
+
+↓
+
+Verify Images
+
+↓
+
+Check Storage
+
+↓
+
+Check Network
+
+↓
+
+Identify Root Cause
+
+↓
+
+Recover
+```
+
+---
+
+# Docker Daemon Not Running
+
+## Symptoms
+
+- Docker commands fail
+- Containers unavailable
+- CI/CD pipelines fail
+
+---
+
+## Investigation
+
+```bash
+systemctl status docker
+
+journalctl -u docker
+
+docker version
+
+docker info
+```
+
+---
+
+## Common Causes
+
+- Docker daemon stopped
+- Invalid daemon configuration
+- Low disk space
+- Permission issues
+- Container runtime failure
+
+---
+
+## Resolution
+
+```bash
+systemctl restart docker
+```
+
+Verify
+
+```bash
+docker ps
+```
+
+---
+
+# Docker Service Failed
+
+## Investigation
+
+```bash
+systemctl status docker
+
+journalctl -xe
+
+journalctl -u docker -f
+```
+
+---
+
+## Verify
+
+- daemon.json
+- Storage driver
+- Network configuration
+- Docker socket
+
+---
+
+# Container Not Starting
+
+## Symptoms
+
+```text
+Exited
+
+Created
+
+Restarting
+```
+
+---
+
+## Investigation
+
+```bash
+docker ps -a
+
+docker inspect <container>
+
+docker logs <container>
+```
+
+---
+
+## Common Causes
+
+- Invalid command
+- Missing environment variables
+- Volume mount failure
+- Permission issues
+- Missing dependencies
+
+---
+
+# Container Exits Immediately
+
+## Investigation
+
+```bash
+docker logs <container>
+
+docker inspect <container>
+```
+
+Review
+
+- Entry point
+- CMD
+- Exit code
+- Application startup
+
+---
+
+## Common Exit Codes
+
+| Exit Code | Meaning |
+|-----------|---------|
+| 0 | Successful exit |
+| 1 | General application error |
+| 125 | Docker execution error |
+| 126 | Command cannot execute |
+| 127 | Command not found |
+| 137 | Killed (OOM or SIGKILL) |
+| 143 | Graceful termination (SIGTERM) |
+
+---
+
+# Restart Loop
+
+## Symptoms
+
+```text
+Restarting
+
+Restart Count Increasing
+```
+
+---
+
+## Investigation
+
+```bash
+docker logs
+
+docker inspect
+
+docker events
+```
+
+Review
+
+- Application crash
+- Health checks
+- Startup scripts
+- Resource limits
+
+---
+
+# Image Pull Failure
+
+## Symptoms
+
+```text
+pull access denied
+
+image not found
+```
+
+---
+
+## Investigation
+
+```bash
+docker pull <image>
+
+docker login
+
+docker images
+```
+
+Verify
+
+- Image name
+- Image tag
+- Registry authentication
+- Network connectivity
+
+---
+
+# Amazon ECR Authentication
+
+Verify
+
+```bash
+aws ecr get-login-password
+
+docker login
+
+docker pull
+```
+
+---
+
+# Volume Mount Failure
+
+## Investigation
+
+```bash
+docker inspect
+
+docker volume ls
+
+docker volume inspect
+```
+
+Verify
+
+- Mount path
+- Permissions
+- Disk availability
+- Host path
+
+---
+
+# Bind Mount Issues
+
+Check
+
+```bash
+ls -ld
+
+mount
+
+df -h
+```
+
+---
+
+# Container Network Failure
+
+## Investigation
+
+```bash
+docker network ls
+
+docker network inspect
+
+docker inspect
+```
+
+---
+
+## Connectivity Tests
+
+```bash
+ping
+
+curl
+
+nslookup
+
+telnet
+```
+
+---
+
+# DNS Failure
+
+Verify
+
+```bash
+cat /etc/resolv.conf
+
+docker exec -it <container> nslookup google.com
+```
+
+---
+
+# High CPU Usage
+
+## Investigation
+
+```bash
+docker stats
+
+top
+
+htop
+```
+
+Review
+
+- Application loops
+- Infinite retries
+- Heavy workloads
+
+---
+
+# High Memory Usage
+
+## Investigation
+
+```bash
+docker stats
+
+free -h
+
+top
+```
+
+Review
+
+- Memory leaks
+- Cache growth
+- JVM heap usage
+
+---
+
+# OOMKilled Container
+
+## Symptoms
+
+```text
+Exit Code
+
+137
+```
+
+---
+
+## Investigation
+
+```bash
+docker inspect
+
+docker logs
+
+docker stats
+```
+
+---
+
+## Resolution
+
+- Increase memory
+- Optimize application
+- Tune JVM
+- Fix memory leak
+
+---
+
+# Disk Full
+
+## Investigation
+
+```bash
+df -h
+
+docker system df
+
+du -sh /var/lib/docker/*
+```
+
+---
+
+## Cleanup
+
+```bash
+docker image prune
+
+docker container prune
+
+docker volume prune
+
+docker network prune
+```
+
+---
+
+## Full Cleanup
+
+```bash
+docker system prune -a
+```
+
+Use with caution in production.
+
+---
+
+# Too Many Images
+
+Verify
+
+```bash
+docker images
+```
+
+Remove
+
+```bash
+docker rmi <image>
+```
+
+---
+
+# Too Many Containers
+
+Verify
+
+```bash
+docker ps -a
+```
+
+Remove
+
+```bash
+docker rm <container>
+```
+
+---
+
+# Docker Logs Too Large
+
+Verify
+
+```bash
+du -sh /var/lib/docker/containers/*
+```
+
+Configure
+
+```text
+Log Rotation
+
+max-size
+
+max-file
+```
+
+---
+
+# Docker Compose Failure
+
+## Investigation
+
+```bash
+docker compose ps
+
+docker compose logs
+
+docker compose config
+```
+
+---
+
+## Verify
+
+- Compose file
+- Environment variables
+- Network
+- Volumes
+
+---
+
+# Docker Socket Issues
+
+Verify
+
+```bash
+ls -l /var/run/docker.sock
+```
+
+Review
+
+- Ownership
+- Group permissions
+- Docker service
+
+---
+
+# Registry Authentication Failure
+
+Review
+
+- Username
+- Password
+- Token
+- Repository permissions
+
+---
+
+# Container Health Check Failure
+
+Inspect
+
+```bash
+docker inspect <container>
+```
+
+Review
+
+- Health command
+- Timeout
+- Interval
+- Retries
+
+---
+
+# Docker Storage Driver
+
+Verify
+
+```bash
+docker info
+```
+
+Review
+
+- overlay2
+- Storage utilization
+- Filesystem support
+
+---
+
+# Production Recovery Workflow
+
+```text
+Incident
+
+↓
+
+Docker Service
+
+↓
+
+Container Logs
+
+↓
+
+Images
+
+↓
+
+Network
+
+↓
+
+Storage
+
+↓
+
+Restart
+
+↓
+
+Validation
+
+↓
+
+Monitoring
+```
+
+---
+
+# Docker Monitoring
+
+Monitor
+
+- Container status
+- CPU usage
+- Memory usage
+- Disk usage
+- Restart count
+- Network traffic
+- Health checks
+
+---
+
+# Production Health Checklist
+
+Verify
+
+- Docker service running
+- Required containers running
+- Images available
+- Volumes mounted
+- Networks healthy
+- Disk space available
+- Logs reviewed
+- Monitoring healthy
+
+---
+
+# Common Docker Production Issues
+
+- Docker daemon stopped
+- Container restart loops
+- Image pull failures
+- ECR authentication failure
+- Volume mount issues
+- High CPU usage
+- Memory leaks
+- OOMKilled containers
+- Full disk
+- Network failures
+
+---
+
+# Best Practices
+
+- Keep Docker Engine updated with supported versions.
+- Configure log rotation to prevent disk exhaustion.
+- Use health checks for production containers.
+- Monitor CPU, memory, and restart counts continuously.
+- Clean unused images, containers, and volumes regularly.
+- Store images in secure registries such as Amazon ECR.
+- Avoid running containers as the root user.
+- Use resource limits for CPU and memory.
+- Back up persistent volumes before maintenance.
+- Test recovery procedures periodically.
+
+---
+
+# Summary
+
+This section covered Docker production troubleshooting, including daemon failures, container startup issues, restart loops, image pull failures, Amazon ECR authentication, volume mounts, networking, DNS, resource utilization, storage cleanup, Docker Compose issues, health checks, and recovery workflows. These runbooks provide a structured process for diagnosing and restoring containerized workloads in production environments.
+
+---
+
+# Terraform & Infrastructure as Code Production Runbooks
+
+---
+
+# Introduction
+
+Terraform production failures can impact infrastructure provisioning, deployments, networking, security, and cloud resources. This runbook provides structured troubleshooting and recovery procedures for Infrastructure as Code (IaC) incidents.
+
+---
+
+# Terraform Troubleshooting Workflow
+
+```text
+Alert
+
+↓
+
+Identify Command
+
+↓
+
+Review Error
+
+↓
+
+Check Authentication
+
+↓
+
+Check State
+
+↓
+
+Validate Configuration
+
+↓
+
+Recover
+
+↓
+
+Verify Infrastructure
+```
+
+---
+
+# Terraform Version Check
+
+```bash
+terraform version
+
+terraform providers
+```
+
+Verify
+
+- Terraform version
+- Provider versions
+- Module compatibility
+
+---
+
+# terraform init Failure
+
+## Symptoms
+
+```text
+Initialization failed
+```
+
+---
+
+## Investigation
+
+```bash
+terraform init
+
+terraform version
+```
+
+Verify
+
+- Backend configuration
+- Internet connectivity
+- Provider versions
+- Registry availability
+
+---
+
+## Common Causes
+
+- Invalid backend
+- Provider download failure
+- Authentication issue
+- Version mismatch
+- Corrupted plugin cache
+
+---
+
+## Resolution
+
+```bash
+terraform init -upgrade
+
+terraform init -reconfigure
+```
+
+---
+
+# Provider Authentication Failure
+
+## AWS Example
+
+Verify
+
+```bash
+aws sts get-caller-identity
+
+aws configure list
+```
+
+Review
+
+- IAM permissions
+- AWS profile
+- Environment variables
+- Temporary credentials
+
+---
+
+# terraform validate Failure
+
+## Investigation
+
+```bash
+terraform validate
+```
+
+Common Causes
+
+- Syntax errors
+- Invalid variables
+- Incorrect module references
+- Unsupported arguments
+
+---
+
+# terraform plan Failure
+
+## Investigation
+
+```bash
+terraform plan
+```
+
+Review
+
+- Variable values
+- Backend access
+- Provider authentication
+- State file
+- Resource dependencies
+
+---
+
+# terraform apply Failure
+
+## Investigation
+
+```bash
+terraform apply
+
+terraform show
+```
+
+Review
+
+- AWS API errors
+- Quota limits
+- Dependency failures
+- IAM permissions
+- Existing resources
+
+---
+
+# Common Apply Errors
+
+Examples
+
+- AccessDenied
+- ResourceAlreadyExists
+- LimitExceeded
+- InvalidParameter
+- DependencyViolation
+
+---
+
+# State File
+
+Purpose
+
+Stores the current infrastructure state managed by Terraform.
+
+---
+
+# State File Location
+
+Examples
+
+```text
+Local
+
+terraform.tfstate
+```
+
+```text
+Remote
+
+Amazon S3 Backend
+```
+
+---
+
+# Remote State Verification
+
+```bash
+aws s3 ls
+
+terraform state list
+```
+
+---
+
+# State Lock
+
+Purpose
+
+Prevent concurrent Terraform operations.
+
+---
+
+# Lock Detection
+
+Example
+
+```text
+Error acquiring state lock
+```
+
+---
+
+## Investigation
+
+Verify
+
+- Active Terraform jobs
+- CI/CD pipelines
+- Previous failed execution
+
+---
+
+## Resolution
+
+```bash
+terraform force-unlock LOCK_ID
+```
+
+Only unlock after confirming no active Terraform execution.
+
+---
+
+# State Drift
+
+Definition
+
+Infrastructure changed outside Terraform.
+
+---
+
+## Detection
+
+```bash
+terraform plan
+```
+
+Review unexpected changes.
+
+---
+
+## Resolution
+
+- Import resources
+- Update configuration
+- Remove manual changes
+
+---
+
+# Resource Import
+
+```bash
+terraform import
+```
+
+Use when
+
+- Existing AWS resources
+- Manual resource creation
+- State recovery
+
+---
+
+# State Recovery
+
+Commands
+
+```bash
+terraform state list
+
+terraform state show
+
+terraform state mv
+
+terraform state rm
+```
+
+---
+
+# Module Failure
+
+## Investigation
+
+```bash
+terraform get
+
+terraform providers
+
+terraform validate
+```
+
+Verify
+
+- Module source
+- Version
+- Variables
+- Outputs
+
+---
+
+# Variable Issues
+
+Verify
+
+```bash
+terraform.tfvars
+
+variables.tf
+```
+
+Common Problems
+
+- Missing values
+- Wrong types
+- Invalid defaults
+
+---
+
+# Backend Failure
+
+Review
+
+- S3 bucket
+- Bucket permissions
+- Backend configuration
+- Region
+- IAM access
+
+---
+
+# Resource Already Exists
+
+Example
+
+```text
+EntityAlreadyExists
+
+BucketAlreadyExists
+```
+
+---
+
+## Resolution
+
+- Import existing resource
+- Rename resource
+- Remove duplicate configuration
+
+---
+
+# Dependency Failure
+
+Review
+
+```text
+depends_on
+
+Resource References
+
+Output Values
+```
+
+---
+
+# Destroy Failure
+
+## Investigation
+
+```bash
+terraform destroy
+```
+
+Check
+
+- Resource dependencies
+- Protection settings
+- IAM permissions
+
+---
+
+# Output Verification
+
+```bash
+terraform output
+
+terraform show
+```
+
+Verify infrastructure after successful deployment.
+
+---
+
+# Production Rollback
+
+Workflow
+
+```text
+Failed Apply
+
+↓
+
+Identify Resources
+
+↓
+
+Rollback Configuration
+
+↓
+
+terraform apply
+
+↓
+
+Validate Infrastructure
+```
+
+---
+
+# Safe Rollback Strategy
+
+Never edit the state file manually unless absolutely necessary.
+
+Preferred
+
+- Restore previous code
+- Review plan
+- Apply changes
+- Validate resources
+
+---
+
+# Infrastructure Verification
+
+Verify
+
+- EC2
+- VPC
+- Security Groups
+- EKS
+- ALB
+- RDS
+- IAM
+- Route53
+
+---
+
+# Drift Prevention
+
+Recommendations
+
+- Prevent manual changes
+- Restrict console access
+- Use CI/CD deployments
+- Enable change approvals
+
+---
+
+# CI/CD Pipeline Failure
+
+Review
+
+- Backend access
+- AWS credentials
+- Terraform version
+- Variables
+- Workspace
+- State lock
+
+---
+
+# Workspace Issues
+
+Verify
+
+```bash
+terraform workspace list
+
+terraform workspace show
+```
+
+Ensure correct workspace is selected.
+
+---
+
+# Debug Logging
+
+Enable
+
+```bash
+export TF_LOG=DEBUG
+
+terraform apply
+```
+
+Disable after troubleshooting.
+
+---
+
+# Backup Strategy
+
+Back up
+
+- Terraform code
+- Remote state
+- Variable files
+- Module versions
+
+---
+
+# Production Recovery Workflow
+
+```text
+Incident
+
+↓
+
+Terraform Error
+
+↓
+
+Review State
+
+↓
+
+Review Plan
+
+↓
+
+Fix Configuration
+
+↓
+
+Apply
+
+↓
+
+Verify AWS Resources
+
+↓
+
+Monitor
+```
+
+---
+
+# Terraform Health Checklist
+
+Verify
+
+- Backend accessible
+- State healthy
+- No active locks
+- Provider authenticated
+- Variables correct
+- Modules available
+- Plan reviewed
+- Infrastructure validated
+
+---
+
+# Common Terraform Production Issues
+
+- init failure
+- plan failure
+- apply failure
+- state lock
+- state drift
+- authentication failure
+- backend failure
+- module errors
+- variable issues
+- provider version mismatch
+
+---
+
+# Best Practices
+
+- Store state remotely using an Amazon S3 backend.
+- Enable state locking to prevent concurrent changes.
+- Review every `terraform plan` before applying.
+- Never modify the state file manually unless absolutely necessary.
+- Version-control Terraform modules and provider versions.
+- Restrict manual infrastructure changes outside Terraform.
+- Use CI/CD pipelines for infrastructure deployments.
+- Regularly back up Terraform state.
+- Validate infrastructure after every apply operation.
+- Document recovery procedures and update runbooks after incidents.
+
+---
+
+# Summary
+
+This section covered Terraform production troubleshooting, including initialization failures, provider authentication, plan and apply failures, remote state management, state locking, drift detection, module issues, backend failures, rollback strategies, and production recovery workflows. These runbooks provide a structured process for safely managing and recovering Infrastructure as Code deployments in production environments.
+
+---
+
