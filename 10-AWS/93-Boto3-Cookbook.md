@@ -3389,6 +3389,7 @@ except ClientError as error:
 
 # Summary
 
-This section covered Boto3 automation for Amazon RDS, Aurora, DynamoDB, ElastiCache, EFS, FSx, AWS Backup, DataSync, Storage Gateway, and Snow Family. These examp
+This section covered Boto3 automation for Amazon RDS, Aurora, DynamoDB, ElastiCache, EFS, FSx, AWS Backup, DataSync, Storage Gateway, and Snow Family. These examples demonstrate production-ready automation for database provisioning, storage management, backup, migration, and recovery using Python.
 
-les demonstrate production-ready automation for database provisioning, storage management, backup, migration, and recovery using Pyt
+---
+
