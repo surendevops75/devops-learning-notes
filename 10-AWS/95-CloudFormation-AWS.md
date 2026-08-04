@@ -5833,3 +5833,651 @@ This section covered CloudFormation templates for Amazon Athena, AWS Glue, Amazo
 
 ---
 
+# Nested Stacks
+
+---
+
+# Parent Stack
+
+```yaml
+Resources:
+
+  NetworkStack:
+
+    Type: AWS::CloudFormation::Stack
+
+    Properties:
+
+      TemplateURL: https://s3.amazonaws.com/templates/network.yaml
+
+      Parameters:
+
+        Environment: production
+```
+
+---
+
+# Nested Stack Output
+
+```yaml
+Outputs:
+
+  VPCId:
+
+    Value: !GetAtt NetworkStack.Outputs.VPCId
+```
+
+---
+
+# Multiple Nested Stacks
+
+```yaml
+Resources:
+
+  Network:
+
+    Type: AWS::CloudFormation::Stack
+
+  Security:
+
+    Type: AWS::CloudFormation::Stack
+
+  Compute:
+
+    Type: AWS::CloudFormation::Stack
+```
+
+---
+
+# Cross-Stack References
+
+---
+
+# Export
+
+```yaml
+Outputs:
+
+  VPCId:
+
+    Value: !Ref VPC
+
+    Export:
+
+      Name: Production-VPC
+```
+
+---
+
+# Import
+
+```yaml
+VpcId:
+
+  Fn::ImportValue: Production-VPC
+```
+
+---
+
+# StackSets
+
+---
+
+# StackSet
+
+```yaml
+Resources:
+
+  SecurityBaseline:
+
+    Type: AWS::CloudFormation::StackSet
+
+    Properties:
+
+      StackSetName: SecurityBaseline
+
+      PermissionModel: SERVICE_MANAGED
+```
+
+---
+
+# StackSet Instance
+
+```yaml
+Resources:
+
+  ProductionStack:
+
+    Type: AWS::CloudFormation::StackInstance
+
+    Properties:
+
+      StackSetName: !Ref SecurityBaseline
+
+      Region: ap-south-1
+```
+
+---
+
+# Change Sets
+
+---
+
+# Create Change Set
+
+```bash
+aws cloudformation create-change-set \
+--stack-name production \
+--change-set-name update-v1 \
+--template-body file://template.yaml
+```
+
+---
+
+# Describe Change Set
+
+```bash
+aws cloudformation describe-change-set \
+--stack-name production \
+--change-set-name update-v1
+```
+
+---
+
+# Execute Change Set
+
+```bash
+aws cloudformation execute-change-set \
+--change-set-name update-v1
+```
+
+---
+
+# Delete Change Set
+
+```bash
+aws cloudformation delete-change-set \
+--stack-name production \
+--change-set-name update-v1
+```
+
+---
+
+# Drift Detection
+
+---
+
+# Detect Drift
+
+```bash
+aws cloudformation detect-stack-drift \
+--stack-name production
+```
+
+---
+
+# Describe Drift
+
+```bash
+aws cloudformation describe-stack-resource-drifts \
+--stack-name production
+```
+
+---
+
+# Stack Status
+
+```bash
+aws cloudformation describe-stacks \
+--stack-name production
+```
+
+---
+
+# CloudFormation Macros
+
+---
+
+# Macro
+
+```yaml
+Resources:
+
+  TransformMacro:
+
+    Type: AWS::CloudFormation::Macro
+
+    Properties:
+
+      Name: CompanyMacro
+
+      FunctionName: MacroFunction
+```
+
+---
+
+# Transform
+
+```yaml
+Transform:
+
+  - CompanyMacro
+```
+
+---
+
+# AWS SAM Transform
+
+```yaml
+Transform: AWS::Serverless-2016-10-31
+```
+
+---
+
+# Include Transform
+
+```yaml
+Transform:
+
+  Name: AWS::Include
+
+  Parameters:
+
+    Location: s3://templates/common.yaml
+```
+
+---
+
+# Custom Resources
+
+---
+
+# Lambda-backed Custom Resource
+
+```yaml
+Resources:
+
+  CustomResource:
+
+    Type: Custom::Initialize
+
+    Properties:
+
+      ServiceToken: !GetAtt CustomLambda.Arn
+```
+
+---
+
+# Service Token
+
+```yaml
+ServiceToken:
+
+  !GetAtt LambdaFunction.Arn
+```
+
+---
+
+# Wait Condition
+
+---
+
+# Wait Condition Handle
+
+```yaml
+Resources:
+
+  WaitHandle:
+
+    Type: AWS::CloudFormation::WaitConditionHandle
+```
+
+---
+
+# Wait Condition
+
+```yaml
+Resources:
+
+  WaitCondition:
+
+    Type: AWS::CloudFormation::WaitCondition
+
+    Properties:
+
+      Handle: !Ref WaitHandle
+
+      Timeout: 600
+```
+
+---
+
+# Resource Import
+
+---
+
+# Import Existing Resource
+
+```bash
+aws cloudformation create-change-set \
+--change-set-type IMPORT
+```
+
+---
+
+# Stack Policy
+
+---
+
+# Stack Policy Body
+
+```json
+{
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": "Update:*",
+      "Principal": "*",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+---
+
+# Apply Stack Policy
+
+```bash
+aws cloudformation set-stack-policy \
+--stack-name production
+```
+
+---
+
+# Rollback Triggers
+
+```yaml
+RollbackConfiguration:
+
+  MonitoringTimeInMinutes: 15
+```
+
+---
+
+# Rollback Alarm
+
+```yaml
+RollbackTriggers:
+
+  - Arn: arn:aws:cloudwatch:alarm
+```
+
+---
+
+# Termination Protection
+
+```bash
+aws cloudformation update-termination-protection \
+--enable-termination-protection
+```
+
+---
+
+# Dynamic References
+
+---
+
+# Secrets Manager
+
+```yaml
+MasterUserPassword:
+
+  "{{resolve:secretsmanager:db-secret:SecretString:password}}"
+```
+
+---
+
+# Parameter Store
+
+```yaml
+ImageId:
+
+  "{{resolve:ssm:/ami/latest}}"
+```
+
+---
+
+# Metadata
+
+```yaml
+Metadata:
+
+  AWS::CloudFormation::Init: {}
+```
+
+---
+
+# cfn-init
+
+```bash
+/opt/aws/bin/cfn-init
+```
+
+---
+
+# cfn-signal
+
+```bash
+/opt/aws/bin/cfn-signal
+```
+
+---
+
+# cfn-hup
+
+```bash
+/opt/aws/bin/cfn-hup
+```
+
+---
+
+# Creation Policy
+
+```yaml
+CreationPolicy:
+
+  ResourceSignal:
+
+    Count: 1
+
+    Timeout: PT15M
+```
+
+---
+
+# Update Policy
+
+```yaml
+UpdatePolicy:
+
+  AutoScalingRollingUpdate:
+
+    MinInstancesInService: 2
+```
+
+---
+
+# Advanced Conditions
+
+```yaml
+Conditions:
+
+  CreateProduction:
+
+    !And
+
+      - !Equals [!Ref Environment, prod]
+
+      - !Equals [!Ref EnableFeature, true]
+```
+
+---
+
+# Advanced Intrinsic Functions
+
+---
+
+# If
+
+```yaml
+!If
+
+  - IsProduction
+
+  - t3.large
+
+  - t3.micro
+```
+
+---
+
+# Equals
+
+```yaml
+!Equals
+
+  - !Ref Environment
+
+  - prod
+```
+
+---
+
+# Not
+
+```yaml
+!Not
+
+  - !Equals [!Ref Environment, dev]
+```
+
+---
+
+# Or
+
+```yaml
+!Or
+
+  - !Equals [!Ref Environment, qa]
+
+  - !Equals [!Ref Environment, prod]
+```
+
+---
+
+# And
+
+```yaml
+!And
+
+  - !Condition IsProduction
+
+  - !Condition EnableMonitoring
+```
+
+---
+
+# FindInMap
+
+```yaml
+!FindInMap
+
+  - RegionMap
+
+  - !Ref AWS::Region
+
+  - AMI
+```
+
+---
+
+# Split
+
+```yaml
+!Split
+
+  - ","
+
+  - !Ref SubnetList
+```
+
+---
+
+# Select
+
+```yaml
+!Select
+
+  - 0
+
+  - !Ref Subnets
+```
+
+---
+
+# Join
+
+```yaml
+!Join
+
+  - "-"
+
+  - [prod, app]
+```
+
+---
+
+# Sub
+
+```yaml
+!Sub
+
+  arn:aws:s3:::${Bucket}
+```
+
+---
+
+# Base64
+
+```yaml
+!Base64 |
+
+  #!/bin/bash
+
+  yum update -y
+```
+
+---
+
+# Best Practices
+
+- Use Nested Stacks for reusable infrastructure.
+- Export shared resources using Cross-Stack References.
+- Review Change Sets before every production deployment.
+- Regularly perform Drift Detection.
+- Store secrets using Dynamic References instead of plaintext.
+- Use Stack Policies to protect critical resources.
+- Enable Termination Protection for production stacks.
+- Use Rollback Triggers with CloudWatch alarms.
+- Use `cfn-init`, `cfn-signal`, and `cfn-hup` for EC2 bootstrapping.
+- Keep templates modular and version-controlled.
+
+---
+
+# Summary
+
+This section covered advanced CloudFormation capabilities including Nested Stacks, Cross-Stack References, StackSets, Change Sets, Drift Detection, Macros, Custom Resources, Wait Conditions, Resource Import, Stack Policies, Dynamic References, CloudFormation helper scripts, advanced intrinsic functions, and enterprise deployment patterns. These features enable scalable, maintainable, and production-ready CloudFormation deployments.
+
+---
+
