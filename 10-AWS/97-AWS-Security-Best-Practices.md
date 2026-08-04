@@ -2969,3 +2969,594 @@ This section covered Amazon GuardDuty, Amazon Inspector, AWS Security Hub, Amazo
 
 ---
 
+# DevSecOps
+
+---
+
+# Introduction
+
+DevSecOps integrates security into every phase of the Software Development Lifecycle (SDLC), ensuring security is automated and continuously enforced throughout development, testing, deployment, and operations.
+
+Goals
+
+- Shift security left
+- Automate security testing
+- Secure software supply chain
+- Continuous compliance
+- Rapid vulnerability remediation
+
+---
+
+# DevSecOps Lifecycle
+
+```text
+Plan
+
+↓
+
+Code
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Scan
+
+↓
+
+Deploy
+
+↓
+
+Monitor
+
+↓
+
+Respond
+```
+
+---
+
+# Secure SDLC
+
+Security Activities
+
+- Threat Modeling
+- Secure Coding
+- Code Review
+- Dependency Scanning
+- Container Scanning
+- Infrastructure Scanning
+- Runtime Monitoring
+
+---
+
+# CI/CD Security Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+SAST
+
+↓
+
+Dependency Scan
+
+↓
+
+Container Scan
+
+↓
+
+Infrastructure Scan
+
+↓
+
+Approval
+
+↓
+
+Deploy
+
+↓
+
+Runtime Monitoring
+```
+
+---
+
+# Source Code Security
+
+Best Practices
+
+- Branch protection
+- Mandatory pull requests
+- Code reviews
+- Signed commits
+- Secret scanning
+- Repository permissions
+
+---
+
+# Jenkins Security
+
+Best Practices
+
+- Enable authentication
+- Use Role-Based Authorization
+- Disable anonymous access
+- Secure agent communication
+- Store credentials securely
+- Update plugins regularly
+
+---
+
+# Jenkins Credentials
+
+Store
+
+- AWS Credentials
+- Git Credentials
+- SSH Keys
+- API Tokens
+- Database Passwords
+
+Never hardcode credentials inside Jenkinsfiles.
+
+---
+
+# GitHub Actions Security
+
+Best Practices
+
+- Use GitHub Secrets
+- Pin action versions
+- Restrict repository permissions
+- Protect environments
+- Require approvals for production deployments
+
+---
+
+# GitLab CI/CD Security
+
+Best Practices
+
+- Protected branches
+- Protected variables
+- Secret masking
+- Environment approvals
+- Pipeline permissions
+
+---
+
+# Secrets Management
+
+Preferred Sources
+
+```text
+AWS Secrets Manager
+
+↓
+
+Systems Manager Parameter Store
+
+↓
+
+IAM Roles
+```
+
+Avoid
+
+- Hardcoded passwords
+- Plaintext configuration files
+- Secrets stored in Git repositories
+
+---
+
+# Static Application Security Testing (SAST)
+
+Purpose
+
+Analyze source code for vulnerabilities before deployment.
+
+Examples
+
+- SQL Injection
+- Command Injection
+- Hardcoded Secrets
+- Insecure APIs
+
+---
+
+# Software Composition Analysis (SCA)
+
+Purpose
+
+Identify vulnerable third-party libraries and dependencies.
+
+Checks
+
+- Known CVEs
+- License compliance
+- Outdated packages
+
+---
+
+# Dynamic Application Security Testing (DAST)
+
+Purpose
+
+Test running applications for security vulnerabilities.
+
+Examples
+
+- Authentication flaws
+- Session issues
+- Input validation
+- Cross-Site Scripting
+
+---
+
+# Infrastructure as Code (IaC) Security
+
+Scan
+
+- CloudFormation
+- Terraform
+- Kubernetes Manifests
+
+Checks
+
+- Public resources
+- Missing encryption
+- Weak IAM policies
+- Security Group exposure
+
+---
+
+# Amazon Elastic Container Registry (ECR)
+
+Security Features
+
+- Private repositories
+- Image scanning
+- IAM integration
+- Encryption
+- Lifecycle policies
+
+---
+
+# Container Image Scanning
+
+Scan for
+
+- Operating System vulnerabilities
+- Application vulnerabilities
+- Known CVEs
+- Malware indicators
+
+Workflow
+
+```text
+Build Image
+
+↓
+
+Push to ECR
+
+↓
+
+Image Scan
+
+↓
+
+Review Findings
+
+↓
+
+Deploy
+```
+
+---
+
+# Container Image Best Practices
+
+- Use minimal base images.
+- Keep images updated.
+- Remove unnecessary packages.
+- Avoid running as root.
+- Sign container images where applicable.
+
+---
+
+# Kubernetes (Amazon EKS) Security
+
+Security Areas
+
+- Cluster
+- Nodes
+- Pods
+- Networking
+- IAM
+- Secrets
+
+---
+
+# IAM Roles for Service Accounts (IRSA)
+
+Purpose
+
+Assign IAM permissions directly to Kubernetes Service Accounts.
+
+Benefits
+
+- Least privilege
+- No static AWS credentials
+- Pod-level permissions
+
+Workflow
+
+```text
+Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+AWS API
+```
+
+---
+
+# Kubernetes RBAC
+
+Use Role-Based Access Control to restrict
+
+- Users
+- Groups
+- Service Accounts
+
+Follow least-privilege principles.
+
+---
+
+# Pod Security
+
+Recommendations
+
+- Non-root containers
+- Read-only root filesystem
+- Drop unnecessary Linux capabilities
+- Resource limits
+- Liveness and readiness probes
+
+---
+
+# Kubernetes Network Policies
+
+Purpose
+
+Control communication between Pods.
+
+Benefits
+
+- Micro-segmentation
+- East-west traffic control
+- Reduced attack surface
+
+---
+
+# Admission Control
+
+Examples
+
+- Image validation
+- Security policy enforcement
+- Namespace restrictions
+- Label validation
+
+---
+
+# Runtime Security
+
+Monitor
+
+- Unexpected processes
+- Privilege escalation
+- File modifications
+- Network anomalies
+- Container escapes
+
+---
+
+# Supply Chain Security
+
+Protect
+
+- Source code
+- Build pipeline
+- Dependencies
+- Container images
+- Deployment artifacts
+
+---
+
+# Artifact Security
+
+Store securely
+
+- Container Images
+- Build Artifacts
+- Packages
+- Helm Charts
+
+Control access using IAM and repository permissions.
+
+---
+
+# Secure Deployment Workflow
+
+```text
+Code
+
+↓
+
+SAST
+
+↓
+
+Dependency Scan
+
+↓
+
+Container Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Approval
+
+↓
+
+Production
+```
+
+---
+
+# Security Gates
+
+Require successful completion of
+
+- Unit Tests
+- SAST
+- Dependency Scan
+- Container Scan
+- IaC Scan
+- Policy Validation
+
+before deployment.
+
+---
+
+# Runtime Monitoring
+
+Monitor
+
+- GuardDuty
+- Security Hub
+- Inspector
+- CloudTrail
+- CloudWatch
+- EKS Audit Logs
+
+---
+
+# Common DevSecOps Mistakes
+
+- Hardcoded credentials
+- Skipping vulnerability scans
+- Running containers as root
+- Unscanned container images
+- Excessive IAM permissions
+- Public container registries
+- Ignoring CVEs
+- Unprotected CI/CD pipelines
+- No security approvals
+- Missing runtime monitoring
+
+---
+
+# DevSecOps Checklist
+
+## Source Code
+
+- Branch protection
+- Pull request reviews
+- Secret scanning
+
+---
+
+## CI/CD
+
+- Secure credentials
+- Signed artifacts
+- Security gates
+- Environment approvals
+
+---
+
+## Containers
+
+- Image scanning
+- Minimal images
+- Non-root containers
+- Image lifecycle policies
+
+---
+
+## Kubernetes
+
+- IRSA
+- RBAC
+- Network Policies
+- Pod Security
+- Audit Logging
+
+---
+
+## Monitoring
+
+- GuardDuty
+- Inspector
+- Security Hub
+- CloudTrail
+- CloudWatch
+
+---
+
+# Best Practices
+
+- Shift security left by integrating security checks early in the SDLC.
+- Automate SAST, SCA, DAST, and IaC scanning in CI/CD pipelines.
+- Store secrets in AWS Secrets Manager or Parameter Store.
+- Use IAM Roles for Service Accounts (IRSA) in Amazon EKS.
+- Scan every container image before deployment.
+- Enforce Kubernetes RBAC and Network Policies.
+- Protect CI/CD pipelines with approvals and least-privilege access.
+- Continuously monitor runtime environments for suspicious activity.
+- Secure the software supply chain from source code to production.
+- Treat security as a continuous process rather than a final deployment step.
+
+---
+
+# Summary
+
+This section covered DevSecOps principles, secure SDLC, CI/CD security, Jenkins, GitHub Actions, GitLab CI/CD, secrets management, SAST, SCA, DAST, Infrastructure as Code security, Amazon ECR, container image scanning, Kubernetes security, IAM Roles for Service Accounts (IRSA), runtime security, supply chain protection, and production DevSecOps best practices.
+
+---
+
