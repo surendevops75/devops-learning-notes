@@ -1704,3 +1704,629 @@ This section covered AWS KMS, Customer Managed Keys, AWS Managed Keys, envelope 
 
 ---
 
+# Network Security
+
+---
+
+# Introduction
+
+Network security in AWS focuses on protecting workloads using layered controls, segmentation, private networking, traffic inspection, and edge protection.
+
+Goals
+
+- Minimize attack surface
+- Restrict unauthorized access
+- Secure east-west traffic
+- Secure north-south traffic
+- Enable Zero Trust networking
+
+---
+
+# Amazon VPC
+
+Purpose
+
+Provides logically isolated virtual networks.
+
+Components
+
+- VPC
+- Subnets
+- Route Tables
+- Internet Gateway
+- NAT Gateway
+- Security Groups
+- Network ACLs
+- VPC Endpoints
+
+---
+
+# VPC Design
+
+Recommended
+
+```text
+Internet
+
+↓
+
+ALB
+
+↓
+
+Public Subnets
+
+↓
+
+Private Application Subnets
+
+↓
+
+Private Database Subnets
+```
+
+---
+
+# Public vs Private Subnets
+
+Public
+
+- ALB
+- NAT Gateway
+- Bastion Host (if required)
+
+Private
+
+- EC2
+- ECS
+- EKS
+- RDS
+- ElastiCache
+
+---
+
+# Network Segmentation
+
+Separate
+
+```text
+Production
+
+↓
+
+Staging
+
+↓
+
+Development
+
+↓
+
+Management
+```
+
+Never mix production workloads with development resources.
+
+---
+
+# Security Groups
+
+Purpose
+
+Stateful virtual firewall.
+
+Characteristics
+
+- Instance level
+- Allow rules only
+- Stateful
+- Default deny inbound
+
+---
+
+# Security Group Best Practices
+
+- Allow minimum required ports.
+- Restrict SSH access.
+- Use Security Group references.
+- Avoid 0.0.0.0/0 where unnecessary.
+- Review rules regularly.
+
+---
+
+# Example Security Groups
+
+Web Tier
+
+```text
+HTTP
+
+HTTPS
+```
+
+---
+
+Application Tier
+
+```text
+Only ALB Security Group
+```
+
+---
+
+Database Tier
+
+```text
+Only Application Security Group
+```
+
+---
+
+# Network ACLs
+
+Purpose
+
+Subnet-level firewall.
+
+Characteristics
+
+- Stateless
+- Allow and Deny rules
+- Ordered evaluation
+
+---
+
+# Security Groups vs NACLs
+
+| Feature | Security Group | Network ACL |
+|----------|----------------|-------------|
+| Level | Instance | Subnet |
+| Stateful | Yes | No |
+| Allow Rules | Yes | Yes |
+| Deny Rules | No | Yes |
+| Rule Order | No | Yes |
+
+---
+
+# Route Tables
+
+Best Practices
+
+- Separate public/private routing.
+- Avoid unnecessary internet access.
+- Use Transit Gateway for large environments.
+
+---
+
+# Internet Gateway
+
+Purpose
+
+Provides internet connectivity for public subnets.
+
+Best Practice
+
+Only attach to public route tables.
+
+---
+
+# NAT Gateway
+
+Purpose
+
+Allows private subnets to access the internet without accepting inbound internet traffic.
+
+Best Practices
+
+- Deploy in public subnets.
+- Use one per Availability Zone for production.
+- Reduce traffic using VPC Endpoints.
+
+---
+
+# VPC Endpoints
+
+Purpose
+
+Access AWS services privately without traversing the public internet.
+
+Benefits
+
+- Improved security
+- Lower NAT Gateway costs
+- Private connectivity
+
+---
+
+# Gateway Endpoints
+
+Supports
+
+- Amazon S3
+- Amazon DynamoDB
+
+---
+
+# Interface Endpoints (AWS PrivateLink)
+
+Supports
+
+- Systems Manager
+- Secrets Manager
+- CloudWatch
+- ECR
+- KMS
+- Hundreds of AWS and partner services
+
+---
+
+# AWS PrivateLink
+
+Purpose
+
+Secure private connectivity between VPCs, AWS services, and SaaS providers without exposing traffic to the public internet.
+
+---
+
+# Bastion Host
+
+Purpose
+
+Secure administrative access to private EC2 instances.
+
+Recommended Architecture
+
+```text
+Internet
+
+↓
+
+Bastion Host
+
+↓
+
+Private EC2
+```
+
+---
+
+# AWS Systems Manager Session Manager
+
+Recommended Alternative
+
+```text
+Administrator
+
+↓
+
+IAM Authentication
+
+↓
+
+Session Manager
+
+↓
+
+Private EC2
+```
+
+Benefits
+
+- No SSH port required
+- No Bastion Host
+- Full audit logging
+- IAM-based access
+
+---
+
+# AWS Network Firewall
+
+Purpose
+
+Managed network firewall for VPC traffic inspection.
+
+Features
+
+- Stateful inspection
+- Stateless inspection
+- Domain filtering
+- Threat prevention
+
+---
+
+# Firewall Policies
+
+Examples
+
+- Block malicious domains
+- Restrict outbound internet
+- Allow approved applications only
+
+---
+
+# AWS WAF
+
+Purpose
+
+Protects web applications from common web attacks.
+
+Protects
+
+- ALB
+- API Gateway
+- CloudFront
+- App Runner
+
+---
+
+# WAF Managed Rules
+
+Examples
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Known Bad Inputs
+- Anonymous IP Lists
+- Bot Protection
+
+---
+
+# Rate Limiting
+
+Example
+
+```text
+1000 Requests
+
+↓
+
+5 Minutes
+
+↓
+
+Block Client
+```
+
+---
+
+# AWS Shield
+
+## Shield Standard
+
+Included automatically.
+
+Protects against common DDoS attacks.
+
+---
+
+## Shield Advanced
+
+Provides
+
+- Advanced DDoS protection
+- 24×7 DDoS Response Team (DRT)
+- Cost protection
+- Advanced visibility
+
+Recommended for internet-facing production workloads.
+
+---
+
+# AWS Firewall Manager
+
+Purpose
+
+Centralized security policy management across AWS Organizations.
+
+Manage
+
+- WAF
+- Shield
+- Security Groups
+- Network Firewall
+
+---
+
+# AWS Transit Gateway
+
+Purpose
+
+Simplifies connectivity between
+
+- VPCs
+- VPNs
+- Direct Connect
+
+Benefits
+
+- Centralized routing
+- Simplified architecture
+- Better scalability
+
+---
+
+# VPN Security
+
+Options
+
+- Site-to-Site VPN
+- Client VPN
+
+Best Practices
+
+- Strong encryption
+- Certificate authentication
+- MFA for Client VPN
+
+---
+
+# Zero Trust Networking
+
+Principles
+
+- Never trust
+- Always verify
+- Least privilege
+- Continuous validation
+- Micro-segmentation
+
+---
+
+# Zero Trust Workflow
+
+```text
+User
+
+↓
+
+Identity Verification
+
+↓
+
+MFA
+
+↓
+
+Authorization
+
+↓
+
+Resource Access
+
+↓
+
+Continuous Monitoring
+```
+
+---
+
+# Secure Administrative Access
+
+Recommended
+
+```text
+IAM Identity Center
+
+↓
+
+MFA
+
+↓
+
+Session Manager
+
+↓
+
+Private EC2
+```
+
+Avoid exposing SSH (22) and RDP (3389) to the internet.
+
+---
+
+# Network Monitoring
+
+Monitor
+
+- VPC Flow Logs
+- CloudTrail
+- GuardDuty
+- Security Hub
+- Network Firewall Logs
+
+---
+
+# VPC Flow Logs
+
+Capture
+
+- Accepted traffic
+- Rejected traffic
+- Network troubleshooting
+- Security investigations
+
+---
+
+# Enterprise Network Architecture
+
+```text
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Shield Advanced
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Application Subnets
+
+↓
+
+Private Database Subnets
+
+↓
+
+VPC Endpoints
+```
+
+---
+
+# Network Security Checklist
+
+- Private subnets for workloads
+- Least-privilege Security Groups
+- NACLs configured where required
+- WAF protecting internet-facing applications
+- Shield enabled
+- Session Manager for administration
+- VPC Flow Logs enabled
+- Network Firewall deployed (where required)
+- VPC Endpoints for AWS services
+- Zero Trust principles implemented
+
+---
+
+# Common Network Security Mistakes
+
+- SSH open to 0.0.0.0/0
+- Public databases
+- Overly permissive Security Groups
+- Missing WAF
+- No Flow Logs
+- No VPC Endpoints
+- Shared Security Groups
+- Internet access from private workloads
+- Ignoring east-west traffic
+- No network segmentation
+
+---
+
+# Best Practices
+
+- Deploy workloads in private subnets whenever possible.
+- Use Security Groups with least-privilege rules.
+- Use Session Manager instead of Bastion Hosts where possible.
+- Protect internet-facing applications with AWS WAF.
+- Enable Shield Advanced for critical production applications.
+- Use VPC Endpoints to eliminate unnecessary internet traffic.
+- Enable VPC Flow Logs for monitoring and investigations.
+- Use AWS Firewall Manager for centralized policy enforcement.
+- Segment environments using separate VPCs or subnets.
+- Apply Zero Trust principles across all network access.
+
+---
+
+# Summary
+
+This section covered VPC security, Security Groups, Network ACLs, VPC Endpoints, AWS PrivateLink, NAT Gateways, Bastion Hosts, Session Manager, AWS Network Firewall, AWS WAF, AWS Shield, Firewall Manager, Transit Gateway, VPN security, Zero Trust networking, VPC Flow Logs, and enterprise network security best practices. These controls form the foundation of a secure AWS networking architecture.
+
+---
+
