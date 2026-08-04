@@ -3393,3 +3393,808 @@ This section covered Boto3 automation for Amazon RDS, Aurora, DynamoDB, ElastiCa
 
 ---
 
+# Amazon ECR
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+ecr = boto3.client("ecr")
+```
+
+---
+
+# List Repositories
+
+```python
+response = ecr.describe_repositories()
+
+for repo in response["repositories"]:
+    print(repo["repositoryName"])
+```
+
+---
+
+# Create Repository
+
+```python
+response = ecr.create_repository(
+    repositoryName="my-app"
+)
+
+print(response["repository"]["repositoryUri"])
+```
+
+---
+
+# Describe Repository
+
+```python
+response = ecr.describe_repositories(
+    repositoryNames=["my-app"]
+)
+
+print(response["repositories"][0])
+```
+
+---
+
+# Delete Repository
+
+```python
+ecr.delete_repository(
+    repositoryName="my-app",
+    force=True
+)
+```
+
+---
+
+# List Images
+
+```python
+response = ecr.list_images(
+    repositoryName="my-app"
+)
+
+print(response["imageIds"])
+```
+
+---
+
+# Describe Images
+
+```python
+response = ecr.describe_images(
+    repositoryName="my-app"
+)
+
+for image in response["imageDetails"]:
+    print(image["imageTags"])
+```
+
+---
+
+# Start Image Scan
+
+```python
+ecr.start_image_scan(
+    repositoryName="my-app",
+    imageId={
+        "imageTag": "latest"
+    }
+)
+```
+
+---
+
+# Get Scan Findings
+
+```python
+response = ecr.describe_image_scan_findings(
+    repositoryName="my-app",
+    imageId={
+        "imageTag": "latest"
+    }
+)
+
+print(response["imageScanFindings"])
+```
+
+---
+
+# Amazon ECS
+
+---
+
+# Import Client
+
+```python
+ecs = boto3.client("ecs")
+```
+
+---
+
+# List Clusters
+
+```python
+response = ecs.list_clusters()
+
+print(response["clusterArns"])
+```
+
+---
+
+# Create Cluster
+
+```python
+response = ecs.create_cluster(
+    clusterName="production"
+)
+
+print(response["cluster"]["clusterArn"])
+```
+
+---
+
+# Delete Cluster
+
+```python
+ecs.delete_cluster(
+    cluster="production"
+)
+```
+
+---
+
+# List Services
+
+```python
+response = ecs.list_services(
+    cluster="production"
+)
+
+print(response["serviceArns"])
+```
+
+---
+
+# Describe Services
+
+```python
+response = ecs.describe_services(
+    cluster="production",
+    services=["web"]
+)
+
+print(response["services"])
+```
+
+---
+
+# Update Service
+
+```python
+ecs.update_service(
+    cluster="production",
+    service="web",
+    desiredCount=3
+)
+```
+
+---
+
+# Force New Deployment
+
+```python
+ecs.update_service(
+    cluster="production",
+    service="web",
+    forceNewDeployment=True
+)
+```
+
+---
+
+# List Tasks
+
+```python
+response = ecs.list_tasks(
+    cluster="production"
+)
+
+print(response["taskArns"])
+```
+
+---
+
+# Stop Task
+
+```python
+ecs.stop_task(
+    cluster="production",
+    task="task-id"
+)
+```
+
+---
+
+# Register Task Definition
+
+```python
+response = ecs.register_task_definition(
+    family="web-app",
+    networkMode="awsvpc",
+    containerDefinitions=[]
+)
+
+print(response["taskDefinition"]["taskDefinitionArn"])
+```
+
+---
+
+# Amazon EKS
+
+---
+
+# Import Client
+
+```python
+eks = boto3.client("eks")
+```
+
+---
+
+# List Clusters
+
+```python
+response = eks.list_clusters()
+
+print(response["clusters"])
+```
+
+---
+
+# Describe Cluster
+
+```python
+response = eks.describe_cluster(
+    name="production"
+)
+
+print(response["cluster"])
+```
+
+---
+
+# Create Cluster
+
+```python
+eks.create_cluster(
+    name="production",
+    version="1.31",
+    roleArn="arn:aws:iam::123456789012:role/EKSRole",
+    resourcesVpcConfig={
+        "subnetIds": [
+            "subnet-1",
+            "subnet-2"
+        ]
+    }
+)
+```
+
+---
+
+# Delete Cluster
+
+```python
+eks.delete_cluster(
+    name="production"
+)
+```
+
+---
+
+# List Nodegroups
+
+```python
+response = eks.list_nodegroups(
+    clusterName="production"
+)
+
+print(response["nodegroups"])
+```
+
+---
+
+# Describe Nodegroup
+
+```python
+response = eks.describe_nodegroup(
+    clusterName="production",
+    nodegroupName="workers"
+)
+
+print(response["nodegroup"])
+```
+
+---
+
+# Delete Nodegroup
+
+```python
+eks.delete_nodegroup(
+    clusterName="production",
+    nodegroupName="workers"
+)
+```
+
+---
+
+# AWS Lambda
+
+---
+
+# Import Client
+
+```python
+lambda_client = boto3.client("lambda")
+```
+
+---
+
+# List Functions
+
+```python
+response = lambda_client.list_functions()
+
+for function in response["Functions"]:
+    print(function["FunctionName"])
+```
+
+---
+
+# Get Function
+
+```python
+response = lambda_client.get_function(
+    FunctionName="processOrders"
+)
+
+print(response["Configuration"])
+```
+
+---
+
+# Invoke Function
+
+```python
+response = lambda_client.invoke(
+    FunctionName="processOrders",
+    Payload=b'{}'
+)
+
+print(response["StatusCode"])
+```
+
+---
+
+# Update Function Code
+
+```python
+lambda_client.update_function_code(
+    FunctionName="processOrders",
+    ZipFile=open("lambda.zip", "rb").read()
+)
+```
+
+---
+
+# Delete Function
+
+```python
+lambda_client.delete_function(
+    FunctionName="processOrders"
+)
+```
+
+---
+
+# Amazon API Gateway
+
+---
+
+# Import Client
+
+```python
+apigateway = boto3.client("apigateway")
+```
+
+---
+
+# List APIs
+
+```python
+response = apigateway.get_rest_apis()
+
+for api in response["items"]:
+    print(api["name"])
+```
+
+---
+
+# Get API
+
+```python
+response = apigateway.get_rest_api(
+    restApiId="abc123"
+)
+
+print(response)
+```
+
+---
+
+# Create REST API
+
+```python
+response = apigateway.create_rest_api(
+    name="OrdersAPI"
+)
+
+print(response["id"])
+```
+
+---
+
+# Delete REST API
+
+```python
+apigateway.delete_rest_api(
+    restApiId="abc123"
+)
+```
+
+---
+
+# Amazon EventBridge
+
+---
+
+# Import Client
+
+```python
+events = boto3.client("events")
+```
+
+---
+
+# List Rules
+
+```python
+response = events.list_rules()
+
+for rule in response["Rules"]:
+    print(rule["Name"])
+```
+
+---
+
+# Create Rule
+
+```python
+events.put_rule(
+    Name="DailySchedule",
+    ScheduleExpression="rate(1 day)"
+)
+```
+
+---
+
+# Put Event
+
+```python
+events.put_events(
+    Entries=[
+        {
+            "Source": "application",
+            "DetailType": "OrderCreated",
+            "Detail": "{}"
+        }
+    ]
+)
+```
+
+---
+
+# Delete Rule
+
+```python
+events.delete_rule(
+    Name="DailySchedule"
+)
+```
+
+---
+
+# Amazon SNS
+
+---
+
+# Import Client
+
+```python
+sns = boto3.client("sns")
+```
+
+---
+
+# List Topics
+
+```python
+response = sns.list_topics()
+
+print(response["Topics"])
+```
+
+---
+
+# Create Topic
+
+```python
+response = sns.create_topic(
+    Name="alerts"
+)
+
+print(response["TopicArn"])
+```
+
+---
+
+# Publish Message
+
+```python
+sns.publish(
+    TopicArn="arn:aws:sns:...",
+    Subject="Deployment",
+    Message="Deployment completed successfully."
+)
+```
+
+---
+
+# Subscribe Endpoint
+
+```python
+sns.subscribe(
+    TopicArn="arn:aws:sns:...",
+    Protocol="email",
+    Endpoint="admin@example.com"
+)
+```
+
+---
+
+# Delete Topic
+
+```python
+sns.delete_topic(
+    TopicArn="arn:aws:sns:..."
+)
+```
+
+---
+
+# Amazon SQS
+
+---
+
+# Import Client
+
+```python
+sqs = boto3.client("sqs")
+```
+
+---
+
+# List Queues
+
+```python
+response = sqs.list_queues()
+
+print(response["QueueUrls"])
+```
+
+---
+
+# Create Queue
+
+```python
+response = sqs.create_queue(
+    QueueName="orders"
+)
+
+print(response["QueueUrl"])
+```
+
+---
+
+# Send Message
+
+```python
+sqs.send_message(
+    QueueUrl="https://sqs.ap-south-1.amazonaws.com/123456789012/orders",
+    MessageBody="Order Created"
+)
+```
+
+---
+
+# Receive Message
+
+```python
+response = sqs.receive_message(
+    QueueUrl="https://sqs.ap-south-1.amazonaws.com/123456789012/orders"
+)
+
+print(response.get("Messages"))
+```
+
+---
+
+# Delete Message
+
+```python
+sqs.delete_message(
+    QueueUrl="https://sqs.ap-south-1.amazonaws.com/123456789012/orders",
+    ReceiptHandle="receipt-handle"
+)
+```
+
+---
+
+# Purge Queue
+
+```python
+sqs.purge_queue(
+    QueueUrl="https://sqs.ap-south-1.amazonaws.com/123456789012/orders"
+)
+```
+
+---
+
+# AWS Step Functions
+
+---
+
+# Import Client
+
+```python
+stepfunctions = boto3.client("stepfunctions")
+```
+
+---
+
+# List State Machines
+
+```python
+response = stepfunctions.list_state_machines()
+
+for sm in response["stateMachines"]:
+    print(sm["name"])
+```
+
+---
+
+# Describe State Machine
+
+```python
+response = stepfunctions.describe_state_machine(
+    stateMachineArn="arn:aws:states:..."
+)
+
+print(response)
+```
+
+---
+
+# Start Execution
+
+```python
+response = stepfunctions.start_execution(
+    stateMachineArn="arn:aws:states:...",
+    input="{}"
+)
+
+print(response["executionArn"])
+```
+
+---
+
+# List Executions
+
+```python
+response = stepfunctions.list_executions(
+    stateMachineArn="arn:aws:states:..."
+)
+
+print(response["executions"])
+```
+
+---
+
+# Stop Execution
+
+```python
+stepfunctions.stop_execution(
+    executionArn="arn:aws:states:..."
+)
+```
+
+---
+
+# Waiter Example
+
+```python
+waiter = eks.get_waiter("cluster_active")
+
+waiter.wait(
+    name="production"
+)
+```
+
+---
+
+# Pagination Example
+
+```python
+paginator = lambda_client.get_paginator(
+    "list_functions"
+)
+
+for page in paginator.paginate():
+    for function in page["Functions"]:
+        print(function["FunctionName"])
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = ecs.list_clusters()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Enable image scanning in Amazon ECR.
+- Store container images with immutable tags.
+- Use rolling updates for ECS and EKS deployments.
+- Keep Lambda functions stateless.
+- Use EventBridge instead of polling wherever possible.
+- Configure SNS with Dead Letter Queues for reliable notifications.
+- Use SQS visibility timeout appropriately.
+- Implement retries and exponential backoff for Step Functions workflows.
+- Use paginators for large result sets.
+- Always catch and handle `ClientError` exceptions.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for Amazon ECR, ECS, EKS, Lambda, API Gateway, EventBridge, SNS, SQS, and Step Functions. These examples demonstrate practical automation patterns for container platforms, serverless applications, messaging systems, and event-driven architectures using Python.
+
+---
+
