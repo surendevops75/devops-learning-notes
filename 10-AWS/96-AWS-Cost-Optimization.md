@@ -922,3 +922,638 @@ This section covered AWS Cost Explorer, cost visualization, service-wise and reg
 
 ---
 
+# AWS Budgets
+
+---
+
+# Introduction
+
+AWS Budgets helps monitor AWS spending, usage, Reserved Instances (RI), and Savings Plans against defined limits.
+
+It supports:
+
+- Cost Budgets
+- Usage Budgets
+- Reservation Budgets
+- Savings Plans Budgets
+
+---
+
+# Budget Workflow
+
+```text
+Create Budget
+
+↓
+
+Monitor Spending
+
+↓
+
+Compare Against Threshold
+
+↓
+
+Send Notification
+
+↓
+
+Take Action
+
+↓
+
+Reduce Costs
+```
+
+---
+
+# Budget Types
+
+## Cost Budget
+
+Tracks total AWS spending.
+
+Example
+
+```text
+Monthly Budget
+
+$2,000
+```
+
+---
+
+## Usage Budget
+
+Tracks service usage instead of cost.
+
+Example
+
+```text
+EC2 Running Hours
+
+500 Hours
+```
+
+---
+
+## Reserved Instance Budget
+
+Tracks
+
+- RI Utilization
+- RI Coverage
+
+---
+
+## Savings Plans Budget
+
+Tracks
+
+- Savings Plan Coverage
+- Savings Plan Utilization
+
+---
+
+# Budget Periods
+
+Supported periods
+
+- Daily
+- Monthly
+- Quarterly
+- Annually
+
+---
+
+# Budget Thresholds
+
+Example
+
+```text
+50%
+
+↓
+
+80%
+
+↓
+
+90%
+
+↓
+
+100%
+
+↓
+
+110%
+```
+
+---
+
+# Budget Notifications
+
+Notifications can be sent using
+
+- Email
+- Amazon SNS
+
+---
+
+# Budget Notification Workflow
+
+```text
+Budget
+
+↓
+
+Threshold Reached
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+Operations Team
+```
+
+---
+
+# Budget Actions
+
+AWS Budgets Actions can automatically perform actions when thresholds are exceeded.
+
+Examples
+
+- Stop EC2 instances
+- Apply IAM policy
+- Restrict new resource creation
+- Notify administrators
+
+---
+
+# Budget Example
+
+```text
+Monthly Budget
+
+$1000
+
+Alert
+
+80%
+
+Critical
+
+100%
+```
+
+---
+
+# Multi-Account Budgets
+
+Using AWS Organizations
+
+```text
+Management Account
+
+↓
+
+Linked Accounts
+
+↓
+
+Department Budgets
+
+↓
+
+Team Budgets
+```
+
+---
+
+# Budget Reports
+
+Review
+
+- Actual Cost
+- Forecast Cost
+- Remaining Budget
+- Percentage Used
+
+---
+
+# Cost & Usage Report (CUR)
+
+---
+
+# Introduction
+
+Cost & Usage Report (CUR) is the most detailed AWS billing report.
+
+Contains
+
+- Resource-level costs
+- Usage data
+- Pricing information
+- Discounts
+- Savings Plans
+- Reserved Instances
+- Tags
+
+---
+
+# CUR Workflow
+
+```text
+AWS Billing
+
+↓
+
+CUR
+
+↓
+
+Amazon S3
+
+↓
+
+AWS Glue
+
+↓
+
+Amazon Athena
+
+↓
+
+QuickSight Dashboard
+```
+
+---
+
+# CUR Storage
+
+Best practice
+
+```text
+Amazon S3
+
+↓
+
+Partitioned Data
+
+↓
+
+Glue Catalog
+
+↓
+
+Athena Queries
+```
+
+---
+
+# CUR Data Includes
+
+- Resource IDs
+- Service names
+- Usage types
+- Pricing
+- Tags
+- Regions
+- Accounts
+- Discounts
+- Credits
+
+---
+
+# CUR Delivery
+
+Formats
+
+- Parquet (Recommended)
+- CSV
+
+Compression
+
+- GZIP
+
+---
+
+# AWS Glue Integration
+
+Workflow
+
+```text
+CUR
+
+↓
+
+Glue Crawler
+
+↓
+
+Glue Data Catalog
+
+↓
+
+Athena
+```
+
+---
+
+# Athena Analysis
+
+Example questions
+
+- Which EC2 instances cost the most?
+- Which team spends the most?
+- Which AWS Region has the highest cost?
+- Which S3 buckets generate the most storage charges?
+
+---
+
+# Amazon QuickSight
+
+Dashboard Examples
+
+- Monthly spending
+- Team spending
+- Cost trends
+- Resource utilization
+- Department reports
+
+---
+
+# Cost Allocation Tags in CUR
+
+Example
+
+```text
+Environment
+
+Project
+
+Owner
+
+CostCenter
+
+Application
+
+BusinessUnit
+```
+
+---
+
+# CUR Retention
+
+Recommended
+
+- Store CUR in versioned S3 buckets
+- Apply lifecycle policies
+- Archive old reports to Glacier
+
+---
+
+# Cost Anomaly Detection
+
+---
+
+# Introduction
+
+AWS Cost Anomaly Detection uses machine learning to identify unusual spending patterns automatically.
+
+---
+
+# Workflow
+
+```text
+AWS Billing
+
+↓
+
+Machine Learning
+
+↓
+
+Anomaly Detected
+
+↓
+
+Notification
+
+↓
+
+Investigation
+
+↓
+
+Optimization
+```
+
+---
+
+# Anomaly Monitor Types
+
+Supported monitors
+
+- AWS Services
+- Linked Accounts
+- Cost Categories
+- Cost Allocation Tags
+
+---
+
+# Service Monitor Example
+
+```text
+Amazon EC2
+
+Amazon S3
+
+Amazon RDS
+
+Amazon Lambda
+```
+
+---
+
+# Account Monitor Example
+
+```text
+Production
+
+Development
+
+Testing
+```
+
+---
+
+# Tag-Based Monitor
+
+```text
+Environment=Production
+
+Project=Payments
+
+Team=Platform
+```
+
+---
+
+# Cost Category Monitor
+
+Example
+
+```text
+Infrastructure
+
+Applications
+
+Security
+
+Networking
+```
+
+---
+
+# Anomaly Subscription
+
+Notification methods
+
+- Email
+- Amazon SNS
+
+---
+
+# Alert Workflow
+
+```text
+Unexpected Cost
+
+↓
+
+Cost Anomaly Detection
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+Cloud Team
+```
+
+---
+
+# Investigation Workflow
+
+```text
+Alert
+
+↓
+
+Cost Explorer
+
+↓
+
+Identify Service
+
+↓
+
+Identify Resource
+
+↓
+
+Optimize
+
+↓
+
+Verify Savings
+```
+
+---
+
+# Common Anomalies
+
+- Large EC2 deployment
+- Unused NAT Gateway
+- Excessive data transfer
+- Snapshot growth
+- Unexpected Lambda invocations
+- Large S3 uploads
+- High CloudWatch ingestion
+- Overprovisioned databases
+
+---
+
+# Monthly FinOps Reports
+
+Include
+
+- Monthly spend
+- Forecast
+- Budget status
+- Cost anomalies
+- Savings Plans utilization
+- Reserved Instance utilization
+- Top cost drivers
+- Optimization opportunities
+
+---
+
+# Operational Review
+
+Daily
+
+- Budget alerts
+- Cost anomalies
+- Billing spikes
+
+Weekly
+
+- Team spending
+- Resource growth
+- Tag compliance
+
+Monthly
+
+- Executive report
+- Optimization plan
+- Savings review
+- Budget adjustments
+
+---
+
+# Best Practices
+
+- Create budgets for every production account.
+- Configure multiple alert thresholds.
+- Use Budget Actions for automated governance.
+- Enable Cost & Usage Reports in Parquet format.
+- Analyze CUR using Athena instead of spreadsheets.
+- Build QuickSight dashboards for executives.
+- Enable Cost Anomaly Detection for all production accounts.
+- Investigate anomalies immediately.
+- Apply consistent cost allocation tags.
+- Review budgets and forecasts every month.
+
+---
+
+# Summary
+
+This section covered AWS Budgets, Budget Actions, Cost & Usage Reports (CUR), AWS Glue integration, Amazon Athena analysis, QuickSight dashboards, Cost Anomaly Detection, anomaly monitors, and FinOps reporting workflows. Together, these services provide comprehensive visibility into AWS spending, automated alerting, and data-driven cost optimization.
+
+---
+
