@@ -5701,3 +5701,606 @@ This section covered Boto3 automation for Amazon Route 53, CloudFront, AWS WAF, 
 
 ---
 
+# Amazon Bedrock
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+bedrock = boto3.client("bedrock")
+```
+
+---
+
+# List Foundation Models
+
+```python
+response = bedrock.list_foundation_models()
+
+for model in response["modelSummaries"]:
+    print(model["modelId"])
+```
+
+---
+
+# Get Foundation Model
+
+```python
+response = bedrock.get_foundation_model(
+    modelIdentifier="amazon.titan-text-express-v1"
+)
+
+print(response["modelDetails"])
+```
+
+---
+
+# Amazon Bedrock Runtime
+
+---
+
+# Import Runtime Client
+
+```python
+runtime = boto3.client("bedrock-runtime")
+```
+
+---
+
+# Invoke Model
+
+```python
+import json
+
+payload = {
+    "inputText": "Explain Amazon EC2 in simple terms."
+}
+
+response = runtime.invoke_model(
+    modelId="amazon.titan-text-express-v1",
+    body=json.dumps(payload)
+)
+
+print(response["body"].read())
+```
+
+---
+
+# Invoke Model with Streaming
+
+```python
+response = runtime.invoke_model_with_response_stream(
+    modelId="amazon.titan-text-express-v1",
+    body=json.dumps(payload)
+)
+
+for event in response["body"]:
+    print(event)
+```
+
+---
+
+# Amazon Q Developer
+
+---
+
+# Import Client
+
+```python
+qbusiness = boto3.client("qbusiness")
+```
+
+---
+
+# List Applications
+
+```python
+response = qbusiness.list_applications()
+
+for app in response["applications"]:
+    print(app["displayName"])
+```
+
+---
+
+# Get Application
+
+```python
+response = qbusiness.get_application(
+    applicationId="application-id"
+)
+
+print(response["displayName"])
+```
+
+---
+
+# List Indices
+
+```python
+response = qbusiness.list_indices(
+    applicationId="application-id"
+)
+
+print(response["indices"])
+```
+
+---
+
+# Amazon Textract
+
+---
+
+# Import Client
+
+```python
+textract = boto3.client("textract")
+```
+
+---
+
+# Detect Document Text
+
+```python
+response = textract.detect_document_text(
+    Document={
+        "Bytes": open("invoice.png", "rb").read()
+    }
+)
+
+for block in response["Blocks"]:
+    if block["BlockType"] == "LINE":
+        print(block["Text"])
+```
+
+---
+
+# Analyze Document
+
+```python
+response = textract.analyze_document(
+    Document={
+        "Bytes": open("invoice.png", "rb").read()
+    },
+    FeatureTypes=[
+        "TABLES",
+        "FORMS"
+    ]
+)
+
+print(response["Blocks"])
+```
+
+---
+
+# Start Document Analysis
+
+```python
+response = textract.start_document_analysis(
+    DocumentLocation={
+        "S3Object": {
+            "Bucket": "documents",
+            "Name": "invoice.pdf"
+        }
+    },
+    FeatureTypes=[
+        "TABLES",
+        "FORMS"
+    ]
+)
+
+print(response["JobId"])
+```
+
+---
+
+# Get Document Analysis
+
+```python
+response = textract.get_document_analysis(
+    JobId="job-id"
+)
+
+print(response["Blocks"])
+```
+
+---
+
+# Amazon Rekognition
+
+---
+
+# Import Client
+
+```python
+rekognition = boto3.client("rekognition")
+```
+
+---
+
+# Detect Labels
+
+```python
+response = rekognition.detect_labels(
+    Image={
+        "S3Object": {
+            "Bucket": "images",
+            "Name": "car.jpg"
+        }
+    }
+)
+
+for label in response["Labels"]:
+    print(label["Name"])
+```
+
+---
+
+# Detect Faces
+
+```python
+response = rekognition.detect_faces(
+    Image={
+        "S3Object": {
+            "Bucket": "images",
+            "Name": "person.jpg"
+        }
+    }
+)
+
+print(response["FaceDetails"])
+```
+
+---
+
+# Compare Faces
+
+```python
+response = rekognition.compare_faces(
+    SourceImage={
+        "S3Object": {
+            "Bucket": "images",
+            "Name": "source.jpg"
+        }
+    },
+    TargetImage={
+        "S3Object": {
+            "Bucket": "images",
+            "Name": "target.jpg"
+        }
+    }
+)
+
+print(response["FaceMatches"])
+```
+
+---
+
+# Detect Text
+
+```python
+response = rekognition.detect_text(
+    Image={
+        "S3Object": {
+            "Bucket": "images",
+            "Name": "license.jpg"
+        }
+    }
+)
+
+print(response["TextDetections"])
+```
+
+---
+
+# Amazon Comprehend
+
+---
+
+# Import Client
+
+```python
+comprehend = boto3.client("comprehend")
+```
+
+---
+
+# Detect Sentiment
+
+```python
+response = comprehend.detect_sentiment(
+    Text="AWS services are excellent.",
+    LanguageCode="en"
+)
+
+print(response["Sentiment"])
+```
+
+---
+
+# Detect Entities
+
+```python
+response = comprehend.detect_entities(
+    Text="John works for Amazon.",
+    LanguageCode="en"
+)
+
+print(response["Entities"])
+```
+
+---
+
+# Detect Key Phrases
+
+```python
+response = comprehend.detect_key_phrases(
+    Text="Cloud computing enables scalable applications.",
+    LanguageCode="en"
+)
+
+print(response["KeyPhrases"])
+```
+
+---
+
+# Detect Language
+
+```python
+response = comprehend.detect_dominant_language(
+    Text="Bonjour tout le monde"
+)
+
+print(response["Languages"])
+```
+
+---
+
+# Amazon Translate
+
+---
+
+# Import Client
+
+```python
+translate = boto3.client("translate")
+```
+
+---
+
+# Translate Text
+
+```python
+response = translate.translate_text(
+    Text="Hello World",
+    SourceLanguageCode="en",
+    TargetLanguageCode="es"
+)
+
+print(response["TranslatedText"])
+```
+
+---
+
+# Amazon Polly
+
+---
+
+# Import Client
+
+```python
+polly = boto3.client("polly")
+```
+
+---
+
+# Convert Text to Speech
+
+```python
+response = polly.synthesize_speech(
+    Text="Welcome to AWS",
+    OutputFormat="mp3",
+    VoiceId="Joanna"
+)
+
+audio = response["AudioStream"].read()
+```
+
+---
+
+# List Voices
+
+```python
+response = polly.describe_voices()
+
+for voice in response["Voices"]:
+    print(voice["Name"])
+```
+
+---
+
+# Amazon Transcribe
+
+---
+
+# Import Client
+
+```python
+transcribe = boto3.client("transcribe")
+```
+
+---
+
+# Start Transcription Job
+
+```python
+response = transcribe.start_transcription_job(
+    TranscriptionJobName="meeting-audio",
+    LanguageCode="en-US",
+    Media={
+        "MediaFileUri": "s3://media/audio.mp3"
+    }
+)
+
+print(response["TranscriptionJob"])
+```
+
+---
+
+# Get Transcription Job
+
+```python
+response = transcribe.get_transcription_job(
+    TranscriptionJobName="meeting-audio"
+)
+
+print(response["TranscriptionJob"]["TranscriptionJobStatus"])
+```
+
+---
+
+# List Transcription Jobs
+
+```python
+response = transcribe.list_transcription_jobs()
+
+print(response["TranscriptionJobSummaries"])
+```
+
+---
+
+# Amazon Personalize
+
+---
+
+# Import Client
+
+```python
+personalize = boto3.client("personalize")
+```
+
+---
+
+# List Datasets
+
+```python
+response = personalize.list_datasets()
+
+print(response["datasets"])
+```
+
+---
+
+# List Solutions
+
+```python
+response = personalize.list_solutions()
+
+print(response["solutions"])
+```
+
+---
+
+# Describe Solution
+
+```python
+response = personalize.describe_solution(
+    solutionArn="arn:aws:personalize:..."
+)
+
+print(response["solution"])
+```
+
+---
+
+# Amazon Forecast
+
+---
+
+# Import Client
+
+```python
+forecast = boto3.client("forecast")
+```
+
+---
+
+# List Predictors
+
+```python
+response = forecast.list_predictors()
+
+print(response["Predictors"])
+```
+
+---
+
+# Describe Predictor
+
+```python
+response = forecast.describe_predictor(
+    PredictorArn="arn:aws:forecast:..."
+)
+
+print(response["PredictorName"])
+```
+
+---
+
+# Delete Predictor
+
+```python
+forecast.delete_predictor(
+    PredictorArn="arn:aws:forecast:..."
+)
+```
+
+---
+
+# Pagination Example
+
+```python
+paginator = rekognition.get_paginator(
+    "detect_labels"
+)
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = bedrock.list_foundation_models()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Keep prompts and model inputs free of sensitive information.
+- Store large documents in Amazon S3 before processing with Textract.
+- Validate confidence scores returned by Rekognition before taking automated actions.
+- Use Comprehend language detection for multilingual applications.
+- Cache frequently requested AI responses when appropriate.
+- Use asynchronous APIs for long-running document processing jobs.
+- Handle API throttling with retries and exponential backoff.
+- Secure AI service access using IAM roles and least-privilege permissions.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for Amazon Bedrock, Bedrock Runtime, Amazon Q Developer, Textract, Rekognition, Comprehend, Translate, Polly, Transcribe, Personalize, and Forecast. These examples demonstrate practical AI/ML automation patterns for generative AI, document processing, computer vision, speech, translation, and natural language processing using Python.
+
+---
+
