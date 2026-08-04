@@ -5415,3 +5415,875 @@ This section covered enterprise observability platform design, Prometheus, Grafa
 
 ---
 
+# Designing Netflix, YouTube & Global-Scale Systems
+
+---
+
+# Introduction
+
+Global-scale platforms such as Netflix and YouTube serve hundreds of millions of users worldwide. Their architectures are designed for massive scalability, high availability, low latency, fault tolerance, and continuous delivery.
+
+Objectives
+
+- Global Availability
+- Massive Scalability
+- Low Latency
+- Fault Tolerance
+- Disaster Recovery
+- Continuous Deployment
+
+---
+
+# Internet-Scale Architecture
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+CDN
+
+↓
+
+Load Balancer
+
+↓
+
+API Gateway
+
+↓
+
+Microservices
+
+↓
+
+Cache
+
+↓
+
+Database
+
+↓
+
+Storage
+```
+
+---
+
+# Core Design Principles
+
+- Horizontal Scaling
+- Stateless Services
+- Event-Driven Architecture
+- Multi-Region Deployment
+- Auto Scaling
+- Observability
+- Zero Downtime Deployment
+
+---
+
+# Netflix High-Level Architecture
+
+```text
+Users
+
+↓
+
+Route 53
+
+↓
+
+CloudFront
+
+↓
+
+API Gateway
+
+↓
+
+Microservices
+
+↓
+
+Kafka
+
+↓
+
+Redis
+
+↓
+
+Databases
+
+↓
+
+Object Storage
+```
+
+---
+
+# Netflix Platform Components
+
+Frontend
+
+- Web
+- Mobile
+- TV Applications
+
+---
+
+Backend
+
+- API Gateway
+- Authentication
+- Recommendation
+- Playback
+- Search
+- Billing
+- User Profile
+
+---
+
+Infrastructure
+
+- Kubernetes
+- CI/CD
+- Monitoring
+- Logging
+- Service Discovery
+
+---
+
+# Netflix Request Flow
+
+```text
+Client
+
+↓
+
+DNS
+
+↓
+
+CDN
+
+↓
+
+API Gateway
+
+↓
+
+Authentication
+
+↓
+
+Microservice
+
+↓
+
+Cache
+
+↓
+
+Database
+```
+
+---
+
+# Netflix Recommendation System
+
+```text
+User Activity
+
+↓
+
+Events
+
+↓
+
+Kafka
+
+↓
+
+Analytics
+
+↓
+
+Recommendation Engine
+
+↓
+
+Personalized Results
+```
+
+---
+
+# Netflix Streaming Flow
+
+```text
+User
+
+↓
+
+CDN
+
+↓
+
+Nearest Edge
+
+↓
+
+Video Chunks
+
+↓
+
+Playback
+```
+
+---
+
+# Why Netflix Uses a CDN
+
+Benefits
+
+- Reduced latency
+- Lower bandwidth costs
+- Faster streaming
+- Reduced origin traffic
+
+---
+
+# YouTube High-Level Architecture
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+CDN
+
+↓
+
+Upload Service
+
+↓
+
+Processing
+
+↓
+
+Storage
+
+↓
+
+Streaming
+
+↓
+
+Recommendation
+```
+
+---
+
+# Video Upload Workflow
+
+```text
+Upload
+
+↓
+
+Temporary Storage
+
+↓
+
+Transcoding
+
+↓
+
+Thumbnail Generation
+
+↓
+
+Metadata
+
+↓
+
+Permanent Storage
+
+↓
+
+CDN
+```
+
+---
+
+# Video Processing Pipeline
+
+Tasks
+
+- Virus scanning
+- Validation
+- Metadata extraction
+- Multiple resolutions
+- Thumbnail generation
+- Compression
+
+---
+
+# Video Streaming Workflow
+
+```text
+User
+
+↓
+
+Nearest CDN
+
+↓
+
+Video Segments
+
+↓
+
+Adaptive Streaming
+
+↓
+
+Playback
+```
+
+---
+
+# Adaptive Bitrate Streaming
+
+Available Resolutions
+
+- 240p
+- 360p
+- 480p
+- 720p
+- 1080p
+- 4K
+
+Player automatically selects the appropriate quality based on network conditions.
+
+---
+
+# CDN Architecture
+
+```text
+Users
+
+↓
+
+Nearest Edge
+
+↓
+
+Regional Edge
+
+↓
+
+Origin Server
+```
+
+---
+
+# Benefits of CDN
+
+- Low latency
+- Global availability
+- Reduced origin load
+- Better user experience
+- DDoS mitigation
+
+---
+
+# API Gateway
+
+Responsibilities
+
+- Authentication
+- Authorization
+- Routing
+- Rate Limiting
+- Logging
+- API Versioning
+
+---
+
+# Microservices
+
+Examples
+
+- Authentication
+- User Service
+- Video Service
+- Search Service
+- Recommendation Service
+- Notification Service
+- Billing Service
+
+---
+
+# Service Communication
+
+```text
+REST API
+
+↓
+
+OR
+
+↓
+
+Kafka
+
+↓
+
+OR
+
+↓
+
+RabbitMQ
+```
+
+---
+
+# Caching Strategy
+
+Levels
+
+```text
+Browser Cache
+
+↓
+
+CDN Cache
+
+↓
+
+Redis
+
+↓
+
+Database
+```
+
+---
+
+# Database Strategy
+
+Use
+
+SQL
+
+- Users
+- Payments
+- Billing
+
+---
+
+NoSQL
+
+- Watch history
+- User activity
+- Recommendations
+- Analytics
+
+---
+
+# Search Architecture
+
+```text
+Videos
+
+↓
+
+Metadata
+
+↓
+
+Search Index
+
+↓
+
+Search Service
+
+↓
+
+Results
+```
+
+---
+
+# Recommendation Pipeline
+
+```text
+User Events
+
+↓
+
+Kafka
+
+↓
+
+Analytics
+
+↓
+
+Machine Learning
+
+↓
+
+Recommendations
+```
+
+---
+
+# Global Traffic Routing
+
+```text
+Users
+
+↓
+
+Route 53
+
+↓
+
+Nearest Region
+
+↓
+
+Regional Load Balancer
+
+↓
+
+Microservices
+```
+
+---
+
+# Multi-Region Deployment
+
+```text
+US-East
+
+↓
+
+Europe
+
+↓
+
+Asia
+
+↓
+
+Australia
+```
+
+Benefits
+
+- Lower latency
+- Disaster Recovery
+- Regional resilience
+
+---
+
+# Database Replication
+
+```text
+Primary Region
+
+↓
+
+Replica Region
+
+↓
+
+Replica Region
+```
+
+---
+
+# High Availability
+
+Implement
+
+- Multiple Availability Zones
+- Auto Scaling
+- Load Balancers
+- Read Replicas
+- Caching
+
+---
+
+# Disaster Recovery
+
+Protect
+
+- Databases
+- Object Storage
+- Configuration
+- Kubernetes
+- CI/CD
+
+Use
+
+- Cross-Region replication
+- Automated backups
+- Failover testing
+
+---
+
+# API Rate Limiting
+
+Protect
+
+- Login APIs
+- Search APIs
+- Upload APIs
+- Public APIs
+
+Methods
+
+- Token bucket
+- Leaky bucket
+- Fixed window
+- Sliding window
+
+---
+
+# Queue-Based Processing
+
+```text
+Upload
+
+↓
+
+Queue
+
+↓
+
+Video Processing
+
+↓
+
+Storage
+
+↓
+
+Notification
+```
+
+Benefits
+
+- Asynchronous processing
+- Improved scalability
+- Fault isolation
+
+---
+
+# Storage Architecture
+
+Object Storage
+
+- Videos
+- Images
+- Thumbnails
+- Static assets
+
+Block Storage
+
+- Databases
+
+File Storage
+
+- Shared application data
+
+---
+
+# Monitoring Architecture
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Grafana
+
+↓
+
+Operations
+```
+
+---
+
+# Logging Architecture
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+# CI/CD Architecture
+
+```text
+Developer
+
+↓
+
+Git
+
+↓
+
+CI
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps
+
+↓
+
+Kubernetes
+```
+
+---
+
+# Deployment Strategy
+
+Use
+
+- Rolling Updates
+- Canary Deployments
+- Blue/Green Deployments
+
+---
+
+# Scalability Strategy
+
+Scale
+
+- Stateless services
+- Kubernetes Pods
+- Worker Nodes
+- Databases
+- Caches
+- Message Brokers
+
+---
+
+# Global Design Checklist
+
+Verify
+
+- Multi-region deployment
+- CDN enabled
+- Auto Scaling
+- Load balancing
+- Database replication
+- Disaster Recovery
+- Monitoring
+- Logging
+- CI/CD
+- Security
+
+---
+
+# Common Global Design Mistakes
+
+- Single-region deployment
+- No CDN
+- No caching
+- Shared monolithic database
+- Missing Auto Scaling
+- No disaster recovery
+- Tight service coupling
+- No monitoring
+- Large synchronous workflows
+- Ignoring latency
+
+---
+
+# System Design Interview Questions
+
+## Netflix
+
+- Design Netflix streaming architecture.
+- How would you deliver videos globally?
+- How would you reduce streaming latency?
+- Design Netflix recommendations.
+
+---
+
+## YouTube
+
+- Design YouTube upload architecture.
+- How would you store billions of videos?
+- Design adaptive video streaming.
+- Design YouTube search.
+
+---
+
+## General
+
+- Design a global social media platform.
+- Design an image-sharing service.
+- Design a ride-sharing application.
+- Design a chat application.
+- Design an online learning platform.
+
+---
+
+# Best Practices
+
+- Design every service to scale horizontally.
+- Keep application services stateless whenever possible.
+- Use CDNs to deliver content close to users.
+- Deploy applications across multiple AWS Regions for global resilience.
+- Cache frequently accessed data at multiple layers.
+- Separate synchronous APIs from asynchronous background processing.
+- Use event-driven architectures for large-scale workloads.
+- Continuously monitor application health, latency, and user experience.
+- Automate deployments using GitOps and Kubernetes.
+- Design systems assuming failures will occur and plan recovery accordingly.
+
+---
+
+# Summary
+
+This section covered the architecture of internet-scale systems such as Netflix and YouTube, including CDN design, adaptive streaming, recommendation systems, API Gateways, global traffic routing, multi-region deployments, caching strategies, event-driven processing, storage architecture, monitoring, CI/CD, and high-availability design principles. These concepts are commonly used in large-scale distributed system design interviews and real-world cloud platforms.
