@@ -2962,3 +2962,775 @@ This section covered synchronous vs asynchronous communication, event-driven arc
 
 ---
 
+# Designing Enterprise CI/CD Platforms
+
+---
+
+# Introduction
+
+An enterprise CI/CD platform enables automated, secure, scalable, and reliable software delivery across multiple teams, environments, and cloud regions.
+
+Objectives
+
+- Continuous Integration
+- Continuous Delivery
+- Continuous Deployment
+- DevSecOps
+- GitOps
+- High Availability
+- Scalability
+
+---
+
+# Enterprise CI/CD Workflow
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+CI Pipeline
+
+↓
+
+Artifact Repository
+
+↓
+
+Security Scanning
+
+↓
+
+GitOps Repository
+
+↓
+
+Argo CD
+
+↓
+
+Kubernetes
+
+↓
+
+Monitoring
+```
+
+---
+
+# Enterprise CI/CD Components
+
+- Source Code Repository
+- CI Server
+- Build Agents
+- Artifact Repository
+- Container Registry
+- Security Scanning
+- GitOps Platform
+- Kubernetes
+- Monitoring
+
+---
+
+# Source Code Management
+
+Examples
+
+- GitHub
+- GitLab
+- Bitbucket
+
+Best Practices
+
+- Branch protection
+- Pull requests
+- Code reviews
+- Signed commits
+
+---
+
+# CI Pipeline
+
+Responsibilities
+
+- Checkout code
+- Compile application
+- Execute unit tests
+- Static code analysis
+- Dependency scanning
+- Build artifacts
+- Build container images
+
+---
+
+# CD Pipeline
+
+Responsibilities
+
+- Deploy application
+- Validate deployment
+- Execute health checks
+- Rollback if required
+
+---
+
+# Enterprise Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Docker Build
+
+↓
+
+Container Scan
+
+↓
+
+Artifact Repository
+
+↓
+
+GitOps Repository
+
+↓
+
+Argo CD
+
+↓
+
+Production
+```
+
+---
+
+# Jenkins Architecture
+
+```text
+Developers
+
+↓
+
+Git
+
+↓
+
+Jenkins Controller
+
+↓
+
+Build Agents
+
+↓
+
+Artifact Repository
+
+↓
+
+Container Registry
+```
+
+---
+
+# Jenkins High Availability
+
+Recommendations
+
+- Dedicated controller
+- Multiple build agents
+- External database (if applicable)
+- Backup `JENKINS_HOME`
+- Load balancer for controller access
+
+---
+
+# Jenkins Build Agents
+
+Benefits
+
+- Parallel builds
+- Isolation
+- Better scalability
+- Faster pipelines
+
+---
+
+# GitHub Actions Architecture
+
+```text
+GitHub Repository
+
+↓
+
+Workflow
+
+↓
+
+GitHub Runner
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+---
+
+# GitHub Self-Hosted Runners
+
+Benefits
+
+- Custom environments
+- Internal network access
+- Better performance
+- Enterprise control
+
+---
+
+# GitLab CI/CD Architecture
+
+```text
+Repository
+
+↓
+
+GitLab Runner
+
+↓
+
+Pipeline
+
+↓
+
+Artifact
+
+↓
+
+Deployment
+```
+
+---
+
+# GitLab Runners
+
+Types
+
+- Shared Runner
+- Group Runner
+- Project Runner
+- Self-Hosted Runner
+
+---
+
+# GitOps
+
+Definition
+
+Git is the single source of truth for infrastructure and application deployments.
+
+---
+
+# GitOps Workflow
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Configuration Update
+
+↓
+
+Argo CD
+
+↓
+
+Kubernetes
+
+↓
+
+Application
+```
+
+---
+
+# Argo CD Architecture
+
+```text
+Git Repository
+
+↓
+
+Argo CD
+
+↓
+
+Kubernetes API
+
+↓
+
+Cluster
+```
+
+---
+
+# Argo CD Benefits
+
+- Automatic synchronization
+- Drift detection
+- Rollback
+- Git as source of truth
+- Declarative deployments
+
+---
+
+# Multi-Environment Deployment
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Promotion should occur only after validation at each stage.
+
+---
+
+# Branch Strategy
+
+Example
+
+```text
+feature
+
+↓
+
+develop
+
+↓
+
+release
+
+↓
+
+main
+```
+
+---
+
+# Environment Promotion
+
+Workflow
+
+```text
+Development
+
+↓
+
+QA
+
+↓
+
+UAT
+
+↓
+
+Production
+```
+
+---
+
+# Artifact Repository
+
+Purpose
+
+Store build outputs and versioned artifacts.
+
+Examples
+
+- JFrog Artifactory
+- Nexus Repository
+- Amazon S3 (generic artifact storage)
+
+---
+
+# Container Registry
+
+Purpose
+
+Store versioned container images.
+
+Examples
+
+- Amazon ECR
+- Docker Hub
+- GitHub Container Registry (GHCR)
+
+---
+
+# DevSecOps Pipeline
+
+```text
+Code
+
+↓
+
+SAST
+
+↓
+
+Dependency Scan
+
+↓
+
+Docker Build
+
+↓
+
+Container Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Approval
+
+↓
+
+Deploy
+```
+
+---
+
+# Security Gates
+
+Validate
+
+- Unit tests
+- Code quality
+- Critical vulnerabilities
+- Infrastructure policies
+- Image scanning
+
+Deployment proceeds only after all gates pass.
+
+---
+
+# Infrastructure as Code
+
+Deploy
+
+- Terraform
+- CloudFormation
+- Kubernetes Manifests
+- Helm Charts
+
+---
+
+# Secrets Management
+
+Use
+
+- AWS Secrets Manager
+- AWS Systems Manager Parameter Store
+- Kubernetes Secrets
+
+Never hardcode credentials.
+
+---
+
+# Deployment Strategies
+
+Rolling Update
+
+```text
+Old Pods
+
+↓
+
+Replace Gradually
+
+↓
+
+New Pods
+```
+
+---
+
+Blue/Green
+
+```text
+Blue
+
+↓
+
+Green
+
+↓
+
+Traffic Switch
+```
+
+---
+
+Canary
+
+```text
+5%
+
+↓
+
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+---
+
+# Rollback Workflow
+
+```text
+Deployment Failure
+
+↓
+
+Rollback
+
+↓
+
+Previous Version
+
+↓
+
+Health Validation
+
+↓
+
+Resume Traffic
+```
+
+---
+
+# Pipeline Parallelization
+
+Parallel Stages
+
+- Unit Tests
+- Security Scans
+- Linting
+- Build Validation
+
+Benefits
+
+- Faster pipeline execution
+- Better resource utilization
+
+---
+
+# Pipeline Caching
+
+Cache
+
+- Dependencies
+- Build artifacts
+- Docker layers
+
+Benefits
+
+- Reduced build time
+- Lower infrastructure cost
+
+---
+
+# Multi-Region Deployment
+
+```text
+CI Pipeline
+
+↓
+
+Region A
+
+↓
+
+Region B
+
+↓
+
+Region C
+```
+
+Benefits
+
+- Disaster Recovery
+- Global availability
+- Faster regional releases
+
+---
+
+# Enterprise Deployment Architecture
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+CI Platform
+
+↓
+
+Artifact Repository
+
+↓
+
+Container Registry
+
+↓
+
+GitOps Repository
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+
+↓
+
+Monitoring
+```
+
+---
+
+# Pipeline Monitoring
+
+Monitor
+
+- Build duration
+- Success rate
+- Failure rate
+- Deployment frequency
+- Queue time
+- Rollback count
+
+---
+
+# DORA Metrics
+
+Track
+
+- Deployment Frequency
+- Lead Time for Changes
+- Change Failure Rate
+- Mean Time to Recovery (MTTR)
+
+---
+
+# Production Deployment Checklist
+
+Verify
+
+- Tests passed
+- Security scans passed
+- Artifact published
+- Image scanned
+- Configuration validated
+- Rollback available
+- Monitoring enabled
+- Alerts configured
+
+---
+
+# Common CI/CD Design Mistakes
+
+- Manual deployments
+- No rollback strategy
+- Hardcoded secrets
+- Single build agent
+- No artifact repository
+- Missing security scans
+- No GitOps
+- Long-running pipelines
+- No pipeline monitoring
+- No deployment validation
+
+---
+
+# Best Practices
+
+- Use Git as the single source of truth for code and deployment configurations.
+- Separate CI and CD responsibilities for better scalability.
+- Implement GitOps with Argo CD for Kubernetes deployments.
+- Store artifacts and container images in versioned repositories.
+- Automate security scanning throughout the pipeline.
+- Use self-hosted runners or build agents for enterprise workloads.
+- Promote applications through development, testing, staging, and production environments.
+- Implement Blue/Green or Canary deployments for production releases.
+- Monitor DORA metrics to continuously improve software delivery performance.
+- Design CI/CD platforms for high availability, scalability, and disaster recovery.
+
+---
+
+# Summary
+
+This section covered enterprise CI/CD platform design, Jenkins, GitHub Actions, GitLab CI/CD, GitOps, Argo CD, artifact repositories, container registries, DevSecOps pipelines, deployment strategies, multi-environment promotions, DORA metrics, and production deployment best practices. These principles form the foundation of scalable, secure, and reliable software delivery platforms.
+
+---
+
