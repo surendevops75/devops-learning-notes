@@ -5010,3 +5010,694 @@ This section covered Boto3 automation for Amazon CloudWatch, CloudWatch Logs, Cl
 
 ---
 
+# Amazon Route 53
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+route53 = boto3.client("route53")
+```
+
+---
+
+# List Hosted Zones
+
+```python
+response = route53.list_hosted_zones()
+
+for zone in response["HostedZones"]:
+    print(zone["Name"])
+```
+
+---
+
+# Get Hosted Zone
+
+```python
+response = route53.get_hosted_zone(
+    Id="Z123456789ABC"
+)
+
+print(response["HostedZone"])
+```
+
+---
+
+# Create Hosted Zone
+
+```python
+import time
+
+response = route53.create_hosted_zone(
+    Name="example.com",
+    CallerReference=str(time.time())
+)
+
+print(response["HostedZone"]["Id"])
+```
+
+---
+
+# Delete Hosted Zone
+
+```python
+route53.delete_hosted_zone(
+    Id="Z123456789ABC"
+)
+```
+
+---
+
+# List DNS Records
+
+```python
+response = route53.list_resource_record_sets(
+    HostedZoneId="Z123456789ABC"
+)
+
+for record in response["ResourceRecordSets"]:
+    print(record["Name"])
+```
+
+---
+
+# Update DNS Record
+
+```python
+route53.change_resource_record_sets(
+    HostedZoneId="Z123456789ABC",
+    ChangeBatch={
+        "Changes": []
+    }
+)
+```
+
+---
+
+# CloudFront
+
+---
+
+# Import Client
+
+```python
+cloudfront = boto3.client("cloudfront")
+```
+
+---
+
+# List Distributions
+
+```python
+response = cloudfront.list_distributions()
+
+print(response["DistributionList"]["Items"])
+```
+
+---
+
+# Get Distribution
+
+```python
+response = cloudfront.get_distribution(
+    Id="E123456789ABC"
+)
+
+print(response["Distribution"])
+```
+
+---
+
+# Create Invalidation
+
+```python
+response = cloudfront.create_invalidation(
+    DistributionId="E123456789ABC",
+    InvalidationBatch={
+        "Paths": {
+            "Quantity": 1,
+            "Items": ["/*"]
+        },
+        "CallerReference": str(time.time())
+    }
+)
+
+print(response["Invalidation"]["Id"])
+```
+
+---
+
+# AWS WAF
+
+---
+
+# Import Client
+
+```python
+waf = boto3.client("wafv2")
+```
+
+---
+
+# List Web ACLs
+
+```python
+response = waf.list_web_acls(
+    Scope="REGIONAL"
+)
+
+for acl in response["WebACLs"]:
+    print(acl["Name"])
+```
+
+---
+
+# Get Web ACL
+
+```python
+response = waf.get_web_acl(
+    Scope="REGIONAL",
+    Id="acl-id",
+    Name="ProductionACL"
+)
+
+print(response["WebACL"])
+```
+
+---
+
+# Create Web ACL
+
+```python
+response = waf.create_web_acl(
+    Name="ProductionACL",
+    Scope="REGIONAL",
+    DefaultAction={
+        "Allow": {}
+    },
+    VisibilityConfig={
+        "CloudWatchMetricsEnabled": True,
+        "MetricName": "ProductionACL",
+        "SampledRequestsEnabled": True
+    },
+    Rules=[]
+)
+
+print(response["Summary"]["Id"])
+```
+
+---
+
+# Delete Web ACL
+
+```python
+waf.delete_web_acl(
+    Scope="REGIONAL",
+    Id="acl-id",
+    Name="ProductionACL",
+    LockToken="lock-token"
+)
+```
+
+---
+
+# AWS Shield
+
+---
+
+# Import Client
+
+```python
+shield = boto3.client("shield")
+```
+
+---
+
+# List Protections
+
+```python
+response = shield.list_protections()
+
+print(response["Protections"])
+```
+
+---
+
+# Describe Protection
+
+```python
+response = shield.describe_protection(
+    ProtectionId="protection-id"
+)
+
+print(response["Protection"])
+```
+
+---
+
+# Amazon GuardDuty
+
+---
+
+# Import Client
+
+```python
+guardduty = boto3.client("guardduty")
+```
+
+---
+
+# List Detectors
+
+```python
+response = guardduty.list_detectors()
+
+print(response["DetectorIds"])
+```
+
+---
+
+# List Findings
+
+```python
+response = guardduty.list_findings(
+    DetectorId="detector-id"
+)
+
+print(response["FindingIds"])
+```
+
+---
+
+# Get Findings
+
+```python
+response = guardduty.get_findings(
+    DetectorId="detector-id",
+    FindingIds=[
+        "finding-id"
+    ]
+)
+
+print(response["Findings"])
+```
+
+---
+
+# AWS Security Hub
+
+---
+
+# Import Client
+
+```python
+securityhub = boto3.client("securityhub")
+```
+
+---
+
+# Enable Security Hub
+
+```python
+securityhub.enable_security_hub()
+```
+
+---
+
+# Get Findings
+
+```python
+response = securityhub.get_findings()
+
+print(response["Findings"])
+```
+
+---
+
+# List Standards
+
+```python
+response = securityhub.get_enabled_standards()
+
+print(response["StandardsSubscriptions"])
+```
+
+---
+
+# Amazon Inspector
+
+---
+
+# Import Client
+
+```python
+inspector = boto3.client("inspector2")
+```
+
+---
+
+# List Findings
+
+```python
+response = inspector.list_findings()
+
+print(response["findings"])
+```
+
+---
+
+# List Coverage
+
+```python
+response = inspector.list_coverage()
+
+print(response["coveredResources"])
+```
+
+---
+
+# Amazon Macie
+
+---
+
+# Import Client
+
+```python
+macie = boto3.client("macie2")
+```
+
+---
+
+# List Classification Jobs
+
+```python
+response = macie.list_classification_jobs()
+
+print(response["items"])
+```
+
+---
+
+# List Findings
+
+```python
+response = macie.list_findings()
+
+print(response["findingIds"])
+```
+
+---
+
+# Amazon Detective
+
+---
+
+# Import Client
+
+```python
+detective = boto3.client("detective")
+```
+
+---
+
+# List Graphs
+
+```python
+response = detective.list_graphs()
+
+print(response["GraphList"])
+```
+
+---
+
+# List Members
+
+```python
+response = detective.list_members(
+    GraphArn="graph-arn"
+)
+
+print(response["MemberDetails"])
+```
+
+---
+
+# Amazon OpenSearch Service
+
+---
+
+# Import Client
+
+```python
+opensearch = boto3.client("opensearch")
+```
+
+---
+
+# List Domains
+
+```python
+response = opensearch.list_domain_names()
+
+print(response["DomainNames"])
+```
+
+---
+
+# Describe Domain
+
+```python
+response = opensearch.describe_domain(
+    DomainName="production"
+)
+
+print(response["DomainStatus"])
+```
+
+---
+
+# Create Domain
+
+```python
+opensearch.create_domain(
+    DomainName="production",
+    EngineVersion="OpenSearch_2.17"
+)
+```
+
+---
+
+# Delete Domain
+
+```python
+opensearch.delete_domain(
+    DomainName="production"
+)
+```
+
+---
+
+# Amazon Managed Prometheus
+
+---
+
+# Import Client
+
+```python
+amp = boto3.client("amp")
+```
+
+---
+
+# List Workspaces
+
+```python
+response = amp.list_workspaces()
+
+print(response["workspaces"])
+```
+
+---
+
+# Create Workspace
+
+```python
+response = amp.create_workspace(
+    alias="production-monitoring"
+)
+
+print(response["workspaceId"])
+```
+
+---
+
+# Describe Workspace
+
+```python
+response = amp.describe_workspace(
+    workspaceId="ws-xxxxxxxx"
+)
+
+print(response["workspace"])
+```
+
+---
+
+# Delete Workspace
+
+```python
+amp.delete_workspace(
+    workspaceId="ws-xxxxxxxx"
+)
+```
+
+---
+
+# Amazon Managed Grafana
+
+---
+
+# Import Client
+
+```python
+grafana = boto3.client("grafana")
+```
+
+---
+
+# List Workspaces
+
+```python
+response = grafana.list_workspaces()
+
+print(response["workspaces"])
+```
+
+---
+
+# Describe Workspace
+
+```python
+response = grafana.describe_workspace(
+    workspaceId="g-xxxxxxxx"
+)
+
+print(response["workspace"])
+```
+
+---
+
+# Delete Workspace
+
+```python
+grafana.delete_workspace(
+    workspaceId="g-xxxxxxxx"
+)
+```
+
+---
+
+# AWS X-Ray
+
+---
+
+# Import Client
+
+```python
+xray = boto3.client("xray")
+```
+
+---
+
+# Get Trace Summaries
+
+```python
+response = xray.get_trace_summaries(
+    StartTime=start_time,
+    EndTime=end_time
+)
+
+print(response["TraceSummaries"])
+```
+
+---
+
+# Batch Get Traces
+
+```python
+response = xray.batch_get_traces(
+    TraceIds=[
+        "trace-id"
+    ]
+)
+
+print(response["Traces"])
+```
+
+---
+
+# Get Service Graph
+
+```python
+response = xray.get_service_graph(
+    StartTime=start_time,
+    EndTime=end_time
+)
+
+print(response["Services"])
+```
+
+---
+
+# Pagination Example
+
+```python
+paginator = securityhub.get_paginator(
+    "get_findings"
+)
+
+for page in paginator.paginate():
+    print(len(page["Findings"]))
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = guardduty.list_detectors()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Use Route 53 health checks with failover routing policies.
+- Minimize CloudFront invalidations by versioning static assets.
+- Protect internet-facing applications with AWS WAF and Shield.
+- Enable GuardDuty, Security Hub, Inspector, and Macie in all production accounts.
+- Review high-severity security findings regularly.
+- Use Amazon Managed Prometheus and Grafana for Kubernetes monitoring.
+- Monitor OpenSearch cluster health and storage utilization.
+- Use pagination for large result sets.
+- Handle `ClientError` exceptions for all security-related API calls.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for Amazon Route 53, CloudFront, AWS WAF, Shield, GuardDuty, Security Hub, Inspector, Macie, Detective, OpenSearch Service, Amazon Managed Prometheus, Amazon Managed Grafana, and AWS X-Ray. These examples demonstrate practical automation for networking, security, threat detection, observability, and search services in AWS.
+
+---
+
