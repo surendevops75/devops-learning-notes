@@ -3391,3 +3391,606 @@ This section covered AWS Trusted Advisor, Compute Optimizer, Resource Explorer, 
 
 ---
 
+# Introduction to FinOps
+
+---
+
+# What is FinOps?
+
+FinOps (Financial Operations) is the practice of bringing engineering, finance, and business teams together to maximize the business value of cloud spending.
+
+Goals
+
+- Cost visibility
+- Accountability
+- Continuous optimization
+- Business alignment
+- Data-driven decisions
+
+---
+
+# FinOps Lifecycle
+
+```text
+Inform
+
+↓
+
+Optimize
+
+↓
+
+Operate
+
+↓
+
+Repeat
+```
+
+---
+
+# FinOps Teams
+
+Engineering
+
+- Optimize resources
+- Improve utilization
+- Reduce waste
+
+---
+
+Finance
+
+- Budget planning
+- Forecasting
+- Cost reporting
+
+---
+
+Business
+
+- ROI
+- Product profitability
+- Cost ownership
+
+---
+
+Cloud Operations
+
+- Governance
+- Automation
+- Monitoring
+
+---
+
+# Cloud Cost Governance
+
+Includes
+
+- Resource ownership
+- Budget controls
+- Cost policies
+- Approval workflows
+- Continuous reviews
+
+---
+
+# Cost Allocation
+
+Purpose
+
+- Identify resource owners
+- Allocate cloud expenses
+- Enable business reporting
+
+---
+
+# Cost Allocation Tags
+
+Mandatory
+
+```text
+Environment
+
+Project
+
+Application
+
+Owner
+
+Department
+
+BusinessUnit
+
+CostCenter
+```
+
+---
+
+Optional
+
+```text
+Compliance
+
+Backup
+
+ManagedBy
+
+Region
+
+SupportLevel
+```
+
+---
+
+# Tagging Workflow
+
+```text
+Provision Resource
+
+↓
+
+Apply Tags
+
+↓
+
+Billing Data
+
+↓
+
+Cost Reports
+
+↓
+
+Chargeback
+
+↓
+
+Optimization
+```
+
+---
+
+# Tag Governance
+
+Rules
+
+- Every resource must be tagged.
+- Use standardized tag names.
+- Enforce tagging using IAM or SCPs.
+- Review tag compliance regularly.
+
+---
+
+# Cost Categories
+
+Examples
+
+```text
+Infrastructure
+
+Applications
+
+Security
+
+Networking
+
+Monitoring
+
+Shared Services
+
+Development
+
+Production
+```
+
+---
+
+# Chargeback
+
+Definition
+
+Chargeback bills business units for their actual cloud usage.
+
+Example
+
+```text
+Engineering
+
+↓
+
+$4,500
+
+Finance
+
+↓
+
+$1,200
+
+Marketing
+
+↓
+
+$900
+```
+
+---
+
+# Benefits
+
+- Accountability
+- Budget ownership
+- Cost awareness
+- Responsible cloud usage
+
+---
+
+# Showback
+
+Definition
+
+Showback reports costs without billing departments directly.
+
+Example
+
+```text
+Monthly Report
+
+↓
+
+Engineering
+
+↓
+
+$5,000
+
+↓
+
+Information Only
+```
+
+---
+
+# Chargeback vs Showback
+
+| Feature | Chargeback | Showback |
+|----------|------------|----------|
+| Billing | Yes | No |
+| Accountability | High | Medium |
+| Financial Impact | Direct | Informational |
+| Budget Ownership | Yes | Partial |
+
+---
+
+# Business Unit Reporting
+
+Example
+
+```text
+Finance
+
+↓
+
+Engineering
+
+↓
+
+Marketing
+
+↓
+
+HR
+
+↓
+
+Operations
+```
+
+---
+
+# Project-Level Reporting
+
+Example
+
+```text
+Payments
+
+Authentication
+
+Analytics
+
+Platform
+
+DevOps
+```
+
+---
+
+# Environment Reporting
+
+Track separately
+
+- Production
+- Development
+- Testing
+- Staging
+- Sandbox
+
+---
+
+# Cost Ownership
+
+Every resource should have
+
+- Owner
+- Team
+- Department
+- Business Unit
+- Project
+
+---
+
+# Budget Governance
+
+Review
+
+- Monthly budgets
+- Department budgets
+- Team budgets
+- Project budgets
+
+---
+
+# Approval Workflow
+
+```text
+Engineer
+
+↓
+
+Resource Request
+
+↓
+
+Manager Approval
+
+↓
+
+Provision
+
+↓
+
+Tag Resources
+
+↓
+
+Monitor Costs
+```
+
+---
+
+# Resource Ownership Matrix
+
+| Resource | Owner |
+|----------|-------|
+| EC2 | DevOps |
+| RDS | DBA |
+| EKS | Platform Team |
+| S3 | Application Team |
+| CloudFront | Networking Team |
+| Lambda | Development Team |
+
+---
+
+# Executive Dashboard
+
+Display
+
+- Monthly spend
+- Forecast
+- Budget status
+- Top services
+- Top departments
+- Savings achieved
+- Cost anomalies
+- Optimization opportunities
+
+---
+
+# FinOps KPIs
+
+Track
+
+- Total cloud spend
+- Cost per application
+- Cost per customer
+- Cost per deployment
+- Budget variance
+- Savings achieved
+- Resource utilization
+- Idle resource percentage
+- Tag compliance
+- RI utilization
+- Savings Plans utilization
+
+---
+
+# Governance Reviews
+
+Daily
+
+- Cost anomalies
+- Budget alerts
+
+---
+
+Weekly
+
+- Resource ownership
+- New resources
+- Untagged resources
+
+---
+
+Monthly
+
+- Executive reporting
+- Optimization review
+- Forecast updates
+- Budget adjustments
+
+---
+
+Quarterly
+
+- FinOps maturity assessment
+- Architecture review
+- Purchasing strategy
+- Governance updates
+
+---
+
+# Enterprise Governance Workflow
+
+```text
+Provision
+
+↓
+
+Tag Resources
+
+↓
+
+Allocate Costs
+
+↓
+
+Generate Reports
+
+↓
+
+Review KPIs
+
+↓
+
+Optimize Resources
+
+↓
+
+Improve Governance
+```
+
+---
+
+# FinOps Maturity
+
+Level 1
+
+```text
+Basic Visibility
+```
+
+---
+
+Level 2
+
+```text
+Budget Management
+```
+
+---
+
+Level 3
+
+```text
+Chargeback
+
+Automation
+
+Optimization
+```
+
+---
+
+Level 4
+
+```text
+Predictive Optimization
+
+Business Integration
+```
+
+---
+
+# Common Governance Issues
+
+- Missing tags
+- Unknown resource owners
+- Budget overruns
+- Idle infrastructure
+- Duplicate environments
+- Lack of accountability
+- No optimization reviews
+- Poor reporting
+
+---
+
+# Enterprise FinOps Checklist
+
+## Visibility
+
+- Cost Explorer enabled
+- CUR enabled
+- Executive dashboards
+- Budget reports
+
+---
+
+## Governance
+
+- Tag policy
+- Budget policy
+- Approval workflow
+- Resource ownership
+
+---
+
+## Optimization
+
+- Monthly reviews
+- Savings Plans review
+- RI review
+- Idle resource cleanup
+
+---
+
+## Accountability
+
+- Department reports
+- Project reports
+- Cost ownership
+- KPI tracking
+
+---
+
+# Best Practices
+
+- Assign an owner to every AWS resource.
+- Standardize mandatory cost allocation tags.
+- Review tag compliance weekly.
+- Use Showback before implementing Chargeback.
+- Separate costs by environment, project, and department.
+- Create executive dashboards for cloud spending.
+- Measure FinOps KPIs consistently.
+- Establish monthly optimization review meetings.
+- Combine engineering and finance reviews for cloud costs.
+- Continuously improve governance processes.
+
+---
+
+# Summary
+
+This section covered FinOps principles, chargeback, showback, cost allocation, tagging governance, budget governance, cost ownership, executive reporting, FinOps KPIs, governance workflows, and enterprise cost management frameworks. These practices help organizations build financial accountability, optimize cloud spending, and align engineering decisions with business objectives.
+
+---
+
