@@ -4730,3 +4730,851 @@ This section covered AWS incident response, evidence collection, containment, er
 
 ---
 
+# Enterprise Security Architecture
+
+---
+
+# Introduction
+
+Enterprise AWS security architecture combines identity, network, data, monitoring, governance, and automation into a layered security model that protects workloads at scale.
+
+Objectives
+
+- Defense in Depth
+- Zero Trust
+- Least Privilege
+- Continuous Monitoring
+- High Availability
+- Regulatory Compliance
+
+---
+
+# Defense in Depth
+
+Security Layers
+
+```text
+Identity
+
+↓
+
+Perimeter
+
+↓
+
+Network
+
+↓
+
+Compute
+
+↓
+
+Application
+
+↓
+
+Data
+
+↓
+
+Monitoring
+
+↓
+
+Incident Response
+```
+
+Never rely on a single security control.
+
+---
+
+# Zero Trust Architecture
+
+Principles
+
+- Never Trust
+- Always Verify
+- Least Privilege
+- Continuous Authentication
+- Micro-segmentation
+- Assume Breach
+
+---
+
+# Zero Trust Workflow
+
+```text
+User
+
+↓
+
+Identity Verification
+
+↓
+
+MFA
+
+↓
+
+Authorization
+
+↓
+
+Device Validation
+
+↓
+
+Resource Access
+
+↓
+
+Continuous Monitoring
+```
+
+---
+
+# Enterprise AWS Landing Zone
+
+Architecture
+
+```text
+Management Account
+
+↓
+
+Security Account
+
+↓
+
+Log Archive Account
+
+↓
+
+Shared Services
+
+↓
+
+Networking
+
+↓
+
+Production
+
+↓
+
+Development
+
+↓
+
+Sandbox
+```
+
+---
+
+# Multi-Account Security Model
+
+Dedicated Accounts
+
+- Management
+- Security
+- Logging
+- Networking
+- Shared Services
+- Production
+- Development
+- Testing
+
+Benefits
+
+- Isolation
+- Governance
+- Reduced blast radius
+- Easier compliance
+
+---
+
+# Enterprise Security Services
+
+Central Security Account
+
+- GuardDuty
+- Security Hub
+- Inspector
+- Detective
+- IAM Access Analyzer
+- Firewall Manager
+
+---
+
+# Centralized Logging
+
+Architecture
+
+```text
+CloudTrail
+
+↓
+
+AWS Config
+
+↓
+
+VPC Flow Logs
+
+↓
+
+CloudWatch Logs
+
+↓
+
+Amazon S3
+
+↓
+
+Security Account
+```
+
+---
+
+# Production VPC Architecture
+
+```text
+Internet
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Shield Advanced
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Application Subnets
+
+↓
+
+Private Database Subnets
+
+↓
+
+Amazon RDS
+```
+
+---
+
+# Secure VPC Design
+
+Recommendations
+
+- Multiple Availability Zones
+- Private workloads
+- Least privilege Security Groups
+- VPC Endpoints
+- Network segmentation
+- Flow Logs enabled
+
+---
+
+# Secure Kubernetes (Amazon EKS)
+
+Architecture
+
+```text
+Internet
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Private Worker Nodes
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ECR
+```
+
+---
+
+# Amazon EKS Security
+
+Enable
+
+- IRSA
+- RBAC
+- Network Policies
+- Audit Logs
+- Private API Endpoint (where applicable)
+- Image Scanning
+
+---
+
+# Secure Container Workflow
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+CI/CD
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Secure CI/CD Architecture
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Build
+
+↓
+
+SAST
+
+↓
+
+Dependency Scan
+
+↓
+
+Container Scan
+
+↓
+
+IaC Scan
+
+↓
+
+Approval
+
+↓
+
+Deploy
+```
+
+---
+
+# Identity Architecture
+
+Recommended
+
+```text
+IAM Identity Center
+
+↓
+
+Permission Sets
+
+↓
+
+AWS Organizations
+
+↓
+
+IAM Roles
+
+↓
+
+Temporary Credentials
+```
+
+Avoid long-lived IAM users whenever possible.
+
+---
+
+# Encryption Architecture
+
+Encrypt
+
+- Amazon S3
+- Amazon EBS
+- Amazon RDS
+- Amazon EFS
+- Amazon DynamoDB
+- AWS Secrets Manager
+
+Using
+
+```text
+AWS KMS
+```
+
+---
+
+# Secrets Architecture
+
+Workflow
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+Secrets Manager
+
+↓
+
+Temporary Secret Access
+```
+
+---
+
+# Network Security Architecture
+
+Layers
+
+```text
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Shield Advanced
+
+↓
+
+Network Firewall
+
+↓
+
+Security Groups
+
+↓
+
+Network ACLs
+```
+
+---
+
+# Logging Architecture
+
+Collect
+
+- CloudTrail
+- Config
+- Flow Logs
+- WAF Logs
+- Application Logs
+- EKS Audit Logs
+
+Store
+
+```text
+Dedicated Logging Account
+```
+
+---
+
+# Monitoring Architecture
+
+```text
+AWS Resources
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+Inspector
+
+↓
+
+CloudWatch
+
+↓
+
+SOC Team
+```
+
+---
+
+# Compliance Architecture
+
+Monitor
+
+- AWS Config
+- Security Hub
+- Audit Manager
+- Macie
+
+Review
+
+- CIS Benchmark
+- PCI DSS
+- ISO 27001
+- HIPAA
+- NIST
+
+---
+
+# Disaster Recovery Security
+
+Protect
+
+- KMS Keys
+- Secrets
+- Backups
+- CloudTrail Logs
+- Config History
+
+Use
+
+- Cross-Region Backup
+- Cross-Account Backup
+
+---
+
+# Identity Security Pattern
+
+```text
+IAM Identity Center
+
+↓
+
+MFA
+
+↓
+
+Permission Set
+
+↓
+
+IAM Role
+
+↓
+
+Temporary Credentials
+```
+
+---
+
+# Secure Administrative Access
+
+Recommended
+
+```text
+Administrator
+
+↓
+
+MFA
+
+↓
+
+IAM Identity Center
+
+↓
+
+Session Manager
+
+↓
+
+Private EC2
+```
+
+Avoid direct SSH access wherever possible.
+
+---
+
+# Micro-Segmentation
+
+Separate
+
+- Production
+- Development
+- Databases
+- Shared Services
+- Management
+
+Use
+
+- Security Groups
+- Network Policies
+- Separate VPCs
+- Separate Accounts
+
+---
+
+# Security Automation
+
+Workflow
+
+```text
+Security Finding
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+Automated Response
+
+↓
+
+SNS Notification
+```
+
+---
+
+# Enterprise Security Dashboard
+
+Display
+
+- Critical Findings
+- Compliance Score
+- IAM Risks
+- Public Resources
+- Vulnerabilities
+- Patch Compliance
+- Incident Status
+- Security Trends
+
+---
+
+# Production Security Checklist
+
+Identity
+
+- MFA enabled
+- Least privilege
+- IAM roles
+- Temporary credentials
+
+---
+
+Network
+
+- Private subnets
+- WAF
+- Shield
+- VPC Endpoints
+- Network Firewall
+
+---
+
+Data
+
+- Encryption enabled
+- KMS rotation
+- Secrets Manager
+- TLS enforced
+
+---
+
+Monitoring
+
+- GuardDuty
+- Security Hub
+- CloudTrail
+- Config
+- Inspector
+
+---
+
+Containers
+
+- Image scanning
+- IRSA
+- RBAC
+- Network Policies
+
+---
+
+Operations
+
+- Incident response
+- Disaster recovery
+- Security reviews
+- Compliance monitoring
+
+---
+
+# Common Enterprise Security Mistakes
+
+- Single AWS account for all workloads
+- AdministratorAccess assigned broadly
+- Public databases
+- Public S3 buckets
+- Missing MFA
+- Hardcoded secrets
+- Disabled CloudTrail
+- No centralized logging
+- Missing vulnerability scanning
+- No incident response testing
+
+---
+
+# Enterprise Security Review
+
+Daily
+
+- Critical findings
+- IAM activity
+- GuardDuty alerts
+
+---
+
+Weekly
+
+- Vulnerabilities
+- Config compliance
+- WAF logs
+- Patch status
+
+---
+
+Monthly
+
+- Security posture review
+- IAM review
+- Key rotation
+- Backup validation
+
+---
+
+Quarterly
+
+- Architecture review
+- Penetration testing
+- Disaster recovery testing
+- Compliance assessment
+
+---
+
+# Reference Architecture
+
+```text
+Users
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Shield Advanced
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon RDS
+
+↓
+
+AWS KMS
+
+↓
+
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+SOC
+```
+
+---
+
+# Best Practices
+
+- Adopt a multi-account architecture using AWS Organizations.
+- Centralize security services in a dedicated Security account.
+- Apply Zero Trust principles across identities, networks, and workloads.
+- Protect internet-facing applications with CloudFront, WAF, and Shield Advanced.
+- Use IAM Identity Center with temporary credentials instead of long-lived IAM users.
+- Encrypt all sensitive data using AWS KMS.
+- Centralize logs in a dedicated Log Archive account.
+- Continuously monitor security posture using GuardDuty, Security Hub, Inspector, and AWS Config.
+- Automate security responses with EventBridge and Lambda.
+- Regularly review architecture, governance, and operational security controls.
+
+---
+
+# Summary
+
+This section covered enterprise AWS security architecture, Zero Trust, Defense in Depth, Landing Zones, multi-account security, secure VPC and Amazon EKS architectures, CI/CD security patterns, identity architecture, centralized logging, monitoring, disaster recovery, automation, and production security design patterns. These reference architectures provide a scalable and secure foundation for enterprise AWS environments.
+
+---
+
