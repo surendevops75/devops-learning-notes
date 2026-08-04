@@ -2721,3 +2721,735 @@ This section covered Terraform examples for Amazon S3, EFS, FSx, RDS, Aurora, Dy
 
 ---
 
+# Amazon Elastic Container Registry (ECR)
+
+---
+
+# Create ECR Repository
+
+```hcl
+resource "aws_ecr_repository" "app" {
+
+  name = "production-app"
+
+  image_tag_mutability = "IMMUTABLE"
+
+  image_scanning_configuration {
+
+    scan_on_push = true
+
+  }
+
+}
+```
+
+---
+
+# Repository Policy
+
+```hcl
+resource "aws_ecr_repository_policy" "app" {
+
+  repository = aws_ecr_repository.app.name
+
+  policy = data.aws_iam_policy_document.ecr.json
+
+}
+```
+
+---
+
+# Lifecycle Policy
+
+```hcl
+resource "aws_ecr_lifecycle_policy" "app" {
+
+  repository = aws_ecr_repository.app.name
+
+  policy = jsonencode({
+
+    rules = [
+
+      {
+
+        rulePriority = 1
+
+        description = "Keep last 20 images"
+
+        selection = {
+
+          tagStatus = "any"
+
+          countType = "imageCountMoreThan"
+
+          countNumber = 20
+
+        }
+
+        action = {
+
+          type = "expire"
+
+        }
+
+      }
+
+    ]
+
+  })
+
+}
+```
+
+---
+
+# Amazon ECS
+
+---
+
+# ECS Cluster
+
+```hcl
+resource "aws_ecs_cluster" "main" {
+
+  name = "production"
+
+}
+```
+
+---
+
+# Capacity Providers
+
+```hcl
+resource "aws_ecs_cluster_capacity_providers" "main" {
+
+  cluster_name = aws_ecs_cluster.main.name
+
+  capacity_providers = [
+
+    "FARGATE",
+
+    "FARGATE_SPOT"
+
+  ]
+
+}
+```
+
+---
+
+# Task Definition
+
+```hcl
+resource "aws_ecs_task_definition" "web" {
+
+  family = "web"
+
+  network_mode = "awsvpc"
+
+  requires_compatibilities = [
+
+    "FARGATE"
+
+  ]
+
+  cpu = 512
+
+  memory = 1024
+
+  execution_role_arn = aws_iam_role.ecs_execution.arn
+
+  container_definitions = file("task-definition.json")
+
+}
+```
+
+---
+
+# ECS Service
+
+```hcl
+resource "aws_ecs_service" "web" {
+
+  name = "web"
+
+  cluster = aws_ecs_cluster.main.id
+
+  task_definition = aws_ecs_task_definition.web.arn
+
+  desired_count = 2
+
+  launch_type = "FARGATE"
+
+}
+```
+
+---
+
+# Auto Scaling Target
+
+```hcl
+resource "aws_appautoscaling_target" "ecs" {
+
+  service_namespace = "ecs"
+
+  resource_id = "service/${aws_ecs_cluster.main.name}/${aws_ecs_service.web.name}"
+
+  scalable_dimension = "ecs:service:DesiredCount"
+
+  min_capacity = 2
+
+  max_capacity = 10
+
+}
+```
+
+---
+
+# Auto Scaling Policy
+
+```hcl
+resource "aws_appautoscaling_policy" "cpu" {
+
+  name = "cpu-scaling"
+
+  service_namespace = "ecs"
+
+  resource_id = aws_appautoscaling_target.ecs.resource_id
+
+  scalable_dimension = aws_appautoscaling_target.ecs.scalable_dimension
+
+  policy_type = "TargetTrackingScaling"
+
+}
+```
+
+---
+
+# Amazon EKS
+
+---
+
+# EKS Cluster
+
+```hcl
+resource "aws_eks_cluster" "main" {
+
+  name = "production"
+
+  role_arn = aws_iam_role.eks.arn
+
+  version = "1.31"
+
+  vpc_config {
+
+    subnet_ids = [
+
+      aws_subnet.private.id
+
+    ]
+
+  }
+
+}
+```
+
+---
+
+# Managed Node Group
+
+```hcl
+resource "aws_eks_node_group" "workers" {
+
+  cluster_name = aws_eks_cluster.main.name
+
+  node_group_name = "workers"
+
+  node_role_arn = aws_iam_role.worker.arn
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+  scaling_config {
+
+    desired_size = 2
+
+    min_size = 2
+
+    max_size = 6
+
+  }
+
+}
+```
+
+---
+
+# EKS Add-on
+
+```hcl
+resource "aws_eks_addon" "coredns" {
+
+  cluster_name = aws_eks_cluster.main.name
+
+  addon_name = "coredns"
+
+}
+```
+
+---
+
+# OIDC Provider
+
+```hcl
+resource "aws_iam_openid_connect_provider" "eks" {
+
+  url = aws_eks_cluster.main.identity[0].oidc[0].issuer
+
+  client_id_list = [
+
+    "sts.amazonaws.com"
+
+  ]
+
+}
+```
+
+---
+
+# Fargate Profile
+
+```hcl
+resource "aws_eks_fargate_profile" "default" {
+
+  cluster_name = aws_eks_cluster.main.name
+
+  fargate_profile_name = "default"
+
+  pod_execution_role_arn = aws_iam_role.fargate.arn
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+}
+```
+
+---
+
+# Kubernetes Provider
+
+```hcl
+provider "kubernetes" {
+
+  host = aws_eks_cluster.main.endpoint
+
+}
+```
+
+---
+
+# Namespace
+
+```hcl
+resource "kubernetes_namespace" "app" {
+
+  metadata {
+
+    name = "production"
+
+  }
+
+}
+```
+
+---
+
+# ConfigMap
+
+```hcl
+resource "kubernetes_config_map" "app" {
+
+  metadata {
+
+    name = "application-config"
+
+    namespace = "production"
+
+  }
+
+}
+```
+
+---
+
+# Secret
+
+```hcl
+resource "kubernetes_secret" "db" {
+
+  metadata {
+
+    name = "db-secret"
+
+  }
+
+}
+```
+
+---
+
+# Deployment
+
+```hcl
+resource "kubernetes_deployment" "web" {
+
+  metadata {
+
+    name = "web"
+
+  }
+
+}
+```
+
+---
+
+# Service
+
+```hcl
+resource "kubernetes_service" "web" {
+
+  metadata {
+
+    name = "web"
+
+  }
+
+}
+```
+
+---
+
+# Ingress
+
+```hcl
+resource "kubernetes_ingress_v1" "web" {
+
+  metadata {
+
+    name = "web"
+
+  }
+
+}
+```
+
+---
+
+# AWS Lambda
+
+---
+
+# Lambda Function
+
+```hcl
+resource "aws_lambda_function" "processor" {
+
+  function_name = "processor"
+
+  runtime = "python3.12"
+
+  handler = "lambda_function.lambda_handler"
+
+  filename = "lambda.zip"
+
+  role = aws_iam_role.lambda.arn
+
+}
+```
+
+---
+
+# Lambda Permission
+
+```hcl
+resource "aws_lambda_permission" "apigw" {
+
+  statement_id = "AllowAPIGateway"
+
+  action = "lambda:InvokeFunction"
+
+  function_name = aws_lambda_function.processor.function_name
+
+  principal = "apigateway.amazonaws.com"
+
+}
+```
+
+---
+
+# Lambda Function URL
+
+```hcl
+resource "aws_lambda_function_url" "main" {
+
+  function_name = aws_lambda_function.processor.function_name
+
+  authorization_type = "NONE"
+
+}
+```
+
+---
+
+# API Gateway REST API
+
+```hcl
+resource "aws_api_gateway_rest_api" "main" {
+
+  name = "OrdersAPI"
+
+}
+```
+
+---
+
+# API Gateway HTTP API
+
+```hcl
+resource "aws_apigatewayv2_api" "http" {
+
+  name = "OrdersHTTP"
+
+  protocol_type = "HTTP"
+
+}
+```
+
+---
+
+# App Runner
+
+```hcl
+resource "aws_apprunner_service" "app" {
+
+  service_name = "production-app"
+
+}
+```
+
+---
+
+# EventBridge Bus
+
+```hcl
+resource "aws_cloudwatch_event_bus" "main" {
+
+  name = "application-events"
+
+}
+```
+
+---
+
+# EventBridge Rule
+
+```hcl
+resource "aws_cloudwatch_event_rule" "schedule" {
+
+  name = "daily-job"
+
+  schedule_expression = "rate(1 day)"
+
+}
+```
+
+---
+
+# EventBridge Target
+
+```hcl
+resource "aws_cloudwatch_event_target" "lambda" {
+
+  rule = aws_cloudwatch_event_rule.schedule.name
+
+  arn = aws_lambda_function.processor.arn
+
+}
+```
+
+---
+
+# SNS Topic
+
+```hcl
+resource "aws_sns_topic" "alerts" {
+
+  name = "alerts"
+
+}
+```
+
+---
+
+# Email Subscription
+
+```hcl
+resource "aws_sns_topic_subscription" "email" {
+
+  topic_arn = aws_sns_topic.alerts.arn
+
+  protocol = "email"
+
+  endpoint = "admin@example.com"
+
+}
+```
+
+---
+
+# SQS Queue
+
+```hcl
+resource "aws_sqs_queue" "orders" {
+
+  name = "orders"
+
+  visibility_timeout_seconds = 30
+
+}
+```
+
+---
+
+# Dead Letter Queue
+
+```hcl
+resource "aws_sqs_queue" "dlq" {
+
+  name = "orders-dlq"
+
+}
+```
+
+---
+
+# Queue Redrive Policy
+
+```hcl
+resource "aws_sqs_queue_redrive_policy" "orders" {
+
+  queue_url = aws_sqs_queue.orders.id
+
+  redrive_policy = jsonencode({
+
+    deadLetterTargetArn = aws_sqs_queue.dlq.arn
+
+    maxReceiveCount = 5
+
+  })
+
+}
+```
+
+---
+
+# Step Functions
+
+```hcl
+resource "aws_sfn_state_machine" "workflow" {
+
+  name = "OrderWorkflow"
+
+  role_arn = aws_iam_role.stepfunctions.arn
+
+  definition = file("workflow.json")
+
+}
+```
+
+---
+
+# Cloud Map Namespace
+
+```hcl
+resource "aws_service_discovery_private_dns_namespace" "main" {
+
+  name = "internal.local"
+
+  vpc = aws_vpc.main.id
+
+}
+```
+
+---
+
+# Cloud Map Service
+
+```hcl
+resource "aws_service_discovery_service" "web" {
+
+  name = "web"
+
+  dns_config {
+
+    namespace_id = aws_service_discovery_private_dns_namespace.main.id
+
+  }
+
+}
+```
+
+---
+
+# Outputs
+
+```hcl
+output "eks_cluster" {
+
+  value = aws_eks_cluster.main.name
+
+}
+
+output "ecs_cluster" {
+
+  value = aws_ecs_cluster.main.name
+
+}
+
+output "lambda_name" {
+
+  value = aws_lambda_function.processor.function_name
+
+}
+```
+
+---
+
+# Best Practices
+
+- Enable image scanning and immutable tags in Amazon ECR.
+- Use Fargate for serverless container workloads when appropriate.
+- Enable EKS managed add-ons and OIDC for IAM Roles for Service Accounts (IRSA).
+- Store Kubernetes manifests separately from infrastructure code when using GitOps.
+- Package Lambda functions with minimal dependencies.
+- Configure DLQs for SQS and Lambda error handling.
+- Use EventBridge for event-driven architectures instead of polling.
+- Protect API Gateway endpoints with authentication and authorization.
+- Tag all container and serverless resources consistently.
+
+---
+
+# Summary
+
+This section covered Terraform examples for Amazon ECR, ECS, EKS, Kubernetes resources, Lambda, API Gateway, App Runner, EventBridge, SNS, SQS, Step Functions, and AWS Cloud Map. These examples provide production-ready infrastructure patterns for containers, Kubernetes, serverless applications, messaging, and event-driven architectures.
+
+---
+
