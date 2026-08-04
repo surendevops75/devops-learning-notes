@@ -1951,3 +1951,773 @@ This section covered Terraform examples for IAM Users, Groups, Roles, Policies, 
 
 ---
 
+# Amazon S3
+
+---
+
+# Create S3 Bucket
+
+```hcl
+resource "aws_s3_bucket" "main" {
+
+  bucket = "production-app-storage"
+
+  tags = {
+
+    Environment = "Production"
+
+  }
+
+}
+```
+
+---
+
+# Enable Versioning
+
+```hcl
+resource "aws_s3_bucket_versioning" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  versioning_configuration {
+
+    status = "Enabled"
+
+  }
+
+}
+```
+
+---
+
+# Enable Server-Side Encryption
+
+```hcl
+resource "aws_s3_bucket_server_side_encryption_configuration" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  rule {
+
+    apply_server_side_encryption_by_default {
+
+      sse_algorithm = "AES256"
+
+    }
+
+  }
+
+}
+```
+
+---
+
+# SSE-KMS Encryption
+
+```hcl
+resource "aws_s3_bucket_server_side_encryption_configuration" "kms" {
+
+  bucket = aws_s3_bucket.main.id
+
+  rule {
+
+    apply_server_side_encryption_by_default {
+
+      kms_master_key_id = aws_kms_key.main.arn
+
+      sse_algorithm = "aws:kms"
+
+    }
+
+  }
+
+}
+```
+
+---
+
+# Block Public Access
+
+```hcl
+resource "aws_s3_bucket_public_access_block" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  block_public_acls = true
+
+  block_public_policy = true
+
+  ignore_public_acls = true
+
+  restrict_public_buckets = true
+
+}
+```
+
+---
+
+# Bucket Lifecycle
+
+```hcl
+resource "aws_s3_bucket_lifecycle_configuration" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  rule {
+
+    id = "archive"
+
+    status = "Enabled"
+
+    transition {
+
+      days = 30
+
+      storage_class = "GLACIER"
+
+    }
+
+  }
+
+}
+```
+
+---
+
+# Bucket Logging
+
+```hcl
+resource "aws_s3_bucket_logging" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  target_bucket = aws_s3_bucket.logs.id
+
+  target_prefix = "logs/"
+
+}
+```
+
+---
+
+# Bucket Policy
+
+```hcl
+resource "aws_s3_bucket_policy" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  policy = data.aws_iam_policy_document.bucket.json
+
+}
+```
+
+---
+
+# Bucket Notification
+
+```hcl
+resource "aws_s3_bucket_notification" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+}
+```
+
+---
+
+# Bucket Ownership Controls
+
+```hcl
+resource "aws_s3_bucket_ownership_controls" "main" {
+
+  bucket = aws_s3_bucket.main.id
+
+  rule {
+
+    object_ownership = "BucketOwnerPreferred"
+
+  }
+
+}
+```
+
+---
+
+# Amazon EFS
+
+---
+
+# File System
+
+```hcl
+resource "aws_efs_file_system" "main" {
+
+  encrypted = true
+
+  performance_mode = "generalPurpose"
+
+  throughput_mode = "bursting"
+
+}
+```
+
+---
+
+# Mount Target
+
+```hcl
+resource "aws_efs_mount_target" "private" {
+
+  file_system_id = aws_efs_file_system.main.id
+
+  subnet_id = aws_subnet.private.id
+
+  security_groups = [
+
+    aws_security_group.efs.id
+
+  ]
+
+}
+```
+
+---
+
+# Access Point
+
+```hcl
+resource "aws_efs_access_point" "app" {
+
+  file_system_id = aws_efs_file_system.main.id
+
+}
+```
+
+---
+
+# Amazon FSx
+
+---
+
+# FSx Windows
+
+```hcl
+resource "aws_fsx_windows_file_system" "main" {
+
+  storage_capacity = 32
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+  throughput_capacity = 8
+
+}
+```
+
+---
+
+# FSx Lustre
+
+```hcl
+resource "aws_fsx_lustre_file_system" "main" {
+
+  storage_capacity = 1200
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+}
+```
+
+---
+
+# Amazon RDS
+
+---
+
+# MySQL Instance
+
+```hcl
+resource "aws_db_instance" "mysql" {
+
+  identifier = "production-db"
+
+  engine = "mysql"
+
+  instance_class = "db.t3.micro"
+
+  allocated_storage = 20
+
+  username = "admin"
+
+  password = var.db_password
+
+  skip_final_snapshot = true
+
+}
+```
+
+---
+
+# PostgreSQL Instance
+
+```hcl
+resource "aws_db_instance" "postgres" {
+
+  identifier = "postgres-db"
+
+  engine = "postgres"
+
+  instance_class = "db.t3.small"
+
+  allocated_storage = 50
+
+  username = "postgres"
+
+  password = var.db_password
+
+}
+```
+
+---
+
+# Parameter Group
+
+```hcl
+resource "aws_db_parameter_group" "mysql" {
+
+  family = "mysql8.0"
+
+  name = "mysql-parameters"
+
+}
+```
+
+---
+
+# Option Group
+
+```hcl
+resource "aws_db_option_group" "mysql" {
+
+  engine_name = "mysql"
+
+  major_engine_version = "8.0"
+
+}
+```
+
+---
+
+# DB Subnet Group
+
+```hcl
+resource "aws_db_subnet_group" "main" {
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+}
+```
+
+---
+
+# Read Replica
+
+```hcl
+resource "aws_db_instance" "replica" {
+
+  replicate_source_db = aws_db_instance.mysql.identifier
+
+  instance_class = "db.t3.micro"
+
+}
+```
+
+---
+
+# Aurora Cluster
+
+```hcl
+resource "aws_rds_cluster" "aurora" {
+
+  cluster_identifier = "aurora-prod"
+
+  engine = "aurora-mysql"
+
+  master_username = "admin"
+
+  master_password = var.db_password
+
+}
+```
+
+---
+
+# Aurora Instance
+
+```hcl
+resource "aws_rds_cluster_instance" "writer" {
+
+  cluster_identifier = aws_rds_cluster.aurora.id
+
+  instance_class = "db.r6g.large"
+
+  engine = aws_rds_cluster.aurora.engine
+
+}
+```
+
+---
+
+# Amazon DynamoDB
+
+---
+
+# DynamoDB Table
+
+```hcl
+resource "aws_dynamodb_table" "users" {
+
+  name = "Users"
+
+  billing_mode = "PAY_PER_REQUEST"
+
+  hash_key = "UserId"
+
+  attribute {
+
+    name = "UserId"
+
+    type = "S"
+
+  }
+
+}
+```
+
+---
+
+# Global Secondary Index
+
+```hcl
+global_secondary_index {
+
+  name = "EmailIndex"
+
+  hash_key = "Email"
+
+  projection_type = "ALL"
+
+}
+```
+
+---
+
+# TTL
+
+```hcl
+ttl {
+
+  attribute_name = "Expiry"
+
+  enabled = true
+
+}
+```
+
+---
+
+# Point-in-Time Recovery
+
+```hcl
+point_in_time_recovery {
+
+  enabled = true
+
+}
+```
+
+---
+
+# Amazon ElastiCache
+
+---
+
+# Redis Cluster
+
+```hcl
+resource "aws_elasticache_cluster" "redis" {
+
+  cluster_id = "redis-prod"
+
+  engine = "redis"
+
+  node_type = "cache.t3.micro"
+
+  num_cache_nodes = 1
+
+}
+```
+
+---
+
+# Redis Replication Group
+
+```hcl
+resource "aws_elasticache_replication_group" "redis" {
+
+  replication_group_id = "redis"
+
+  engine = "redis"
+
+  node_type = "cache.t3.small"
+
+  automatic_failover_enabled = true
+
+}
+```
+
+---
+
+# Memcached Cluster
+
+```hcl
+resource "aws_elasticache_cluster" "memcached" {
+
+  cluster_id = "memcached"
+
+  engine = "memcached"
+
+  node_type = "cache.t3.micro"
+
+  num_cache_nodes = 2
+
+}
+```
+
+---
+
+# AWS Backup
+
+---
+
+# Backup Vault
+
+```hcl
+resource "aws_backup_vault" "main" {
+
+  name = "ProductionVault"
+
+}
+```
+
+---
+
+# Backup Plan
+
+```hcl
+resource "aws_backup_plan" "daily" {
+
+  name = "DailyBackup"
+
+  rule {
+
+    rule_name = "Daily"
+
+    target_vault_name = aws_backup_vault.main.name
+
+    schedule = "cron(0 2 * * ? *)"
+
+  }
+
+}
+```
+
+---
+
+# Backup Selection
+
+```hcl
+resource "aws_backup_selection" "ec2" {
+
+  iam_role_arn = aws_iam_role.backup.arn
+
+  name = "EC2Selection"
+
+  plan_id = aws_backup_plan.daily.id
+
+  resources = [
+
+    aws_instance.web.arn
+
+  ]
+
+}
+```
+
+---
+
+# AWS DataSync
+
+---
+
+# DataSync Location (S3)
+
+```hcl
+resource "aws_datasync_location_s3" "source" {
+
+  s3_bucket_arn = aws_s3_bucket.main.arn
+
+  subdirectory = "/"
+
+}
+```
+
+---
+
+# DataSync Task
+
+```hcl
+resource "aws_datasync_task" "migration" {
+
+  source_location_arn = aws_datasync_location_s3.source.arn
+
+  destination_location_arn = aws_datasync_location_s3.destination.arn
+
+}
+```
+
+---
+
+# AWS Storage Gateway
+
+---
+
+# File Gateway
+
+```hcl
+resource "aws_storagegateway_gateway" "main" {
+
+  gateway_name = "FileGateway"
+
+  gateway_timezone = "GMT"
+
+  gateway_type = "FILE_S3"
+
+}
+```
+
+---
+
+# SMB File Share
+
+```hcl
+resource "aws_storagegateway_smb_file_share" "share" {
+
+  gateway_arn = aws_storagegateway_gateway.main.arn
+
+  location_arn = aws_s3_bucket.main.arn
+
+}
+```
+
+---
+
+# AWS Snow Family
+
+---
+
+# Snowball Job
+
+```hcl
+resource "aws_snowball_job" "import" {
+
+  job_type = "IMPORT"
+
+  snowball_type = "EDGE"
+
+}
+```
+
+---
+
+# Data Sources
+
+---
+
+# Latest RDS Engine
+
+```hcl
+data "aws_rds_engine_version" "mysql" {
+
+  engine = "mysql"
+
+}
+```
+
+---
+
+# Current Caller Identity
+
+```hcl
+data "aws_caller_identity" "current" {}
+```
+
+---
+
+# Outputs
+
+```hcl
+output "bucket_name" {
+
+  value = aws_s3_bucket.main.bucket
+
+}
+
+output "database_endpoint" {
+
+  value = aws_db_instance.mysql.endpoint
+
+}
+
+output "efs_id" {
+
+  value = aws_efs_file_system.main.id
+
+}
+```
+
+---
+
+# Best Practices
+
+- Enable S3 Versioning and default encryption.
+- Block public access for production buckets.
+- Store databases in private subnets.
+- Enable automated backups and Multi-AZ for production RDS instances.
+- Enable Point-in-Time Recovery for DynamoDB tables.
+- Encrypt EFS, FSx, RDS, and ElastiCache using KMS.
+- Use AWS Backup to centralize backup policies.
+- Protect sensitive variables (such as database passwords) using Terraform variables and secret managers.
+- Tag all storage and database resources consistently.
+
+---
+
+# Summary
+
+This section covered Terraform examples for Amazon S3, EFS, FSx, RDS, Aurora, DynamoDB, ElastiCache, AWS Backup, DataSync, Storage Gateway, and Snow Family. These examples provide production-ready infrastructure patterns for AWS storage, databases, backup, and migration services.
+
+---
+
