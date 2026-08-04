@@ -5492,3 +5492,786 @@ This section covered Terraform examples for Amazon Athena, Glue, EMR, Redshift, 
 
 ---
 
+# Terraform Modules
+
+---
+
+# Root Module
+
+```text
+terraform/
+
+├── main.tf
+├── variables.tf
+├── outputs.tf
+└── modules/
+    ├── vpc/
+    ├── eks/
+    ├── rds/
+    └── alb/
+```
+
+---
+
+# Module Block
+
+```hcl
+module "vpc" {
+
+  source = "./modules/vpc"
+
+  vpc_cidr = "10.0.0.0/16"
+
+  environment = "production"
+
+}
+```
+
+---
+
+# Module Variables
+
+```hcl
+variable "vpc_cidr" {
+
+  type = string
+
+}
+```
+
+---
+
+# Module Outputs
+
+```hcl
+output "vpc_id" {
+
+  value = aws_vpc.main.id
+
+}
+```
+
+---
+
+# Git Module Source
+
+```hcl
+module "eks" {
+
+  source = "git::https://github.com/company/terraform-aws-eks.git"
+
+}
+```
+
+---
+
+# Terraform Registry Module
+
+```hcl
+module "vpc" {
+
+  source = "terraform-aws-modules/vpc/aws"
+
+  version = "~> 5.0"
+
+}
+```
+
+---
+
+# Local Module
+
+```hcl
+module "network" {
+
+  source = "../modules/network"
+
+}
+```
+
+---
+
+# Remote State
+
+---
+
+# S3 Backend
+
+```hcl
+terraform {
+
+  backend "s3" {
+
+    bucket = "terraform-state"
+
+    key = "production/terraform.tfstate"
+
+    region = "ap-south-1"
+
+    encrypt = true
+
+  }
+
+}
+```
+
+---
+
+# Backend Configuration
+
+```bash
+terraform init \
+-backend-config="bucket=terraform-state" \
+-backend-config="key=prod/terraform.tfstate"
+```
+
+---
+
+# Remote State Data Source
+
+```hcl
+data "terraform_remote_state" "network" {
+
+  backend = "s3"
+
+  config = {
+
+    bucket = "terraform-state"
+
+    key = "network/terraform.tfstate"
+
+    region = "ap-south-1"
+
+  }
+
+}
+```
+
+---
+
+# Workspaces
+
+---
+
+# Create Workspace
+
+```bash
+terraform workspace new production
+```
+
+---
+
+# Select Workspace
+
+```bash
+terraform workspace select production
+```
+
+---
+
+# List Workspaces
+
+```bash
+terraform workspace list
+```
+
+---
+
+# Current Workspace
+
+```hcl
+terraform.workspace
+```
+
+---
+
+# Dynamic Blocks
+
+```hcl
+dynamic "ingress" {
+
+  for_each = var.ingress_rules
+
+  content {
+
+    from_port = ingress.value.port
+
+    to_port = ingress.value.port
+
+    protocol = "tcp"
+
+    cidr_blocks = ingress.value.cidr
+
+  }
+
+}
+```
+
+---
+
+# for_each
+
+```hcl
+resource "aws_s3_bucket" "bucket" {
+
+  for_each = toset([
+
+    "logs",
+
+    "artifacts",
+
+    "backup"
+
+  ])
+
+  bucket = each.key
+
+}
+```
+
+---
+
+# count
+
+```hcl
+resource "aws_instance" "server" {
+
+  count = 3
+
+  ami = data.aws_ami.amazon_linux.id
+
+}
+```
+
+---
+
+# Conditional Resource
+
+```hcl
+resource "aws_eip" "public" {
+
+  count = var.create_eip ? 1 : 0
+
+}
+```
+
+---
+
+# Expressions
+
+```hcl
+locals {
+
+  bucket_name = "${var.environment}-logs"
+
+}
+```
+
+---
+
+# for Expression
+
+```hcl
+locals {
+
+  instance_names = [
+
+    for i in aws_instance.server :
+
+    i.private_ip
+
+  ]
+
+}
+```
+
+---
+
+# Functions
+
+Upper
+
+```hcl
+upper(var.environment)
+```
+
+---
+
+Lower
+
+```hcl
+lower(var.environment)
+```
+
+---
+
+Length
+
+```hcl
+length(var.subnets)
+```
+
+---
+
+Join
+
+```hcl
+join(",", var.subnets)
+```
+
+---
+
+Split
+
+```hcl
+split(",", var.tags)
+```
+
+---
+
+Lookup
+
+```hcl
+lookup(var.ami_map, "production")
+```
+
+---
+
+Merge
+
+```hcl
+merge(
+
+  local.common_tags,
+
+  local.environment_tags
+
+)
+```
+
+---
+
+Flatten
+
+```hcl
+flatten(var.subnets)
+```
+
+---
+
+Distinct
+
+```hcl
+distinct(var.azs)
+```
+
+---
+
+Element
+
+```hcl
+element(var.subnets, 0)
+```
+
+---
+
+Templatefile
+
+```hcl
+templatefile(
+
+  "userdata.tpl",
+
+  {
+
+    environment = "production"
+
+  }
+
+)
+```
+
+---
+
+# Sensitive Variable
+
+```hcl
+variable "db_password" {
+
+  type = string
+
+  sensitive = true
+
+}
+```
+
+---
+
+# Sensitive Output
+
+```hcl
+output "database_password" {
+
+  value = var.db_password
+
+  sensitive = true
+
+}
+```
+
+---
+
+# Provisioners
+
+---
+
+Local Exec
+
+```hcl
+resource "null_resource" "build" {
+
+  provisioner "local-exec" {
+
+    command = "echo Build Complete"
+
+  }
+
+}
+```
+
+---
+
+Remote Exec
+
+```hcl
+provisioner "remote-exec" {
+
+  inline = [
+
+    "sudo dnf update -y",
+
+    "sudo systemctl restart nginx"
+
+  ]
+
+}
+```
+
+---
+
+# terraform_data Resource
+
+```hcl
+resource "terraform_data" "build" {
+
+  input = {
+
+    version = "1.0.0"
+
+  }
+
+}
+```
+
+---
+
+# Null Resource Trigger
+
+```hcl
+resource "null_resource" "deploy" {
+
+  triggers = {
+
+    build = timestamp()
+
+  }
+
+}
+```
+
+---
+
+# depends_on
+
+```hcl
+resource "aws_instance" "web" {
+
+  depends_on = [
+
+    aws_security_group.web,
+
+    aws_iam_role.ec2
+
+  ]
+
+}
+```
+
+---
+
+# Lifecycle
+
+Ignore Changes
+
+```hcl
+lifecycle {
+
+  ignore_changes = [
+
+    tags
+
+  ]
+
+}
+```
+
+---
+
+Create Before Destroy
+
+```hcl
+lifecycle {
+
+  create_before_destroy = true
+
+}
+```
+
+---
+
+Prevent Destroy
+
+```hcl
+lifecycle {
+
+  prevent_destroy = true
+
+}
+```
+
+---
+
+# Import Block (Terraform 1.5+)
+
+```hcl
+import {
+
+  to = aws_s3_bucket.logs
+
+  id = "production-logs"
+
+}
+```
+
+---
+
+# Moved Block
+
+```hcl
+moved {
+
+  from = aws_instance.old
+
+  to = aws_instance.web
+
+}
+```
+
+---
+
+# Preconditions
+
+```hcl
+lifecycle {
+
+  precondition {
+
+    condition = var.instance_count > 0
+
+    error_message = "Instance count must be greater than zero."
+
+  }
+
+}
+```
+
+---
+
+# Postconditions
+
+```hcl
+lifecycle {
+
+  postcondition {
+
+    condition = self.instance_state == "running"
+
+    error_message = "Instance failed to start."
+
+  }
+
+}
+```
+
+---
+
+# Terraform Test
+
+```text
+tests/
+
+└── main.tftest.hcl
+```
+
+---
+
+Example Test
+
+```hcl
+run "plan" {
+
+  command = plan
+
+}
+```
+
+---
+
+# Validate
+
+```bash
+terraform validate
+```
+
+---
+
+# Format
+
+```bash
+terraform fmt -recursive
+```
+
+---
+
+# Plan
+
+```bash
+terraform plan -out=tfplan
+```
+
+---
+
+# Apply Saved Plan
+
+```bash
+terraform apply tfplan
+```
+
+---
+
+# Refresh State
+
+```bash
+terraform refresh
+```
+
+---
+
+# Graph Dependencies
+
+```bash
+terraform graph
+```
+
+---
+
+# Providers
+
+```bash
+terraform providers
+```
+
+---
+
+# State List
+
+```bash
+terraform state list
+```
+
+---
+
+# State Show
+
+```bash
+terraform state show aws_instance.web
+```
+
+---
+
+# State Move
+
+```bash
+terraform state mv \
+aws_instance.old \
+aws_instance.new
+```
+
+---
+
+# State Remove
+
+```bash
+terraform state rm aws_instance.web
+```
+
+---
+
+# Force Unlock
+
+```bash
+terraform force-unlock LOCK_ID
+```
+
+---
+
+# Outputs
+
+```hcl
+output "workspace" {
+
+  value = terraform.workspace
+
+}
+
+output "vpc" {
+
+  value = module.vpc.vpc_id
+
+}
+```
+
+---
+
+# Best Practices
+
+- Build reusable modules with clear inputs and outputs.
+- Store Terraform state remotely in Amazon S3.
+- Enable state locking to prevent concurrent modifications.
+- Keep modules small and focused on a single responsibility.
+- Use `for_each` for stable resource management.
+- Prefer `terraform_data` over `null_resource` for new projects.
+- Mark secrets as `sensitive`.
+- Use lifecycle rules carefully to avoid unintended resource recreation.
+- Validate and format code before every deployment.
+- Store plans for production deployments and review them before applying.
+- Use import and moved blocks when migrating existing infrastructure.
+
+---
+
+# Summary
+
+This section covered advanced Terraform concepts including reusable modules, remote state, workspaces, dynamic blocks, expressions, built-in functions, lifecycle meta-arguments, provisioners, `terraform_data`, import blocks, moved blocks, preconditions, postconditions, testing, state management, and production deployment workflows. These patterns are essential for building scalable, maintainable enterprise Terraform projects.
+
+---
+
