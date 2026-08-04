@@ -4853,3 +4853,642 @@ This section covered Terraform examples for Amazon Route53, CloudFront, AWS WAF,
 
 ---
 
+# Amazon Athena
+
+---
+
+# Workgroup
+
+```hcl
+resource "aws_athena_workgroup" "main" {
+
+  name = "production"
+
+  state = "ENABLED"
+
+}
+```
+
+---
+
+# Named Query
+
+```hcl
+resource "aws_athena_named_query" "top_users" {
+
+  name = "TopUsers"
+
+  database = "analytics"
+
+  query = file("queries/top-users.sql")
+
+  workgroup = aws_athena_workgroup.main.name
+
+}
+```
+
+---
+
+# Data Catalog
+
+```hcl
+resource "aws_athena_data_catalog" "glue" {
+
+  name = "AwsDataCatalog"
+
+  type = "GLUE"
+
+}
+```
+
+---
+
+# AWS Glue
+
+---
+
+# Catalog Database
+
+```hcl
+resource "aws_glue_catalog_database" "analytics" {
+
+  name = "analytics"
+
+}
+```
+
+---
+
+# Catalog Table
+
+```hcl
+resource "aws_glue_catalog_table" "orders" {
+
+  name = "orders"
+
+  database_name = aws_glue_catalog_database.analytics.name
+
+  table_type = "EXTERNAL_TABLE"
+
+}
+```
+
+---
+
+# Glue Crawler
+
+```hcl
+resource "aws_glue_crawler" "crawler" {
+
+  name = "orders-crawler"
+
+  database_name = aws_glue_catalog_database.analytics.name
+
+  role = aws_iam_role.glue.arn
+
+}
+```
+
+---
+
+# Glue Job
+
+```hcl
+resource "aws_glue_job" "etl" {
+
+  name = "daily-etl"
+
+  role_arn = aws_iam_role.glue.arn
+
+  command {
+
+    script_location = "s3://scripts/etl.py"
+
+  }
+
+}
+```
+
+---
+
+# Glue Workflow
+
+```hcl
+resource "aws_glue_workflow" "etl" {
+
+  name = "DailyWorkflow"
+
+}
+```
+
+---
+
+# Amazon EMR
+
+---
+
+# EMR Cluster
+
+```hcl
+resource "aws_emr_cluster" "analytics" {
+
+  name = "analytics-cluster"
+
+  release_label = "emr-7.0.0"
+
+  applications = [
+
+    "Spark",
+
+    "Hive"
+
+  ]
+
+}
+```
+
+---
+
+# EMR Studio
+
+```hcl
+resource "aws_emr_studio" "main" {
+
+  name = "AnalyticsStudio"
+
+  auth_mode = "SSO"
+
+}
+```
+
+---
+
+# Amazon Redshift
+
+---
+
+# Cluster
+
+```hcl
+resource "aws_redshift_cluster" "warehouse" {
+
+  cluster_identifier = "warehouse"
+
+  node_type = "ra3.xlplus"
+
+  cluster_type = "single-node"
+
+  master_username = "admin"
+
+  master_password = var.redshift_password
+
+}
+```
+
+---
+
+# Subnet Group
+
+```hcl
+resource "aws_redshift_subnet_group" "main" {
+
+  name = "warehouse-subnets"
+
+  subnet_ids = [
+
+    aws_subnet.private.id
+
+  ]
+
+}
+```
+
+---
+
+# Parameter Group
+
+```hcl
+resource "aws_redshift_parameter_group" "main" {
+
+  family = "redshift-1.0"
+
+}
+```
+
+---
+
+# Amazon OpenSearch Service
+
+---
+
+# Domain
+
+```hcl
+resource "aws_opensearch_domain" "logs" {
+
+  domain_name = "production-logs"
+
+  engine_version = "OpenSearch_2.17"
+
+}
+```
+
+---
+
+# Domain Policy
+
+```hcl
+resource "aws_opensearch_domain_policy" "main" {
+
+  domain_name = aws_opensearch_domain.logs.domain_name
+
+  access_policies = file("opensearch-policy.json")
+
+}
+```
+
+---
+
+# Package Association
+
+```hcl
+resource "aws_opensearch_package_association" "main" {
+
+  package_id = aws_opensearch_package.dictionary.id
+
+  domain_name = aws_opensearch_domain.logs.domain_name
+
+}
+```
+
+---
+
+# Amazon Bedrock
+
+---
+
+# Guardrail
+
+```hcl
+resource "aws_bedrock_guardrail" "main" {
+
+  name = "production-guardrail"
+
+  blocked_input_messaging = "Input blocked."
+
+  blocked_outputs_messaging = "Output blocked."
+
+}
+```
+
+---
+
+# Prompt
+
+```hcl
+resource "aws_bedrock_prompt" "assistant" {
+
+  name = "devops-assistant"
+
+}
+```
+
+---
+
+# Inference Profile
+
+```hcl
+resource "aws_bedrock_inference_profile" "main" {
+
+  inference_profile_name = "production-profile"
+
+  model_source {
+
+    copy_from = "arn:aws:bedrock:region::foundation-model/amazon.nova-lite-v1:0"
+
+  }
+
+}
+```
+
+---
+
+# Amazon Q Developer
+
+---
+
+# Q Business Application
+
+```hcl
+resource "awscc_qbusiness_application" "main" {
+
+  display_name = "EngineeringAssistant"
+
+}
+```
+
+---
+
+# Amazon Textract
+
+---
+
+# IAM Role
+
+```hcl
+resource "aws_iam_role" "textract" {
+
+  name = "TextractRole"
+
+}
+```
+
+---
+
+# Amazon Rekognition
+
+---
+
+# Collection
+
+```hcl
+resource "aws_rekognition_collection" "faces" {
+
+  collection_id = "employees"
+
+}
+```
+
+---
+
+# Stream Processor
+
+```hcl
+resource "aws_rekognition_stream_processor" "main" {
+
+  name = "video-analysis"
+
+}
+```
+
+---
+
+# Amazon Comprehend
+
+---
+
+# Entity Recognizer
+
+```hcl
+resource "aws_comprehend_entity_recognizer" "main" {
+
+  recognizer_name = "customer-entities"
+
+  language_code = "en"
+
+}
+```
+
+---
+
+# Document Classifier
+
+```hcl
+resource "aws_comprehend_document_classifier" "main" {
+
+  document_classifier_name = "support-classifier"
+
+  language_code = "en"
+
+}
+```
+
+---
+
+# Amazon Managed Prometheus
+
+---
+
+# Workspace
+
+```hcl
+resource "aws_prometheus_workspace" "main" {
+
+  alias = "production-monitoring"
+
+}
+```
+
+---
+
+# Rule Group Namespace
+
+```hcl
+resource "aws_prometheus_rule_group_namespace" "alerts" {
+
+  name = "production-alerts"
+
+  workspace_id = aws_prometheus_workspace.main.id
+
+  data = file("alerts.yaml")
+
+}
+```
+
+---
+
+# Amazon Managed Grafana
+
+---
+
+# Workspace
+
+```hcl
+resource "aws_grafana_workspace" "main" {
+
+  name = "production"
+
+  account_access_type = "CURRENT_ACCOUNT"
+
+  authentication_providers = [
+
+    "AWS_SSO"
+
+  ]
+
+}
+```
+
+---
+
+# Role Association
+
+```hcl
+resource "aws_grafana_role_association" "admin" {
+
+  workspace_id = aws_grafana_workspace.main.id
+
+  role = "ADMIN"
+
+  group_ids = [
+
+    "devops-group"
+
+  ]
+
+}
+```
+
+---
+
+# AWS X-Ray
+
+---
+
+# Sampling Rule
+
+```hcl
+resource "aws_xray_sampling_rule" "main" {
+
+  rule_name = "ProductionSampling"
+
+  priority = 100
+
+  reservoir_size = 5
+
+  fixed_rate = 0.1
+
+}
+```
+
+---
+
+# Amazon Kinesis Data Stream
+
+```hcl
+resource "aws_kinesis_stream" "events" {
+
+  name = "application-events"
+
+  shard_count = 2
+
+}
+```
+
+---
+
+# Firehose Delivery Stream
+
+```hcl
+resource "aws_kinesis_firehose_delivery_stream" "logs" {
+
+  name = "application-logs"
+
+  destination = "extended_s3"
+
+}
+```
+
+---
+
+# Amazon MSK
+
+```hcl
+resource "aws_msk_cluster" "main" {
+
+  cluster_name = "production"
+
+  kafka_version = "3.7.0"
+
+  number_of_broker_nodes = 3
+
+}
+```
+
+---
+
+# Amazon Managed Service for Apache Flink
+
+```hcl
+resource "aws_kinesisanalyticsv2_application" "streaming" {
+
+  name = "stream-processing"
+
+  runtime_environment = "FLINK-1_18"
+
+}
+```
+
+---
+
+# Data Sources
+
+---
+
+# Current Region
+
+```hcl
+data "aws_region" "current" {}
+```
+
+---
+
+# Current Account
+
+```hcl
+data "aws_caller_identity" "current" {}
+```
+
+---
+
+# Outputs
+
+```hcl
+output "athena_workgroup" {
+
+  value = aws_athena_workgroup.main.name
+
+}
+
+output "redshift_endpoint" {
+
+  value = aws_redshift_cluster.warehouse.endpoint
+
+}
+
+output "prometheus_workspace" {
+
+  value = aws_prometheus_workspace.main.id
+
+}
+
+output "grafana_workspace" {
+
+  value = aws_grafana_workspace.main.endpoint
+
+}
+```
+
+---
+
+# Best Practices
+
+- Store Athena query results in encrypted S3 buckets.
+- Schedule Glue Crawlers instead of running them manually.
+- Use Glue Workflows for orchestrating ETL pipelines.
+- Deploy Redshift in private subnets with encryption enabled.
+- Enable fine-grained access control for OpenSearch domains.
+- Protect Bedrock applications with Guardrails.
+- Configure Amazon Managed Prometheus with alerting rules.
+- Use Amazon Managed Grafana with AWS IAM Identity Center.
+- Configure X-Ray sampling appropriately to control tracing costs.
+- Encrypt streaming services such as Kinesis and MSK using AWS KMS.
+
+---
+
+# Summary
+
+This section covered Terraform examples for Amazon Athena, Glue, EMR, Redshift, OpenSearch Service, Bedrock, Amazon Q Developer, Rekognition, Comprehend, Amazon Managed Prometheus, Amazon Managed Grafana, AWS X-Ray, Kinesis, Firehose, MSK, and Apache Flink. These examples provide production-ready infrastructure patterns for analytics, AI/ML, streaming, search, and observability services.
+
+---
+
