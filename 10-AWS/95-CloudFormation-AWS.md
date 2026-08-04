@@ -5075,3 +5075,761 @@ This section covered CloudFormation templates for Route53, CloudFront, AWS WAF, 
 
 ---
 
+# Amazon Athena
+
+---
+
+# Athena WorkGroup
+
+```yaml
+Resources:
+
+  AthenaWorkGroup:
+
+    Type: AWS::Athena::WorkGroup
+
+    Properties:
+
+      Name: production
+
+      State: ENABLED
+```
+
+---
+
+# Named Query
+
+```yaml
+Resources:
+
+  TopUsersQuery:
+
+    Type: AWS::Athena::NamedQuery
+
+    Properties:
+
+      Name: TopUsers
+
+      Database: analytics
+
+      QueryString: |
+        SELECT * FROM users;
+```
+
+---
+
+# Data Catalog
+
+```yaml
+Resources:
+
+  AthenaCatalog:
+
+    Type: AWS::Athena::DataCatalog
+
+    Properties:
+
+      Name: AwsDataCatalog
+
+      Type: GLUE
+```
+
+---
+
+# AWS Glue
+
+---
+
+# Catalog Database
+
+```yaml
+Resources:
+
+  AnalyticsDatabase:
+
+    Type: AWS::Glue::Database
+
+    Properties:
+
+      CatalogId: !Ref AWS::AccountId
+
+      DatabaseInput:
+
+        Name: analytics
+```
+
+---
+
+# Catalog Table
+
+```yaml
+Resources:
+
+  OrdersTable:
+
+    Type: AWS::Glue::Table
+
+    Properties:
+
+      CatalogId: !Ref AWS::AccountId
+
+      DatabaseName: analytics
+```
+
+---
+
+# Glue Crawler
+
+```yaml
+Resources:
+
+  OrdersCrawler:
+
+    Type: AWS::Glue::Crawler
+
+    Properties:
+
+      Name: orders-crawler
+
+      Role: !GetAtt GlueRole.Arn
+
+      DatabaseName: analytics
+```
+
+---
+
+# Glue Job
+
+```yaml
+Resources:
+
+  DailyETL:
+
+    Type: AWS::Glue::Job
+
+    Properties:
+
+      Name: daily-etl
+
+      Role: !GetAtt GlueRole.Arn
+
+      Command:
+
+        Name: glueetl
+
+        ScriptLocation: s3://scripts/etl.py
+```
+
+---
+
+# Glue Workflow
+
+```yaml
+Resources:
+
+  ETLWorkflow:
+
+    Type: AWS::Glue::Workflow
+
+    Properties:
+
+      Name: DailyWorkflow
+```
+
+---
+
+# Glue Trigger
+
+```yaml
+Resources:
+
+  DailyTrigger:
+
+    Type: AWS::Glue::Trigger
+
+    Properties:
+
+      Type: SCHEDULED
+
+      Schedule: cron(0 2 * * ? *)
+```
+
+---
+
+# Amazon EMR
+
+---
+
+# EMR Cluster
+
+```yaml
+Resources:
+
+  AnalyticsCluster:
+
+    Type: AWS::EMR::Cluster
+
+    Properties:
+
+      Name: analytics-cluster
+
+      ReleaseLabel: emr-7.0.0
+```
+
+---
+
+# EMR Security Configuration
+
+```yaml
+Resources:
+
+  EMRSecurity:
+
+    Type: AWS::EMR::SecurityConfiguration
+
+    Properties:
+
+      Name: ProductionSecurity
+```
+
+---
+
+# EMR Studio
+
+```yaml
+Resources:
+
+  AnalyticsStudio:
+
+    Type: AWS::EMR::Studio
+
+    Properties:
+
+      Name: AnalyticsStudio
+
+      AuthMode: SSO
+```
+
+---
+
+# Amazon Redshift
+
+---
+
+# Cluster
+
+```yaml
+Resources:
+
+  RedshiftCluster:
+
+    Type: AWS::Redshift::Cluster
+
+    Properties:
+
+      ClusterIdentifier: warehouse
+
+      NodeType: ra3.xlplus
+
+      ClusterType: single-node
+```
+
+---
+
+# Subnet Group
+
+```yaml
+Resources:
+
+  RedshiftSubnetGroup:
+
+    Type: AWS::Redshift::ClusterSubnetGroup
+
+    Properties:
+
+      Description: Warehouse Subnets
+```
+
+---
+
+# Parameter Group
+
+```yaml
+Resources:
+
+  RedshiftParameters:
+
+    Type: AWS::Redshift::ClusterParameterGroup
+
+    Properties:
+
+      Description: Production Parameters
+```
+
+---
+
+# Scheduled Action
+
+```yaml
+Resources:
+
+  PauseCluster:
+
+    Type: AWS::Redshift::ScheduledAction
+
+    Properties:
+
+      ScheduledActionName: PauseWarehouse
+```
+
+---
+
+# Amazon OpenSearch Service
+
+---
+
+# OpenSearch Domain
+
+```yaml
+Resources:
+
+  LogsDomain:
+
+    Type: AWS::OpenSearchService::Domain
+
+    Properties:
+
+      DomainName: production-logs
+
+      EngineVersion: OpenSearch_2.17
+```
+
+---
+
+# Domain Policy
+
+```yaml
+AccessPolicies:
+
+  Version: "2012-10-17"
+
+  Statement: []
+```
+
+---
+
+# Package Association
+
+```yaml
+Resources:
+
+  DictionaryPackage:
+
+    Type: AWS::OpenSearchService::PackageAssociation
+
+    Properties:
+
+      DomainName: !Ref LogsDomain
+```
+
+---
+
+# Amazon Bedrock
+
+---
+
+# Guardrail
+
+```yaml
+Resources:
+
+  BedrockGuardrail:
+
+    Type: AWS::Bedrock::Guardrail
+
+    Properties:
+
+      Name: production-guardrail
+```
+
+---
+
+# Prompt
+
+```yaml
+Resources:
+
+  DevOpsPrompt:
+
+    Type: AWS::Bedrock::Prompt
+
+    Properties:
+
+      Name: devops-assistant
+```
+
+---
+
+# Inference Profile
+
+```yaml
+Resources:
+
+  InferenceProfile:
+
+    Type: AWS::Bedrock::ApplicationInferenceProfile
+
+    Properties:
+
+      InferenceProfileName: production-profile
+```
+
+---
+
+# Amazon Q Business
+
+---
+
+# Application
+
+```yaml
+Resources:
+
+  QBusiness:
+
+    Type: AWS::QBusiness::Application
+
+    Properties:
+
+      DisplayName: EngineeringAssistant
+```
+
+---
+
+# Amazon Textract
+
+---
+
+# Textract IAM Role
+
+```yaml
+Resources:
+
+  TextractRole:
+
+    Type: AWS::IAM::Role
+
+    Properties:
+
+      RoleName: TextractRole
+```
+
+---
+
+# Amazon Rekognition
+
+---
+
+# Collection
+
+```yaml
+Resources:
+
+  EmployeeCollection:
+
+    Type: AWS::Rekognition::Collection
+
+    Properties:
+
+      CollectionId: employees
+```
+
+---
+
+# Stream Processor
+
+```yaml
+Resources:
+
+  VideoProcessor:
+
+    Type: AWS::Rekognition::StreamProcessor
+
+    Properties:
+
+      Name: video-analysis
+```
+
+---
+
+# Amazon Comprehend
+
+---
+
+# Document Classifier
+
+```yaml
+Resources:
+
+  SupportClassifier:
+
+    Type: AWS::Comprehend::DocumentClassifier
+
+    Properties:
+
+      DocumentClassifierName: support-classifier
+
+      LanguageCode: en
+```
+
+---
+
+# Entity Recognizer
+
+```yaml
+Resources:
+
+  CustomerRecognizer:
+
+    Type: AWS::Comprehend::EntityRecognizer
+
+    Properties:
+
+      RecognizerName: customer-entities
+
+      LanguageCode: en
+```
+
+---
+
+# Amazon Managed Prometheus
+
+---
+
+# Workspace
+
+```yaml
+Resources:
+
+  AMPWorkspace:
+
+    Type: AWS::APS::Workspace
+
+    Properties:
+
+      Alias: production-monitoring
+```
+
+---
+
+# Rule Group Namespace
+
+```yaml
+Resources:
+
+  AlertRules:
+
+    Type: AWS::APS::RuleGroupsNamespace
+
+    Properties:
+
+      Name: production-alerts
+```
+
+---
+
+# Amazon Managed Grafana
+
+---
+
+# Workspace
+
+```yaml
+Resources:
+
+  GrafanaWorkspace:
+
+    Type: AWS::Grafana::Workspace
+
+    Properties:
+
+      Name: production
+
+      AccountAccessType: CURRENT_ACCOUNT
+
+      AuthenticationProviders:
+
+        - AWS_SSO
+```
+
+---
+
+# Role Association
+
+```yaml
+Resources:
+
+  GrafanaAdmins:
+
+    Type: AWS::Grafana::RoleAssociation
+
+    Properties:
+
+      Role: ADMIN
+```
+
+---
+
+# AWS X-Ray
+
+---
+
+# Sampling Rule
+
+```yaml
+Resources:
+
+  ProductionSampling:
+
+    Type: AWS::XRay::SamplingRule
+
+    Properties:
+
+      SamplingRule:
+
+        RuleName: ProductionSampling
+
+        FixedRate: 0.1
+```
+
+---
+
+# Amazon Kinesis
+
+---
+
+# Data Stream
+
+```yaml
+Resources:
+
+  EventStream:
+
+    Type: AWS::Kinesis::Stream
+
+    Properties:
+
+      Name: application-events
+
+      ShardCount: 2
+```
+
+---
+
+# Firehose Delivery Stream
+
+```yaml
+Resources:
+
+  LogDelivery:
+
+    Type: AWS::KinesisFirehose::DeliveryStream
+
+    Properties:
+
+      DeliveryStreamName: application-logs
+```
+
+---
+
+# Amazon MSK
+
+---
+
+# MSK Cluster
+
+```yaml
+Resources:
+
+  KafkaCluster:
+
+    Type: AWS::MSK::Cluster
+
+    Properties:
+
+      ClusterName: production
+
+      KafkaVersion: 3.7.0
+
+      NumberOfBrokerNodes: 3
+```
+
+---
+
+# Amazon Managed Service for Apache Flink
+
+```yaml
+Resources:
+
+  StreamingApplication:
+
+    Type: AWS::KinesisAnalyticsV2::Application
+
+    Properties:
+
+      ApplicationName: stream-processing
+
+      RuntimeEnvironment: FLINK-1_18
+```
+
+---
+
+# Outputs
+
+```yaml
+Outputs:
+
+  AthenaWorkGroup:
+
+    Value: !Ref AthenaWorkGroup
+
+  RedshiftEndpoint:
+
+    Value: !GetAtt RedshiftCluster.Endpoint.Address
+
+  OpenSearchEndpoint:
+
+    Value: !GetAtt LogsDomain.DomainEndpoint
+
+  PrometheusWorkspace:
+
+    Value: !Ref AMPWorkspace
+
+  GrafanaWorkspace:
+
+    Value: !Ref GrafanaWorkspace
+```
+
+---
+
+# Best Practices
+
+- Store Athena query results in encrypted S3 buckets.
+- Schedule Glue Crawlers and ETL Jobs using Glue Triggers.
+- Deploy Redshift clusters in private subnets with encryption enabled.
+- Enable fine-grained access control for OpenSearch domains.
+- Protect Bedrock applications with Guardrails.
+- Use Amazon Q Business with IAM Identity Center integration.
+- Configure Amazon Managed Prometheus with recording and alerting rules.
+- Integrate Amazon Managed Grafana with AWS IAM Identity Center.
+- Tune AWS X-Ray sampling rules to balance observability and cost.
+- Encrypt Kinesis streams, Firehose, and MSK clusters using AWS KMS.
+
+---
+
+# Summary
+
+This section covered CloudFormation templates for Amazon Athena, AWS Glue, Amazon EMR, Amazon Redshift, OpenSearch Service, Amazon Bedrock, Amazon Q Business, Textract, Rekognition, Comprehend, Amazon Managed Prometheus, Amazon Managed Grafana, AWS X-Ray, Amazon Kinesis, Kinesis Firehose, Amazon MSK, and Managed Service for Apache Flink. These templates provide production-ready patterns for analytics, AI/ML, streaming, search, and observability services using AWS CloudFormation.
+
+---
+
