@@ -6576,3 +6576,837 @@ This section covered Terraform fundamentals, providers, resources, variables, ou
 
 ---
 
+# CI/CD, Jenkins, GitHub Actions, GitLab CI & Argo CD Interview Questions
+
+---
+
+# Introduction
+
+CI/CD is one of the most important areas in DevOps interviews. Companies expect engineers to understand how code moves from a developer's machine to production securely, automatically, and reliably.
+
+This section covers
+
+- CI/CD Fundamentals
+- Jenkins
+- GitHub Actions
+- GitLab CI/CD
+- Argo CD
+- GitOps
+- Webhooks
+- Shared Libraries
+- Pipeline Optimization
+- DevSecOps
+- Enterprise Troubleshooting
+
+---
+
+# Question 1
+
+## What is CI/CD?
+
+### Answer
+
+CI/CD stands for
+
+- Continuous Integration (CI)
+- Continuous Delivery (CD)
+- Continuous Deployment (CD)
+
+Continuous Integration
+
+Developers frequently merge code into a shared repository where automated builds and tests are executed.
+
+Continuous Delivery
+
+Code is always in a deployable state, but production deployment requires approval.
+
+Continuous Deployment
+
+Every successful pipeline automatically deploys to production.
+
+---
+
+# CI/CD Workflow
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+Security Scan
+
+↓
+
+Artifact
+
+↓
+
+Deploy
+
+↓
+
+Monitor
+```
+
+---
+
+# Question 2
+
+## What is Jenkins?
+
+### Answer
+
+Jenkins is an open-source automation server used to build, test, and deploy applications.
+
+Capabilities
+
+- CI/CD
+- Pipeline automation
+- Plugin ecosystem
+- Distributed builds
+
+---
+
+# Question 3
+
+## Jenkins Architecture
+
+```text
+Developer
+
+↓
+
+Git
+
+↓
+
+Jenkins Controller
+
+↓
+
+Build Agent
+
+↓
+
+Artifact Repository
+
+↓
+
+Deployment
+```
+
+Components
+
+- Controller
+- Agents
+- Jobs
+- Pipelines
+- Plugins
+
+---
+
+# Question 4
+
+## Why Use Jenkins Agents?
+
+### Answer
+
+Agents execute build workloads instead of the controller.
+
+Benefits
+
+- Parallel execution
+- Better scalability
+- Build isolation
+- Improved performance
+
+---
+
+# Question 5
+
+## Freestyle Job vs Pipeline
+
+| Freestyle | Pipeline |
+|-----------|----------|
+| GUI-based | Pipeline as Code |
+| Limited automation | Highly flexible |
+| Hard to version | Stored in Git |
+| Legacy approach | Recommended |
+
+---
+
+# Question 6
+
+## Declarative vs Scripted Pipeline
+
+| Declarative | Scripted |
+|-------------|----------|
+| Simpler syntax | Full Groovy flexibility |
+| Easier maintenance | More powerful |
+| Recommended | Advanced use cases |
+
+---
+
+# Question 7
+
+## Jenkinsfile
+
+### Example
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                echo 'Building...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+            }
+        }
+    }
+}
+```
+
+---
+
+# Question 8
+
+## Jenkins Pipeline Stages
+
+Typical Pipeline
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+Code Quality
+
+↓
+
+Security Scan
+
+↓
+
+Docker Build
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+
+↓
+
+Smoke Test
+```
+
+---
+
+# Question 9
+
+## Jenkins Shared Library
+
+### Answer
+
+Reusable Groovy code shared across multiple pipelines.
+
+Benefits
+
+- Code reuse
+- Standardization
+- Easier maintenance
+
+---
+
+# Question 10
+
+## What is a Webhook?
+
+### Answer
+
+A webhook automatically triggers a pipeline when code is pushed to Git.
+
+Workflow
+
+```text
+Git Push
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Pipeline
+```
+
+---
+
+# Question 11
+
+## GitHub Actions
+
+### Answer
+
+GitHub Actions is GitHub's native CI/CD platform.
+
+Features
+
+- Workflow automation
+- GitHub integration
+- Hosted runners
+- Self-hosted runners
+
+---
+
+# Question 12
+
+## GitHub Actions Workflow
+
+```text
+Push
+
+↓
+
+Workflow
+
+↓
+
+Runner
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 13
+
+## GitHub Actions YAML Example
+
+```yaml
+name: Build
+
+on:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - run: echo "Building..."
+```
+
+---
+
+# Question 14
+
+## GitHub Hosted Runner vs Self-Hosted Runner
+
+| Hosted | Self-Hosted |
+|----------|-------------|
+| Managed by GitHub | Managed by organization |
+| Limited customization | Full customization |
+| Internet hosted | Can access private infrastructure |
+
+---
+
+# Question 15
+
+## GitLab CI/CD
+
+### Answer
+
+GitLab CI/CD is GitLab's integrated automation platform.
+
+Configuration file
+
+```text
+.gitlab-ci.yml
+```
+
+---
+
+# Question 16
+
+## GitLab Pipeline Stages
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Package
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 17
+
+## GitLab Runner
+
+### Answer
+
+GitLab Runner executes CI/CD jobs.
+
+Types
+
+- Shared Runner
+- Group Runner
+- Project Runner
+- Self-Hosted Runner
+
+---
+
+# Question 18
+
+## What is GitOps?
+
+### Answer
+
+GitOps is an operational model where Git serves as the single source of truth for infrastructure and application configuration.
+
+---
+
+# GitOps Workflow
+
+```text
+Developer
+
+↓
+
+Git
+
+↓
+
+Argo CD
+
+↓
+
+Kubernetes
+```
+
+---
+
+# Question 19
+
+## What is Argo CD?
+
+### Answer
+
+Argo CD is a GitOps continuous delivery tool for Kubernetes.
+
+Features
+
+- Automatic Sync
+- Drift Detection
+- Rollback
+- Self-Healing
+
+---
+
+# Question 20
+
+## Argo CD Sync Process
+
+```text
+Git
+
+↓
+
+Desired State
+
+↓
+
+Argo CD
+
+↓
+
+Cluster
+
+↓
+
+Application
+```
+
+---
+
+# Question 21
+
+## What is Drift Detection?
+
+### Answer
+
+Argo CD detects when the live Kubernetes cluster differs from the desired state stored in Git.
+
+Benefits
+
+- Configuration consistency
+- Automatic reconciliation
+- Reduced configuration drift
+
+---
+
+# Question 22
+
+## Blue-Green Deployment
+
+```text
+Blue Environment
+
+↓
+
+Green Environment
+
+↓
+
+Traffic Switch
+```
+
+Benefits
+
+- Zero downtime
+- Easy rollback
+
+---
+
+# Question 23
+
+## Canary Deployment
+
+```text
+5%
+
+↓
+
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Benefits
+
+- Lower deployment risk
+- Progressive validation
+
+---
+
+# Question 24
+
+## Artifact Repository
+
+Examples
+
+- JFrog Artifactory
+- Nexus Repository
+- Amazon ECR (for container images)
+
+Purpose
+
+Store versioned build artifacts.
+
+---
+
+# Question 25
+
+## Container Registry
+
+Examples
+
+- Amazon ECR
+- Docker Hub
+- GitHub Container Registry
+
+---
+
+# Question 26
+
+## DevSecOps Pipeline
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube
+
+↓
+
+Dependency Scan
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+```
+
+---
+
+# Question 27
+
+## Why Scan Container Images?
+
+### Answer
+
+To detect
+
+- Critical vulnerabilities
+- Outdated packages
+- Security misconfigurations
+
+Common Tools
+
+- Trivy
+- Grype
+
+---
+
+# Question 28
+
+## SonarQube
+
+### Answer
+
+Static code analysis platform.
+
+Detects
+
+- Bugs
+- Vulnerabilities
+- Code smells
+- Maintainability issues
+
+---
+
+# Question 29
+
+## Pipeline Optimization
+
+Techniques
+
+- Parallel stages
+- Dependency caching
+- Docker layer caching
+- Incremental builds
+- Reusable workflows
+- Shared libraries
+
+---
+
+# Question 30
+
+## Enterprise CI/CD Best Practices
+
+- Pipeline as Code
+- Version-controlled pipelines
+- Immutable artifacts
+- Automated testing
+- Security gates
+- Rollback strategy
+- GitOps deployments
+- Least-privilege credentials
+- Monitoring
+- Audit logging
+
+---
+
+# Production Scenario 1
+
+Pipeline fails during Docker build.
+
+### Investigation
+
+Check
+
+- Dockerfile
+- Build logs
+- Base image availability
+- Registry authentication
+- Disk space on runner
+
+---
+
+# Production Scenario 2
+
+Deployment succeeds but application is unavailable.
+
+### Investigation
+
+Verify
+
+- Kubernetes rollout status
+- Pod logs
+- Readiness probe
+- Service
+- Ingress
+- Load Balancer
+
+---
+
+# Production Scenario 3
+
+Argo CD shows OutOfSync.
+
+### Investigation
+
+Check
+
+- Git repository
+- Cluster resources
+- Manual changes
+- Sync status
+- Application events
+
+---
+
+# Production Scenario 4
+
+Jenkins pipeline hangs indefinitely.
+
+### Investigation
+
+Review
+
+- Agent availability
+- Queue length
+- Workspace locks
+- External dependencies
+- Plugin health
+
+---
+
+# Production Scenario 5
+
+GitHub Actions workflow cannot access AWS.
+
+### Investigation
+
+Verify
+
+- IAM permissions
+- OIDC/IAM role configuration (or credentials if used)
+- Repository secrets
+- Runner network connectivity
+
+---
+
+# FAANG-Style CI/CD Questions
+
+- Design an enterprise CI/CD platform.
+- How do you secure a CI/CD pipeline?
+- Explain immutable deployments.
+- How would you reduce pipeline execution time?
+- Explain GitOps architecture.
+- Design a deployment strategy for zero downtime.
+- How do you manage secrets in CI/CD?
+- Explain Blue-Green vs Canary deployments.
+- How do you design multi-region deployments?
+- How do you troubleshoot production deployment failures?
+
+---
+
+# CI/CD Interview Tips
+
+Structure every answer as
+
+1. Concept
+2. Architecture
+3. Pipeline flow
+4. Security
+5. Production example
+6. Troubleshooting
+7. Best practices
+
+Senior-level interviews focus on pipeline design, scalability, security, and operational excellence—not just writing pipeline syntax.
+
+---
+
+# Summary
+
+This section covered CI/CD fundamentals, Jenkins architecture, Pipelines, GitHub Actions, GitLab CI/CD, GitOps, Argo CD, webhooks, deployment strategies, DevSecOps integration, pipeline optimization, enterprise troubleshooting, and FAANG-style interview questions.
+
+---
+
