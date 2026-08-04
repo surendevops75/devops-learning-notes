@@ -3466,3 +3466,781 @@ This section covered CloudFormation templates for Amazon ECR, ECS, EKS, Lambda, 
 
 ---
 
+# Amazon CloudWatch
+
+---
+
+# CloudWatch Dashboard
+
+```yaml
+Resources:
+
+  ProductionDashboard:
+
+    Type: AWS::CloudWatch::Dashboard
+
+    Properties:
+
+      DashboardName: ProductionDashboard
+
+      DashboardBody: |
+        {
+          "widgets":[]
+        }
+```
+
+---
+
+# CloudWatch Alarm
+
+```yaml
+Resources:
+
+  HighCPUAlarm:
+
+    Type: AWS::CloudWatch::Alarm
+
+    Properties:
+
+      AlarmName: HighCPU
+
+      Namespace: AWS/EC2
+
+      MetricName: CPUUtilization
+
+      Statistic: Average
+
+      Threshold: 80
+
+      EvaluationPeriods: 2
+
+      ComparisonOperator: GreaterThanThreshold
+```
+
+---
+
+# Composite Alarm
+
+```yaml
+Resources:
+
+  CriticalAlarm:
+
+    Type: AWS::CloudWatch::CompositeAlarm
+
+    Properties:
+
+      AlarmName: CriticalAlarm
+
+      AlarmRule: ALARM(HighCPU)
+```
+
+---
+
+# Alarm Notification
+
+```yaml
+AlarmActions:
+
+  - !Ref AlertsTopic
+```
+
+---
+
+# CloudWatch Log Group
+
+```yaml
+Resources:
+
+  ApplicationLogs:
+
+    Type: AWS::Logs::LogGroup
+
+    Properties:
+
+      LogGroupName: /application/logs
+
+      RetentionInDays: 30
+```
+
+---
+
+# Log Stream
+
+```yaml
+Resources:
+
+  LogStream:
+
+    Type: AWS::Logs::LogStream
+
+    Properties:
+
+      LogGroupName: !Ref ApplicationLogs
+
+      LogStreamName: production
+```
+
+---
+
+# Resource Policy
+
+```yaml
+Resources:
+
+  LogsPolicy:
+
+    Type: AWS::Logs::ResourcePolicy
+
+    Properties:
+
+      PolicyName: CloudWatchLogs
+```
+
+---
+
+# Subscription Filter
+
+```yaml
+Resources:
+
+  LogSubscription:
+
+    Type: AWS::Logs::SubscriptionFilter
+
+    Properties:
+
+      LogGroupName: !Ref ApplicationLogs
+
+      FilterPattern: ""
+
+      DestinationArn: arn:aws:lambda:...
+```
+
+---
+
+# EventBridge
+
+---
+
+# Event Bus
+
+```yaml
+Resources:
+
+  OperationsBus:
+
+    Type: AWS::Events::EventBus
+
+    Properties:
+
+      Name: operations
+```
+
+---
+
+# Event Rule
+
+```yaml
+Resources:
+
+  EC2StateRule:
+
+    Type: AWS::Events::Rule
+
+    Properties:
+
+      Name: EC2StateChange
+```
+
+---
+
+# Event Target
+
+```yaml
+Targets:
+
+  - Arn: !GetAtt LambdaFunction.Arn
+
+    Id: LambdaTarget
+```
+
+---
+
+# CloudTrail
+
+---
+
+# Trail
+
+```yaml
+Resources:
+
+  OrganizationTrail:
+
+    Type: AWS::CloudTrail::Trail
+
+    Properties:
+
+      TrailName: OrganizationTrail
+
+      IsLogging: true
+
+      IsMultiRegionTrail: true
+
+      EnableLogFileValidation: true
+
+      S3BucketName: audit-logs
+```
+
+---
+
+# Event Selectors
+
+```yaml
+EventSelectors:
+
+  - IncludeManagementEvents: true
+
+    ReadWriteType: All
+```
+
+---
+
+# AWS Config
+
+---
+
+# Configuration Recorder
+
+```yaml
+Resources:
+
+  ConfigRecorder:
+
+    Type: AWS::Config::ConfigurationRecorder
+
+    Properties:
+
+      Name: default
+
+      RoleARN: arn:aws:iam::123456789012:role/config-role
+```
+
+---
+
+# Delivery Channel
+
+```yaml
+Resources:
+
+  ConfigDelivery:
+
+    Type: AWS::Config::DeliveryChannel
+
+    Properties:
+
+      S3BucketName: config-bucket
+```
+
+---
+
+# Config Rule
+
+```yaml
+Resources:
+
+  EncryptedVolumes:
+
+    Type: AWS::Config::ConfigRule
+
+    Properties:
+
+      ConfigRuleName: encrypted-volumes
+
+      Source:
+
+        Owner: AWS
+
+        SourceIdentifier: ENCRYPTED_VOLUMES
+```
+
+---
+
+# Conformance Pack
+
+```yaml
+Resources:
+
+  SecurityPack:
+
+    Type: AWS::Config::ConformancePack
+
+    Properties:
+
+      ConformancePackName: SecurityBaseline
+```
+
+---
+
+# AWS CodeCommit
+
+---
+
+# Repository
+
+```yaml
+Resources:
+
+  Repository:
+
+    Type: AWS::CodeCommit::Repository
+
+    Properties:
+
+      RepositoryName: infrastructure
+```
+
+---
+
+# Approval Rule Template
+
+```yaml
+Resources:
+
+  ApprovalTemplate:
+
+    Type: AWS::CodeCommit::ApprovalRuleTemplate
+
+    Properties:
+
+      ApprovalRuleTemplateName: MandatoryReview
+```
+
+---
+
+# AWS CodeBuild
+
+---
+
+# Build Project
+
+```yaml
+Resources:
+
+  BuildProject:
+
+    Type: AWS::CodeBuild::Project
+
+    Properties:
+
+      Name: ApplicationBuild
+
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+```
+
+---
+
+# Source Credential
+
+```yaml
+Resources:
+
+  GitHubCredential:
+
+    Type: AWS::CodeBuild::SourceCredential
+
+    Properties:
+
+      AuthType: PERSONAL_ACCESS_TOKEN
+
+      ServerType: GITHUB
+
+      Token: ghp_xxxxxxxxx
+```
+
+---
+
+# Webhook
+
+```yaml
+Resources:
+
+  BuildWebhook:
+
+    Type: AWS::CodeBuild::Webhook
+
+    Properties:
+
+      ProjectName: !Ref BuildProject
+```
+
+---
+
+# AWS CodeDeploy
+
+---
+
+# Application
+
+```yaml
+Resources:
+
+  CodeDeployApp:
+
+    Type: AWS::CodeDeploy::Application
+
+    Properties:
+
+      ApplicationName: WebApplication
+```
+
+---
+
+# Deployment Group
+
+```yaml
+Resources:
+
+  ProductionDeployment:
+
+    Type: AWS::CodeDeploy::DeploymentGroup
+
+    Properties:
+
+      ApplicationName: !Ref CodeDeployApp
+
+      ServiceRoleArn: !GetAtt CodeDeployRole.Arn
+```
+
+---
+
+# AWS CodePipeline
+
+---
+
+# Pipeline
+
+```yaml
+Resources:
+
+  CICDPipeline:
+
+    Type: AWS::CodePipeline::Pipeline
+
+    Properties:
+
+      Name: ProductionPipeline
+
+      RoleArn: !GetAtt PipelineRole.Arn
+```
+
+---
+
+# AWS CodeArtifact
+
+---
+
+# Domain
+
+```yaml
+Resources:
+
+  ArtifactDomain:
+
+    Type: AWS::CodeArtifact::Domain
+
+    Properties:
+
+      DomainName: company
+```
+
+---
+
+# Repository
+
+```yaml
+Resources:
+
+  MavenRepository:
+
+    Type: AWS::CodeArtifact::Repository
+
+    Properties:
+
+      RepositoryName: maven
+
+      DomainName: !Ref ArtifactDomain
+```
+
+---
+
+# AWS Systems Manager
+
+---
+
+# Parameter
+
+```yaml
+Resources:
+
+  APIEndpoint:
+
+    Type: AWS::SSM::Parameter
+
+    Properties:
+
+      Name: /prod/api/url
+
+      Type: String
+
+      Value: https://api.example.com
+```
+
+---
+
+# Patch Baseline
+
+```yaml
+Resources:
+
+  LinuxPatchBaseline:
+
+    Type: AWS::SSM::PatchBaseline
+
+    Properties:
+
+      Name: LinuxBaseline
+
+      OperatingSystem: AMAZON_LINUX_2
+```
+
+---
+
+# Maintenance Window
+
+```yaml
+Resources:
+
+  WeeklyMaintenance:
+
+    Type: AWS::SSM::MaintenanceWindow
+
+    Properties:
+
+      Name: WeeklyMaintenance
+
+      Schedule: cron(0 2 ? * SUN *)
+```
+
+---
+
+# Maintenance Target
+
+```yaml
+Resources:
+
+  MaintenanceTarget:
+
+    Type: AWS::SSM::MaintenanceWindowTarget
+
+    Properties:
+
+      WindowId: !Ref WeeklyMaintenance
+
+      ResourceType: INSTANCE
+```
+
+---
+
+# Maintenance Task
+
+```yaml
+Resources:
+
+  PatchTask:
+
+    Type: AWS::SSM::MaintenanceWindowTask
+
+    Properties:
+
+      WindowId: !Ref WeeklyMaintenance
+
+      TaskType: RUN_COMMAND
+```
+
+---
+
+# Association
+
+```yaml
+Resources:
+
+  InventoryAssociation:
+
+    Type: AWS::SSM::Association
+
+    Properties:
+
+      Name: AWS-GatherSoftwareInventory
+```
+
+---
+
+# SSM Document
+
+```yaml
+Resources:
+
+  RestartDocument:
+
+    Type: AWS::SSM::Document
+
+    Properties:
+
+      DocumentType: Command
+
+      Name: RestartService
+```
+
+---
+
+# OpsCenter
+
+---
+
+# OpsItem
+
+```yaml
+Resources:
+
+  HighCPUIncident:
+
+    Type: AWS::SSM::OpsItem
+
+    Properties:
+
+      Title: High CPU Usage
+
+      Source: CloudWatch
+```
+
+---
+
+# Resource Data Sync
+
+```yaml
+Resources:
+
+  InventorySync:
+
+    Type: AWS::SSM::ResourceDataSync
+
+    Properties:
+
+      SyncName: InventorySync
+
+      S3Destination:
+
+        BucketName: inventory-bucket
+```
+
+---
+
+# CloudFormation Stack
+
+```yaml
+Resources:
+
+  NetworkStack:
+
+    Type: AWS::CloudFormation::Stack
+
+    Properties:
+
+      TemplateURL: https://s3.amazonaws.com/templates/network.yaml
+```
+
+---
+
+# StackSet
+
+```yaml
+Resources:
+
+  SecurityStackSet:
+
+    Type: AWS::CloudFormation::StackSet
+
+    Properties:
+
+      StackSetName: SecurityBaseline
+
+      PermissionModel: SERVICE_MANAGED
+```
+
+---
+
+# StackSet Instance
+
+```yaml
+Resources:
+
+  ProductionInstance:
+
+    Type: AWS::CloudFormation::StackInstance
+
+    Properties:
+
+      StackSetName: !Ref SecurityStackSet
+
+      Region: ap-south-1
+```
+
+---
+
+# Outputs
+
+```yaml
+Outputs:
+
+  Dashboard:
+
+    Value: !Ref ProductionDashboard
+
+  Pipeline:
+
+    Value: !Ref CICDPipeline
+
+  LogGroup:
+
+    Value: !Ref ApplicationLogs
+
+  BuildProject:
+
+    Value: !Ref BuildProject
+```
+
+---
+
+# Best Practices
+
+- Create CloudWatch dashboards for critical workloads.
+- Configure CloudWatch alarms with SNS notifications.
+- Enable CloudTrail across all regions with log file validation.
+- Record all supported resources using AWS Config.
+- Store application configuration in Systems Manager Parameter Store.
+- Automate deployments using CodePipeline.
+- Store CodeBuild credentials securely using Secrets Manager.
+- Schedule regular patching with Systems Manager Maintenance Windows.
+- Use StackSets for multi-account deployments.
+- Tag monitoring and CI/CD resources consistently.
+
+---
+
+# Summary
+
+This section covered CloudFormation templates for CloudWatch, CloudWatch Logs, EventBridge, CloudTrail, AWS Config, CodeCommit, CodeBuild, CodeDeploy, CodePipeline, CodeArtifact, Systems Manager (SSM), OpsCenter, CloudFormation Stacks, and StackSets. These templates provide production-ready patterns for monitoring, CI/CD automation, configuration management, and operational governance using AWS CloudFormation.
+
+---
+
