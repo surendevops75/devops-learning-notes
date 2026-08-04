@@ -517,3 +517,611 @@ This section covered the AWS Shared Responsibility Model, IAM fundamentals, auth
 
 ---
 
+# AWS Organizations
+
+---
+
+# Introduction
+
+AWS Organizations helps centrally manage multiple AWS accounts using a single management account.
+
+Benefits
+
+- Centralized governance
+- Consolidated billing
+- Security controls
+- Policy management
+- Multi-account architecture
+
+---
+
+# Organization Structure
+
+```text
+Management Account
+
+↓
+
+Organizational Units (OUs)
+
+↓
+
+Member Accounts
+```
+
+---
+
+# AWS Organizations Components
+
+- Management Account
+- Member Accounts
+- Organizational Units (OUs)
+- Service Control Policies (SCPs)
+- Tag Policies
+- Backup Policies
+- AI Services Opt-Out Policies
+
+---
+
+# Multi-Account Strategy
+
+Recommended Structure
+
+```text
+Management
+
+↓
+
+Security
+
+↓
+
+Log Archive
+
+↓
+
+Shared Services
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+---
+
+# Why Multiple Accounts?
+
+Benefits
+
+- Security isolation
+- Separate billing
+- Resource quotas
+- Blast radius reduction
+- Independent deployments
+- Compliance
+
+---
+
+# Organizational Units (OUs)
+
+Purpose
+
+Group AWS accounts based on business or security requirements.
+
+Example
+
+```text
+Production OU
+
+Development OU
+
+Security OU
+
+Infrastructure OU
+
+Sandbox OU
+```
+
+---
+
+# Nested OUs
+
+Example
+
+```text
+Production
+
+↓
+
+Finance
+
+↓
+
+Payments
+
+↓
+
+Core Banking
+```
+
+---
+
+# Service Control Policies (SCPs)
+
+Purpose
+
+Define the maximum permissions available to accounts within an Organization.
+
+Important
+
+SCPs **do not grant permissions**.
+
+They only restrict permissions.
+
+---
+
+# SCP Evaluation
+
+```text
+IAM Policy
+
+↓
+
+SCP Check
+
+↓
+
+Allowed
+
+↓
+
+AWS API
+```
+
+If denied by an SCP, access is denied even if IAM allows it.
+
+---
+
+# Common SCP Examples
+
+Restrict
+
+- Root account usage
+- Region usage
+- IAM changes
+- Security service deletion
+- Public resource creation
+
+---
+
+# Deny Root User Actions
+
+Example
+
+```text
+Root User
+
+↓
+
+Sensitive API
+
+↓
+
+Denied
+```
+
+---
+
+# Restrict AWS Regions
+
+Example
+
+Allow
+
+```text
+ap-south-1
+
+us-east-1
+```
+
+Deny
+
+```text
+All Other Regions
+```
+
+---
+
+# Protect Security Services
+
+Prevent disabling
+
+- CloudTrail
+- AWS Config
+- GuardDuty
+- Security Hub
+- Inspector
+
+---
+
+# Restrict Public S3 Buckets
+
+Prevent
+
+```text
+Public Bucket Policy
+
+↓
+
+Denied
+```
+
+---
+
+# Restrict IAM Changes
+
+Protect
+
+- IAM Roles
+- IAM Policies
+- Administrator Accounts
+
+---
+
+# Deny Resource Deletion
+
+Protect
+
+- KMS Keys
+- CloudTrail Trails
+- Config Recorders
+- Production Resources
+
+---
+
+# Delegated Administrator
+
+Allows member accounts to manage AWS services without using the management account.
+
+Examples
+
+- GuardDuty
+- Security Hub
+- Inspector
+- Firewall Manager
+
+---
+
+# AWS Control Tower
+
+Purpose
+
+Automates secure multi-account AWS environments.
+
+Features
+
+- Landing Zone
+- Guardrails
+- Account Factory
+- Centralized governance
+
+---
+
+# Landing Zone
+
+Provides
+
+- Secure account structure
+- Logging
+- Identity
+- Networking
+- Governance
+
+---
+
+# Account Factory
+
+Automatically creates new AWS accounts with predefined security settings.
+
+Workflow
+
+```text
+Request
+
+↓
+
+Provision
+
+↓
+
+Apply Guardrails
+
+↓
+
+Account Ready
+```
+
+---
+
+# Preventive Guardrails
+
+Prevent actions before they occur.
+
+Examples
+
+- Block public S3 buckets
+- Restrict Regions
+- Deny root usage
+
+---
+
+# Detective Guardrails
+
+Monitor and report policy violations.
+
+Examples
+
+- Unencrypted resources
+- Disabled logging
+- Public access
+
+---
+
+# Mandatory Guardrails
+
+Always enforced.
+
+Examples
+
+- CloudTrail enabled
+- Central logging
+- Security monitoring
+
+---
+
+# Optional Guardrails
+
+Applied based on organizational requirements.
+
+---
+
+# Centralized Logging
+
+Recommended
+
+```text
+All Accounts
+
+↓
+
+CloudTrail
+
+↓
+
+Log Archive Account
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Centralized Security
+
+Architecture
+
+```text
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+Inspector
+
+↓
+
+Security Account
+```
+
+---
+
+# Account Isolation
+
+Separate
+
+- Production
+- Development
+- Security
+- Networking
+- Shared Services
+
+Never mix production and development workloads.
+
+---
+
+# Permission Management
+
+Recommended
+
+```text
+IAM Identity Center
+
+↓
+
+Permission Sets
+
+↓
+
+Multiple Accounts
+```
+
+---
+
+# Enterprise Governance Workflow
+
+```text
+Create Account
+
+↓
+
+Assign OU
+
+↓
+
+Apply SCP
+
+↓
+
+Enable Logging
+
+↓
+
+Enable Monitoring
+
+↓
+
+Enable Security Services
+
+↓
+
+Production Ready
+```
+
+---
+
+# Governance Checklist
+
+Every account should have
+
+- CloudTrail
+- AWS Config
+- GuardDuty
+- Security Hub
+- IAM Identity Center
+- Budget
+- Cost Allocation Tags
+- Backup Policies
+
+---
+
+# Common Governance Mistakes
+
+- Running everything in one AWS account
+- No SCPs
+- No centralized logging
+- Shared production and development accounts
+- Root account usage
+- Missing guardrails
+- No account ownership
+- Disabled CloudTrail
+- Weak IAM policies
+- No governance reviews
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Management Account
+
+↓
+
+Security Account
+
+↓
+
+Logging Account
+
+↓
+
+Shared Services
+
+↓
+
+Production OU
+
+↓
+
+Development OU
+
+↓
+
+Testing OU
+```
+
+---
+
+# Governance Review Schedule
+
+Daily
+
+- Security alerts
+- GuardDuty findings
+- Failed log delivery
+
+---
+
+Weekly
+
+- SCP changes
+- New accounts
+- IAM reviews
+- Guardrail violations
+
+---
+
+Monthly
+
+- OU review
+- Account inventory
+- Security audit
+- Governance assessment
+
+---
+
+Quarterly
+
+- Landing Zone review
+- SCP optimization
+- Compliance assessment
+- Architecture review
+
+---
+
+# Best Practices
+
+- Use multiple AWS accounts instead of a single large account.
+- Organize accounts using Organizational Units (OUs).
+- Apply SCPs to enforce security guardrails.
+- Use AWS Control Tower for enterprise deployments.
+- Separate production, development, and security accounts.
+- Centralize logging in a dedicated Log Archive account.
+- Centralize GuardDuty, Security Hub, and Inspector findings.
+- Use IAM Identity Center with permission sets.
+- Protect critical security services using SCPs.
+- Regularly review governance policies and organizational structure.
+
+---
+
+# Summary
+
+This section covered AWS Organizations, Organizational Units (OUs), Service Control Policies (SCPs), delegated administration, AWS Control Tower, Landing Zones, Account Factory, guardrails, centralized logging, enterprise account structures, and governance best practices. These capabilities provide the foundation for secure, scalable, and well-governed multi-account AWS environments.
+
+---
+
