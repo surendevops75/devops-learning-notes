@@ -4654,3 +4654,709 @@ Verify
 # Summary
 
 This section covered Linux production troubleshooting, including CPU, memory, disk, networking, SSH, services, boot failures, DNS, filesystem issues, process crashes, performance analysis, and recovery workflows. These runbooks provide a practical operational guide for maintaining and recovering Linux servers in production environments.
+
+---
+
+# Networking, DNS & Load Balancer Production Runbooks
+
+---
+
+# Introduction
+
+Network-related incidents are among the most critical production failures because they can affect every application simultaneously. This runbook provides systematic troubleshooting procedures for DNS, networking, AWS Load Balancers, Route 53, VPC connectivity, and AWS networking components.
+
+---
+
+# Network Troubleshooting Workflow
+
+```text
+Alert
+
+↓
+
+Verify DNS
+
+↓
+
+Check Connectivity
+
+↓
+
+Check Load Balancer
+
+↓
+
+Verify Target Health
+
+↓
+
+Review Security Groups
+
+↓
+
+Review Network ACLs
+
+↓
+
+Review Route Tables
+
+↓
+
+Validate Application
+
+↓
+
+Monitor
+```
+
+---
+
+# End-to-End Connectivity Check
+
+```text
+Client
+
+↓
+
+DNS
+
+↓
+
+CloudFront
+
+↓
+
+ALB
+
+↓
+
+Target Group
+
+↓
+
+Application
+
+↓
+
+Database
+```
+
+Verify each layer individually.
+
+---
+
+# DNS Resolution Failure
+
+## Symptoms
+
+- Website inaccessible
+- Name resolution failed
+- Timeout
+
+---
+
+## Investigation
+
+```bash
+nslookup example.com
+
+dig example.com
+
+host example.com
+```
+
+---
+
+## Verify
+
+- Route 53 record
+- DNS propagation
+- Resolver configuration
+- Domain registration
+
+---
+
+# Route 53 Issues
+
+## Check
+
+- Hosted Zone
+- Record Type
+- Alias Record
+- TTL
+- Health Checks
+- Routing Policy
+
+---
+
+## Verify
+
+```bash
+dig example.com
+
+dig NS example.com
+```
+
+---
+
+# Route 53 Health Check Failure
+
+Review
+
+- Endpoint availability
+- Response codes
+- Health thresholds
+- Firewall rules
+
+---
+
+# Application Load Balancer (ALB) Unavailable
+
+## Investigation
+
+Verify
+
+- ALB state
+- Listener configuration
+- Target Group
+- Security Groups
+- Subnets
+
+---
+
+## AWS CLI
+
+```bash
+aws elbv2 describe-load-balancers
+
+aws elbv2 describe-listeners
+
+aws elbv2 describe-target-groups
+```
+
+---
+
+# Target Group Unhealthy
+
+## Symptoms
+
+```text
+Unhealthy Targets
+```
+
+---
+
+## Investigation
+
+Review
+
+- Health Check Path
+- Health Check Port
+- Success Codes
+- Application Logs
+- Security Groups
+
+---
+
+## Commands
+
+```bash
+curl http://localhost:8080/health
+
+kubectl get pods
+
+kubectl describe pod
+```
+
+---
+
+# Health Check Failure
+
+Verify
+
+- Application running
+- Endpoint available
+- Timeout values
+- Port configuration
+- Network connectivity
+
+---
+
+# HTTP 502 Bad Gateway
+
+## Common Causes
+
+- Backend application down
+- Target timeout
+- Port mismatch
+- Application crash
+
+---
+
+## Investigation
+
+Review
+
+- ALB target health
+- Application logs
+- Pod status
+- Service configuration
+
+---
+
+# HTTP 503 Service Unavailable
+
+## Common Causes
+
+- No healthy targets
+- Deployment failure
+- Autoscaling delay
+
+---
+
+## Resolution
+
+- Restore healthy targets
+- Scale application
+- Verify deployment
+
+---
+
+# HTTP 504 Gateway Timeout
+
+## Investigation
+
+Check
+
+- Backend latency
+- Database performance
+- Application timeout
+- Network latency
+
+---
+
+# Network Load Balancer (NLB)
+
+Verify
+
+- Listener
+- Target registration
+- Target health
+- Security Groups
+- Application port
+
+---
+
+# SSL/TLS Certificate Issues
+
+## Symptoms
+
+```text
+Certificate Expired
+
+SSL Handshake Failed
+```
+
+---
+
+## Investigation
+
+```bash
+openssl s_client -connect example.com:443
+```
+
+---
+
+## Verify
+
+- ACM certificate
+- Expiration date
+- Domain validation
+- Listener configuration
+
+---
+
+# HTTPS Redirect Failure
+
+Review
+
+- Listener rules
+- Redirect configuration
+- WAF rules
+
+---
+
+# Security Group Issues
+
+## Investigation
+
+Verify
+
+- Inbound rules
+- Outbound rules
+- Source Security Groups
+- Required ports
+
+---
+
+## Example
+
+Web
+
+```text
+443
+
+↓
+
+ALB
+```
+
+Application
+
+```text
+8080
+
+↓
+
+ALB Security Group
+```
+
+Database
+
+```text
+3306
+
+↓
+
+Application Security Group
+```
+
+---
+
+# Network ACL Issues
+
+Review
+
+- Allow rules
+- Deny rules
+- Rule order
+- Ephemeral ports
+
+---
+
+# Route Table Issues
+
+Verify
+
+```text
+Subnet
+
+↓
+
+Route Table
+
+↓
+
+Internet Gateway
+
+↓
+
+NAT Gateway
+```
+
+---
+
+# NAT Gateway Failure
+
+## Symptoms
+
+Private instances cannot access the internet.
+
+---
+
+## Investigation
+
+Verify
+
+- NAT Gateway status
+- Elastic IP
+- Route Table
+- Public subnet
+
+---
+
+# Internet Gateway Issues
+
+Review
+
+- VPC attachment
+- Route configuration
+- Public subnet association
+
+---
+
+# VPC Peering Issues
+
+Verify
+
+- Peering status
+- Route tables
+- CIDR overlap
+- Security Groups
+
+---
+
+# Transit Gateway Issues
+
+Review
+
+- Attachments
+- Route propagation
+- Route tables
+- Network ACLs
+
+---
+
+# VPC Endpoint Issues
+
+Verify
+
+- Endpoint policy
+- Route tables
+- DNS support
+- Security Groups
+
+---
+
+# AWS PrivateLink Issues
+
+Check
+
+- Endpoint service
+- Endpoint state
+- DNS resolution
+- IAM permissions
+
+---
+
+# Kubernetes Service Connectivity
+
+```bash
+kubectl get svc
+
+kubectl get endpoints
+
+kubectl describe svc
+```
+
+Verify
+
+- Selectors
+- Endpoints
+- Target ports
+
+---
+
+# Ingress Connectivity
+
+```bash
+kubectl get ingress
+
+kubectl describe ingress
+```
+
+Review
+
+- ALB annotations
+- Rules
+- Certificates
+- Backend services
+
+---
+
+# Cross-VPC Communication
+
+Verify
+
+- Peering
+- Transit Gateway
+- Routing
+- Security Groups
+- Network ACLs
+
+---
+
+# Firewall Issues
+
+Review
+
+- AWS Network Firewall
+- Security Groups
+- Network ACLs
+- Host firewall
+
+---
+
+# Port Connectivity
+
+```bash
+telnet host port
+
+nc -zv host port
+
+curl
+```
+
+---
+
+# Packet Capture
+
+```bash
+tcpdump
+
+wireshark
+```
+
+Use for advanced troubleshooting during maintenance or controlled investigations.
+
+---
+
+# Latency Investigation
+
+Review
+
+- Network latency
+- DNS latency
+- Application latency
+- Database latency
+
+---
+
+## Commands
+
+```bash
+ping
+
+mtr
+
+traceroute
+```
+
+---
+
+# Production Network Checklist
+
+Verify
+
+- DNS resolving
+- Load Balancer healthy
+- Target Groups healthy
+- Security Groups correct
+- Network ACLs correct
+- Route Tables correct
+- NAT Gateway healthy
+- Certificates valid
+- Backend application healthy
+
+---
+
+# End-to-End Validation
+
+```text
+DNS
+
+↓
+
+Load Balancer
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+API Response
+
+↓
+
+Monitoring
+```
+
+---
+
+# Production Recovery Workflow
+
+```text
+Network Incident
+
+↓
+
+Identify Layer
+
+↓
+
+Collect Logs
+
+↓
+
+Verify Configuration
+
+↓
+
+Restore Connectivity
+
+↓
+
+Validate Service
+
+↓
+
+Monitor
+
+↓
+
+Document RCA
+```
+
+---
+
+# Common Production Networking Issues
+
+- DNS failure
+- Route 53 misconfiguration
+- ALB unhealthy targets
+- SSL certificate expiration
+- Security Group misconfiguration
+- Network ACL blocking traffic
+- Route table errors
+- NAT Gateway failure
+- Transit Gateway routing issues
+- Kubernetes Ingress failure
+
+---
+
+# Best Practices
+
+- Enable Route 53 health checks for critical endpoints.
+- Monitor ALB target health continuously.
+- Renew ACM certificates before expiration.
+- Apply least-privilege Security Group rules.
+- Review Network ACLs carefully before changes.
+- Use VPC Endpoints for AWS service access where appropriate.
+- Monitor DNS latency and application response times.
+- Test failover and routing changes in non-production environments.
+- Validate end-to-end connectivity after every network change.
+- Maintain updated network diagrams and runbooks.
+
+---
+
+# Summary
+
+This section covered production troubleshooting for DNS, Route 53, Application Load Balancers, Network Load Balancers, SSL/TLS certificates, Security Groups, Network ACLs, Route Tables, NAT Gateways, VPC connectivity, Kubernetes Ingress, AWS PrivateLink, Transit Gateway, and end-to-end network validation. These runbooks provide a structured methodology for diagnosing and recovering from networking incidents in AWS production environments.
+
+---
+
