@@ -429,3 +429,496 @@ This section introduced AWS Cost Optimization fundamentals, pricing models, bill
 
 ---
 
+# AWS Cost Explorer
+
+---
+
+# Introduction
+
+AWS Cost Explorer is a cost analysis tool that helps visualize, analyze, forecast, and optimize AWS spending.
+
+Features include:
+
+- Historical cost analysis
+- Forecasting
+- Cost breakdowns
+- Usage analysis
+- Savings Plans analysis
+- Reserved Instance analysis
+
+---
+
+# Cost Explorer Workflow
+
+```text
+AWS Billing Data
+
+↓
+
+Cost Explorer
+
+↓
+
+Analyze Trends
+
+↓
+
+Identify Cost Drivers
+
+↓
+
+Optimize Resources
+
+↓
+
+Monitor Savings
+```
+
+---
+
+# Cost Explorer Dashboard
+
+Provides visibility into:
+
+- Monthly cost
+- Daily cost
+- Forecasted cost
+- Service-wise spending
+- Region-wise spending
+- Linked account spending
+- Usage trends
+
+---
+
+# Cost Views
+
+## Daily
+
+Used for:
+
+- Detecting spikes
+- Daily monitoring
+
+---
+
+## Monthly
+
+Used for:
+
+- Budget planning
+- Long-term analysis
+
+---
+
+## Hourly
+
+Useful for:
+
+- Investigating incidents
+- Temporary workloads
+
+---
+
+# Group By Options
+
+Group costs by:
+
+- Service
+- Region
+- Linked Account
+- Availability Zone
+- Instance Type
+- Usage Type
+- Cost Allocation Tag
+- API Operation
+
+---
+
+# Filter Options
+
+Common filters
+
+- AWS Service
+- Region
+- Usage Type
+- Linked Account
+- Purchase Option
+- Instance Type
+- Tag
+- Cost Category
+
+---
+
+# Service-wise Analysis
+
+Example
+
+```text
+Amazon EC2
+
+Amazon S3
+
+Amazon RDS
+
+AWS Lambda
+
+Amazon EKS
+
+Amazon ECS
+
+CloudFront
+
+CloudWatch
+```
+
+---
+
+# Region-wise Analysis
+
+Example
+
+```text
+ap-south-1
+
+us-east-1
+
+eu-west-1
+
+ap-southeast-1
+```
+
+---
+
+# Linked Account Analysis
+
+Useful for
+
+- Chargeback
+- Team billing
+- Department billing
+- Business unit reporting
+
+---
+
+# Tag-Based Analysis
+
+Example
+
+```text
+Project = Payments
+
+Environment = Production
+
+Owner = Platform
+
+Department = Finance
+```
+
+---
+
+# Purchase Option Analysis
+
+Analyze spending for
+
+- On-Demand
+- Reserved Instances
+- Savings Plans
+- Spot Instances
+
+---
+
+# EC2 Cost Analysis
+
+Review
+
+- Instance families
+- Instance types
+- Running hours
+- Idle instances
+- Utilization
+
+---
+
+# Storage Cost Analysis
+
+Review
+
+- S3
+- EBS
+- EFS
+- FSx
+- Snapshots
+
+---
+
+# Database Cost Analysis
+
+Review
+
+- RDS
+- Aurora
+- DynamoDB
+- ElastiCache
+
+---
+
+# Networking Cost Analysis
+
+Review
+
+- NAT Gateway
+
+- Elastic IP
+
+- Data Transfer
+
+- Transit Gateway
+
+- Load Balancers
+
+- CloudFront
+
+---
+
+# Forecasting
+
+Forecasts estimate future spending based on historical usage patterns.
+
+Example
+
+```text
+Current Month
+
+↓
+
+Historical Trend
+
+↓
+
+Forecast
+
+↓
+
+Budget Planning
+```
+
+---
+
+# Cost Trends
+
+Example
+
+```text
+January
+
+↓
+
+February
+
+↓
+
+March
+
+↓
+
+April
+
+↓
+
+Increasing Storage Costs
+```
+
+---
+
+# Cost Spike Investigation
+
+Workflow
+
+```text
+Unexpected Bill
+
+↓
+
+Identify Service
+
+↓
+
+Identify Region
+
+↓
+
+Identify Resource
+
+↓
+
+Check Recent Changes
+
+↓
+
+Optimize
+```
+
+---
+
+# Analyze Top Services
+
+Typical review order
+
+1. EC2
+2. EBS
+3. RDS
+4. S3
+5. NAT Gateway
+6. Data Transfer
+7. EKS
+8. CloudFront
+
+---
+
+# Analyze Resource Growth
+
+Review
+
+- Running instances
+- Storage usage
+- Database growth
+- Snapshot count
+- Load Balancers
+- Elastic IPs
+
+---
+
+# Monthly Review Checklist
+
+Review
+
+- Highest-cost services
+- Highest-cost regions
+- Unused resources
+- Idle resources
+- New services
+- Storage growth
+- Data transfer charges
+
+---
+
+# Savings Plans Analysis
+
+Review
+
+- Coverage %
+- Utilization %
+- Hourly commitment
+- Estimated savings
+- Expiration dates
+
+---
+
+# Reserved Instance Analysis
+
+Review
+
+- Coverage
+- Utilization
+- Expiration
+- Family compatibility
+
+---
+
+# Visualization Types
+
+Available views
+
+- Line Chart
+- Bar Chart
+- Stacked Bar
+- Table
+
+---
+
+# Export Reports
+
+Supported formats
+
+- CSV
+- Billing reports
+- Cost & Usage Reports (CUR)
+
+---
+
+# Practical Investigation Example
+
+```text
+Monthly Cost Increased
+
+↓
+
+Filter by Service
+
+↓
+
+Amazon EC2
+
+↓
+
+Group by Instance Type
+
+↓
+
+Identify New Instances
+
+↓
+
+Terminate Idle Resources
+
+↓
+
+Validate Savings
+```
+
+---
+
+# Cost Review Frequency
+
+Daily
+
+- Billing spikes
+- Anomalies
+- Production costs
+
+Weekly
+
+- Service growth
+- Resource utilization
+- Idle resources
+
+Monthly
+
+- Budgets
+- Savings Plans
+- Reserved Instances
+- Long-term trends
+
+---
+
+# Best Practices
+
+- Review Cost Explorer weekly.
+- Group costs using cost allocation tags.
+- Investigate sudden cost increases immediately.
+- Review region-wise spending regularly.
+- Track storage growth every month.
+- Analyze EC2 usage before purchasing Savings Plans.
+- Review Reserved Instance utilization.
+- Export reports for business analysis.
+- Compare forecasts with budgets.
+- Make Cost Explorer reviews part of operational governance.
+
+---
+
+# Summary
+
+This section covered AWS Cost Explorer, cost visualization, service-wise and region-wise analysis, filtering and grouping, forecasting, Savings Plans analysis, Reserved Instance analysis, cost investigations, and reporting. These capabilities help identify spending trends, optimize cloud resources, and improve financial governance.
+
+---
+
