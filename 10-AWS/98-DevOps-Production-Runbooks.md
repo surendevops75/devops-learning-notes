@@ -3307,3 +3307,636 @@ This section covered Terraform production troubleshooting, including initializat
 
 ---
 
+# CI/CD Pipeline Production Runbooks
+
+---
+
+# Introduction
+
+CI/CD pipeline failures can interrupt software delivery, delay releases, and impact production deployments. This runbook provides a structured approach for diagnosing, recovering, and preventing common CI/CD issues.
+
+---
+
+# CI/CD Troubleshooting Workflow
+
+```text
+Pipeline Failed
+
+↓
+
+Identify Failed Stage
+
+↓
+
+Review Logs
+
+↓
+
+Verify Credentials
+
+↓
+
+Check Infrastructure
+
+↓
+
+Fix Issue
+
+↓
+
+Re-run Pipeline
+
+↓
+
+Validate Deployment
+```
+
+---
+
+# Pipeline Stuck
+
+## Symptoms
+
+- Pipeline queued indefinitely
+- No stage execution
+- Jobs pending
+
+---
+
+## Investigation
+
+Review
+
+- Available runners/agents
+- Executor availability
+- Pipeline queue
+- Resource utilization
+- Scheduler status
+
+---
+
+## Resolution
+
+- Restart runner/agent
+- Increase executors
+- Free system resources
+- Retry pipeline
+
+---
+
+# Git Checkout Failure
+
+## Symptoms
+
+```text
+Repository clone failed
+```
+
+---
+
+## Investigation
+
+Verify
+
+- Repository URL
+- Branch name
+- Git credentials
+- SSH keys
+- Network connectivity
+
+---
+
+## Commands
+
+```bash
+git clone <repo>
+
+git ls-remote <repo>
+
+ssh -T git@github.com
+```
+
+---
+
+# Build Failure
+
+## Investigation
+
+Review
+
+- Build logs
+- Compiler errors
+- Dependency versions
+- Environment variables
+- Build tools
+
+---
+
+## Common Causes
+
+- Syntax errors
+- Missing dependencies
+- Incorrect environment variables
+- Version mismatch
+- Build script failure
+
+---
+
+# Unit Test Failure
+
+## Investigation
+
+Review
+
+- Failed test cases
+- Recent code changes
+- Test reports
+- Mock configurations
+
+---
+
+## Resolution
+
+- Fix application code
+- Update test cases
+- Resolve flaky tests
+- Re-run pipeline
+
+---
+
+# Static Code Analysis Failure
+
+Review
+
+- SonarQube Quality Gate
+- Code coverage
+- Code smells
+- Security hotspots
+- Critical vulnerabilities
+
+---
+
+## Resolution
+
+Fix quality issues before deployment.
+
+---
+
+# Dependency Scan Failure
+
+Review
+
+- Critical CVEs
+- High-risk libraries
+- License violations
+- Dependency versions
+
+---
+
+## Resolution
+
+Update vulnerable dependencies.
+
+---
+
+# Container Image Build Failure
+
+## Investigation
+
+```bash
+docker build
+
+docker images
+
+docker logs
+```
+
+Review
+
+- Dockerfile
+- Base image
+- Build context
+- Registry authentication
+
+---
+
+# Container Scan Failure
+
+Review
+
+- Critical vulnerabilities
+- High vulnerabilities
+- Base image age
+- Operating system packages
+
+---
+
+## Resolution
+
+- Update base image
+- Patch dependencies
+- Rebuild image
+
+---
+
+# Artifact Publishing Failure
+
+## Symptoms
+
+```text
+Upload failed
+```
+
+---
+
+## Verify
+
+- Artifact repository
+- Credentials
+- Network
+- Storage capacity
+
+---
+
+## Common Targets
+
+- Amazon S3
+- JFrog Artifactory
+- Nexus Repository
+
+---
+
+# Deployment Failure
+
+## Investigation
+
+Review
+
+- Deployment logs
+- Kubernetes events
+- Helm output
+- Infrastructure health
+
+---
+
+# Kubernetes Deployment Failure
+
+```bash
+kubectl rollout status deployment/<deployment>
+
+kubectl describe deployment
+
+kubectl get events
+
+kubectl logs
+```
+
+---
+
+# Helm Deployment Failure
+
+```bash
+helm list
+
+helm status
+
+helm history
+
+helm rollback
+```
+
+---
+
+# GitHub Actions Failure
+
+## Investigation
+
+Review
+
+- Workflow logs
+- GitHub Secrets
+- Runner status
+- Action versions
+- Repository permissions
+
+---
+
+## Verify
+
+- Workflow syntax
+- Branch protection
+- Required approvals
+
+---
+
+# GitLab CI Failure
+
+## Investigation
+
+Review
+
+- Pipeline logs
+- Runner availability
+- Protected variables
+- CI configuration
+
+---
+
+## Commands
+
+```bash
+gitlab-runner status
+```
+
+---
+
+# Jenkins Pipeline Failure
+
+Review
+
+- Console output
+- Jenkins agents
+- Credentials
+- Workspace
+- Plugins
+
+---
+
+# Runner/Agent Offline
+
+## Investigation
+
+Check
+
+- CPU
+- Memory
+- Disk
+- Network
+- Service status
+
+---
+
+## Resolution
+
+Restart runner service.
+
+---
+
+# Secret Management Failure
+
+Verify
+
+- AWS Secrets Manager
+- Parameter Store
+- Jenkins Credentials
+- GitHub Secrets
+- GitLab Variables
+
+Never expose secrets in logs.
+
+---
+
+# Environment Variable Issues
+
+Review
+
+- Missing variables
+- Incorrect values
+- Scope
+- Environment mapping
+
+---
+
+# Webhook Failure
+
+Verify
+
+- Webhook URL
+- Authentication
+- Firewall rules
+- Repository settings
+- Network connectivity
+
+---
+
+# Release Failure
+
+Workflow
+
+```text
+Release
+
+↓
+
+Deployment Failure
+
+↓
+
+Rollback
+
+↓
+
+Validate Previous Version
+
+↓
+
+Monitor
+```
+
+---
+
+# Rollback Strategy
+
+Preferred
+
+```text
+Previous Stable Release
+
+↓
+
+Deploy
+
+↓
+
+Health Check
+
+↓
+
+Traffic Validation
+```
+
+---
+
+# Canary Deployment Failure
+
+Actions
+
+- Stop rollout
+- Route traffic back
+- Investigate logs
+- Fix issue
+- Restart deployment
+
+---
+
+# Blue/Green Failure
+
+Workflow
+
+```text
+Green Deployment
+
+↓
+
+Validation Failed
+
+↓
+
+Switch Traffic
+
+↓
+
+Blue Environment
+
+↓
+
+Recovery
+```
+
+---
+
+# Pipeline Performance Issues
+
+Review
+
+- Queue time
+- Build duration
+- Test duration
+- Image build time
+- Deployment time
+
+---
+
+## Optimization
+
+- Parallel stages
+- Build cache
+- Dependency cache
+- Incremental builds
+- Faster runners
+
+---
+
+# Release Validation
+
+Verify
+
+- Application health
+- API responses
+- Logs
+- Metrics
+- Alerts
+- User access
+
+---
+
+# Deployment Verification
+
+Check
+
+- Pods running
+- Services healthy
+- Database connectivity
+- ALB/Ingress
+- DNS resolution
+- Monitoring dashboards
+
+---
+
+# CI/CD Health Checklist
+
+Verify
+
+- Source repository reachable
+- Runners healthy
+- Credentials valid
+- Secrets available
+- Artifact repository accessible
+- Deployment successful
+- Monitoring healthy
+- Rollback tested
+
+---
+
+# Production Recovery Workflow
+
+```text
+Pipeline Failure
+
+↓
+
+Identify Failed Stage
+
+↓
+
+Collect Logs
+
+↓
+
+Resolve Issue
+
+↓
+
+Re-run Pipeline
+
+↓
+
+Validate Deployment
+
+↓
+
+Monitor Production
+
+↓
+
+Document RCA
+```
+
+---
+
+# Common CI/CD Production Issues
+
+- Repository authentication failure
+- Pipeline stuck
+- Build failures
+- Unit test failures
+- SonarQube Quality Gate failure
+- Dependency scan failure
+- Docker build failure
+- Artifact upload failure
+- Deployment failure
+- Runner offline
+
+---
+
+# Best Practices
+
+- Protect production branches with mandatory reviews.
+- Store secrets securely using dedicated secret management services.
+- Validate every deployment with automated health checks.
+- Use canary or blue/green deployment strategies for production.
+- Automate rollback for failed deployments where possible.
+- Keep CI/CD runners updated and monitored.
+- Cache dependencies to improve pipeline performance.
+- Fail pipelines on critical security vulnerabilities.
+- Monitor deployment metrics after every release.
+- Update runbooks after every production incident.
+
+---
+
+# Summary
+
+This section covered CI/CD production troubleshooting, including pipeline failures, Git checkout issues, build and test failures, SonarQube quality gates, dependency scanning, Docker image builds, artifact publishing, GitHub Actions, GitLab CI, Jenkins pipelines, deployment failures, rollback strategies, runner issues, and production recovery workflows. These runbooks provide a systematic approach to restoring CI/CD pipelines and ensuring reliable software delivery.
+
+---
+
