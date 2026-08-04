@@ -4255,3 +4255,754 @@ This demonstrates practical, production-oriented knowledge.
 # Summary
 
 This section covered Docker fundamentals, architecture, images, containers, Dockerfiles, Docker Compose, networking, volumes, registries, multi-stage builds, security, production troubleshooting, and FAANG-style interview questions. These topics form the foundation of Docker interviews for DevOps engineers.
+
+---
+
+# Kubernetes Interview Questions (Basic → Intermediate)
+
+---
+
+# Introduction
+
+Kubernetes is one of the most important technologies in modern DevOps. Interviewers expect candidates to understand Kubernetes architecture, workloads, networking, storage, security, scaling, and production troubleshooting.
+
+This section covers:
+
+- Kubernetes Fundamentals
+- Cluster Architecture
+- Pods
+- ReplicaSets
+- Deployments
+- Services
+- Ingress
+- ConfigMaps
+- Secrets
+- Namespaces
+- Resource Management
+- Production Scenarios
+- Follow-up Questions
+
+---
+
+# Question 1
+
+## What is Kubernetes?
+
+### Answer
+
+Kubernetes (K8s) is an open-source container orchestration platform used to automate deployment, scaling, networking, and management of containerized applications.
+
+Benefits
+
+- Auto Scaling
+- Self Healing
+- Service Discovery
+- Load Balancing
+- Rolling Updates
+- Rollbacks
+- High Availability
+
+---
+
+### Production Example
+
+Deploy a microservices application on Amazon EKS with automatic scaling, rolling updates, and self-healing.
+
+---
+
+# Question 2
+
+## Kubernetes Architecture
+
+### Answer
+
+Main Components
+
+Control Plane
+
+- API Server
+- etcd
+- Scheduler
+- Controller Manager
+
+Worker Node
+
+- kubelet
+- kube-proxy
+- Container Runtime
+
+---
+
+### Architecture
+
+```text
+Users
+
+↓
+
+kubectl
+
+↓
+
+API Server
+
+↓
+
+Scheduler
+
+↓
+
+Worker Nodes
+
+↓
+
+Pods
+```
+
+---
+
+# Question 3
+
+## What is a Pod?
+
+### Answer
+
+A Pod is the smallest deployable unit in Kubernetes.
+
+A Pod contains
+
+- One or more containers
+- Shared network
+- Shared storage
+
+---
+
+### Follow-up
+
+Can multiple containers run inside one Pod?
+
+Answer
+
+Yes. Sidecar, init, and helper containers are common examples.
+
+---
+
+# Question 4
+
+## Pod Lifecycle
+
+```text
+Pending
+
+↓
+
+Running
+
+↓
+
+Succeeded
+
+↓
+
+Failed
+
+↓
+
+Unknown
+```
+
+---
+
+# Question 5
+
+## What is a ReplicaSet?
+
+### Answer
+
+ReplicaSet ensures the desired number of Pod replicas are always running.
+
+Example
+
+Desired
+
+```text
+3 Pods
+```
+
+One Pod crashes
+
+↓
+
+ReplicaSet creates another Pod automatically.
+
+---
+
+# Question 6
+
+## Deployment
+
+### Answer
+
+Deployment manages ReplicaSets and provides
+
+- Rolling updates
+- Rollbacks
+- Scaling
+- Version management
+
+---
+
+### Workflow
+
+```text
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+```
+
+---
+
+# Question 7
+
+## Deployment vs ReplicaSet
+
+| Deployment | ReplicaSet |
+|-------------|------------|
+| Supports rolling updates | No rollout management |
+| Rollback support | No rollback |
+| Recommended | Usually managed by Deployment |
+
+---
+
+# Question 8
+
+## Kubernetes Service
+
+### Answer
+
+A Service provides a stable network endpoint for Pods.
+
+Types
+
+- ClusterIP
+- NodePort
+- LoadBalancer
+- ExternalName
+
+---
+
+# Question 9
+
+## ClusterIP
+
+Default service type.
+
+Accessible only inside the cluster.
+
+---
+
+# Question 10
+
+## NodePort
+
+Exposes an application using a port on every worker node.
+
+---
+
+# Question 11
+
+## LoadBalancer
+
+Creates a cloud load balancer.
+
+Production Example
+
+On AWS, a Service of type `LoadBalancer` provisions an AWS load balancer.
+
+---
+
+# Question 12
+
+## ExternalName
+
+Maps a Kubernetes Service to an external DNS name.
+
+---
+
+# Question 13
+
+## Ingress
+
+### Answer
+
+Ingress manages HTTP and HTTPS routing into the cluster.
+
+Supports
+
+- Path-based routing
+- Host-based routing
+- TLS termination
+
+---
+
+### Production Example
+
+```text
+/api
+
+↓
+
+Backend API
+
+----------------
+
+/images
+
+↓
+
+Image Service
+```
+
+---
+
+# Question 14
+
+## Ingress vs LoadBalancer
+
+| Ingress | LoadBalancer |
+|----------|--------------|
+| Layer 7 | Layer 4/Cloud LB |
+| Path routing | One service exposure |
+| Multiple applications | Usually single service |
+
+---
+
+# Question 15
+
+## Namespace
+
+### Answer
+
+Namespaces logically isolate Kubernetes resources.
+
+Examples
+
+- dev
+- qa
+- staging
+- production
+- monitoring
+
+---
+
+# Question 16
+
+## Labels
+
+### Answer
+
+Labels organize Kubernetes resources.
+
+Example
+
+```yaml
+labels:
+  app: frontend
+  env: production
+```
+
+---
+
+# Question 17
+
+## Selectors
+
+### Answer
+
+Selectors identify resources using labels.
+
+Example
+
+```yaml
+selector:
+  app: frontend
+```
+
+---
+
+# Question 18
+
+## ConfigMap
+
+### Answer
+
+Stores non-sensitive configuration.
+
+Examples
+
+- URLs
+- Application settings
+- Feature flags
+
+---
+
+# Question 19
+
+## Secret
+
+### Answer
+
+Stores sensitive information.
+
+Examples
+
+- Passwords
+- Tokens
+- API Keys
+- Certificates
+
+---
+
+### Follow-up
+
+Difference between ConfigMap and Secret?
+
+| ConfigMap | Secret |
+|------------|---------|
+| Non-sensitive | Sensitive |
+| Plain configuration | Encoded data (Base64 in manifests; consider encryption at rest) |
+
+---
+
+# Question 20
+
+## Resource Requests
+
+### Answer
+
+Minimum resources guaranteed.
+
+Example
+
+```yaml
+requests:
+  cpu: "500m"
+  memory: "512Mi"
+```
+
+---
+
+# Question 21
+
+## Resource Limits
+
+### Answer
+
+Maximum resources a container can consume.
+
+Example
+
+```yaml
+limits:
+  cpu: "1"
+  memory: "1Gi"
+```
+
+---
+
+# Question 22
+
+## What happens if memory exceeds the limit?
+
+Answer
+
+The container may be terminated by Kubernetes due to exceeding its memory limit, often resulting in an `OOMKilled` status.
+
+---
+
+# Question 23
+
+## Liveness Probe
+
+### Answer
+
+Determines whether a container should be restarted.
+
+---
+
+# Question 24
+
+## Readiness Probe
+
+### Answer
+
+Determines whether a Pod is ready to receive traffic.
+
+---
+
+### Follow-up
+
+Difference
+
+| Liveness | Readiness |
+|-----------|-----------|
+| Restart container | Control traffic |
+| Detect dead applications | Detect application readiness |
+
+---
+
+# Question 25
+
+## Startup Probe
+
+### Answer
+
+Protects slow-starting applications from being restarted before initialization completes.
+
+---
+
+# Question 26
+
+## kubectl get
+
+Examples
+
+```bash
+kubectl get pods
+
+kubectl get nodes
+
+kubectl get svc
+
+kubectl get deployments
+```
+
+---
+
+# Question 27
+
+## kubectl describe
+
+Provides detailed resource information.
+
+```bash
+kubectl describe pod pod-name
+```
+
+Useful for viewing Events during troubleshooting.
+
+---
+
+# Question 28
+
+## kubectl logs
+
+View application logs.
+
+```bash
+kubectl logs pod-name
+
+kubectl logs -f pod-name
+```
+
+Multiple containers
+
+```bash
+kubectl logs pod-name -c container-name
+```
+
+---
+
+# Question 29
+
+## kubectl exec
+
+Access a running container.
+
+```bash
+kubectl exec -it pod-name -- bash
+```
+
+---
+
+# Question 30
+
+## kubectl rollout
+
+Deployment management.
+
+```bash
+kubectl rollout status deployment/app
+
+kubectl rollout undo deployment/app
+```
+
+---
+
+# Production Scenario 1
+
+Pods remain in Pending state.
+
+### Investigation
+
+```bash
+kubectl describe pod pod-name
+
+kubectl get nodes
+
+kubectl top nodes
+```
+
+Check
+
+- Available CPU
+- Available memory
+- Taints
+- Node readiness
+- Persistent volume availability
+
+---
+
+# Production Scenario 2
+
+Pods are in CrashLoopBackOff.
+
+### Investigation
+
+```bash
+kubectl logs pod-name --previous
+
+kubectl describe pod pod-name
+
+kubectl get events
+```
+
+Review
+
+- Application logs
+- Environment variables
+- Secrets
+- ConfigMaps
+- Resource limits
+- Probe configuration
+
+---
+
+# Production Scenario 3
+
+Application is inaccessible.
+
+### Investigation
+
+Verify
+
+```bash
+kubectl get svc
+
+kubectl get ingress
+
+kubectl describe ingress
+
+kubectl get endpoints
+```
+
+Check
+
+- Service selectors
+- Pod labels
+- Ingress rules
+- DNS resolution
+
+---
+
+# Production Scenario 4
+
+Deployment rollout fails.
+
+### Investigation
+
+```bash
+kubectl rollout status deployment/app
+
+kubectl describe deployment app
+
+kubectl get rs
+```
+
+Review
+
+- Image availability
+- Probe failures
+- Resource constraints
+- Configuration changes
+
+---
+
+# Production Scenario 5
+
+A Pod cannot communicate with another service.
+
+### Investigation
+
+Check
+
+- Service DNS
+- Endpoints
+- Network Policies
+- Namespace
+- Service selectors
+
+Useful commands
+
+```bash
+kubectl get svc
+
+kubectl get endpoints
+
+kubectl exec -it pod-name -- nslookup service-name
+```
+
+---
+
+# FAANG-Style Kubernetes Questions
+
+- Explain the Kubernetes scheduler.
+- How does etcd work?
+- Explain kube-proxy.
+- Difference between Deployment and StatefulSet.
+- Explain Kubernetes networking.
+- How does Kubernetes Service Discovery work?
+- Explain rolling updates internally.
+- What happens when a node becomes NotReady?
+- How does Kubernetes perform self-healing?
+- Explain Kubernetes control plane components in detail.
+
+---
+
+# Kubernetes Interview Tips
+
+Structure every answer like this:
+
+1. Definition
+2. Architecture
+3. YAML/Command example
+4. Production use case
+5. Troubleshooting approach
+6. Best practice
+
+Interviewers value practical troubleshooting experience as much as theoretical knowledge.
+
+---
+
+# Summary
+
+This section covered Kubernetes fundamentals, architecture, Pods, ReplicaSets, Deployments, Services, Ingress, Namespaces, Labels, Selectors, ConfigMaps, Secrets, resource requests and limits, health probes, kubectl commands, production troubleshooting scenarios, and FAANG-style interview questions. These topics form the foundation for Kubernetes interviews at all levels.
+
+---
+
