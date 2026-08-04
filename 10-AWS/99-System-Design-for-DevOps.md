@@ -3734,3 +3734,848 @@ This section covered enterprise CI/CD platform design, Jenkins, GitHub Actions, 
 
 ---
 
+# Designing Enterprise Kubernetes Platforms
+
+---
+
+# Introduction
+
+Enterprise Kubernetes platforms provide scalable, highly available, secure, and automated infrastructure for running containerized workloads. This section focuses on production-grade Kubernetes platform architecture with Amazon EKS.
+
+Objectives
+
+- High Availability
+- Scalability
+- Security
+- Automation
+- Observability
+- Disaster Recovery
+
+---
+
+# Enterprise Kubernetes Architecture
+
+```text
+Users
+
+↓
+
+Route 53
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Amazon EKS Architecture
+
+Components
+
+- Control Plane
+- Worker Nodes
+- Node Groups
+- CoreDNS
+- kube-proxy
+- VPC CNI
+- AWS Load Balancer Controller
+
+---
+
+# Kubernetes Architecture
+
+```text
+Users
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pods
+
+↓
+
+Persistent Storage
+```
+
+---
+
+# Kubernetes Control Plane
+
+Components
+
+- API Server
+- etcd
+- Scheduler
+- Controller Manager
+
+Responsibilities
+
+- Cluster management
+- Scheduling
+- State management
+- API processing
+
+---
+
+# Worker Nodes
+
+Responsibilities
+
+- Run Pods
+- Execute containers
+- Provide compute resources
+- Report node health
+
+Components
+
+- kubelet
+- containerd
+- kube-proxy
+
+---
+
+# Managed Node Groups
+
+Benefits
+
+- Automatic updates
+- Managed lifecycle
+- Easy scaling
+- High availability
+
+---
+
+# Self-Managed Node Groups
+
+Benefits
+
+- Greater customization
+- Full control
+
+Trade-offs
+
+- Manual lifecycle management
+- Higher operational overhead
+
+---
+
+# Node Architecture
+
+```text
+Amazon EKS
+
+↓
+
+Managed Node Group
+
+↓
+
+EC2 Instances
+
+↓
+
+Pods
+```
+
+---
+
+# Pod Architecture
+
+```text
+Namespace
+
+↓
+
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+
+↓
+
+Containers
+```
+
+---
+
+# Namespaces
+
+Purpose
+
+Provide logical isolation for workloads.
+
+Examples
+
+- dev
+- qa
+- staging
+- production
+- monitoring
+
+---
+
+# Deployment Strategy
+
+```text
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+```
+
+Benefits
+
+- Rolling updates
+- Rollbacks
+- Replica management
+
+---
+
+# Stateful Applications
+
+Use
+
+```text
+StatefulSet
+```
+
+Examples
+
+- PostgreSQL
+- MySQL
+- Kafka
+- Elasticsearch
+
+---
+
+# DaemonSet
+
+Purpose
+
+Run one Pod on every node.
+
+Examples
+
+- Fluent Bit
+- Node Exporter
+- Filebeat
+- Security Agents
+
+---
+
+# Jobs
+
+Purpose
+
+Run one-time batch workloads.
+
+Examples
+
+- Database migration
+- Backup
+- Batch processing
+
+---
+
+# CronJobs
+
+Purpose
+
+Execute scheduled tasks.
+
+Examples
+
+- Daily backups
+- Log cleanup
+- Report generation
+
+---
+
+# Service Types
+
+ClusterIP
+
+Internal communication only.
+
+---
+
+NodePort
+
+Expose services using worker node ports.
+
+---
+
+LoadBalancer
+
+Provision cloud load balancers automatically.
+
+---
+
+ExternalName
+
+Map Kubernetes services to external DNS names.
+
+---
+
+# Kubernetes Networking
+
+```text
+Pod
+
+↓
+
+Service
+
+↓
+
+Ingress
+
+↓
+
+Application Load Balancer
+```
+
+---
+
+# AWS Load Balancer Controller
+
+Purpose
+
+Automatically provisions AWS Application Load Balancers for Kubernetes Ingress resources.
+
+Benefits
+
+- Native AWS integration
+- Automatic target registration
+- SSL termination
+- Path-based routing
+
+---
+
+# Ingress Architecture
+
+```text
+Internet
+
+↓
+
+ALB
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pods
+```
+
+---
+
+# DNS Flow
+
+```text
+Route 53
+
+↓
+
+ALB
+
+↓
+
+Ingress
+
+↓
+
+Application
+```
+
+---
+
+# Cluster Autoscaler
+
+Purpose
+
+Automatically adds or removes worker nodes based on pending Pods and resource utilization.
+
+Workflow
+
+```text
+Pending Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+Launch EC2 Nodes
+
+↓
+
+Pods Scheduled
+```
+
+---
+
+# Karpenter
+
+Purpose
+
+Provision worker nodes dynamically based on workload requirements.
+
+Benefits
+
+- Faster provisioning
+- Better resource utilization
+- Lower cost
+- Flexible instance selection
+
+---
+
+# Cluster Autoscaler vs Karpenter
+
+| Feature | Cluster Autoscaler | Karpenter |
+|----------|--------------------|-----------|
+| Scaling Unit | Node Group | Individual Nodes |
+| Provisioning Speed | Moderate | Faster |
+| Instance Flexibility | Limited | High |
+| Resource Efficiency | Good | Excellent |
+
+---
+
+# Resource Requests & Limits
+
+Configure
+
+- CPU Requests
+- CPU Limits
+- Memory Requests
+- Memory Limits
+
+Benefits
+
+- Fair scheduling
+- Resource protection
+- Stable workloads
+
+---
+
+# Horizontal Pod Autoscaler (HPA)
+
+Purpose
+
+Automatically scale Pods.
+
+Metrics
+
+- CPU
+- Memory
+- Custom Metrics
+
+Workflow
+
+```text
+High CPU
+
+↓
+
+HPA
+
+↓
+
+Increase Replicas
+```
+
+---
+
+# Vertical Pod Autoscaler (VPA)
+
+Purpose
+
+Recommend or automatically adjust Pod resource requests.
+
+Best suited for workloads with changing resource requirements.
+
+---
+
+# Storage Architecture
+
+Persistent Volumes
+
+↓
+
+Persistent Volume Claims
+
+↓
+
+Storage Classes
+
+↓
+
+Amazon EBS / Amazon EFS
+```
+
+---
+
+# Storage Options
+
+Amazon EBS
+
+Best For
+
+- Databases
+- Stateful applications
+
+---
+
+Amazon EFS
+
+Best For
+
+- Shared storage
+- Multiple Pods
+- ReadWriteMany workloads
+
+---
+
+# Container Registry
+
+Recommended
+
+```text
+Amazon ECR
+```
+
+Benefits
+
+- Image scanning
+- IAM integration
+- Lifecycle policies
+
+---
+
+# Service Mesh
+
+Purpose
+
+Manage service-to-service communication.
+
+Features
+
+- Mutual TLS (mTLS)
+- Traffic routing
+- Observability
+- Retries
+- Circuit breaking
+
+Examples
+
+- Istio
+- Linkerd
+
+---
+
+# Service Mesh Architecture
+
+```text
+Service A
+
+↓
+
+Sidecar Proxy
+
+↓
+
+Service B
+
+↓
+
+Sidecar Proxy
+```
+
+---
+
+# Kubernetes Security
+
+Implement
+
+- RBAC
+- IRSA
+- Network Policies
+- Pod Security
+- Image Scanning
+
+---
+
+# Observability Stack
+
+```text
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Grafana
+
+↓
+
+ELK Stack
+```
+
+---
+
+# Multi-Cluster Architecture
+
+```text
+Region A
+
+↓
+
+Amazon EKS Cluster
+
+-----------------------
+
+Region B
+
+↓
+
+Amazon EKS Cluster
+```
+
+Benefits
+
+- Disaster Recovery
+- Regional isolation
+- High availability
+
+---
+
+# Multi-Region Kubernetes
+
+```text
+Users
+
+↓
+
+Route 53
+
+↓
+
+Region A
+
+↓
+
+Region B
+
+↓
+
+Region C
+```
+
+---
+
+# Production EKS Platform
+
+```text
+Internet
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Amazon S3
+```
+
+---
+
+# CI/CD Integration
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+CI Pipeline
+
+↓
+
+Amazon ECR
+
+↓
+
+GitOps Repository
+
+↓
+
+Argo CD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Platform Monitoring
+
+Monitor
+
+- Node health
+- Pod health
+- API Server
+- etcd
+- CPU
+- Memory
+- Storage
+- Network
+- Deployments
+
+---
+
+# Disaster Recovery
+
+Protect
+
+- Kubernetes manifests
+- Git repositories
+- Amazon ECR images
+- Persistent Volumes
+- Databases
+
+Deploy across multiple Availability Zones and, where required, multiple Regions.
+
+---
+
+# Production Kubernetes Checklist
+
+Verify
+
+- Control Plane healthy
+- Nodes Ready
+- Pods Running
+- HPA operational
+- Storage healthy
+- Ingress working
+- Monitoring enabled
+- Logging enabled
+- Backups verified
+- Disaster Recovery tested
+
+---
+
+# Common Platform Design Mistakes
+
+- Single-node cluster
+- No Auto Scaling
+- Missing resource limits
+- Public worker nodes
+- No Ingress controller
+- No monitoring
+- Missing backups
+- No GitOps
+- No Disaster Recovery
+- Overloaded shared cluster
+
+---
+
+# Best Practices
+
+- Deploy Amazon EKS across multiple Availability Zones.
+- Use Managed Node Groups for simplified operations.
+- Use Karpenter or Cluster Autoscaler to scale compute automatically.
+- Configure HPA with appropriate CPU, memory, or custom metrics.
+- Use Amazon EBS for block storage and Amazon EFS for shared storage.
+- Store container images in Amazon ECR with image scanning enabled.
+- Implement GitOps using Argo CD for declarative deployments.
+- Secure workloads using RBAC, IRSA, and Network Policies.
+- Monitor clusters using Prometheus, Grafana, and the ELK Stack.
+- Design multi-cluster and multi-region architectures for critical production workloads.
+
+---
+
+# Summary
+
+This section covered enterprise Kubernetes platform design, Amazon EKS architecture, control plane, worker nodes, Managed Node Groups, Karpenter, Cluster Autoscaler, storage architecture, networking, AWS Load Balancer Controller, Service Mesh concepts, GitOps integration, multi-cluster deployments, observability, disaster recovery, and production best practices. These principles provide a strong foundation for designing and operating enterprise-grade Kubernetes platforms.
+
+---
+
