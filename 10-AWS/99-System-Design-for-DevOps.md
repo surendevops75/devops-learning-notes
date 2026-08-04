@@ -1379,3 +1379,790 @@ This section covered load balancing fundamentals, Layer 4 vs Layer 7 load balanc
 
 ---
 
+# Database Design, Storage & Caching
+
+---
+
+# Introduction
+
+Databases are the backbone of modern distributed systems. Proper database architecture, caching, replication, and storage strategies are essential for building scalable, reliable, and high-performance applications.
+
+Objectives
+
+- High Performance
+- Scalability
+- High Availability
+- Data Durability
+- Low Latency
+- Disaster Recovery
+
+---
+
+# Database Architecture
+
+```text
+Application
+
+↓
+
+Cache
+
+↓
+
+Primary Database
+
+↓
+
+Read Replica
+
+↓
+
+Backup
+```
+
+---
+
+# Types of Databases
+
+## Relational (SQL)
+
+Characteristics
+
+- Structured data
+- ACID transactions
+- Fixed schema
+- Strong consistency
+
+Examples
+
+- PostgreSQL
+- MySQL
+- MariaDB
+- Oracle
+- Microsoft SQL Server
+
+---
+
+## NoSQL
+
+Characteristics
+
+- Flexible schema
+- Horizontal scaling
+- High throughput
+- Eventual consistency (many implementations)
+
+Examples
+
+- DynamoDB
+- MongoDB
+- Cassandra
+- Redis
+- Couchbase
+
+---
+
+# SQL vs NoSQL
+
+| Feature | SQL | NoSQL |
+|----------|-----|--------|
+| Schema | Fixed | Flexible |
+| Transactions | ACID | Varies |
+| Scaling | Vertical + Read Scaling | Horizontal |
+| Joins | Supported | Limited/Depends |
+| Best For | Structured Data | Large-scale Distributed Data |
+
+---
+
+# ACID Properties
+
+Atomicity
+
+All operations succeed or none succeed.
+
+---
+
+Consistency
+
+Database remains in a valid state.
+
+---
+
+Isolation
+
+Concurrent transactions do not interfere.
+
+---
+
+Durability
+
+Committed data survives failures.
+
+---
+
+# BASE Model
+
+Common in distributed NoSQL systems.
+
+Components
+
+- Basically Available
+- Soft State
+- Eventual Consistency
+
+---
+
+# Choosing a Database
+
+Use SQL when
+
+- Financial systems
+- Banking
+- Inventory
+- Strong consistency
+
+Use NoSQL when
+
+- User profiles
+- Product catalogs
+- IoT
+- Logging
+- Large-scale metadata
+
+---
+
+# Database Scaling
+
+Methods
+
+```text
+Vertical Scaling
+
+↓
+
+Bigger Server
+```
+
+OR
+
+```text
+Horizontal Scaling
+
+↓
+
+Multiple Servers
+```
+
+---
+
+# Read Replicas
+
+Purpose
+
+Distribute read traffic.
+
+Architecture
+
+```text
+Primary Database
+
+↓
+
+Replica 1
+
+↓
+
+Replica 2
+
+↓
+
+Replica 3
+```
+
+---
+
+# Read/Write Separation
+
+```text
+Application
+
+↓
+
+Write
+
+↓
+
+Primary Database
+
+---------------------
+
+Read
+
+↓
+
+Read Replicas
+```
+
+Benefits
+
+- Lower read latency
+- Reduced primary load
+- Better scalability
+
+---
+
+# Database Replication
+
+Purpose
+
+Maintain synchronized copies of data.
+
+Benefits
+
+- High Availability
+- Disaster Recovery
+- Read Scaling
+
+---
+
+# Synchronous Replication
+
+Characteristics
+
+- Strong consistency
+- Higher latency
+- Safer writes
+
+---
+
+# Asynchronous Replication
+
+Characteristics
+
+- Faster writes
+- Possible replication lag
+- Better performance
+
+---
+
+# Database Sharding
+
+Purpose
+
+Split data across multiple database servers.
+
+Example
+
+```text
+Users A-H
+
+↓
+
+Shard 1
+
+----------------
+
+Users I-P
+
+↓
+
+Shard 2
+
+----------------
+
+Users Q-Z
+
+↓
+
+Shard 3
+```
+
+Benefits
+
+- Horizontal scaling
+- Better performance
+- Higher capacity
+
+---
+
+# Database Partitioning
+
+Types
+
+- Range Partitioning
+- Hash Partitioning
+- List Partitioning
+- Composite Partitioning
+
+---
+
+# Database Indexing
+
+Purpose
+
+Speed up query execution.
+
+Common Index Types
+
+- Primary Index
+- Secondary Index
+- Composite Index
+- Unique Index
+
+---
+
+# Index Trade-offs
+
+Advantages
+
+- Faster reads
+
+Disadvantages
+
+- Slower writes
+- More storage
+- Maintenance overhead
+
+---
+
+# Database Connection Pooling
+
+Purpose
+
+Reuse existing database connections.
+
+Benefits
+
+- Reduced latency
+- Better performance
+- Lower database overhead
+
+---
+
+# Connection Pool Workflow
+
+```text
+Application
+
+↓
+
+Connection Pool
+
+↓
+
+Database
+```
+
+---
+
+# Caching
+
+Purpose
+
+Store frequently accessed data in memory.
+
+Benefits
+
+- Lower latency
+- Reduced database load
+- Faster response times
+
+---
+
+# Cache Architecture
+
+```text
+Application
+
+↓
+
+Cache
+
+↓
+
+Database
+```
+
+---
+
+# Redis
+
+Best For
+
+- Session storage
+- Caching
+- Rate limiting
+- Queues
+- Leaderboards
+
+---
+
+# Memcached
+
+Best For
+
+- Simple key-value caching
+- Temporary cache
+- Lightweight workloads
+
+---
+
+# Redis vs Memcached
+
+| Feature | Redis | Memcached |
+|----------|--------|-----------|
+| Persistence | Yes | No |
+| Data Types | Multiple | Key-Value |
+| Replication | Supported | Limited |
+| Pub/Sub | Yes | No |
+
+---
+
+# Cache-Aside Pattern
+
+Workflow
+
+```text
+Application
+
+↓
+
+Cache
+
+↓
+
+Miss
+
+↓
+
+Database
+
+↓
+
+Update Cache
+```
+
+Advantages
+
+- Simple
+- Efficient
+
+---
+
+# Read-Through Cache
+
+Workflow
+
+```text
+Application
+
+↓
+
+Cache
+
+↓
+
+Database (Automatic)
+
+↓
+
+Response
+```
+
+---
+
+# Write-Through Cache
+
+Workflow
+
+```text
+Application
+
+↓
+
+Cache
+
+↓
+
+Database
+```
+
+Advantages
+
+- Cache always updated
+
+Trade-off
+
+- Higher write latency
+
+---
+
+# Write-Back Cache
+
+Workflow
+
+```text
+Application
+
+↓
+
+Cache
+
+↓
+
+Response
+
+↓
+
+Database (Later)
+```
+
+Advantages
+
+- Fast writes
+
+Trade-off
+
+- Risk of temporary data loss
+
+---
+
+# Cache Eviction Policies
+
+Examples
+
+- LRU (Least Recently Used)
+- LFU (Least Frequently Used)
+- FIFO (First In, First Out)
+- TTL (Time To Live)
+
+---
+
+# Cache Invalidation
+
+Strategies
+
+- TTL expiration
+- Event-driven invalidation
+- Manual invalidation
+- Versioned cache keys
+
+---
+
+# CDN Caching
+
+Architecture
+
+```text
+Users
+
+↓
+
+CloudFront
+
+↓
+
+Origin
+
+↓
+
+Application
+```
+
+Cache
+
+- Images
+- CSS
+- JavaScript
+- Videos
+- Static assets
+
+---
+
+# Data Consistency
+
+Types
+
+Strong Consistency
+
+Latest data always returned.
+
+---
+
+Eventual Consistency
+
+Data synchronizes over time.
+
+---
+
+# Backup Strategy
+
+Implement
+
+- Automated backups
+- Point-in-Time Recovery (PITR)
+- Cross-Region backups
+- Backup validation
+
+---
+
+# Disaster Recovery
+
+Protect
+
+- Database backups
+- Transaction logs
+- Replicas
+- Snapshots
+
+---
+
+# Storage Types
+
+Object Storage
+
+Examples
+
+- Amazon S3
+
+Use Cases
+
+- Images
+- Videos
+- Backups
+- Documents
+
+---
+
+Block Storage
+
+Examples
+
+- Amazon EBS
+
+Use Cases
+
+- EC2
+- Databases
+- Boot volumes
+
+---
+
+File Storage
+
+Examples
+
+- Amazon EFS
+
+Use Cases
+
+- Shared application storage
+- Containers
+- Web servers
+
+---
+
+# Large-Scale Storage Architecture
+
+```text
+Users
+
+↓
+
+Application
+
+↓
+
+Redis Cache
+
+↓
+
+Primary Database
+
+↓
+
+Read Replicas
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Database Monitoring
+
+Monitor
+
+- CPU
+- Memory
+- Connections
+- Query latency
+- Replication lag
+- Slow queries
+- Storage utilization
+- Cache hit ratio
+
+---
+
+# Common Database Bottlenecks
+
+- Missing indexes
+- Slow queries
+- High connection count
+- Full table scans
+- Cache misses
+- Storage latency
+- Replication lag
+- Lock contention
+
+---
+
+# Production Database Checklist
+
+Verify
+
+- Backups successful
+- Replication healthy
+- Read replicas synchronized
+- Indexes optimized
+- Cache operational
+- Connection pool healthy
+- Monitoring enabled
+- Disaster Recovery tested
+
+---
+
+# Common Design Mistakes
+
+- No indexes
+- Single database server
+- No read replicas
+- No caching
+- Too many database connections
+- Full table scans
+- Missing backups
+- No replication
+- Large monolithic tables
+- Ignoring query optimization
+
+---
+
+# Best Practices
+
+- Choose SQL or NoSQL based on application requirements.
+- Use read replicas to scale read-heavy workloads.
+- Implement sharding only when vertical scaling is insufficient.
+- Use Redis for distributed caching and session storage.
+- Configure connection pooling to reduce database overhead.
+- Apply appropriate indexing strategies based on query patterns.
+- Monitor replication lag and slow queries continuously.
+- Automate backups and regularly test recovery procedures.
+- Store static assets in object storage such as Amazon S3.
+- Design storage and caching layers to reduce database load and improve application performance.
+
+---
+
+# Summary
+
+This section covered SQL vs NoSQL databases, ACID and BASE models, replication, read replicas, sharding, partitioning, indexing, connection pooling, Redis, Memcached, caching strategies, CDN caching, storage architecture, database monitoring, disaster recovery, and production database best practices. These concepts provide the foundation for designing scalable and resilient data platforms.
