@@ -1994,3 +1994,748 @@ This section covered CloudFormation templates for IAM Users, Groups, Roles, Mana
 
 ---
 
+# Amazon S3
+
+---
+
+# Create S3 Bucket
+
+```yaml
+Resources:
+
+  ApplicationBucket:
+
+    Type: AWS::S3::Bucket
+
+    Properties:
+
+      BucketName: production-app-storage
+
+      Tags:
+
+        - Key: Environment
+
+          Value: Production
+```
+
+---
+
+# Enable Versioning
+
+```yaml
+VersioningConfiguration:
+
+  Status: Enabled
+```
+
+---
+
+# Server-Side Encryption (SSE-S3)
+
+```yaml
+BucketEncryption:
+
+  ServerSideEncryptionConfiguration:
+
+    - ServerSideEncryptionByDefault:
+
+        SSEAlgorithm: AES256
+```
+
+---
+
+# SSE-KMS Encryption
+
+```yaml
+BucketEncryption:
+
+  ServerSideEncryptionConfiguration:
+
+    - ServerSideEncryptionByDefault:
+
+        SSEAlgorithm: aws:kms
+
+        KMSMasterKeyID: !Ref EncryptionKey
+```
+
+---
+
+# Block Public Access
+
+```yaml
+PublicAccessBlockConfiguration:
+
+  BlockPublicAcls: true
+
+  BlockPublicPolicy: true
+
+  IgnorePublicAcls: true
+
+  RestrictPublicBuckets: true
+```
+
+---
+
+# Bucket Lifecycle Rule
+
+```yaml
+LifecycleConfiguration:
+
+  Rules:
+
+    - Id: ArchiveLogs
+
+      Status: Enabled
+
+      Transitions:
+
+        - StorageClass: GLACIER
+
+          TransitionInDays: 30
+```
+
+---
+
+# Bucket Logging
+
+```yaml
+LoggingConfiguration:
+
+  DestinationBucketName: access-logs
+
+  LogFilePrefix: s3/
+```
+
+---
+
+# Bucket Notification
+
+```yaml
+NotificationConfiguration:
+
+  LambdaConfigurations:
+
+    - Event: s3:ObjectCreated:*
+
+      Function: !GetAtt LambdaFunction.Arn
+```
+
+---
+
+# Bucket Policy
+
+```yaml
+Resources:
+
+  BucketPolicy:
+
+    Type: AWS::S3::BucketPolicy
+
+    Properties:
+
+      Bucket: !Ref ApplicationBucket
+
+      PolicyDocument:
+
+        Version: "2012-10-17"
+```
+
+---
+
+# Intelligent Tiering
+
+```yaml
+IntelligentTieringConfigurations:
+
+  - Id: Archive
+
+    Status: Enabled
+```
+
+---
+
+# Amazon EFS
+
+---
+
+# File System
+
+```yaml
+Resources:
+
+  EFS:
+
+    Type: AWS::EFS::FileSystem
+
+    Properties:
+
+      Encrypted: true
+
+      PerformanceMode: generalPurpose
+```
+
+---
+
+# Mount Target
+
+```yaml
+Resources:
+
+  EFSMount:
+
+    Type: AWS::EFS::MountTarget
+
+    Properties:
+
+      FileSystemId: !Ref EFS
+
+      SubnetId: !Ref PrivateSubnet
+
+      SecurityGroups:
+
+        - !Ref EFSSecurityGroup
+```
+
+---
+
+# Access Point
+
+```yaml
+Resources:
+
+  AccessPoint:
+
+    Type: AWS::EFS::AccessPoint
+
+    Properties:
+
+      FileSystemId: !Ref EFS
+```
+
+---
+
+# Amazon FSx
+
+---
+
+# Windows File Server
+
+```yaml
+Resources:
+
+  WindowsFSx:
+
+    Type: AWS::FSx::FileSystem
+
+    Properties:
+
+      FileSystemType: WINDOWS
+
+      StorageCapacity: 32
+
+      SubnetIds:
+
+        - !Ref PrivateSubnet
+```
+
+---
+
+# Lustre File System
+
+```yaml
+Resources:
+
+  LustreFS:
+
+    Type: AWS::FSx::FileSystem
+
+    Properties:
+
+      FileSystemType: LUSTRE
+
+      StorageCapacity: 1200
+```
+
+---
+
+# Amazon RDS
+
+---
+
+# MySQL Instance
+
+```yaml
+Resources:
+
+  MySQL:
+
+    Type: AWS::RDS::DBInstance
+
+    Properties:
+
+      Engine: mysql
+
+      DBInstanceClass: db.t3.micro
+
+      AllocatedStorage: 20
+
+      MasterUsername: admin
+
+      MasterUserPassword: Password123
+```
+
+---
+
+# PostgreSQL Instance
+
+```yaml
+Resources:
+
+  PostgreSQL:
+
+    Type: AWS::RDS::DBInstance
+
+    Properties:
+
+      Engine: postgres
+
+      DBInstanceClass: db.t3.small
+
+      AllocatedStorage: 50
+```
+
+---
+
+# DB Subnet Group
+
+```yaml
+Resources:
+
+  DBSubnetGroup:
+
+    Type: AWS::RDS::DBSubnetGroup
+
+    Properties:
+
+      DBSubnetGroupDescription: Database Subnets
+
+      SubnetIds:
+
+        - !Ref PrivateSubnet
+```
+
+---
+
+# Parameter Group
+
+```yaml
+Resources:
+
+  DBParameters:
+
+    Type: AWS::RDS::DBParameterGroup
+
+    Properties:
+
+      Family: mysql8.0
+
+      Description: Production Parameters
+```
+
+---
+
+# Option Group
+
+```yaml
+Resources:
+
+  DBOptions:
+
+    Type: AWS::RDS::OptionGroup
+
+    Properties:
+
+      EngineName: mysql
+
+      MajorEngineVersion: "8.0"
+```
+
+---
+
+# Read Replica
+
+```yaml
+Resources:
+
+  Replica:
+
+    Type: AWS::RDS::DBInstance
+
+    Properties:
+
+      SourceDBInstanceIdentifier: !Ref MySQL
+```
+
+---
+
+# Aurora Cluster
+
+```yaml
+Resources:
+
+  AuroraCluster:
+
+    Type: AWS::RDS::DBCluster
+
+    Properties:
+
+      Engine: aurora-mysql
+
+      MasterUsername: admin
+
+      MasterUserPassword: Password123
+```
+
+---
+
+# Aurora Instance
+
+```yaml
+Resources:
+
+  AuroraWriter:
+
+    Type: AWS::RDS::DBInstance
+
+    Properties:
+
+      DBClusterIdentifier: !Ref AuroraCluster
+
+      Engine: aurora-mysql
+
+      DBInstanceClass: db.r6g.large
+```
+
+---
+
+# Amazon DynamoDB
+
+---
+
+# DynamoDB Table
+
+```yaml
+Resources:
+
+  UsersTable:
+
+    Type: AWS::DynamoDB::Table
+
+    Properties:
+
+      BillingMode: PAY_PER_REQUEST
+
+      AttributeDefinitions:
+
+        - AttributeName: UserId
+
+          AttributeType: S
+
+      KeySchema:
+
+        - AttributeName: UserId
+
+          KeyType: HASH
+```
+
+---
+
+# Global Secondary Index
+
+```yaml
+GlobalSecondaryIndexes:
+
+  - IndexName: EmailIndex
+
+    KeySchema:
+
+      - AttributeName: Email
+
+        KeyType: HASH
+
+    Projection:
+
+      ProjectionType: ALL
+```
+
+---
+
+# Point-in-Time Recovery
+
+```yaml
+PointInTimeRecoverySpecification:
+
+  PointInTimeRecoveryEnabled: true
+```
+
+---
+
+# TTL
+
+```yaml
+TimeToLiveSpecification:
+
+  AttributeName: Expiry
+
+  Enabled: true
+```
+
+---
+
+# Amazon ElastiCache
+
+---
+
+# Redis Cluster
+
+```yaml
+Resources:
+
+  RedisCluster:
+
+    Type: AWS::ElastiCache::CacheCluster
+
+    Properties:
+
+      Engine: redis
+
+      CacheNodeType: cache.t3.micro
+
+      NumCacheNodes: 1
+```
+
+---
+
+# Redis Replication Group
+
+```yaml
+Resources:
+
+  RedisReplication:
+
+    Type: AWS::ElastiCache::ReplicationGroup
+
+    Properties:
+
+      Engine: redis
+
+      ReplicationGroupDescription: Production Redis
+```
+
+---
+
+# Memcached Cluster
+
+```yaml
+Resources:
+
+  Memcached:
+
+    Type: AWS::ElastiCache::CacheCluster
+
+    Properties:
+
+      Engine: memcached
+
+      CacheNodeType: cache.t3.micro
+
+      NumCacheNodes: 2
+```
+
+---
+
+# AWS Backup
+
+---
+
+# Backup Vault
+
+```yaml
+Resources:
+
+  BackupVault:
+
+    Type: AWS::Backup::BackupVault
+
+    Properties:
+
+      BackupVaultName: ProductionVault
+```
+
+---
+
+# Backup Plan
+
+```yaml
+Resources:
+
+  BackupPlan:
+
+    Type: AWS::Backup::BackupPlan
+
+    Properties:
+
+      BackupPlan:
+
+        BackupPlanName: DailyBackup
+```
+
+---
+
+# Backup Selection
+
+```yaml
+Resources:
+
+  BackupSelection:
+
+    Type: AWS::Backup::BackupSelection
+
+    Properties:
+
+      BackupPlanId: !Ref BackupPlan
+
+      BackupSelection:
+
+        SelectionName: ProductionResources
+```
+
+---
+
+# AWS DataSync
+
+---
+
+# S3 Location
+
+```yaml
+Resources:
+
+  SourceLocation:
+
+    Type: AWS::DataSync::LocationS3
+
+    Properties:
+
+      S3BucketArn: !GetAtt ApplicationBucket.Arn
+```
+
+---
+
+# DataSync Task
+
+```yaml
+Resources:
+
+  MigrationTask:
+
+    Type: AWS::DataSync::Task
+
+    Properties:
+
+      SourceLocationArn: !Ref SourceLocation
+
+      DestinationLocationArn: arn:aws:datasync:destination
+```
+
+---
+
+# AWS Storage Gateway
+
+---
+
+# File Share
+
+```yaml
+Resources:
+
+  SMBShare:
+
+    Type: AWS::StorageGateway::SMBFileShare
+
+    Properties:
+
+      GatewayARN: arn:aws:storagegateway:gateway
+
+      LocationARN: !GetAtt ApplicationBucket.Arn
+```
+
+---
+
+# AWS Snow Family
+
+---
+
+# Snowball Job
+
+```yaml
+Resources:
+
+  ImportJob:
+
+    Type: AWS::Snowball::Job
+
+    Properties:
+
+      JobType: IMPORT
+
+      Resources: {}
+```
+
+---
+
+# Outputs
+
+```yaml
+Outputs:
+
+  BucketName:
+
+    Value: !Ref ApplicationBucket
+
+  DatabaseEndpoint:
+
+    Value: !GetAtt MySQL.Endpoint.Address
+
+  DynamoDBTable:
+
+    Value: !Ref UsersTable
+
+  EFSId:
+
+    Value: !Ref EFS
+```
+
+---
+
+# Best Practices
+
+- Enable S3 Versioning and default encryption.
+- Block public access for production buckets.
+- Store databases in private subnets.
+- Enable automated backups and Multi-AZ for production RDS instances.
+- Enable Point-in-Time Recovery for DynamoDB tables.
+- Encrypt EFS, FSx, RDS, ElastiCache, and S3 using AWS KMS.
+- Use AWS Backup for centralized backup management.
+- Configure lifecycle policies for long-term S3 storage optimization.
+- Avoid hardcoding database credentials in templates; use Secrets Manager or dynamic references.
+- Tag all storage resources consistently.
+
+---
+
+# Summary
+
+This section covered CloudFormation templates for Amazon S3, EFS, FSx, RDS, Aurora, DynamoDB, ElastiCache, AWS Backup, DataSync, Storage Gateway, and Snow Family. These templates provide production-ready patterns for implementing secure, scalable AWS storage, database, backup, and migration solutions using CloudFormation.
+
+---
+
