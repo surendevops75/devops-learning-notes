@@ -1362,3 +1362,894 @@ This section covered the first 25 Linux interview questions, including Linux bas
 
 ---
 
+# Linux Interview Questions (Intermediate → Advanced)
+
+---
+
+# Introduction
+
+This section covers advanced Linux concepts frequently asked in DevOps interviews, including users, permissions, process management, services, SSH, networking, storage, and real-world production troubleshooting.
+
+---
+
+# Question 26
+
+## Explain Linux File Permissions
+
+### Answer
+
+Linux permissions control access to files and directories.
+
+Permission Types
+
+```text
+r = Read
+
+w = Write
+
+x = Execute
+```
+
+Example
+
+```text
+-rwxr-xr--
+```
+
+Breakdown
+
+```text
+Owner
+
+↓
+
+Group
+
+↓
+
+Others
+```
+
+---
+
+### Numeric Permissions
+
+| Permission | Value |
+|------------|------:|
+| Read | 4 |
+| Write | 2 |
+| Execute | 1 |
+
+Examples
+
+```bash
+chmod 755 file
+
+chmod 644 file
+
+chmod 777 file
+```
+
+---
+
+### Follow-up
+
+Difference between
+
+```text
+755
+
+644
+
+700
+
+600
+```
+
+---
+
+# Question 27
+
+## chmod Command
+
+### Answer
+
+Changes file permissions.
+
+Examples
+
+```bash
+chmod 755 script.sh
+
+chmod +x script.sh
+
+chmod -R 755 directory
+```
+
+---
+
+Production Example
+
+Make deployment script executable.
+
+---
+
+# Question 28
+
+## chown Command
+
+### Answer
+
+Changes ownership.
+
+```bash
+chown user file.txt
+
+chown user:group file.txt
+
+chown -R user:group folder
+```
+
+---
+
+Production Example
+
+Change ownership of application directory.
+
+---
+
+# Question 29
+
+## User Management
+
+Create User
+
+```bash
+useradd devops
+```
+
+Set Password
+
+```bash
+passwd devops
+```
+
+Delete User
+
+```bash
+userdel devops
+```
+
+---
+
+Follow-up
+
+Difference between
+
+```bash
+useradd
+
+adduser
+```
+
+---
+
+# Question 30
+
+## Group Management
+
+Create Group
+
+```bash
+groupadd developers
+```
+
+Add User
+
+```bash
+usermod -aG developers devops
+```
+
+Display Groups
+
+```bash
+groups devops
+```
+
+---
+
+# Question 31
+
+## Hard Link vs Soft Link
+
+### Hard Link
+
+- Shares inode
+- Works only within same filesystem
+- Original file deletion does not affect link
+
+Command
+
+```bash
+ln file.txt hardlink
+```
+
+---
+
+### Soft Link
+
+- Different inode
+- Can span filesystems
+- Breaks if original file is removed
+
+Command
+
+```bash
+ln -s file.txt softlink
+```
+
+---
+
+Interview Table
+
+| Hard Link | Soft Link |
+|------------|-----------|
+| Same inode | Different inode |
+| Same filesystem | Cross filesystem |
+| Survives original deletion | Breaks if original deleted |
+
+---
+
+# Question 32
+
+## inode
+
+### Answer
+
+An inode stores metadata about a file.
+
+Contains
+
+- Owner
+- Group
+- Permissions
+- Size
+- Timestamps
+- Disk block pointers
+
+Does NOT store
+
+- File name
+
+---
+
+Check inode
+
+```bash
+ls -li
+```
+
+---
+
+# Question 33
+
+## What is a Process?
+
+### Answer
+
+A process is a running instance of a program.
+
+View
+
+```bash
+ps
+
+ps -ef
+
+ps aux
+```
+
+---
+
+# Question 34
+
+## top Command
+
+### Answer
+
+Displays real-time system utilization.
+
+Shows
+
+- CPU
+- Memory
+- Processes
+- Load Average
+
+---
+
+# Question 35
+
+## htop
+
+### Answer
+
+Improved version of top.
+
+Features
+
+- Interactive
+- Colored interface
+- Easier process management
+
+---
+
+# Question 36
+
+## Kill a Process
+
+Graceful
+
+```bash
+kill PID
+```
+
+Force
+
+```bash
+kill -9 PID
+```
+
+---
+
+Follow-up
+
+Difference between
+
+```bash
+kill
+
+kill -9
+```
+
+---
+
+# Question 37
+
+## Signals
+
+Common Signals
+
+| Signal | Meaning |
+|----------|----------|
+| SIGTERM (15) | Graceful stop |
+| SIGKILL (9) | Force stop |
+| SIGHUP | Reload |
+| SIGINT | Ctrl+C |
+
+---
+
+# Question 38
+
+## Zombie Process
+
+### Answer
+
+A terminated child process whose parent hasn't collected its exit status.
+
+View
+
+```bash
+ps aux | grep Z
+```
+
+---
+
+# Question 39
+
+## Daemon Process
+
+### Answer
+
+Background service.
+
+Examples
+
+- sshd
+- nginx
+- docker
+- kubelet
+
+---
+
+# Question 40
+
+## systemctl
+
+### Answer
+
+Manage services.
+
+Examples
+
+```bash
+systemctl start nginx
+
+systemctl stop nginx
+
+systemctl restart nginx
+
+systemctl status nginx
+
+systemctl enable nginx
+```
+
+---
+
+# Question 41
+
+## journalctl
+
+### Answer
+
+View systemd logs.
+
+Examples
+
+```bash
+journalctl
+
+journalctl -u nginx
+
+journalctl -xe
+
+journalctl -f
+```
+
+---
+
+Production Example
+
+Investigate failed service startup.
+
+---
+
+# Question 42
+
+## Cron Jobs
+
+View
+
+```bash
+crontab -l
+```
+
+Edit
+
+```bash
+crontab -e
+```
+
+Example
+
+```text
+0 2 * * * backup.sh
+```
+
+Runs daily at 2 AM.
+
+---
+
+# Question 43
+
+## SSH
+
+Connect
+
+```bash
+ssh user@server
+```
+
+Using Key
+
+```bash
+ssh -i key.pem ec2-user@host
+```
+
+Generate Key
+
+```bash
+ssh-keygen
+```
+
+---
+
+Follow-up
+
+Why use SSH keys instead of passwords?
+
+---
+
+# Question 44
+
+## SCP
+
+Copy File
+
+```bash
+scp file.txt user@host:/tmp
+```
+
+Recursive
+
+```bash
+scp -r folder user@host:/tmp
+```
+
+---
+
+# Question 45
+
+## rsync
+
+Synchronize Files
+
+```bash
+rsync -av source destination
+```
+
+Benefits
+
+- Incremental copy
+- Faster transfers
+- Preserves metadata
+
+---
+
+# Question 46
+
+## Networking Commands
+
+Check Interfaces
+
+```bash
+ip addr
+```
+
+Routes
+
+```bash
+ip route
+```
+
+Hostname
+
+```bash
+hostname
+```
+
+---
+
+# Question 47
+
+## ping
+
+Test connectivity.
+
+```bash
+ping google.com
+```
+
+---
+
+# Question 48
+
+## traceroute
+
+Shows packet path.
+
+```bash
+traceroute google.com
+```
+
+---
+
+# Question 49
+
+## ss Command
+
+Display listening ports.
+
+```bash
+ss -tulpn
+```
+
+Older alternative
+
+```bash
+netstat -tulpn
+```
+
+---
+
+# Question 50
+
+## curl
+
+Test HTTP endpoints.
+
+```bash
+curl http://localhost
+
+curl -I https://example.com
+```
+
+---
+
+# Question 51
+
+## wget
+
+Download files.
+
+```bash
+wget https://example.com/file.zip
+```
+
+---
+
+# Question 52
+
+## df Command
+
+Disk usage.
+
+```bash
+df -h
+```
+
+---
+
+# Question 53
+
+## du Command
+
+Directory size.
+
+```bash
+du -sh *
+
+du -sh /var/log
+```
+
+---
+
+# Question 54
+
+## free Command
+
+Memory usage.
+
+```bash
+free -h
+```
+
+---
+
+# Question 55
+
+## vmstat
+
+Displays
+
+- CPU
+- Memory
+- IO
+- Processes
+
+```bash
+vmstat
+```
+
+---
+
+# Question 56
+
+## iostat
+
+Disk performance.
+
+```bash
+iostat
+```
+
+---
+
+# Question 57
+
+## lsof
+
+Open files.
+
+```bash
+lsof
+
+lsof -i :8080
+```
+
+---
+
+# Question 58
+
+## Environment Variables
+
+Display
+
+```bash
+env
+
+printenv
+```
+
+Create
+
+```bash
+export APP_ENV=prod
+```
+
+---
+
+# Question 59
+
+## Alias
+
+Example
+
+```bash
+alias ll='ls -ltr'
+```
+
+---
+
+# Question 60
+
+## History
+
+```bash
+history
+
+history | grep kubectl
+```
+
+---
+
+# Production Scenario 1
+
+Application is running slowly.
+
+Investigation
+
+```bash
+top
+
+free -h
+
+df -h
+
+iostat
+
+vmstat
+
+journalctl
+```
+
+Check
+
+- CPU bottleneck
+- Memory usage
+- Disk IO
+- Logs
+
+---
+
+# Production Scenario 2
+
+SSH is not working.
+
+Investigate
+
+```bash
+systemctl status sshd
+
+journalctl -u sshd
+
+ss -lntp | grep 22
+```
+
+Verify
+
+- SSH service
+- Security Groups
+- Firewall
+- Authorized keys
+- Network connectivity
+
+---
+
+# Production Scenario 3
+
+Disk is 100% full.
+
+Steps
+
+```bash
+df -h
+
+du -sh /var/*
+
+find / -size +500M
+```
+
+Review
+
+- Logs
+- Docker images
+- Backups
+- Temporary files
+
+---
+
+# Production Scenario 4
+
+A service fails after reboot.
+
+Investigate
+
+```bash
+systemctl status service
+
+journalctl -u service
+
+systemctl is-enabled service
+```
+
+Enable if required
+
+```bash
+systemctl enable service
+```
+
+---
+
+# FAANG-Style Linux Questions
+
+- Explain the Linux boot process.
+- What happens after you press the power button?
+- Explain virtual memory.
+- Difference between process and thread.
+- How does the Linux scheduler work?
+- Explain cgroups and namespaces.
+- What is the OOM Killer?
+- How do you troubleshoot high system load?
+- Explain file descriptors.
+- What happens when memory becomes exhausted?
+
+---
+
+# Linux Interview Tips
+
+Always answer in this order:
+
+1. Definition
+2. Command(s)
+3. Real production example
+4. Troubleshooting approach
+5. Best practice
+
+This demonstrates both theoretical knowledge and practical experience.
+
+---
+
+# Summary
+
+This section covered Linux permissions, users and groups, hard and soft links, inode, process management, signals, services, SSH, networking, disk and memory management, environment variables, production troubleshooting scenarios, and FAANG-style Linux interview questions. These topics are commonly asked in intermediate and advanced DevOps interviews.
