@@ -3940,3 +3940,717 @@ This section covered CI/CD production troubleshooting, including pipeline failur
 
 ---
 
+# Linux & Server Production Runbooks
+
+---
+
+# Introduction
+
+Linux servers host applications, containers, databases, CI/CD tools, and Kubernetes worker nodes. This runbook provides a structured approach to diagnosing and recovering from common Linux production issues.
+
+---
+
+# Linux Troubleshooting Workflow
+
+```text
+Alert
+
+↓
+
+Check Server Availability
+
+↓
+
+Check CPU
+
+↓
+
+Check Memory
+
+↓
+
+Check Disk
+
+↓
+
+Check Network
+
+↓
+
+Check Services
+
+↓
+
+Review Logs
+
+↓
+
+Recover
+
+↓
+
+Monitor
+```
+
+---
+
+# Server Unreachable
+
+## Symptoms
+
+- SSH unavailable
+- Monitoring alerts
+- Application inaccessible
+
+---
+
+## Investigation
+
+Verify
+
+- EC2 instance state
+- Security Groups
+- Network ACLs
+- Route Tables
+- Internet Gateway/NAT Gateway
+- Instance System Status Checks
+
+---
+
+## Commands
+
+```bash
+ping <server>
+
+traceroute <server>
+
+nc -zv <server> 22
+```
+
+---
+
+# SSH Connection Failure
+
+## Symptoms
+
+```text
+Connection timed out
+
+Permission denied
+
+Connection refused
+```
+
+---
+
+## Investigation
+
+Verify
+
+```bash
+systemctl status sshd
+
+journalctl -u sshd
+
+ss -lntp | grep :22
+```
+
+---
+
+## Check
+
+- SSH service
+- Firewall
+- Security Groups
+- SSH key
+- Authorized keys
+- User permissions
+
+---
+
+# High CPU Utilization
+
+## Investigation
+
+```bash
+top
+
+htop
+
+mpstat
+
+pidstat
+
+ps -eo pid,ppid,cmd,%cpu --sort=-%cpu | head
+```
+
+---
+
+## Common Causes
+
+- Infinite loops
+- High traffic
+- Java processes
+- Database queries
+- Container overload
+
+---
+
+## Resolution
+
+- Identify process
+- Optimize application
+- Scale infrastructure
+- Restart only if necessary
+
+---
+
+# High Memory Usage
+
+## Investigation
+
+```bash
+free -h
+
+vmstat
+
+top
+
+ps -eo pid,cmd,%mem --sort=-%mem | head
+```
+
+---
+
+## Check
+
+- Memory leaks
+- Cache usage
+- JVM heap
+- Container memory
+
+---
+
+## Resolution
+
+- Tune application
+- Increase memory
+- Restart affected process
+- Fix memory leak
+
+---
+
+# OOM Killer
+
+## Symptoms
+
+Applications terminate unexpectedly.
+
+---
+
+## Investigation
+
+```bash
+dmesg | grep -i oom
+
+journalctl -k
+```
+
+---
+
+## Resolution
+
+- Increase available memory
+- Tune memory limits
+- Optimize application
+- Review swap usage
+
+---
+
+# Disk Full
+
+## Investigation
+
+```bash
+df -h
+
+du -sh /*
+
+find / -type f -size +500M
+```
+
+---
+
+## Common Causes
+
+- Log growth
+- Docker images
+- Backup files
+- Core dumps
+- Temporary files
+
+---
+
+## Cleanup
+
+```bash
+journalctl --vacuum-time=7d
+
+rm -rf /tmp/*
+```
+
+Review before deleting production data.
+
+---
+
+# Inode Exhaustion
+
+## Symptoms
+
+Disk appears available but writes fail.
+
+---
+
+## Investigation
+
+```bash
+df -i
+```
+
+---
+
+## Resolution
+
+Remove unnecessary small files.
+
+---
+
+# File System Errors
+
+## Investigation
+
+```bash
+dmesg
+
+mount
+
+lsblk
+```
+
+---
+
+## Recovery
+
+Use filesystem repair tools during maintenance windows.
+
+Examples
+
+```bash
+fsck
+```
+
+Run only on unmounted filesystems where appropriate.
+
+---
+
+# Service Failure
+
+## Investigation
+
+```bash
+systemctl status <service>
+
+journalctl -u <service>
+
+systemctl is-enabled <service>
+```
+
+---
+
+## Resolution
+
+```bash
+systemctl restart <service>
+```
+
+Verify service health after restart.
+
+---
+
+# Boot Failure
+
+## Investigation
+
+Review
+
+- GRUB
+- Kernel
+- Disk
+- Filesystem
+- Boot logs
+
+---
+
+## Commands
+
+```bash
+journalctl -b
+
+dmesg
+```
+
+---
+
+# Kernel Panic
+
+## Symptoms
+
+Server becomes unresponsive.
+
+---
+
+## Investigation
+
+Review
+
+- Kernel logs
+- Hardware issues
+- Driver updates
+- Recent kernel changes
+
+---
+
+## Recovery
+
+- Boot previous kernel
+- Review crash logs
+- Verify hardware health
+
+---
+
+# Network Connectivity Issues
+
+## Investigation
+
+```bash
+ip addr
+
+ip route
+
+ping
+
+traceroute
+
+ss -tulpn
+```
+
+---
+
+## Verify
+
+- Default gateway
+- DNS
+- Firewall
+- Routing
+- Interface status
+
+---
+
+# DNS Resolution Failure
+
+## Investigation
+
+```bash
+cat /etc/resolv.conf
+
+nslookup google.com
+
+dig google.com
+```
+
+---
+
+## Resolution
+
+Review
+
+- DNS servers
+- Network connectivity
+- Resolver configuration
+
+---
+
+# Time Synchronization
+
+## Investigation
+
+```bash
+timedatectl
+
+chronyc sources
+```
+
+---
+
+## Verify
+
+- NTP synchronization
+- Correct timezone
+- Time drift
+
+---
+
+# File Descriptor Exhaustion
+
+## Symptoms
+
+Applications cannot open files or sockets.
+
+---
+
+## Investigation
+
+```bash
+ulimit -n
+
+lsof | wc -l
+```
+
+---
+
+## Resolution
+
+Increase limits after reviewing application requirements.
+
+---
+
+# Zombie Processes
+
+## Investigation
+
+```bash
+ps aux | grep Z
+```
+
+---
+
+## Resolution
+
+Identify parent process and resolve application issue.
+
+---
+
+# Process Crash
+
+## Investigation
+
+```bash
+journalctl
+
+dmesg
+
+systemctl status
+```
+
+Review
+
+- Exit code
+- Core dumps
+- Memory
+- Dependencies
+
+---
+
+# Log Investigation
+
+Common Locations
+
+```text
+/var/log/messages
+
+/var/log/syslog
+
+/var/log/secure
+
+/var/log/auth.log
+
+journalctl
+```
+
+---
+
+# Performance Analysis
+
+Tools
+
+```bash
+top
+
+htop
+
+vmstat
+
+iostat
+
+sar
+
+iotop
+```
+
+---
+
+# Swap Usage
+
+## Investigation
+
+```bash
+free -h
+
+swapon --show
+
+vmstat
+```
+
+---
+
+## Resolution
+
+- Reduce memory usage
+- Add RAM
+- Optimize application
+
+---
+
+# Open Ports
+
+## Investigation
+
+```bash
+ss -tulpn
+
+netstat -tulpn
+```
+
+Verify expected services only.
+
+---
+
+# Firewall Verification
+
+Examples
+
+```bash
+firewall-cmd --list-all
+
+iptables -L
+
+nft list ruleset
+```
+
+---
+
+# Package Management Issues
+
+RHEL/CentOS
+
+```bash
+dnf check
+
+dnf history
+```
+
+Ubuntu/Debian
+
+```bash
+apt update
+
+apt list --upgradable
+```
+
+---
+
+# Production Recovery Workflow
+
+```text
+Alert
+
+↓
+
+Collect Metrics
+
+↓
+
+Review Logs
+
+↓
+
+Identify Resource Bottleneck
+
+↓
+
+Resolve Issue
+
+↓
+
+Validate Service
+
+↓
+
+Monitor
+
+↓
+
+Document RCA
+```
+
+---
+
+# Linux Health Checklist
+
+Verify
+
+- CPU utilization
+- Memory usage
+- Disk utilization
+- Inode usage
+- Network connectivity
+- Services running
+- SSH access
+- System time
+- Filesystem health
+- Logs reviewed
+
+---
+
+# Common Linux Production Issues
+
+- High CPU
+- High memory
+- OOM Killer
+- Disk full
+- Inode exhaustion
+- SSH failures
+- Network failures
+- DNS issues
+- Service crashes
+- Boot failures
+
+---
+
+# Best Practices
+
+- Monitor CPU, memory, disk, and network continuously.
+- Configure log rotation to prevent disk exhaustion.
+- Keep system packages updated following change management processes.
+- Review system logs regularly.
+- Enable NTP/Chrony for accurate time synchronization.
+- Restrict SSH access using least-privilege principles.
+- Monitor inode usage in addition to disk utilization.
+- Automate health checks using monitoring tools.
+- Test backup and recovery procedures regularly.
+- Document production incidents and update runbooks after every RCA.
+
+---
+
+# Summary
+
+This section covered Linux production troubleshooting, including CPU, memory, disk, networking, SSH, services, boot failures, DNS, filesystem issues, process crashes, performance analysis, and recovery workflows. These runbooks provide a practical operational guide for maintaining and recovering Linux servers in production environments.
