@@ -4198,3 +4198,815 @@ This section covered Boto3 automation for Amazon ECR, ECS, EKS, Lambda, API Gate
 
 ---
 
+# Amazon CloudWatch
+
+---
+
+# Import Boto3
+
+```python
+import boto3
+
+cloudwatch = boto3.client("cloudwatch")
+```
+
+---
+
+# List Metrics
+
+```python
+response = cloudwatch.list_metrics()
+
+for metric in response["Metrics"]:
+    print(metric["MetricName"])
+```
+
+---
+
+# Get Metric Statistics
+
+```python
+response = cloudwatch.get_metric_statistics(
+    Namespace="AWS/EC2",
+    MetricName="CPUUtilization",
+    StartTime=start_time,
+    EndTime=end_time,
+    Period=300,
+    Statistics=["Average"]
+)
+
+print(response["Datapoints"])
+```
+
+---
+
+# Put Custom Metric
+
+```python
+cloudwatch.put_metric_data(
+    Namespace="Custom/Application",
+    MetricData=[
+        {
+            "MetricName": "ActiveUsers",
+            "Value": 100,
+            "Unit": "Count"
+        }
+    ]
+)
+```
+
+---
+
+# Create Alarm
+
+```python
+cloudwatch.put_metric_alarm(
+    AlarmName="HighCPU",
+    MetricName="CPUUtilization",
+    Namespace="AWS/EC2",
+    Statistic="Average",
+    Threshold=80,
+    ComparisonOperator="GreaterThanThreshold",
+    EvaluationPeriods=2,
+    Period=300
+)
+```
+
+---
+
+# Describe Alarms
+
+```python
+response = cloudwatch.describe_alarms()
+
+for alarm in response["MetricAlarms"]:
+    print(alarm["AlarmName"])
+```
+
+---
+
+# Delete Alarm
+
+```python
+cloudwatch.delete_alarms(
+    AlarmNames=[
+        "HighCPU"
+    ]
+)
+```
+
+---
+
+# CloudWatch Logs
+
+---
+
+# Import Client
+
+```python
+logs = boto3.client("logs")
+```
+
+---
+
+# List Log Groups
+
+```python
+response = logs.describe_log_groups()
+
+for group in response["logGroups"]:
+    print(group["logGroupName"])
+```
+
+---
+
+# Create Log Group
+
+```python
+logs.create_log_group(
+    logGroupName="application-logs"
+)
+```
+
+---
+
+# Delete Log Group
+
+```python
+logs.delete_log_group(
+    logGroupName="application-logs"
+)
+```
+
+---
+
+# List Log Streams
+
+```python
+response = logs.describe_log_streams(
+    logGroupName="application-logs"
+)
+
+print(response["logStreams"])
+```
+
+---
+
+# Get Log Events
+
+```python
+response = logs.get_log_events(
+    logGroupName="application-logs",
+    logStreamName="stream-name"
+)
+
+print(response["events"])
+```
+
+---
+
+# Filter Log Events
+
+```python
+response = logs.filter_log_events(
+    logGroupName="application-logs",
+    filterPattern="ERROR"
+)
+
+print(response["events"])
+```
+
+---
+
+# AWS CloudTrail
+
+---
+
+# Import Client
+
+```python
+cloudtrail = boto3.client("cloudtrail")
+```
+
+---
+
+# List Trails
+
+```python
+response = cloudtrail.describe_trails()
+
+for trail in response["trailList"]:
+    print(trail["Name"])
+```
+
+---
+
+# Get Trail Status
+
+```python
+response = cloudtrail.get_trail_status(
+    Name="organization-trail"
+)
+
+print(response)
+```
+
+---
+
+# Create Trail
+
+```python
+cloudtrail.create_trail(
+    Name="organization-trail",
+    S3BucketName="audit-logs"
+)
+```
+
+---
+
+# Start Logging
+
+```python
+cloudtrail.start_logging(
+    Name="organization-trail"
+)
+```
+
+---
+
+# Stop Logging
+
+```python
+cloudtrail.stop_logging(
+    Name="organization-trail"
+)
+```
+
+---
+
+# Lookup Events
+
+```python
+response = cloudtrail.lookup_events()
+
+print(response["Events"])
+```
+
+---
+
+# AWS Config
+
+---
+
+# Import Client
+
+```python
+config = boto3.client("config")
+```
+
+---
+
+# Describe Configuration Recorders
+
+```python
+response = config.describe_configuration_recorders()
+
+print(response["ConfigurationRecorders"])
+```
+
+---
+
+# Describe Config Rules
+
+```python
+response = config.describe_config_rules()
+
+for rule in response["ConfigRules"]:
+    print(rule["ConfigRuleName"])
+```
+
+---
+
+# Get Compliance Summary
+
+```python
+response = config.get_compliance_summary_by_config_rule()
+
+print(response)
+```
+
+---
+
+# AWS CodeCommit
+
+---
+
+# Import Client
+
+```python
+codecommit = boto3.client("codecommit")
+```
+
+---
+
+# List Repositories
+
+```python
+response = codecommit.list_repositories()
+
+for repo in response["repositories"]:
+    print(repo["repositoryName"])
+```
+
+---
+
+# Create Repository
+
+```python
+response = codecommit.create_repository(
+    repositoryName="devops-repo"
+)
+
+print(response["repositoryMetadata"])
+```
+
+---
+
+# Get Repository
+
+```python
+response = codecommit.get_repository(
+    repositoryName="devops-repo"
+)
+
+print(response["repositoryMetadata"])
+```
+
+---
+
+# Delete Repository
+
+```python
+codecommit.delete_repository(
+    repositoryName="devops-repo"
+)
+```
+
+---
+
+# AWS CodeBuild
+
+---
+
+# Import Client
+
+```python
+codebuild = boto3.client("codebuild")
+```
+
+---
+
+# List Projects
+
+```python
+response = codebuild.list_projects()
+
+print(response["projects"])
+```
+
+---
+
+# Start Build
+
+```python
+response = codebuild.start_build(
+    projectName="my-build"
+)
+
+print(response["build"]["id"])
+```
+
+---
+
+# Batch Get Builds
+
+```python
+response = codebuild.batch_get_builds(
+    ids=[
+        "build-id"
+    ]
+)
+
+print(response["builds"])
+```
+
+---
+
+# Stop Build
+
+```python
+codebuild.stop_build(
+    id="build-id"
+)
+```
+
+---
+
+# AWS CodeDeploy
+
+---
+
+# Import Client
+
+```python
+codedeploy = boto3.client("codedeploy")
+```
+
+---
+
+# List Applications
+
+```python
+response = codedeploy.list_applications()
+
+print(response["applications"])
+```
+
+---
+
+# Create Deployment
+
+```python
+response = codedeploy.create_deployment(
+    applicationName="web-app",
+    deploymentGroupName="production"
+)
+
+print(response["deploymentId"])
+```
+
+---
+
+# Get Deployment
+
+```python
+response = codedeploy.get_deployment(
+    deploymentId="deployment-id"
+)
+
+print(response["deploymentInfo"])
+```
+
+---
+
+# Stop Deployment
+
+```python
+codedeploy.stop_deployment(
+    deploymentId="deployment-id"
+)
+```
+
+---
+
+# AWS CodePipeline
+
+---
+
+# Import Client
+
+```python
+pipeline = boto3.client("codepipeline")
+```
+
+---
+
+# List Pipelines
+
+```python
+response = pipeline.list_pipelines()
+
+for p in response["pipelines"]:
+    print(p["name"])
+```
+
+---
+
+# Get Pipeline
+
+```python
+response = pipeline.get_pipeline(
+    name="production-pipeline"
+)
+
+print(response["pipeline"])
+```
+
+---
+
+# Start Pipeline Execution
+
+```python
+response = pipeline.start_pipeline_execution(
+    name="production-pipeline"
+)
+
+print(response["pipelineExecutionId"])
+```
+
+---
+
+# Get Pipeline State
+
+```python
+response = pipeline.get_pipeline_state(
+    name="production-pipeline"
+)
+
+print(response["stageStates"])
+```
+
+---
+
+# AWS CodeArtifact
+
+---
+
+# Import Client
+
+```python
+codeartifact = boto3.client("codeartifact")
+```
+
+---
+
+# List Domains
+
+```python
+response = codeartifact.list_domains()
+
+print(response["domains"])
+```
+
+---
+
+# List Repositories
+
+```python
+response = codeartifact.list_repositories()
+
+print(response["repositories"])
+```
+
+---
+
+# Get Authorization Token
+
+```python
+response = codeartifact.get_authorization_token(
+    domain="my-domain"
+)
+
+print(response["authorizationToken"])
+```
+
+---
+
+# AWS Systems Manager (SSM)
+
+---
+
+# Import Client
+
+```python
+ssm = boto3.client("ssm")
+```
+
+---
+
+# Describe Managed Instances
+
+```python
+response = ssm.describe_instance_information()
+
+for instance in response["InstanceInformationList"]:
+    print(instance["InstanceId"])
+```
+
+---
+
+# Start Session
+
+```python
+response = ssm.start_session(
+    Target="i-0123456789abcdef0"
+)
+
+print(response["SessionId"])
+```
+
+---
+
+# Send Command
+
+```python
+response = ssm.send_command(
+    DocumentName="AWS-RunShellScript",
+    InstanceIds=[
+        "i-0123456789abcdef0"
+    ],
+    Parameters={
+        "commands": [
+            "uptime"
+        ]
+    }
+)
+
+print(response["Command"]["CommandId"])
+```
+
+---
+
+# Get Command Invocation
+
+```python
+response = ssm.get_command_invocation(
+    CommandId="command-id",
+    InstanceId="i-0123456789abcdef0"
+)
+
+print(response["Status"])
+```
+
+---
+
+# List Commands
+
+```python
+response = ssm.list_commands()
+
+print(response["Commands"])
+```
+
+---
+
+# Parameter Store
+
+---
+
+# Create Parameter
+
+```python
+ssm.put_parameter(
+    Name="/prod/db/password",
+    Value="Password123",
+    Type="SecureString",
+    Overwrite=True
+)
+```
+
+---
+
+# Get Parameter
+
+```python
+response = ssm.get_parameter(
+    Name="/prod/db/password",
+    WithDecryption=True
+)
+
+print(response["Parameter"]["Value"])
+```
+
+---
+
+# Get Multiple Parameters
+
+```python
+response = ssm.get_parameters(
+    Names=[
+        "/prod/db/password",
+        "/prod/api/url"
+    ],
+    WithDecryption=True
+)
+
+print(response["Parameters"])
+```
+
+---
+
+# Delete Parameter
+
+```python
+ssm.delete_parameter(
+    Name="/prod/db/password"
+)
+```
+
+---
+
+# OpsCenter
+
+---
+
+# List OpsItems
+
+```python
+response = ssm.list_ops_items()
+
+print(response["OpsItemSummaries"])
+```
+
+---
+
+# Get OpsItem
+
+```python
+response = ssm.get_ops_item(
+    OpsItemId="oi-xxxxxxxx"
+)
+
+print(response["OpsItem"])
+```
+
+---
+
+# Create OpsItem
+
+```python
+response = ssm.create_ops_item(
+    Title="High CPU Alert",
+    Source="CloudWatch"
+)
+
+print(response["OpsItemId"])
+```
+
+---
+
+# Pagination Example
+
+```python
+paginator = logs.get_paginator(
+    "describe_log_groups"
+)
+
+for page in paginator.paginate():
+    for group in page["logGroups"]:
+        print(group["logGroupName"])
+```
+
+---
+
+# Waiter Example
+
+```python
+waiter = codebuild.get_waiter(
+    "build_succeeded"
+)
+
+waiter.wait(
+    ids=[
+        "build-id"
+    ]
+)
+```
+
+---
+
+# Exception Handling
+
+```python
+from botocore.exceptions import ClientError
+
+try:
+    response = cloudwatch.describe_alarms()
+
+except ClientError as error:
+    print(error.response["Error"]["Code"])
+    print(error.response["Error"]["Message"])
+```
+
+---
+
+# Best Practices
+
+- Create CloudWatch alarms for all production workloads.
+- Use CloudWatch Logs retention policies to control costs.
+- Enable CloudTrail organization-wide for auditing.
+- Store application configuration in Parameter Store.
+- Use Systems Manager Session Manager instead of SSH whenever possible.
+- Automate deployments using CodePipeline and CodeBuild.
+- Monitor deployment status before proceeding with dependent stages.
+- Use paginators when retrieving large datasets.
+- Catch and handle `ClientError` exceptions consistently.
+
+---
+
+# Summary
+
+This section covered Boto3 automation for Amazon CloudWatch, CloudWatch Logs, CloudTrail, AWS Config, CodeCommit, CodeBuild, CodeDeploy, CodePipeline, CodeArtifact, Systems Manager (SSM), Parameter Store, and OpsCenter. These examples provide production-ready automation for monitoring, logging, CI/CD, infrastructure governance, and operational management using Python.
+
+---
+
