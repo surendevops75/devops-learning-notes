@@ -2144,3 +2144,698 @@ This section covered AWS Savings Plans, Reserved Instances, Spot Instances, Spot
 
 ---
 
+# Amazon EC2 Cost Optimization
+
+---
+
+# Right-Sizing
+
+Review
+
+- CPU utilization
+- Memory utilization
+- Network throughput
+- Disk utilization
+
+Example
+
+```text
+m5.2xlarge
+
+↓
+
+m6i.large
+
+↓
+
+Lower Cost
+```
+
+---
+
+# Stop Idle Instances
+
+Review
+
+- Development
+- Testing
+- Sandbox
+- Training
+
+Automate shutdown during non-business hours.
+
+---
+
+# Auto Scaling
+
+Benefits
+
+- Launch instances only when needed
+- Remove idle capacity
+- Reduce On-Demand costs
+
+---
+
+# Mixed Instance Auto Scaling
+
+Example
+
+```text
+20%
+
+On-Demand
+
+↓
+
+80%
+
+Spot
+```
+
+---
+
+# Use Latest Generation Instances
+
+Example
+
+```text
+m5
+
+↓
+
+m7i
+
+↓
+
+Better Price/Performance
+```
+
+---
+
+# Graviton Migration
+
+Example
+
+```text
+x86
+
+↓
+
+AWS Graviton
+
+↓
+
+Lower Compute Cost
+```
+
+---
+
+# Elastic IP Optimization
+
+Remove
+
+- Unused Elastic IPs
+- Detached Elastic IPs
+
+---
+
+# Dedicated Hosts Review
+
+Only use when required for
+
+- License compliance
+- Regulatory requirements
+
+---
+
+# Amazon EBS Cost Optimization
+
+---
+
+# gp2 to gp3
+
+Example
+
+```text
+gp2
+
+↓
+
+gp3
+
+↓
+
+Lower Cost
+```
+
+---
+
+# Delete Unused Volumes
+
+Review
+
+- Available volumes
+- Detached volumes
+
+---
+
+# Delete Old Snapshots
+
+Review
+
+- Obsolete backups
+- Duplicate snapshots
+
+---
+
+# Snapshot Lifecycle
+
+Workflow
+
+```text
+Snapshot
+
+↓
+
+Retention
+
+↓
+
+Archive
+
+↓
+
+Delete
+```
+
+---
+
+# Right-Size Volumes
+
+Avoid
+
+- Overprovisioned storage
+- Unused IOPS
+
+---
+
+# Amazon S3 Cost Optimization
+
+---
+
+# Lifecycle Policies
+
+Workflow
+
+```text
+Standard
+
+↓
+
+Standard-IA
+
+↓
+
+Glacier Instant Retrieval
+
+↓
+
+Glacier Flexible Retrieval
+
+↓
+
+Deep Archive
+```
+
+---
+
+# Intelligent-Tiering
+
+Ideal for
+
+- Unknown access patterns
+- Frequently changing workloads
+
+---
+
+# Delete Incomplete Multipart Uploads
+
+Automatically remove abandoned uploads.
+
+---
+
+# Remove Old Object Versions
+
+Review
+
+- Versioned buckets
+- Obsolete versions
+
+---
+
+# Compress Data
+
+Examples
+
+- GZIP
+- Parquet
+- ORC
+
+---
+
+# Amazon RDS Cost Optimization
+
+---
+
+# Right-Size Instances
+
+Review
+
+- CPU
+- Memory
+- Storage
+- Connections
+
+---
+
+# Multi-AZ Review
+
+Enable only for
+
+- Production
+- Business-critical databases
+
+---
+
+# Storage Autoscaling
+
+Enable automatic storage growth.
+
+---
+
+# Delete Old Snapshots
+
+Keep only required backups.
+
+---
+
+# Reserved Instances
+
+Recommended for
+
+- Production databases
+- Predictable workloads
+
+---
+
+# Aurora Optimization
+
+---
+
+# Serverless v2
+
+Ideal for
+
+- Variable workloads
+- Development
+- Event-driven applications
+
+---
+
+# Reader Instances
+
+Add replicas only when needed.
+
+---
+
+# DynamoDB Cost Optimization
+
+---
+
+# Billing Mode
+
+Choose
+
+- On-Demand
+- Provisioned
+
+Based on workload characteristics.
+
+---
+
+# Auto Scaling
+
+Enable for provisioned capacity.
+
+---
+
+# TTL
+
+Automatically remove expired items.
+
+---
+
+# Global Tables Review
+
+Deploy only when cross-region replication is required.
+
+---
+
+# Lambda Cost Optimization
+
+---
+
+# Memory Tuning
+
+Review
+
+- Duration
+- Memory
+- CPU allocation
+
+---
+
+# Provisioned Concurrency
+
+Use only for latency-sensitive workloads.
+
+---
+
+# Remove Unused Functions
+
+Delete
+
+- Old versions
+- Unused aliases
+- Deprecated functions
+
+---
+
+# Optimize Package Size
+
+Reduce deployment package size to improve cold starts.
+
+---
+
+# Amazon EKS Cost Optimization
+
+---
+
+# Managed Node Groups
+
+Use managed node groups to simplify operations.
+
+---
+
+# Cluster Autoscaler
+
+Automatically scale worker nodes.
+
+---
+
+# Karpenter
+
+Launch right-sized instances dynamically.
+
+---
+
+# Spot Worker Nodes
+
+Ideal for
+
+- CI/CD
+- Batch jobs
+- Stateless applications
+
+---
+
+# Remove Idle Clusters
+
+Delete unused development clusters.
+
+---
+
+# Amazon ECS Cost Optimization
+
+---
+
+# Fargate Spot
+
+Use for interruptible workloads.
+
+---
+
+# Right-Size Tasks
+
+Review
+
+- CPU
+- Memory
+
+---
+
+# Service Auto Scaling
+
+Scale tasks automatically based on demand.
+
+---
+
+# CloudFront Cost Optimization
+
+---
+
+# Cache Optimization
+
+Increase cache hit ratio.
+
+Benefits
+
+- Lower origin requests
+- Lower bandwidth cost
+
+---
+
+# Compression
+
+Enable
+
+- GZIP
+- Brotli
+
+---
+
+# Origin Optimization
+
+Reduce unnecessary origin fetches.
+
+---
+
+# AWS Networking Cost Optimization
+
+---
+
+# NAT Gateway
+
+Reduce NAT traffic using
+
+- Gateway Endpoints
+- Interface Endpoints
+
+---
+
+# Data Transfer
+
+Review
+
+- Cross-AZ traffic
+- Cross-region traffic
+- Internet egress
+
+---
+
+# VPC Endpoints
+
+Use
+
+- S3 Gateway Endpoint
+- DynamoDB Gateway Endpoint
+- Interface Endpoints
+
+To reduce NAT Gateway charges.
+
+---
+
+# Load Balancers
+
+Delete unused
+
+- ALBs
+- NLBs
+- CLBs
+
+---
+
+# CloudWatch Cost Optimization
+
+---
+
+# Log Retention
+
+Configure
+
+- 7 Days
+- 30 Days
+- 90 Days
+
+Avoid indefinite retention.
+
+---
+
+# Custom Metrics
+
+Delete unused metrics.
+
+---
+
+# Log Filtering
+
+Reduce unnecessary log ingestion.
+
+---
+
+# Container Image Optimization
+
+Review
+
+- Old ECR images
+- Untagged images
+- Unused repositories
+
+Apply lifecycle policies.
+
+---
+
+# Backup Optimization
+
+Review
+
+- Backup frequency
+- Snapshot retention
+- Cross-region copies
+
+---
+
+# Common Service-Level Waste
+
+- Idle EC2 instances
+- Detached EBS volumes
+- Old EBS snapshots
+- Unused Elastic IPs
+- Idle NAT Gateways
+- Idle Load Balancers
+- Old Lambda versions
+- Unused ECR images
+- Large CloudWatch log retention
+- Orphaned EKS clusters
+
+---
+
+# Optimization Workflow
+
+```text
+Monitor
+
+↓
+
+Identify Waste
+
+↓
+
+Analyze Usage
+
+↓
+
+Right-Size
+
+↓
+
+Automate
+
+↓
+
+Review Monthly
+```
+
+---
+
+# Monthly Service Review Checklist
+
+EC2
+
+- Idle instances
+- Right sizing
+- Savings Plans coverage
+
+---
+
+Storage
+
+- EBS
+- S3
+- Snapshots
+
+---
+
+Database
+
+- RDS
+- Aurora
+- DynamoDB
+
+---
+
+Networking
+
+- NAT Gateway
+- Elastic IP
+- Data Transfer
+
+---
+
+Containers
+
+- ECS
+- EKS
+- ECR
+
+---
+
+Monitoring
+
+- CloudWatch
+- Logs
+- Metrics
+
+---
+
+# Best Practices
+
+- Right-size compute resources regularly.
+- Upgrade EBS volumes from gp2 to gp3 where appropriate.
+- Use S3 lifecycle policies for archival.
+- Enable Intelligent-Tiering for unpredictable access patterns.
+- Purchase Reserved Instances for long-running databases.
+- Use Cluster Autoscaler or Karpenter for EKS.
+- Reduce NAT Gateway traffic with VPC Endpoints.
+- Configure CloudWatch log retention policies.
+- Apply ECR lifecycle policies to remove old images.
+- Review service utilization every month.
+
+---
+
+# Summary
+
+This section covered service-level cost optimization techniques for Amazon EC2, EBS, S3, RDS, Aurora, DynamoDB, Lambda, EKS, ECS, CloudFront, networking, CloudWatch, ECR, and backup strategies. These practices help eliminate waste, improve utilization, and significantly reduce AWS operational costs while maintaining performance and reliability.
+
+---
+
