@@ -9096,3 +9096,799 @@ Interviewers are evaluating your troubleshooting methodology more than whether y
 # Summary
 
 This section covered real-world production scenarios across Kubernetes, AWS, Docker, Terraform, CI/CD, monitoring, networking, databases, and security. It also introduced a structured troubleshooting framework, RCA template, incident communication strategy, and FAANG-style production interview questions. These scenarios closely resemble what senior DevOps engineers face in production environments.
+
+---
+
+# Bash & Python Scripting Interview Questions
+
+---
+
+# Introduction
+
+Automation is a core responsibility of every DevOps Engineer. Interviewers expect you to know Bash for Linux automation and Python for cloud automation, API integrations, and infrastructure tasks.
+
+This section covers
+
+- Bash Fundamentals
+- Shell Scripting
+- Linux Automation
+- Python Basics
+- File Handling
+- JSON
+- REST APIs
+- Boto3
+- Production Automation
+- Interview Coding Questions
+
+---
+
+# Bash Scripting
+
+---
+
+# Question 1
+
+## What is a Shell Script?
+
+### Answer
+
+A shell script is a text file containing Linux commands executed by a shell interpreter.
+
+Advantages
+
+- Automation
+- Reusability
+- Scheduling
+- Faster administration
+
+---
+
+### Example
+
+```bash
+#!/bin/bash
+
+echo "Hello DevOps"
+```
+
+Run
+
+```bash
+chmod +x hello.sh
+
+./hello.sh
+```
+
+---
+
+# Question 2
+
+## Difference Between sh and bash
+
+| sh | bash |
+|----|------|
+| POSIX shell | Bourne Again Shell |
+| Basic features | Advanced features |
+| Less scripting capability | Arrays, functions, completion |
+
+---
+
+# Question 3
+
+## Variables
+
+Example
+
+```bash
+NAME="Surendra"
+
+echo $NAME
+```
+
+---
+
+# Question 4
+
+## User Input
+
+```bash
+read NAME
+
+echo $NAME
+```
+
+---
+
+# Question 5
+
+## If Statement
+
+```bash
+if [ $AGE -gt 18 ]
+then
+    echo Adult
+fi
+```
+
+---
+
+# Question 6
+
+## Case Statement
+
+```bash
+case $ENV in
+dev)
+echo Development
+;;
+prod)
+echo Production
+;;
+esac
+```
+
+---
+
+# Question 7
+
+## For Loop
+
+```bash
+for i in 1 2 3
+do
+    echo $i
+done
+```
+
+---
+
+# Question 8
+
+## While Loop
+
+```bash
+COUNT=1
+
+while [ $COUNT -le 5 ]
+do
+    echo $COUNT
+    COUNT=$((COUNT+1))
+done
+```
+
+---
+
+# Question 9
+
+## Functions
+
+```bash
+hello() {
+
+echo "Hello"
+
+}
+
+hello
+```
+
+---
+
+# Question 10
+
+## Exit Codes
+
+Common Values
+
+```text
+0 = Success
+
+Non-zero = Error
+```
+
+Check
+
+```bash
+echo $?
+```
+
+---
+
+# Question 11
+
+## Command Line Arguments
+
+```bash
+echo $1
+
+echo $2
+```
+
+Run
+
+```bash
+./script.sh dev production
+```
+
+---
+
+# Question 12
+
+## File Existence Check
+
+```bash
+if [ -f file.txt ]
+then
+echo Exists
+fi
+```
+
+---
+
+# Question 13
+
+## Directory Existence
+
+```bash
+if [ -d backup ]
+then
+echo Exists
+fi
+```
+
+---
+
+# Question 14
+
+## Read File Line by Line
+
+```bash
+while read line
+do
+echo $line
+done < file.txt
+```
+
+---
+
+# Question 15
+
+## Bash Production Script
+
+Disk Usage Alert
+
+```bash
+#!/bin/bash
+
+USAGE=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
+
+if [ "$USAGE" -gt 80 ]
+then
+echo "Disk usage exceeded"
+fi
+```
+
+---
+
+# Python for DevOps
+
+---
+
+# Question 16
+
+## Why Python for DevOps?
+
+Answer
+
+Python is widely used for
+
+- Cloud automation
+- AWS SDK (Boto3)
+- REST APIs
+- Infrastructure automation
+- Monitoring
+- CI/CD scripting
+
+---
+
+# Question 17
+
+## Variables
+
+```python
+name = "DevOps"
+
+print(name)
+```
+
+---
+
+# Question 18
+
+## Data Types
+
+Examples
+
+- String
+- Integer
+- Float
+- Boolean
+- List
+- Dictionary
+- Tuple
+- Set
+
+---
+
+# Question 19
+
+## If Statement
+
+```python
+age = 25
+
+if age > 18:
+    print("Adult")
+```
+
+---
+
+# Question 20
+
+## For Loop
+
+```python
+for i in range(5):
+    print(i)
+```
+
+---
+
+# Question 21
+
+## Functions
+
+```python
+def greet():
+
+    print("Hello")
+
+greet()
+```
+
+---
+
+# Question 22
+
+## File Handling
+
+Read
+
+```python
+with open("data.txt") as f:
+    print(f.read())
+```
+
+Write
+
+```python
+with open("file.txt","w") as f:
+    f.write("DevOps")
+```
+
+---
+
+# Question 23
+
+## JSON
+
+```python
+import json
+
+data = '{"name":"DevOps"}'
+
+obj = json.loads(data)
+
+print(obj["name"])
+```
+
+---
+
+# Question 24
+
+## Requests Library
+
+```python
+import requests
+
+response = requests.get("https://example.com")
+
+print(response.status_code)
+```
+
+---
+
+# Question 25
+
+## Exception Handling
+
+```python
+try:
+    print(10/0)
+
+except Exception as e:
+    print(e)
+```
+
+---
+
+# Question 26
+
+## Boto3
+
+### Answer
+
+Boto3 is the AWS SDK for Python.
+
+Example
+
+```python
+import boto3
+
+ec2 = boto3.client("ec2")
+
+response = ec2.describe_instances()
+
+print(response)
+```
+
+---
+
+# Question 27
+
+## List S3 Buckets
+
+```python
+import boto3
+
+s3 = boto3.client("s3")
+
+print(s3.list_buckets())
+```
+
+---
+
+# Question 28
+
+## List EC2 Instances
+
+```python
+import boto3
+
+ec2 = boto3.client("ec2")
+
+print(ec2.describe_instances())
+```
+
+---
+
+# Question 29
+
+## Environment Variables
+
+```python
+import os
+
+print(os.getenv("HOME"))
+```
+
+---
+
+# Question 30
+
+## Execute Linux Commands
+
+```python
+import subprocess
+
+subprocess.run(["ls","-l"])
+```
+
+---
+
+# Production Automation Script
+
+## Restart Failed Service
+
+```python
+import subprocess
+
+status = subprocess.run(
+    ["systemctl","is-active","nginx"],
+    capture_output=True,
+    text=True
+)
+
+if status.stdout.strip() != "active":
+    subprocess.run(["systemctl","restart","nginx"])
+```
+
+---
+
+# Production Automation
+
+## Backup Script
+
+```text
+Database
+
+↓
+
+Backup
+
+↓
+
+Compress
+
+↓
+
+Upload
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Production Automation
+
+## Health Check Script
+
+Workflow
+
+```text
+Ping
+
+↓
+
+API
+
+↓
+
+Database
+
+↓
+
+Disk
+
+↓
+
+Memory
+
+↓
+
+Alert
+```
+
+---
+
+# Coding Question 1
+
+Find Duplicate Lines
+
+Expected
+
+- Read file
+- Find duplicates
+- Print counts
+
+---
+
+# Coding Question 2
+
+Monitor Disk Usage
+
+Expected
+
+- Read disk usage
+- Compare threshold
+- Send alert
+
+---
+
+# Coding Question 3
+
+Restart Failed Service
+
+Expected
+
+- Check status
+- Restart
+- Verify
+- Log action
+
+---
+
+# Coding Question 4
+
+List EC2 Instances
+
+Expected
+
+- Use Boto3
+- Print IDs
+- Print State
+
+---
+
+# Coding Question 5
+
+List S3 Objects
+
+Expected
+
+- Read bucket
+- Print object names
+
+---
+
+# Production Scenario 1
+
+Daily backup script failed.
+
+### Investigation
+
+Review
+
+- Cron logs
+- Permissions
+- Available disk space
+- S3 connectivity
+- Exit code
+
+---
+
+# Production Scenario 2
+
+Python automation script suddenly stops working.
+
+### Investigation
+
+Check
+
+- API changes
+- Credentials
+- Dependencies
+- Python version
+- Exception logs
+
+---
+
+# Production Scenario 3
+
+Disk alert script sends false alarms.
+
+### Investigation
+
+Verify
+
+- Parsing logic
+- Threshold
+- Mounted filesystem
+- Script execution environment
+
+---
+
+# Production Scenario 4
+
+Boto3 cannot access AWS.
+
+### Investigation
+
+Verify
+
+- IAM Role
+- AWS credentials
+- Region
+- Network connectivity
+- Environment variables
+
+---
+
+# Production Scenario 5
+
+Script works manually but fails in cron.
+
+### Investigation
+
+Review
+
+- PATH variable
+- Environment variables
+- File permissions
+- Absolute paths
+- Cron logs
+
+---
+
+# Bash Interview Questions
+
+- Difference between bash and sh.
+- What is shebang?
+- Explain exit codes.
+- Difference between $* and $@.
+- How do you debug a shell script?
+- Explain cron jobs.
+- How do you redirect stderr?
+- Difference between source and execute.
+- What is xargs?
+- Explain awk and sed usage in scripts.
+
+---
+
+# Python Interview Questions
+
+- Why Python for DevOps?
+- Difference between list and tuple.
+- What are dictionaries?
+- Explain exception handling.
+- What is a virtual environment?
+- How do you call REST APIs?
+- Explain subprocess.
+- Explain Boto3.
+- How do you parse JSON?
+- How do you read environment variables?
+
+---
+
+# FAANG-Style Scripting Questions
+
+- Write a script to monitor CPU usage.
+- Write a script to detect failed Pods.
+- Write a script to restart unhealthy services.
+- Write a script to archive logs older than 30 days.
+- Write a Python program to list EC2 instances by tag.
+- Write a script to identify unused EBS volumes.
+- Write a script to validate Kubernetes Deployments.
+- Write a script to compare two configuration files.
+- Write a log parser for application errors.
+- Write a script to monitor SSL certificate expiry.
+
+---
+
+# Scripting Best Practices
+
+- Write modular functions.
+- Handle exceptions gracefully.
+- Use meaningful variable names.
+- Validate inputs before processing.
+- Avoid hardcoded secrets.
+- Use logging instead of excessive print statements.
+- Return proper exit codes.
+- Test scripts in non-production environments.
+- Make scripts idempotent where possible.
+- Document usage and dependencies.
+
+---
+
+# Interview Tips
+
+When given a coding problem:
+
+1. Clarify requirements.
+2. Explain your approach.
+3. Write clean code.
+4. Handle edge cases.
+5. Discuss improvements and optimizations.
+
+Interviewers value readability, error handling, and maintainability as much as correctness.
+
+---
+
+# Summary
+
+This section covered Bash scripting, Python fundamentals, file handling, JSON, REST APIs, Boto3, production automation scripts, coding interview questions, troubleshooting scenarios, and scripting best practices. These skills are commonly assessed in DevOps technical interviews and day-to-day automation tasks.
+
+---
+
