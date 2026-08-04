@@ -6304,606 +6304,639 @@ This section covered Boto3 automation for Amazon Bedrock, Bedrock Runtime, Amazo
 
 ---
 
-# Amazon Bedrock
+# Boto3 Sessions
 
 ---
 
-# Import Boto3
+# Default Session
 
 ```python
 import boto3
 
-bedrock = boto3.client("bedrock")
+session = boto3.Session()
 ```
 
 ---
 
-# List Foundation Models
+# Session with Profile
 
 ```python
-response = bedrock.list_foundation_models()
-
-for model in response["modelSummaries"]:
-    print(model["modelId"])
+session = boto3.Session(
+    profile_name="production"
+)
 ```
 
 ---
 
-# Get Foundation Model
+# Session with Region
 
 ```python
-response = bedrock.get_foundation_model(
-    modelIdentifier="amazon.titan-text-express-v1"
+session = boto3.Session(
+    region_name="ap-south-1"
+)
+```
+
+---
+
+# Session with Explicit Credentials
+
+```python
+session = boto3.Session(
+    aws_access_key_id="ACCESS_KEY",
+    aws_secret_access_key="SECRET_KEY",
+    aws_session_token="SESSION_TOKEN",
+    region_name="ap-south-1"
+)
+```
+
+---
+
+# Available Profiles
+
+```python
+import boto3.session
+
+profiles = boto3.session.Session().available_profiles
+
+print(profiles)
+```
+
+---
+
+# Create Client from Session
+
+```python
+ec2 = session.client("ec2")
+```
+
+---
+
+# Create Resource from Session
+
+```python
+s3 = session.resource("s3")
+```
+
+---
+
+# STS Cross-Account Access
+
+---
+
+# Assume IAM Role
+
+```python
+import boto3
+
+sts = boto3.client("sts")
+
+response = sts.assume_role(
+    RoleArn="arn:aws:iam::123456789012:role/AdminRole",
+    RoleSessionName="CrossAccountSession"
 )
 
-print(response["modelDetails"])
+credentials = response["Credentials"]
 ```
 
 ---
 
-# Amazon Bedrock Runtime
-
----
-
-# Import Runtime Client
+# Create Session Using Temporary Credentials
 
 ```python
-runtime = boto3.client("bedrock-runtime")
+cross_session = boto3.Session(
+    aws_access_key_id=credentials["AccessKeyId"],
+    aws_secret_access_key=credentials["SecretAccessKey"],
+    aws_session_token=credentials["SessionToken"]
+)
 ```
 
 ---
 
-# Invoke Model
+# Paginators
+
+---
+
+# EC2 Paginator
 
 ```python
-import json
+ec2 = boto3.client("ec2")
 
-payload = {
-    "inputText": "Explain Amazon EC2 in simple terms."
-}
-
-response = runtime.invoke_model(
-    modelId="amazon.titan-text-express-v1",
-    body=json.dumps(payload)
+paginator = ec2.get_paginator(
+    "describe_instances"
 )
 
-print(response["body"].read())
+for page in paginator.paginate():
+
+    for reservation in page["Reservations"]:
+
+        for instance in reservation["Instances"]:
+
+            print(instance["InstanceId"])
 ```
 
 ---
 
-# Invoke Model with Streaming
+# S3 Paginator
 
 ```python
-response = runtime.invoke_model_with_response_stream(
-    modelId="amazon.titan-text-express-v1",
-    body=json.dumps(payload)
+s3 = boto3.client("s3")
+
+paginator = s3.get_paginator(
+    "list_objects_v2"
 )
 
-for event in response["body"]:
-    print(event)
+for page in paginator.paginate(
+    Bucket="my-bucket"
+):
+
+    for obj in page.get("Contents", []):
+
+        print(obj["Key"])
 ```
 
 ---
 
-# Amazon Q Developer
+# Waiters
 
 ---
 
-# Import Client
+# Wait for EC2 Running
 
 ```python
-qbusiness = boto3.client("qbusiness")
-```
-
----
-
-# List Applications
-
-```python
-response = qbusiness.list_applications()
-
-for app in response["applications"]:
-    print(app["displayName"])
-```
-
----
-
-# Get Application
-
-```python
-response = qbusiness.get_application(
-    applicationId="application-id"
+waiter = ec2.get_waiter(
+    "instance_running"
 )
 
-print(response["displayName"])
-```
-
----
-
-# List Indices
-
-```python
-response = qbusiness.list_indices(
-    applicationId="application-id"
-)
-
-print(response["indices"])
-```
-
----
-
-# Amazon Textract
-
----
-
-# Import Client
-
-```python
-textract = boto3.client("textract")
-```
-
----
-
-# Detect Document Text
-
-```python
-response = textract.detect_document_text(
-    Document={
-        "Bytes": open("invoice.png", "rb").read()
-    }
-)
-
-for block in response["Blocks"]:
-    if block["BlockType"] == "LINE":
-        print(block["Text"])
-```
-
----
-
-# Analyze Document
-
-```python
-response = textract.analyze_document(
-    Document={
-        "Bytes": open("invoice.png", "rb").read()
-    },
-    FeatureTypes=[
-        "TABLES",
-        "FORMS"
+waiter.wait(
+    InstanceIds=[
+        "i-0123456789abcdef0"
     ]
 )
-
-print(response["Blocks"])
 ```
 
 ---
 
-# Start Document Analysis
+# Wait for EC2 Stopped
 
 ```python
-response = textract.start_document_analysis(
-    DocumentLocation={
-        "S3Object": {
-            "Bucket": "documents",
-            "Name": "invoice.pdf"
-        }
-    },
-    FeatureTypes=[
-        "TABLES",
-        "FORMS"
+waiter = ec2.get_waiter(
+    "instance_stopped"
+)
+
+waiter.wait(
+    InstanceIds=[
+        "i-0123456789abcdef0"
     ]
 )
-
-print(response["JobId"])
 ```
 
 ---
 
-# Get Document Analysis
+# Wait for RDS Available
 
 ```python
-response = textract.get_document_analysis(
-    JobId="job-id"
+rds = boto3.client("rds")
+
+waiter = rds.get_waiter(
+    "db_instance_available"
 )
 
-print(response["Blocks"])
+waiter.wait(
+    DBInstanceIdentifier="production-db"
+)
 ```
 
 ---
 
-# Amazon Rekognition
+# Retry Configuration
 
 ---
 
-# Import Client
+# Configure Automatic Retries
 
 ```python
-rekognition = boto3.client("rekognition")
-```
+from botocore.config import Config
 
----
+config = Config(
 
-# Detect Labels
-
-```python
-response = rekognition.detect_labels(
-    Image={
-        "S3Object": {
-            "Bucket": "images",
-            "Name": "car.jpg"
-        }
+    retries={
+        "max_attempts": 10,
+        "mode": "standard"
     }
+
 )
 
-for label in response["Labels"]:
-    print(label["Name"])
+ec2 = boto3.client(
+    "ec2",
+    config=config
+)
 ```
 
 ---
 
-# Detect Faces
+# Logging
+
+---
+
+# Enable Logging
 
 ```python
-response = rekognition.detect_faces(
-    Image={
-        "S3Object": {
-            "Bucket": "images",
-            "Name": "person.jpg"
-        }
+import logging
+
+logging.basicConfig(
+    level=logging.INFO
+)
+
+logger = logging.getLogger(__name__)
+```
+
+---
+
+# Log API Responses
+
+```python
+response = ec2.describe_instances()
+
+logger.info(response)
+```
+
+---
+
+# ThreadPool Automation
+
+---
+
+# Parallel EC2 Processing
+
+```python
+from concurrent.futures import ThreadPoolExecutor
+
+import boto3
+
+ec2 = boto3.client("ec2")
+
+def stop_instance(instance_id):
+
+    ec2.stop_instances(
+        InstanceIds=[instance_id]
+    )
+
+instance_ids = [
+    "i-11111111111111111",
+    "i-22222222222222222"
+]
+
+with ThreadPoolExecutor(max_workers=5) as executor:
+
+    executor.map(
+        stop_instance,
+        instance_ids
+    )
+```
+
+---
+
+# Batch Processing
+
+---
+
+# Stop Multiple Instances
+
+```python
+ec2.stop_instances(
+
+    InstanceIds=[
+        "i-11111111111111111",
+        "i-22222222222222222",
+        "i-33333333333333333"
+    ]
+
+)
+```
+
+---
+
+# Delete Multiple S3 Objects
+
+```python
+s3 = boto3.client("s3")
+
+s3.delete_objects(
+
+    Bucket="my-bucket",
+
+    Delete={
+
+        "Objects":[
+
+            {"Key":"file1.txt"},
+            {"Key":"file2.txt"},
+            {"Key":"file3.txt"}
+
+        ]
+
     }
-)
 
-print(response["FaceDetails"])
-```
-
----
-
-# Compare Faces
-
-```python
-response = rekognition.compare_faces(
-    SourceImage={
-        "S3Object": {
-            "Bucket": "images",
-            "Name": "source.jpg"
-        }
-    },
-    TargetImage={
-        "S3Object": {
-            "Bucket": "images",
-            "Name": "target.jpg"
-        }
-    }
-)
-
-print(response["FaceMatches"])
-```
-
----
-
-# Detect Text
-
-```python
-response = rekognition.detect_text(
-    Image={
-        "S3Object": {
-            "Bucket": "images",
-            "Name": "license.jpg"
-        }
-    }
-)
-
-print(response["TextDetections"])
-```
-
----
-
-# Amazon Comprehend
-
----
-
-# Import Client
-
-```python
-comprehend = boto3.client("comprehend")
-```
-
----
-
-# Detect Sentiment
-
-```python
-response = comprehend.detect_sentiment(
-    Text="AWS services are excellent.",
-    LanguageCode="en"
-)
-
-print(response["Sentiment"])
-```
-
----
-
-# Detect Entities
-
-```python
-response = comprehend.detect_entities(
-    Text="John works for Amazon.",
-    LanguageCode="en"
-)
-
-print(response["Entities"])
-```
-
----
-
-# Detect Key Phrases
-
-```python
-response = comprehend.detect_key_phrases(
-    Text="Cloud computing enables scalable applications.",
-    LanguageCode="en"
-)
-
-print(response["KeyPhrases"])
-```
-
----
-
-# Detect Language
-
-```python
-response = comprehend.detect_dominant_language(
-    Text="Bonjour tout le monde"
-)
-
-print(response["Languages"])
-```
-
----
-
-# Amazon Translate
-
----
-
-# Import Client
-
-```python
-translate = boto3.client("translate")
-```
-
----
-
-# Translate Text
-
-```python
-response = translate.translate_text(
-    Text="Hello World",
-    SourceLanguageCode="en",
-    TargetLanguageCode="es"
-)
-
-print(response["TranslatedText"])
-```
-
----
-
-# Amazon Polly
-
----
-
-# Import Client
-
-```python
-polly = boto3.client("polly")
-```
-
----
-
-# Convert Text to Speech
-
-```python
-response = polly.synthesize_speech(
-    Text="Welcome to AWS",
-    OutputFormat="mp3",
-    VoiceId="Joanna"
-)
-
-audio = response["AudioStream"].read()
-```
-
----
-
-# List Voices
-
-```python
-response = polly.describe_voices()
-
-for voice in response["Voices"]:
-    print(voice["Name"])
-```
-
----
-
-# Amazon Transcribe
-
----
-
-# Import Client
-
-```python
-transcribe = boto3.client("transcribe")
-```
-
----
-
-# Start Transcription Job
-
-```python
-response = transcribe.start_transcription_job(
-    TranscriptionJobName="meeting-audio",
-    LanguageCode="en-US",
-    Media={
-        "MediaFileUri": "s3://media/audio.mp3"
-    }
-)
-
-print(response["TranscriptionJob"])
-```
-
----
-
-# Get Transcription Job
-
-```python
-response = transcribe.get_transcription_job(
-    TranscriptionJobName="meeting-audio"
-)
-
-print(response["TranscriptionJob"]["TranscriptionJobStatus"])
-```
-
----
-
-# List Transcription Jobs
-
-```python
-response = transcribe.list_transcription_jobs()
-
-print(response["TranscriptionJobSummaries"])
-```
-
----
-
-# Amazon Personalize
-
----
-
-# Import Client
-
-```python
-personalize = boto3.client("personalize")
-```
-
----
-
-# List Datasets
-
-```python
-response = personalize.list_datasets()
-
-print(response["datasets"])
-```
-
----
-
-# List Solutions
-
-```python
-response = personalize.list_solutions()
-
-print(response["solutions"])
-```
-
----
-
-# Describe Solution
-
-```python
-response = personalize.describe_solution(
-    solutionArn="arn:aws:personalize:..."
-)
-
-print(response["solution"])
-```
-
----
-
-# Amazon Forecast
-
----
-
-# Import Client
-
-```python
-forecast = boto3.client("forecast")
-```
-
----
-
-# List Predictors
-
-```python
-response = forecast.list_predictors()
-
-print(response["Predictors"])
-```
-
----
-
-# Describe Predictor
-
-```python
-response = forecast.describe_predictor(
-    PredictorArn="arn:aws:forecast:..."
-)
-
-print(response["PredictorName"])
-```
-
----
-
-# Delete Predictor
-
-```python
-forecast.delete_predictor(
-    PredictorArn="arn:aws:forecast:..."
 )
 ```
 
 ---
 
-# Pagination Example
+# Utility Functions
+
+---
+
+# Get Current AWS Account
 
 ```python
-paginator = rekognition.get_paginator(
-    "detect_labels"
-)
+def current_account():
+
+    sts = boto3.client("sts")
+
+    return sts.get_caller_identity()["Account"]
+
+print(current_account())
 ```
 
 ---
 
-# Exception Handling
+# Check Bucket Exists
+
+```python
+def bucket_exists(bucket):
+
+    s3 = boto3.client("s3")
+
+    try:
+
+        s3.head_bucket(Bucket=bucket)
+
+        return True
+
+    except:
+
+        return False
+```
+
+---
+
+# Check EC2 Exists
+
+```python
+def instance_exists(instance_id):
+
+    ec2 = boto3.client("ec2")
+
+    try:
+
+        ec2.describe_instances(
+            InstanceIds=[instance_id]
+        )
+
+        return True
+
+    except:
+
+        return False
+```
+
+---
+
+# Get Region
+
+```python
+session = boto3.Session()
+
+print(session.region_name)
+```
+
+---
+
+# Upload File Utility
+
+```python
+def upload(local_file, bucket, key):
+
+    s3 = boto3.client("s3")
+
+    s3.upload_file(
+        local_file,
+        bucket,
+        key
+    )
+```
+
+---
+
+# Download File Utility
+
+```python
+def download(bucket, key, file_name):
+
+    s3 = boto3.client("s3")
+
+    s3.download_file(
+        bucket,
+        key,
+        file_name
+    )
+```
+
+---
+
+# Common Error Handling
 
 ```python
 from botocore.exceptions import ClientError
 
 try:
-    response = bedrock.list_foundation_models()
+
+    response = ec2.describe_instances()
 
 except ClientError as error:
+
     print(error.response["Error"]["Code"])
+
     print(error.response["Error"]["Message"])
+
+except Exception as error:
+
+    print(error)
 ```
+
+---
+
+# Read Environment Variables
+
+```python
+import os
+
+region = os.getenv("AWS_REGION")
+
+print(region)
+```
+
+---
+
+# Production Script Structure
+
+```python
+import logging
+import boto3
+
+logger = logging.getLogger(__name__)
+
+def main():
+
+    ec2 = boto3.client("ec2")
+
+    response = ec2.describe_instances()
+
+    logger.info(response)
+
+if __name__ == "__main__":
+
+    main()
+```
+
+---
+
+# DevOps Automation Example
+
+---
+
+# Stop All Running Instances
+
+```python
+ec2 = boto3.client("ec2")
+
+instances = ec2.describe_instances(
+
+    Filters=[
+
+        {
+
+            "Name":"instance-state-name",
+
+            "Values":["running"]
+
+        }
+
+    ]
+
+)
+
+for reservation in instances["Reservations"]:
+
+    for instance in reservation["Instances"]:
+
+        ec2.stop_instances(
+
+            InstanceIds=[
+                instance["InstanceId"]
+            ]
+
+        )
+```
+
+---
+
+# Start All Stopped Instances
+
+```python
+instances = ec2.describe_instances(
+
+    Filters=[
+
+        {
+
+            "Name":"instance-state-name",
+
+            "Values":["stopped"]
+
+        }
+
+    ]
+
+)
+
+for reservation in instances["Reservations"]:
+
+    for instance in reservation["Instances"]:
+
+        ec2.start_instances(
+
+            InstanceIds=[
+                instance["InstanceId"]
+            ]
+
+        )
+```
+
+---
+
+# Interview Examples
+
+Common interview tasks using Boto3:
+
+- Launch an EC2 instance
+- Upload a file to S3
+- Generate a presigned URL
+- Create an IAM role
+- Encrypt data using KMS
+- Store secrets in Secrets Manager
+- Trigger a Lambda function
+- Start a CodePipeline execution
+- Query a DynamoDB table
+- Create a CloudWatch alarm
 
 ---
 
 # Best Practices
 
-- Keep prompts and model inputs free of sensitive information.
-- Store large documents in Amazon S3 before processing with Textract.
-- Validate confidence scores returned by Rekognition before taking automated actions.
-- Use Comprehend language detection for multilingual applications.
-- Cache frequently requested AI responses when appropriate.
-- Use asynchronous APIs for long-running document processing jobs.
-- Handle API throttling with retries and exponential backoff.
-- Secure AI service access using IAM roles and least-privilege permissions.
+- Use IAM Roles instead of long-term access keys.
+- Reuse clients and sessions instead of recreating them.
+- Configure retries for production workloads.
+- Use paginators for large AWS API responses.
+- Use waiters for asynchronous AWS operations.
+- Handle `ClientError` exceptions explicitly.
+- Log API calls and important events.
+- Keep secrets in AWS Secrets Manager or Parameter Store.
+- Use thread pools for independent parallel operations.
+- Validate user inputs before calling AWS APIs.
+- Apply least-privilege IAM policies.
+- Tag AWS resources consistently for governance.
+- Test automation in non-production environments first.
 
 ---
 
 # Summary
 
-This section covered Boto3 automation for Amazon Bedrock, Bedrock Runtime, Amazon Q Developer, Textract, Rekognition, Comprehend, Translate, Polly, Transcribe, Personalize, and Forecast. These examples demonstrate practical AI/ML automation patterns for generative AI, document processing, computer vision, speech, translation, and natural language processing using Python.
+This final section covered advanced Boto3 usage including sessions, credentials, cross-account access with STS, paginators, waiters, retry configuration, logging, parallel execution, reusable utility functions, batch operations, production script patterns, DevOps automation examples, interview tasks, and best practices. Combined with the previous nine sections, this cookbook provides a comprehensive, production-ready reference for automating AWS services with Python.
 
 ---
 
+# Cookbook Statistics
+
+| Category | Coverage |
+|----------|----------:|
+| EC2 & EBS | ✅ |
+| VPC & Networking | ✅ |
+| IAM & Security | ✅ |
+| Amazon S3 | ✅ |
+| Databases & Storage | ✅ |
+| Containers & Serverless | ✅ |
+| Monitoring & CI/CD | ✅ |
+| Networking & Observability | ✅ |
+| AI/ML Services | ✅ |
+| Advanced Automation | ✅ |
+
+**Approximate Coverage**
+
+- **600+ production-ready Boto3 examples**
+- **10 comprehensive sections**
+- **Cross-account automation**
+- **Reusable utility functions**
+- **Production-ready coding patterns**
+- **DevOps interview examples**
+- **Enterprise best practices**
