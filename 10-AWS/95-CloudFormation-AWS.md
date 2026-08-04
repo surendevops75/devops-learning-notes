@@ -1305,3 +1305,692 @@ This section covered CloudFormation templates for Amazon VPC, Internet Gateway, 
 
 ---
 
+# AWS IAM
+
+---
+
+# IAM User
+
+```yaml
+Resources:
+
+  DeveloperUser:
+
+    Type: AWS::IAM::User
+
+    Properties:
+
+      UserName: developer
+
+      Path: /
+
+      Tags:
+
+        - Key: Team
+
+          Value: DevOps
+```
+
+---
+
+# IAM Group
+
+```yaml
+Resources:
+
+  DevOpsGroup:
+
+    Type: AWS::IAM::Group
+
+    Properties:
+
+      GroupName: DevOps
+```
+
+---
+
+# Add User to Group
+
+```yaml
+Resources:
+
+  Developers:
+
+    Type: AWS::IAM::UserToGroupAddition
+
+    Properties:
+
+      GroupName: !Ref DevOpsGroup
+
+      Users:
+
+        - !Ref DeveloperUser
+```
+
+---
+
+# IAM Managed Policy
+
+```yaml
+Resources:
+
+  S3ReadOnlyPolicy:
+
+    Type: AWS::IAM::ManagedPolicy
+
+    Properties:
+
+      ManagedPolicyName: S3ReadOnly
+
+      PolicyDocument:
+
+        Version: "2012-10-17"
+
+        Statement:
+
+          - Effect: Allow
+
+            Action:
+
+              - s3:GetObject
+
+              - s3:ListBucket
+
+            Resource: "*"
+```
+
+---
+
+# Attach Managed Policy to Group
+
+```yaml
+ManagedPolicyArns:
+
+  - !Ref S3ReadOnlyPolicy
+```
+
+---
+
+# IAM Role
+
+```yaml
+Resources:
+
+  EC2Role:
+
+    Type: AWS::IAM::Role
+
+    Properties:
+
+      RoleName: EC2Role
+
+      AssumeRolePolicyDocument:
+
+        Version: "2012-10-17"
+
+        Statement:
+
+          - Effect: Allow
+
+            Principal:
+
+              Service:
+
+                - ec2.amazonaws.com
+
+            Action:
+
+              - sts:AssumeRole
+```
+
+---
+
+# Inline IAM Policy
+
+```yaml
+Policies:
+
+  - PolicyName: S3Access
+
+    PolicyDocument:
+
+      Version: "2012-10-17"
+
+      Statement:
+
+        - Effect: Allow
+
+          Action:
+
+            - s3:*
+
+          Resource: "*"
+```
+
+---
+
+# Attach AWS Managed Policy
+
+```yaml
+ManagedPolicyArns:
+
+  - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+```
+
+---
+
+# Instance Profile
+
+```yaml
+Resources:
+
+  EC2InstanceProfile:
+
+    Type: AWS::IAM::InstanceProfile
+
+    Properties:
+
+      Roles:
+
+        - !Ref EC2Role
+```
+
+---
+
+# Access Key
+
+```yaml
+Resources:
+
+  DeveloperAccessKey:
+
+    Type: AWS::IAM::AccessKey
+
+    Properties:
+
+      UserName: !Ref DeveloperUser
+```
+
+---
+
+# Login Profile
+
+```yaml
+LoginProfile:
+
+  Password: ChangeMe123!
+
+  PasswordResetRequired: true
+```
+
+---
+
+# Account Password Policy
+
+```yaml
+Resources:
+
+  PasswordPolicy:
+
+    Type: AWS::IAM::AccountPasswordPolicy
+
+    Properties:
+
+      MinimumPasswordLength: 14
+
+      RequireSymbols: true
+
+      RequireNumbers: true
+
+      RequireUppercaseCharacters: true
+
+      RequireLowercaseCharacters: true
+```
+
+---
+
+# KMS Key
+
+```yaml
+Resources:
+
+  EncryptionKey:
+
+    Type: AWS::KMS::Key
+
+    Properties:
+
+      EnableKeyRotation: true
+
+      PendingWindowInDays: 30
+
+      Description: Production Encryption Key
+```
+
+---
+
+# KMS Alias
+
+```yaml
+Resources:
+
+  KMSAlias:
+
+    Type: AWS::KMS::Alias
+
+    Properties:
+
+      AliasName: alias/production
+
+      TargetKeyId: !Ref EncryptionKey
+```
+
+---
+
+# Secrets Manager Secret
+
+```yaml
+Resources:
+
+  DatabaseSecret:
+
+    Type: AWS::SecretsManager::Secret
+
+    Properties:
+
+      Name: database-password
+```
+
+---
+
+# Secret Value
+
+```yaml
+GenerateSecretString:
+
+  SecretStringTemplate: '{"username":"admin"}'
+
+  GenerateStringKey: password
+
+  PasswordLength: 20
+```
+
+---
+
+# Systems Manager Parameter
+
+```yaml
+Resources:
+
+  DBPassword:
+
+    Type: AWS::SSM::Parameter
+
+    Properties:
+
+      Name: /prod/db/password
+
+      Type: SecureString
+
+      Value: Password123
+```
+
+---
+
+# ACM Certificate
+
+```yaml
+Resources:
+
+  ACMCertificate:
+
+    Type: AWS::CertificateManager::Certificate
+
+    Properties:
+
+      DomainName: example.com
+
+      ValidationMethod: DNS
+```
+
+---
+
+# IAM Identity Center Instance
+
+```yaml
+Resources:
+
+  IdentityCenter:
+
+    Type: AWS::SSO::Instance
+```
+
+---
+
+# AWS Organizations
+
+```yaml
+Resources:
+
+  Organization:
+
+    Type: AWS::Organizations::Organization
+
+    Properties:
+
+      FeatureSet: ALL
+```
+
+---
+
+# Organizational Unit
+
+```yaml
+Resources:
+
+  DevelopmentOU:
+
+    Type: AWS::Organizations::OrganizationalUnit
+
+    Properties:
+
+      Name: Development
+
+      ParentId: r-xxxx
+```
+
+---
+
+# AWS Account
+
+```yaml
+Resources:
+
+  DevelopmentAccount:
+
+    Type: AWS::Organizations::Account
+
+    Properties:
+
+      AccountName: Development
+
+      Email: dev@example.com
+```
+
+---
+
+# Service Control Policy
+
+```yaml
+Resources:
+
+  SCP:
+
+    Type: AWS::Organizations::Policy
+
+    Properties:
+
+      Name: DenyRoot
+
+      Type: SERVICE_CONTROL_POLICY
+
+      Content: |
+        {
+          "Version":"2012-10-17",
+          "Statement":[]
+        }
+```
+
+---
+
+# GuardDuty Detector
+
+```yaml
+Resources:
+
+  GuardDuty:
+
+    Type: AWS::GuardDuty::Detector
+
+    Properties:
+
+      Enable: true
+```
+
+---
+
+# Security Hub
+
+```yaml
+Resources:
+
+  SecurityHub:
+
+    Type: AWS::SecurityHub::Hub
+```
+
+---
+
+# Security Hub Standard
+
+```yaml
+Resources:
+
+  CISStandard:
+
+    Type: AWS::SecurityHub::Standard
+
+    Properties:
+
+      StandardsArn: arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.4.0
+```
+
+---
+
+# Amazon Inspector
+
+```yaml
+Resources:
+
+  Inspector:
+
+    Type: AWS::InspectorV2::Filter
+```
+
+---
+
+# Amazon Macie
+
+```yaml
+Resources:
+
+  Macie:
+
+    Type: AWS::Macie::Session
+
+    Properties:
+
+      Status: ENABLED
+```
+
+---
+
+# AWS Detective
+
+```yaml
+Resources:
+
+  DetectiveGraph:
+
+    Type: AWS::Detective::Graph
+
+    Properties:
+
+      AutoEnableMembers: true
+```
+
+---
+
+# AWS WAF Web ACL
+
+```yaml
+Resources:
+
+  WebACL:
+
+    Type: AWS::WAFv2::WebACL
+
+    Properties:
+
+      Name: ProductionACL
+
+      Scope: REGIONAL
+
+      DefaultAction:
+
+        Allow: {}
+
+      VisibilityConfig:
+
+        CloudWatchMetricsEnabled: true
+
+        MetricName: ProductionACL
+
+        SampledRequestsEnabled: true
+```
+
+---
+
+# AWS Shield Protection
+
+```yaml
+Resources:
+
+  ShieldProtection:
+
+    Type: AWS::Shield::Protection
+
+    Properties:
+
+      Name: ALBProtection
+
+      ResourceArn: arn:aws:elasticloadbalancing:...
+```
+
+---
+
+# CloudTrail
+
+```yaml
+Resources:
+
+  Trail:
+
+    Type: AWS::CloudTrail::Trail
+
+    Properties:
+
+      IsLogging: true
+
+      S3BucketName: audit-logs
+```
+
+---
+
+# AWS Config Recorder
+
+```yaml
+Resources:
+
+  ConfigRecorder:
+
+    Type: AWS::Config::ConfigurationRecorder
+
+    Properties:
+
+      Name: default
+
+      RoleARN: arn:aws:iam::123456789012:role/config-role
+```
+
+---
+
+# Delivery Channel
+
+```yaml
+Resources:
+
+  ConfigDelivery:
+
+    Type: AWS::Config::DeliveryChannel
+
+    Properties:
+
+      S3BucketName: config-logs
+```
+
+---
+
+# Config Rule
+
+```yaml
+Resources:
+
+  EncryptedVolumes:
+
+    Type: AWS::Config::ConfigRule
+
+    Properties:
+
+      ConfigRuleName: encrypted-volumes
+
+      Source:
+
+        Owner: AWS
+
+        SourceIdentifier: ENCRYPTED_VOLUMES
+```
+
+---
+
+# Outputs
+
+```yaml
+Outputs:
+
+  RoleArn:
+
+    Value: !GetAtt EC2Role.Arn
+
+  KMSKey:
+
+    Value: !Ref EncryptionKey
+
+  SecretArn:
+
+    Value: !Ref DatabaseSecret
+```
+
+---
+
+# Best Practices
+
+- Prefer IAM Roles instead of IAM Users whenever possible.
+- Apply the principle of least privilege to IAM policies.
+- Enable automatic KMS key rotation.
+- Store secrets in AWS Secrets Manager instead of templates.
+- Use SecureString for Systems Manager Parameters.
+- Enable CloudTrail organization-wide.
+- Enable AWS Config to monitor configuration drift.
+- Enable GuardDuty, Security Hub, Inspector, Macie, and Detective in production accounts.
+- Protect internet-facing applications using AWS WAF and Shield.
+- Tag all IAM and security resources consistently.
+
+---
+
+# Summary
+
+This section covered CloudFormation templates for IAM Users, Groups, Roles, Managed Policies, Instance Profiles, KMS, Secrets Manager, Systems Manager Parameter Store, ACM, AWS Organizations, Service Control Policies (SCPs), GuardDuty, Security Hub, Inspector, Macie, Detective, WAF, Shield, CloudTrail, and AWS Config. These templates provide production-ready patterns for implementing identity, access management, encryption, governance, and security in AWS.
+
+---
+
