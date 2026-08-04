@@ -5836,3 +5836,743 @@ This section covered StatefulSets, DaemonSets, Jobs, CronJobs, Persistent Volume
 
 ---
 
+# Terraform Interview Questions (Basic → Advanced)
+
+---
+
+# Introduction
+
+Terraform is the industry-standard Infrastructure as Code (IaC) tool used to provision and manage cloud infrastructure. In DevOps interviews, interviewers focus on Terraform architecture, state management, modules, backends, workspaces, and production troubleshooting.
+
+This section covers
+
+- Terraform Fundamentals
+- Architecture
+- Providers
+- Resources
+- Variables
+- Outputs
+- State Management
+- Modules
+- Workspaces
+- Lifecycle Rules
+- Import
+- Enterprise Practices
+- Production Scenarios
+
+---
+
+# Question 1
+
+## What is Terraform?
+
+### Answer
+
+Terraform is an Infrastructure as Code (IaC) tool developed by HashiCorp that allows infrastructure to be defined declaratively using HCL (HashiCorp Configuration Language).
+
+Benefits
+
+- Infrastructure automation
+- Version control
+- Reproducible deployments
+- Multi-cloud support
+- Idempotent operations
+
+---
+
+### Production Example
+
+Provision an AWS VPC, Amazon EKS cluster, IAM roles, ALB, Amazon RDS, and Amazon S3 using reusable Terraform modules.
+
+---
+
+# Question 2
+
+## What is Infrastructure as Code (IaC)?
+
+### Answer
+
+Infrastructure as Code is the practice of managing infrastructure through code instead of manual configuration.
+
+Advantages
+
+- Automation
+- Consistency
+- Version control
+- Repeatability
+- Faster deployments
+
+---
+
+# Question 3
+
+## Terraform Architecture
+
+### Components
+
+- Configuration Files
+- Providers
+- Resources
+- State File
+- Backend
+
+---
+
+### Workflow
+
+```text
+Terraform Configuration
+
+↓
+
+Terraform Init
+
+↓
+
+Provider
+
+↓
+
+Cloud API
+
+↓
+
+Infrastructure
+```
+
+---
+
+# Question 4
+
+## What is a Provider?
+
+### Answer
+
+A Provider allows Terraform to interact with a cloud platform or service.
+
+Examples
+
+- AWS
+- Azure
+- Google Cloud
+- Kubernetes
+- GitHub
+
+---
+
+### Example
+
+```hcl
+provider "aws" {
+  region = "ap-south-1"
+}
+```
+
+---
+
+# Question 5
+
+## What is a Resource?
+
+### Answer
+
+A Resource represents an infrastructure object managed by Terraform.
+
+Examples
+
+- EC2 Instance
+- VPC
+- IAM Role
+- Amazon S3 Bucket
+- Amazon RDS Instance
+
+---
+
+### Example
+
+```hcl
+resource "aws_instance" "web" {
+  ami           = "ami-xxxxxxxx"
+  instance_type = "t3.micro"
+}
+```
+
+---
+
+# Question 6
+
+## What is Terraform State?
+
+### Answer
+
+Terraform State records the current infrastructure managed by Terraform.
+
+Default File
+
+```text
+terraform.tfstate
+```
+
+Purpose
+
+- Track resources
+- Detect changes
+- Enable updates
+- Prevent unnecessary recreation
+
+---
+
+# Question 7
+
+## Why is the State File Important?
+
+### Answer
+
+Terraform uses the state file to compare the desired infrastructure with the actual infrastructure.
+
+Without state
+
+- No change tracking
+- No dependency tracking
+- No efficient updates
+
+---
+
+# Question 8
+
+## Local State vs Remote State
+
+| Local State | Remote State |
+|--------------|--------------|
+| Stored locally | Stored remotely |
+| Single user | Team collaboration |
+| Less secure | More secure |
+| No locking | Backend-dependent locking |
+
+---
+
+### Production Recommendation
+
+Store state remotely for team environments.
+
+---
+
+# Question 9
+
+## What is a Backend?
+
+### Answer
+
+A backend defines where Terraform stores state.
+
+Common Backends
+
+- Local
+- Amazon S3
+- Azure Storage
+- Google Cloud Storage
+- Terraform Cloud
+
+---
+
+### Production Example
+
+Use an Amazon S3 backend for centralized state storage.
+
+---
+
+# Question 10
+
+## Terraform Init
+
+### Answer
+
+Initializes a Terraform project.
+
+Downloads
+
+- Providers
+- Modules
+- Backend configuration
+
+Command
+
+```bash
+terraform init
+```
+
+---
+
+# Question 11
+
+## Terraform Validate
+
+### Answer
+
+Checks configuration syntax and validity.
+
+```bash
+terraform validate
+```
+
+---
+
+# Question 12
+
+## Terraform Plan
+
+### Answer
+
+Displays the changes Terraform intends to make.
+
+```bash
+terraform plan
+```
+
+Benefits
+
+- Safe preview
+- Change verification
+- Review before apply
+
+---
+
+# Question 13
+
+## Terraform Apply
+
+### Answer
+
+Creates or updates infrastructure.
+
+```bash
+terraform apply
+```
+
+---
+
+# Question 14
+
+## Terraform Destroy
+
+### Answer
+
+Deletes managed infrastructure.
+
+```bash
+terraform destroy
+```
+
+Use carefully in production environments.
+
+---
+
+# Question 15
+
+## Variables
+
+### Answer
+
+Variables make Terraform configurations reusable.
+
+Example
+
+```hcl
+variable "instance_type" {
+  type = string
+}
+```
+
+---
+
+# Question 16
+
+## Variable Types
+
+Examples
+
+- string
+- number
+- bool
+- list
+- map
+- object
+
+---
+
+# Question 17
+
+## Output Values
+
+### Answer
+
+Outputs expose useful information after deployment.
+
+Example
+
+```hcl
+output "instance_ip" {
+  value = aws_instance.web.public_ip
+}
+```
+
+---
+
+# Question 18
+
+## Modules
+
+### Answer
+
+Modules organize reusable Terraform code.
+
+Benefits
+
+- Reusability
+- Standardization
+- Easier maintenance
+- Reduced duplication
+
+---
+
+### Production Example
+
+Separate modules for
+
+- VPC
+- IAM
+- Amazon EKS
+- Amazon RDS
+- ALB
+
+---
+
+# Question 19
+
+## Root Module vs Child Module
+
+| Root Module | Child Module |
+|--------------|--------------|
+| Entry point | Reusable module |
+| Calls other modules | Invoked by root module |
+
+---
+
+# Question 20
+
+## Workspaces
+
+### Answer
+
+Terraform Workspaces manage multiple state files from a single configuration.
+
+Example
+
+```text
+dev
+
+qa
+
+staging
+
+production
+```
+
+---
+
+### Commands
+
+```bash
+terraform workspace list
+
+terraform workspace new dev
+
+terraform workspace select production
+```
+
+---
+
+# Question 21
+
+## Terraform Lifecycle
+
+Useful Options
+
+- create_before_destroy
+- prevent_destroy
+- ignore_changes
+
+---
+
+### Example
+
+```hcl
+lifecycle {
+  prevent_destroy = true
+}
+```
+
+---
+
+# Question 22
+
+## Terraform Import
+
+### Answer
+
+Imports existing infrastructure into Terraform state.
+
+Example
+
+```bash
+terraform import aws_s3_bucket.logs my-prod-logs
+```
+
+---
+
+# Question 23
+
+## Terraform Refresh
+
+### Answer
+
+Updates the state file based on the current infrastructure.
+
+*(Note: Modern Terraform workflows often use plan/apply to refresh state automatically.)*
+
+---
+
+# Question 24
+
+## Terraform Graph
+
+### Answer
+
+Displays the dependency graph of resources.
+
+```bash
+terraform graph
+```
+
+Useful for understanding resource relationships.
+
+---
+
+# Question 25
+
+## Terraform Dependency
+
+Automatic
+
+Terraform determines dependencies through resource references.
+
+Explicit
+
+```hcl
+depends_on = [aws_vpc.main]
+```
+
+---
+
+# Question 26
+
+## Terraform Provisioners
+
+Types
+
+- local-exec
+- remote-exec
+
+Recommendation
+
+Use provisioners only when necessary; prefer cloud-init, configuration management tools, or image baking where appropriate.
+
+---
+
+# Question 27
+
+## Terraform Data Sources
+
+### Answer
+
+Read existing infrastructure without creating it.
+
+Example
+
+```hcl
+data "aws_ami" "amazon_linux" {}
+```
+
+---
+
+# Question 28
+
+## Count vs for_each
+
+| count | for_each |
+|--------|----------|
+| Numeric | Collection-based |
+| Indexes | Named keys |
+| Better for identical resources | Better for unique resources |
+
+---
+
+# Question 29
+
+## State Locking
+
+### Answer
+
+Prevents multiple Terraform operations from modifying the same state simultaneously.
+
+Benefits
+
+- Prevents corruption
+- Safe team collaboration
+- Consistent deployments
+
+---
+
+# Question 30
+
+## Enterprise Terraform Best Practices
+
+- Use remote state
+- Organize reusable modules
+- Review `terraform plan` before applying
+- Separate environments appropriately
+- Store secrets securely
+- Keep providers version-pinned
+- Use CI/CD pipelines for deployments
+- Follow least-privilege IAM principles
+- Review state changes regularly
+- Enable backup/versioning for remote state
+
+---
+
+# Production Scenario 1
+
+Terraform Apply Fails
+
+### Investigation
+
+```bash
+terraform validate
+
+terraform plan
+
+terraform providers
+```
+
+Check
+
+- Syntax errors
+- IAM permissions
+- Missing variables
+- Provider configuration
+
+---
+
+# Production Scenario 2
+
+State File Out of Sync
+
+### Investigation
+
+Review
+
+- Recent manual infrastructure changes
+- Terraform state
+- Planned resource changes
+
+Use
+
+```bash
+terraform state list
+```
+
+---
+
+# Production Scenario 3
+
+Resource Already Exists
+
+### Investigation
+
+Options
+
+- Import the resource
+- Remove duplicate configuration
+- Verify resource ownership
+
+---
+
+# Production Scenario 4
+
+Infrastructure Drift
+
+### Investigation
+
+Run
+
+```bash
+terraform plan
+```
+
+Review
+
+- Manual console changes
+- Configuration differences
+- Desired vs actual state
+
+---
+
+# Production Scenario 5
+
+Module Upgrade Causes Unexpected Changes
+
+### Investigation
+
+- Review module version
+- Examine plan output carefully
+- Test in lower environments
+- Validate rollback strategy
+
+---
+
+# FAANG-Style Terraform Questions
+
+- Explain Terraform internals.
+- How does Terraform build the dependency graph?
+- Explain state locking.
+- How do you organize Terraform modules in a large enterprise?
+- How do you detect and handle infrastructure drift?
+- How would you design Terraform for multiple AWS accounts?
+- How do you secure Terraform state?
+- Explain count vs for_each.
+- How would you migrate local state to a remote backend?
+- How do you manage Terraform in CI/CD pipelines?
+
+---
+
+# Terraform Interview Tips
+
+Structure every answer as:
+
+1. Definition
+2. Architecture
+3. Example
+4. Production use case
+5. Best practice
+6. Troubleshooting
+
+For senior roles, discuss module design, state management, security, and collaboration rather than only Terraform commands.
+
+---
+
+# Summary
+
+This section covered Terraform fundamentals, providers, resources, variables, outputs, state management, remote backends, modules, workspaces, lifecycle rules, imports, dependencies, enterprise best practices, production troubleshooting, and FAANG-style interview questions. These topics are commonly covered in mid-level to senior DevOps interviews.
+
+---
+
