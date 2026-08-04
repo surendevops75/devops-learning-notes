@@ -3453,3 +3453,664 @@ This section covered Terraform examples for Amazon ECR, ECS, EKS, Kubernetes res
 
 ---
 
+# Amazon CloudWatch
+
+---
+
+# CloudWatch Dashboard
+
+```hcl
+resource "aws_cloudwatch_dashboard" "main" {
+
+  dashboard_name = "ProductionDashboard"
+
+  dashboard_body = file("dashboard.json")
+
+}
+```
+
+---
+
+# Metric Alarm
+
+```hcl
+resource "aws_cloudwatch_metric_alarm" "cpu" {
+
+  alarm_name = "HighCPU"
+
+  namespace = "AWS/EC2"
+
+  metric_name = "CPUUtilization"
+
+  statistic = "Average"
+
+  threshold = 80
+
+  comparison_operator = "GreaterThanThreshold"
+
+  evaluation_periods = 2
+
+  period = 300
+
+}
+```
+
+---
+
+# Composite Alarm
+
+```hcl
+resource "aws_cloudwatch_composite_alarm" "critical" {
+
+  alarm_name = "CriticalAlarm"
+
+  alarm_rule = "ALARM(HighCPU)"
+
+}
+```
+
+---
+
+# Log Group
+
+```hcl
+resource "aws_cloudwatch_log_group" "application" {
+
+  name = "/application/logs"
+
+  retention_in_days = 30
+
+}
+```
+
+---
+
+# Log Stream
+
+```hcl
+resource "aws_cloudwatch_log_stream" "main" {
+
+  name = "production"
+
+  log_group_name = aws_cloudwatch_log_group.application.name
+
+}
+```
+
+---
+
+# Log Resource Policy
+
+```hcl
+resource "aws_cloudwatch_log_resource_policy" "logs" {
+
+  policy_name = "CloudWatchLogs"
+
+  policy_document = file("logs-policy.json")
+
+}
+```
+
+---
+
+# EventBridge Bus
+
+```hcl
+resource "aws_cloudwatch_event_bus" "operations" {
+
+  name = "operations"
+
+}
+```
+
+---
+
+# EventBridge Rule
+
+```hcl
+resource "aws_cloudwatch_event_rule" "ec2" {
+
+  name = "EC2StateChange"
+
+  event_pattern = file("ec2-events.json")
+
+}
+```
+
+---
+
+# EventBridge Target
+
+```hcl
+resource "aws_cloudwatch_event_target" "lambda" {
+
+  rule = aws_cloudwatch_event_rule.ec2.name
+
+  arn = aws_lambda_function.processor.arn
+
+}
+```
+
+---
+
+# CloudTrail
+
+---
+
+# Organization Trail
+
+```hcl
+resource "aws_cloudtrail" "organization" {
+
+  name = "OrganizationTrail"
+
+  s3_bucket_name = aws_s3_bucket.logs.id
+
+  is_organization_trail = true
+
+}
+```
+
+---
+
+# CloudTrail Event Selector
+
+```hcl
+event_selector {
+
+  read_write_type = "All"
+
+  include_management_events = true
+
+}
+```
+
+---
+
+# AWS Config
+
+---
+
+# Configuration Recorder
+
+```hcl
+resource "aws_config_configuration_recorder" "main" {
+
+  name = "config"
+
+  role_arn = aws_iam_role.config.arn
+
+}
+```
+
+---
+
+# Delivery Channel
+
+```hcl
+resource "aws_config_delivery_channel" "main" {
+
+  s3_bucket_name = aws_s3_bucket.logs.bucket
+
+}
+```
+
+---
+
+# Config Rule
+
+```hcl
+resource "aws_config_config_rule" "encrypted_volumes" {
+
+  name = "encrypted-volumes"
+
+  source {
+
+    owner = "AWS"
+
+    source_identifier = "ENCRYPTED_VOLUMES"
+
+  }
+
+}
+```
+
+---
+
+# Conformance Pack
+
+```hcl
+resource "aws_config_conformance_pack" "security" {
+
+  name = "OperationalBestPractices"
+
+  template_body = file("conformance-pack.yaml")
+
+}
+```
+
+---
+
+# AWS CodeCommit
+
+---
+
+# Repository
+
+```hcl
+resource "aws_codecommit_repository" "repo" {
+
+  repository_name = "devops-repository"
+
+  description = "Infrastructure Repository"
+
+}
+```
+
+---
+
+# Approval Rule Template
+
+```hcl
+resource "aws_codecommit_approval_rule_template" "main" {
+
+  approval_rule_template_name = "MandatoryReview"
+
+  approval_rule_template_content = file("approval.json")
+
+}
+```
+
+---
+
+# AWS CodeBuild
+
+---
+
+# Build Project
+
+```hcl
+resource "aws_codebuild_project" "build" {
+
+  name = "ApplicationBuild"
+
+  service_role = aws_iam_role.codebuild.arn
+
+}
+```
+
+---
+
+# Build Webhook
+
+```hcl
+resource "aws_codebuild_webhook" "main" {
+
+  project_name = aws_codebuild_project.build.name
+
+}
+```
+
+---
+
+# Source Credential
+
+```hcl
+resource "aws_codebuild_source_credential" "github" {
+
+  auth_type = "PERSONAL_ACCESS_TOKEN"
+
+  server_type = "GITHUB"
+
+  token = var.github_token
+
+}
+```
+
+---
+
+# AWS CodeDeploy
+
+---
+
+# Application
+
+```hcl
+resource "aws_codedeploy_app" "main" {
+
+  name = "WebApplication"
+
+}
+```
+
+---
+
+# Deployment Group
+
+```hcl
+resource "aws_codedeploy_deployment_group" "production" {
+
+  app_name = aws_codedeploy_app.main.name
+
+  deployment_group_name = "Production"
+
+  service_role_arn = aws_iam_role.codedeploy.arn
+
+}
+```
+
+---
+
+# AWS CodePipeline
+
+---
+
+# Pipeline
+
+```hcl
+resource "aws_codepipeline" "pipeline" {
+
+  name = "ProductionPipeline"
+
+  role_arn = aws_iam_role.pipeline.arn
+
+}
+```
+
+---
+
+# AWS CodeArtifact
+
+---
+
+# Domain
+
+```hcl
+resource "aws_codeartifact_domain" "main" {
+
+  domain = "company"
+
+}
+```
+
+---
+
+# Repository
+
+```hcl
+resource "aws_codeartifact_repository" "maven" {
+
+  repository = "maven"
+
+  domain = aws_codeartifact_domain.main.domain
+
+}
+```
+
+---
+
+# AWS Systems Manager
+
+---
+
+# SSM Parameter
+
+```hcl
+resource "aws_ssm_parameter" "api" {
+
+  name = "/prod/api/url"
+
+  type = "String"
+
+  value = "https://api.example.com"
+
+}
+```
+
+---
+
+# Patch Baseline
+
+```hcl
+resource "aws_ssm_patch_baseline" "linux" {
+
+  name = "LinuxBaseline"
+
+  operating_system = "AMAZON_LINUX_2"
+
+}
+```
+
+---
+
+# Maintenance Window
+
+```hcl
+resource "aws_ssm_maintenance_window" "weekly" {
+
+  name = "WeeklyMaintenance"
+
+  schedule = "cron(0 2 ? * SUN *)"
+
+  duration = 3
+
+  cutoff = 1
+
+}
+```
+
+---
+
+# Maintenance Window Target
+
+```hcl
+resource "aws_ssm_maintenance_window_target" "instances" {
+
+  window_id = aws_ssm_maintenance_window.weekly.id
+
+  resource_type = "INSTANCE"
+
+}
+```
+
+---
+
+# Maintenance Window Task
+
+```hcl
+resource "aws_ssm_maintenance_window_task" "patch" {
+
+  window_id = aws_ssm_maintenance_window.weekly.id
+
+  task_type = "RUN_COMMAND"
+
+  task_arn = "AWS-RunPatchBaseline"
+
+}
+```
+
+---
+
+# Association
+
+```hcl
+resource "aws_ssm_association" "inventory" {
+
+  name = "AWS-GatherSoftwareInventory"
+
+}
+```
+
+---
+
+# Document
+
+```hcl
+resource "aws_ssm_document" "restart" {
+
+  name = "RestartService"
+
+  document_type = "Command"
+
+  content = file("restart.json")
+
+}
+```
+
+---
+
+# OpsCenter
+
+---
+
+# OpsItem
+
+```hcl
+resource "aws_ssm_opsitem" "incident" {
+
+  title = "High CPU Usage"
+
+  source = "CloudWatch"
+
+}
+```
+
+---
+
+# Explorer
+
+```hcl
+resource "aws_ssm_resource_data_sync" "inventory" {
+
+  name = "InventorySync"
+
+  s3_destination {
+
+    bucket_name = aws_s3_bucket.logs.bucket
+
+  }
+
+}
+```
+
+---
+
+# CloudFormation Stack
+
+```hcl
+resource "aws_cloudformation_stack" "network" {
+
+  name = "LegacyNetwork"
+
+  template_body = file("network.yaml")
+
+}
+```
+
+---
+
+# CloudFormation StackSet
+
+```hcl
+resource "aws_cloudformation_stack_set" "organization" {
+
+  name = "SecurityBaseline"
+
+  permission_model = "SERVICE_MANAGED"
+
+  template_body = file("baseline.yaml")
+
+}
+```
+
+---
+
+# CloudFormation StackSet Instance
+
+```hcl
+resource "aws_cloudformation_stack_set_instance" "prod" {
+
+  stack_set_name = aws_cloudformation_stack_set.organization.name
+
+  deployment_targets {
+
+    organizational_unit_ids = [
+
+      "ou-xxxxxxxx"
+
+    ]
+
+  }
+
+  region = "ap-south-1"
+
+}
+```
+
+---
+
+# Data Sources
+
+---
+
+# Current Region
+
+```hcl
+data "aws_region" "current" {}
+```
+
+---
+
+# Current Caller Identity
+
+```hcl
+data "aws_caller_identity" "current" {}
+```
+
+---
+
+# Outputs
+
+```hcl
+output "pipeline_name" {
+
+  value = aws_codepipeline.pipeline.name
+
+}
+
+output "codebuild_project" {
+
+  value = aws_codebuild_project.build.name
+
+}
+
+output "log_group" {
+
+  value = aws_cloudwatch_log_group.application.name
+
+}
+```
+
+---
+
+# Best Practices
+
+- Create CloudWatch dashboards for critical workloads.
+- Configure CloudWatch alarms with SNS notifications.
+- Enable CloudTrail organization-wide with log file validation.
+- Record all supported resources using AWS Config.
+- Store configuration values in Systems Manager Parameter Store.
+- Use CodePipeline for automated deployments.
+- Protect CodeBuild credentials using Secrets Manager.
+- Configure regular patching with Systems Manager Maintenance Windows.
+- Use CloudFormation StackSets for multi-account deployments.
+- Tag monitoring and CI/CD resources consistently.
+
+---
+
+# Summary
+
+This section covered Terraform examples for Amazon CloudWatch, CloudWatch Logs, EventBridge, CloudTrail, AWS Config, CodeCommit, CodeBuild, CodeDeploy, CodePipeline, CodeArtifact, Systems Manager (SSM), OpsCenter, CloudFormation Stacks, and StackSets. These examples provide production-ready patterns for monitoring, CI/CD automation, configuration management, and operational governance.
+
+---
+
