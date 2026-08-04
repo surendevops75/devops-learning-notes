@@ -2739,3 +2739,730 @@ This section covered CloudFormation templates for Amazon S3, EFS, FSx, RDS, Auro
 
 ---
 
+# Amazon Elastic Container Registry (ECR)
+
+---
+
+# Create ECR Repository
+
+```yaml
+Resources:
+
+  ECRRepository:
+
+    Type: AWS::ECR::Repository
+
+    Properties:
+
+      RepositoryName: production-app
+
+      ImageScanningConfiguration:
+
+        ScanOnPush: true
+
+      ImageTagMutability: IMMUTABLE
+```
+
+---
+
+# Lifecycle Policy
+
+```yaml
+LifecyclePolicy:
+
+  LifecyclePolicyText: |
+    {
+      "rules":[
+        {
+          "rulePriority":1,
+          "description":"Keep last 20 images",
+          "selection":{
+            "tagStatus":"any",
+            "countType":"imageCountMoreThan",
+            "countNumber":20
+          },
+          "action":{
+            "type":"expire"
+          }
+        }
+      ]
+    }
+```
+
+---
+
+# Repository Policy
+
+```yaml
+RepositoryPolicyText:
+
+  Version: "2012-10-17"
+
+  Statement:
+
+    - Effect: Allow
+
+      Principal:
+
+        AWS: arn:aws:iam::123456789012:root
+
+      Action:
+
+        - ecr:BatchGetImage
+```
+
+---
+
+# Amazon ECS
+
+---
+
+# ECS Cluster
+
+```yaml
+Resources:
+
+  ECSCluster:
+
+    Type: AWS::ECS::Cluster
+
+    Properties:
+
+      ClusterName: production
+```
+
+---
+
+# Capacity Providers
+
+```yaml
+CapacityProviders:
+
+  - FARGATE
+
+  - FARGATE_SPOT
+```
+
+---
+
+# Task Definition
+
+```yaml
+Resources:
+
+  TaskDefinition:
+
+    Type: AWS::ECS::TaskDefinition
+
+    Properties:
+
+      Family: web
+
+      Cpu: 512
+
+      Memory: 1024
+
+      NetworkMode: awsvpc
+
+      RequiresCompatibilities:
+
+        - FARGATE
+```
+
+---
+
+# Container Definition
+
+```yaml
+ContainerDefinitions:
+
+  - Name: nginx
+
+    Image: nginx:latest
+
+    Essential: true
+
+    PortMappings:
+
+      - ContainerPort: 80
+```
+
+---
+
+# ECS Service
+
+```yaml
+Resources:
+
+  ECSService:
+
+    Type: AWS::ECS::Service
+
+    Properties:
+
+      Cluster: !Ref ECSCluster
+
+      DesiredCount: 2
+
+      LaunchType: FARGATE
+
+      TaskDefinition: !Ref TaskDefinition
+```
+
+---
+
+# Service Auto Scaling
+
+```yaml
+Resources:
+
+  ECSScalableTarget:
+
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+
+    Properties:
+
+      MaxCapacity: 10
+
+      MinCapacity: 2
+
+      ServiceNamespace: ecs
+```
+
+---
+
+# Scaling Policy
+
+```yaml
+Resources:
+
+  ECSScalingPolicy:
+
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+
+    Properties:
+
+      PolicyType: TargetTrackingScaling
+```
+
+---
+
+# Amazon EKS
+
+---
+
+# EKS Cluster
+
+```yaml
+Resources:
+
+  EKSCluster:
+
+    Type: AWS::EKS::Cluster
+
+    Properties:
+
+      Name: production
+
+      Version: "1.31"
+
+      RoleArn: !GetAtt EKSRole.Arn
+```
+
+---
+
+# VPC Configuration
+
+```yaml
+ResourcesVpcConfig:
+
+  SubnetIds:
+
+    - !Ref PrivateSubnet
+
+  EndpointPublicAccess: true
+
+  EndpointPrivateAccess: true
+```
+
+---
+
+# Managed Node Group
+
+```yaml
+Resources:
+
+  WorkerNodes:
+
+    Type: AWS::EKS::Nodegroup
+
+    Properties:
+
+      ClusterName: !Ref EKSCluster
+
+      NodeRole: !GetAtt WorkerRole.Arn
+
+      ScalingConfig:
+
+        DesiredSize: 2
+
+        MinSize: 2
+
+        MaxSize: 6
+```
+
+---
+
+# Fargate Profile
+
+```yaml
+Resources:
+
+  FargateProfile:
+
+    Type: AWS::EKS::FargateProfile
+
+    Properties:
+
+      ClusterName: !Ref EKSCluster
+
+      FargateProfileName: default
+```
+
+---
+
+# EKS Add-on
+
+```yaml
+Resources:
+
+  CoreDNSAddon:
+
+    Type: AWS::EKS::Addon
+
+    Properties:
+
+      ClusterName: !Ref EKSCluster
+
+      AddonName: coredns
+```
+
+---
+
+# OIDC Provider
+
+```yaml
+Resources:
+
+  OIDCProvider:
+
+    Type: AWS::IAM::OIDCProvider
+```
+
+---
+
+# AWS Lambda
+
+---
+
+# Lambda Function
+
+```yaml
+Resources:
+
+  LambdaFunction:
+
+    Type: AWS::Lambda::Function
+
+    Properties:
+
+      FunctionName: processor
+
+      Runtime: python3.12
+
+      Handler: lambda_function.lambda_handler
+
+      Role: !GetAtt LambdaRole.Arn
+
+      Code:
+
+        S3Bucket: deployment-artifacts
+
+        S3Key: lambda.zip
+```
+
+---
+
+# Lambda Permission
+
+```yaml
+Resources:
+
+  LambdaPermission:
+
+    Type: AWS::Lambda::Permission
+
+    Properties:
+
+      Action: lambda:InvokeFunction
+
+      FunctionName: !Ref LambdaFunction
+
+      Principal: apigateway.amazonaws.com
+```
+
+---
+
+# Lambda Version
+
+```yaml
+Resources:
+
+  LambdaVersion:
+
+    Type: AWS::Lambda::Version
+
+    Properties:
+
+      FunctionName: !Ref LambdaFunction
+```
+
+---
+
+# Lambda Alias
+
+```yaml
+Resources:
+
+  ProductionAlias:
+
+    Type: AWS::Lambda::Alias
+
+    Properties:
+
+      Name: prod
+
+      FunctionName: !Ref LambdaFunction
+
+      FunctionVersion: !GetAtt LambdaVersion.Version
+```
+
+---
+
+# API Gateway REST API
+
+```yaml
+Resources:
+
+  RestAPI:
+
+    Type: AWS::ApiGateway::RestApi
+
+    Properties:
+
+      Name: OrdersAPI
+```
+
+---
+
+# API Gateway Resource
+
+```yaml
+Resources:
+
+  OrdersResource:
+
+    Type: AWS::ApiGateway::Resource
+```
+
+---
+
+# API Gateway Method
+
+```yaml
+Resources:
+
+  GetOrders:
+
+    Type: AWS::ApiGateway::Method
+
+    Properties:
+
+      HttpMethod: GET
+```
+
+---
+
+# Deployment
+
+```yaml
+Resources:
+
+  APIDeployment:
+
+    Type: AWS::ApiGateway::Deployment
+```
+
+---
+
+# Stage
+
+```yaml
+Resources:
+
+  ProductionStage:
+
+    Type: AWS::ApiGateway::Stage
+
+    Properties:
+
+      StageName: prod
+```
+
+---
+
+# HTTP API
+
+```yaml
+Resources:
+
+  HTTPAPI:
+
+    Type: AWS::ApiGatewayV2::Api
+
+    Properties:
+
+      ProtocolType: HTTP
+```
+
+---
+
+# App Runner
+
+```yaml
+Resources:
+
+  AppRunner:
+
+    Type: AWS::AppRunner::Service
+
+    Properties:
+
+      ServiceName: production-app
+```
+
+---
+
+# EventBridge Bus
+
+```yaml
+Resources:
+
+  EventBus:
+
+    Type: AWS::Events::EventBus
+
+    Properties:
+
+      Name: application-events
+```
+
+---
+
+# Event Rule
+
+```yaml
+Resources:
+
+  DailyRule:
+
+    Type: AWS::Events::Rule
+
+    Properties:
+
+      ScheduleExpression: rate(1 day)
+```
+
+---
+
+# SNS Topic
+
+```yaml
+Resources:
+
+  AlertsTopic:
+
+    Type: AWS::SNS::Topic
+
+    Properties:
+
+      TopicName: alerts
+```
+
+---
+
+# SNS Subscription
+
+```yaml
+Resources:
+
+  EmailSubscription:
+
+    Type: AWS::SNS::Subscription
+
+    Properties:
+
+      Protocol: email
+
+      Endpoint: admin@example.com
+
+      TopicArn: !Ref AlertsTopic
+```
+
+---
+
+# SQS Queue
+
+```yaml
+Resources:
+
+  OrdersQueue:
+
+    Type: AWS::SQS::Queue
+
+    Properties:
+
+      QueueName: orders
+```
+
+---
+
+# Dead Letter Queue
+
+```yaml
+Resources:
+
+  DLQ:
+
+    Type: AWS::SQS::Queue
+
+    Properties:
+
+      QueueName: orders-dlq
+```
+
+---
+
+# Redrive Policy
+
+```yaml
+RedrivePolicy:
+
+  deadLetterTargetArn: !GetAtt DLQ.Arn
+
+  maxReceiveCount: 5
+```
+
+---
+
+# Step Functions
+
+```yaml
+Resources:
+
+  OrderWorkflow:
+
+    Type: AWS::StepFunctions::StateMachine
+
+    Properties:
+
+      StateMachineName: OrderWorkflow
+
+      DefinitionString: "{}"
+```
+
+---
+
+# Cloud Map Namespace
+
+```yaml
+Resources:
+
+  PrivateNamespace:
+
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+
+    Properties:
+
+      Name: internal.local
+
+      Vpc: !Ref VPC
+```
+
+---
+
+# Cloud Map Service
+
+```yaml
+Resources:
+
+  DiscoveryService:
+
+    Type: AWS::ServiceDiscovery::Service
+
+    Properties:
+
+      Name: web
+```
+
+---
+
+# Outputs
+
+```yaml
+Outputs:
+
+  ECRRepository:
+
+    Value: !Ref ECRRepository
+
+  ECSCluster:
+
+    Value: !Ref ECSCluster
+
+  EKSCluster:
+
+    Value: !Ref EKSCluster
+
+  LambdaFunction:
+
+    Value: !Ref LambdaFunction
+
+  OrdersQueue:
+
+    Value: !Ref OrdersQueue
+```
+
+---
+
+# Best Practices
+
+- Enable image scanning and immutable tags in Amazon ECR.
+- Store container images in private repositories.
+- Use ECS Fargate for serverless container workloads.
+- Enable EKS managed add-ons and IAM Roles for Service Accounts (IRSA).
+- Package Lambda code separately and store artifacts in S3.
+- Configure Dead Letter Queues (DLQs) for SQS and Lambda.
+- Use EventBridge for event-driven architectures.
+- Protect API Gateway using IAM, Cognito, or Lambda authorizers.
+- Use Cloud Map for service discovery in microservices.
+- Tag all container and serverless resources consistently.
+
+---
+
+# Summary
+
+This section covered CloudFormation templates for Amazon ECR, ECS, EKS, Lambda, API Gateway (REST and HTTP APIs), App Runner, EventBridge, SNS, SQS, Step Functions, and AWS Cloud Map. These templates provide production-ready patterns for deploying containerized, Kubernetes-based, and serverless applications using AWS CloudFormation.
+
+---
+
