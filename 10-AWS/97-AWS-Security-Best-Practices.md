@@ -3560,3 +3560,550 @@ This section covered DevSecOps principles, secure SDLC, CI/CD security, Jenkins,
 
 ---
 
+# Security Compliance
+
+---
+
+# Introduction
+
+Compliance ensures AWS workloads meet legal, regulatory, and organizational security requirements through governance, continuous monitoring, auditing, and documentation.
+
+Objectives
+
+- Meet regulatory requirements
+- Reduce security risk
+- Maintain audit readiness
+- Protect sensitive data
+- Demonstrate compliance
+
+---
+
+# AWS Well-Architected Security Pillar
+
+Principles
+
+- Implement a strong identity foundation
+- Enable traceability
+- Apply security at all layers
+- Automate security best practices
+- Protect data in transit and at rest
+- Keep people away from data
+- Prepare for security events
+
+---
+
+# Governance Framework
+
+```text
+Security Policies
+
+↓
+
+Security Standards
+
+↓
+
+Implementation
+
+↓
+
+Monitoring
+
+↓
+
+Auditing
+
+↓
+
+Continuous Improvement
+```
+
+---
+
+# CIS AWS Foundations Benchmark
+
+Purpose
+
+Provides security best practices for AWS environments.
+
+Major Categories
+
+- IAM
+- Logging
+- Monitoring
+- Networking
+- Storage
+
+---
+
+# Typical CIS Checks
+
+- Root MFA enabled
+- No root access keys
+- CloudTrail enabled
+- CloudTrail log validation enabled
+- S3 bucket logging configured
+- IAM password policy enforced
+- Security Groups reviewed
+- VPC Flow Logs enabled
+
+---
+
+# PCI DSS
+
+Purpose
+
+Protect payment card information.
+
+Common Requirements
+
+- Encrypt cardholder data
+- Network segmentation
+- Vulnerability management
+- Access control
+- Logging
+- Regular testing
+
+---
+
+# HIPAA
+
+Purpose
+
+Protect electronic Protected Health Information (ePHI).
+
+Security Controls
+
+- Encryption
+- Audit logging
+- Access controls
+- Backup
+- Disaster recovery
+
+---
+
+# ISO 27001
+
+Purpose
+
+Information Security Management System (ISMS).
+
+Domains
+
+- Asset Management
+- Access Control
+- Cryptography
+- Operations Security
+- Supplier Security
+- Incident Management
+
+---
+
+# SOC 2
+
+Trust Service Criteria
+
+- Security
+- Availability
+- Processing Integrity
+- Confidentiality
+- Privacy
+
+---
+
+# NIST Cybersecurity Framework
+
+Core Functions
+
+```text
+Identify
+
+↓
+
+Protect
+
+↓
+
+Detect
+
+↓
+
+Respond
+
+↓
+
+Recover
+```
+
+---
+
+# AWS Audit Manager
+
+Purpose
+
+Automates evidence collection for compliance audits.
+
+Benefits
+
+- Continuous evidence gathering
+- Audit reporting
+- Framework mapping
+- Reduced manual effort
+
+---
+
+# Audit Manager Workflow
+
+```text
+Compliance Framework
+
+↓
+
+Collect Evidence
+
+↓
+
+Review Controls
+
+↓
+
+Generate Report
+
+↓
+
+Audit
+```
+
+---
+
+# AWS Artifact
+
+Purpose
+
+Provides access to AWS compliance reports and agreements.
+
+Examples
+
+- SOC Reports
+- ISO Certifications
+- PCI Reports
+- GDPR Documentation
+
+---
+
+# Amazon Macie
+
+Purpose
+
+Uses machine learning to discover and protect sensitive data stored in Amazon S3.
+
+Detects
+
+- Personally Identifiable Information (PII)
+- Financial data
+- Credentials
+- Sensitive business information
+
+---
+
+# Macie Workflow
+
+```text
+Amazon S3
+
+↓
+
+Macie Scan
+
+↓
+
+Sensitive Data Found
+
+↓
+
+Security Finding
+
+↓
+
+Remediation
+```
+
+---
+
+# Data Classification
+
+Levels
+
+```text
+Public
+
+↓
+
+Internal
+
+↓
+
+Confidential
+
+↓
+
+Restricted
+```
+
+---
+
+# Data Handling
+
+Public
+
+- Minimal restrictions
+
+Internal
+
+- Employee access only
+
+Confidential
+
+- Encryption required
+
+Restricted
+
+- Strict access controls
+- Continuous monitoring
+- Audit logging
+
+---
+
+# Security Policies
+
+Examples
+
+- Password Policy
+- Encryption Policy
+- Backup Policy
+- Logging Policy
+- Incident Response Policy
+- Access Control Policy
+- Data Retention Policy
+
+---
+
+# Governance Controls
+
+Implement
+
+- IAM reviews
+- Resource tagging
+- Encryption enforcement
+- Backup verification
+- Logging validation
+- Vulnerability management
+
+---
+
+# Enterprise Security Standards
+
+Require
+
+- MFA
+- Least privilege
+- Encryption
+- Logging
+- Monitoring
+- Vulnerability scanning
+- Patch management
+- Incident response
+
+---
+
+# Compliance Monitoring
+
+Monitor
+
+- AWS Config Rules
+- Security Hub
+- GuardDuty
+- Inspector
+- CloudTrail
+- Macie
+
+---
+
+# Continuous Compliance
+
+Workflow
+
+```text
+Provision Resource
+
+↓
+
+Evaluate Configuration
+
+↓
+
+Detect Non-Compliance
+
+↓
+
+Generate Finding
+
+↓
+
+Remediate
+
+↓
+
+Verify Compliance
+```
+
+---
+
+# Compliance Dashboard
+
+Display
+
+- Compliance score
+- Open findings
+- Critical risks
+- Non-compliant resources
+- Encryption status
+- Patch status
+- Audit readiness
+
+---
+
+# Enterprise Security Reviews
+
+Daily
+
+- Critical findings
+- Security alerts
+- IAM changes
+
+---
+
+Weekly
+
+- Compliance violations
+- Vulnerability reports
+- Patch status
+- Security posture
+
+---
+
+Monthly
+
+- Audit reports
+- Governance review
+- Security metrics
+- Executive reporting
+
+---
+
+Quarterly
+
+- Compliance assessment
+- Policy review
+- Disaster recovery testing
+- Risk assessment
+
+---
+
+# Security Documentation
+
+Maintain
+
+- Policies
+- Procedures
+- Runbooks
+- Architecture diagrams
+- Risk register
+- Asset inventory
+- Compliance reports
+
+---
+
+# Common Compliance Issues
+
+- Missing MFA
+- Public S3 buckets
+- Unencrypted storage
+- Weak IAM policies
+- Missing audit logs
+- Delayed patching
+- Poor documentation
+- Missing backups
+- Non-compliant Security Groups
+- Incomplete evidence collection
+
+---
+
+# Enterprise Compliance Checklist
+
+## Identity
+
+- MFA enabled
+- Least privilege
+- IAM reviews
+- Credential rotation
+
+---
+
+## Data
+
+- Encryption at rest
+- Encryption in transit
+- Secrets protected
+- Data classification
+
+---
+
+## Infrastructure
+
+- CloudTrail enabled
+- AWS Config enabled
+- GuardDuty enabled
+- Security Hub enabled
+
+---
+
+## Compliance
+
+- Audit Manager configured
+- Macie enabled
+- CIS Benchmark reviewed
+- Evidence collected
+
+---
+
+## Governance
+
+- Policies documented
+- Security reviews
+- Risk assessments
+- Executive reporting
+
+---
+
+# Best Practices
+
+- Align cloud security with recognized compliance frameworks.
+- Enable continuous compliance monitoring using AWS Config and Security Hub.
+- Use AWS Audit Manager to automate evidence collection.
+- Review AWS Artifact regularly for compliance documentation.
+- Classify data and apply appropriate security controls.
+- Use Amazon Macie to identify sensitive data stored in Amazon S3.
+- Maintain comprehensive security documentation and runbooks.
+- Perform regular compliance assessments and risk reviews.
+- Integrate compliance into CI/CD and operational workflows.
+- Treat compliance as an ongoing process rather than a one-time audit activity.
+
+---
+
+# Summary
+
+This section covered the AWS Well-Architected Security Pillar, CIS AWS Foundations Benchmark, PCI DSS, HIPAA, ISO 27001, SOC 2, NIST Cybersecurity Framework, AWS Audit Manager, AWS Artifact, Amazon Macie, data classification, governance, enterprise compliance practices, and continuous compliance monitoring. These controls help organizations achieve and maintain regulatory compliance while strengthening overall security posture.
+
+---
+
