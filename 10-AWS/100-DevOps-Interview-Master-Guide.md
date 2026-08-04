@@ -2256,3 +2256,658 @@ This section covered Linux permissions, users and groups, hard and soft links, i
 
 ---
 
+# AWS Interview Questions (Basic → Intermediate)
+
+---
+
+# Introduction
+
+AWS is one of the most frequently tested topics in DevOps interviews. Interviewers expect not only service definitions but also practical production experience, architecture knowledge, troubleshooting skills, and cost/security best practices.
+
+This section covers:
+
+- AWS Basics
+- Global Infrastructure
+- EC2
+- EBS
+- IAM
+- VPC
+- S3
+- ELB
+- Auto Scaling
+- Production Scenarios
+- Follow-up Questions
+
+---
+
+# Question 1
+
+## What is AWS?
+
+### Answer
+
+AWS (Amazon Web Services) is a cloud computing platform that provides on-demand infrastructure and managed services.
+
+It offers services in:
+
+- Compute
+- Storage
+- Networking
+- Databases
+- Security
+- Monitoring
+- AI/ML
+- Analytics
+
+---
+
+### Follow-up
+
+Why do companies use AWS?
+
+Answer
+
+- Pay-as-you-go pricing
+- Global availability
+- High availability
+- Scalability
+- Managed services
+- Security
+- Reliability
+
+---
+
+# Question 2
+
+## Explain AWS Global Infrastructure
+
+### Answer
+
+AWS Global Infrastructure consists of:
+
+- Regions
+- Availability Zones (AZs)
+- Edge Locations
+- Regional Edge Caches
+
+---
+
+### Region
+
+A geographic area containing multiple Availability Zones.
+
+Examples
+
+- us-east-1
+- eu-west-1
+- ap-south-1 (Mumbai)
+
+---
+
+### Availability Zone
+
+An isolated data center within a Region.
+
+Benefits
+
+- Fault isolation
+- High availability
+- Disaster recovery
+
+---
+
+### Edge Locations
+
+Used by CloudFront and Route 53.
+
+Purpose
+
+- Low latency
+- Faster content delivery
+
+---
+
+### Follow-up
+
+Difference between Region and AZ?
+
+| Region | Availability Zone |
+|----------|-------------------|
+| Geographic location | Individual data center |
+| Multiple AZs | Part of one Region |
+| Disaster recovery | High availability |
+
+---
+
+# Question 3
+
+## What is EC2?
+
+### Answer
+
+Amazon EC2 (Elastic Compute Cloud) provides scalable virtual servers in the cloud.
+
+Common Use Cases
+
+- Web servers
+- Application servers
+- CI/CD servers
+- Bastion hosts
+- Kubernetes worker nodes
+
+---
+
+### EC2 Launch Workflow
+
+```text
+AMI
+
+↓
+
+Instance Type
+
+↓
+
+Storage
+
+↓
+
+Security Group
+
+↓
+
+Key Pair
+
+↓
+
+Launch
+```
+
+---
+
+### Follow-up
+
+Which instance types have you used?
+
+Examples
+
+- t3.micro
+- t3.medium
+- t3.large
+- m5.large
+- c5.large
+- r5.large
+
+Explain the workload each instance family is designed for.
+
+---
+
+# Question 4
+
+## What is an AMI?
+
+### Answer
+
+AMI (Amazon Machine Image) is a template used to launch EC2 instances.
+
+Contains
+
+- Operating System
+- Installed software
+- Configuration
+- Boot volume
+
+---
+
+### Types
+
+- Amazon AMI
+- Community AMI
+- Custom AMI
+
+---
+
+### Production Example
+
+Create a custom AMI after configuring Jenkins so multiple identical servers can be launched quickly.
+
+---
+
+# Question 5
+
+## What is an EBS Volume?
+
+### Answer
+
+Amazon EBS (Elastic Block Store) provides persistent block storage for EC2.
+
+Characteristics
+
+- Persistent
+- High performance
+- Can be attached/detached
+- Supports snapshots
+
+---
+
+### EBS Volume Types
+
+| Type | Use Case |
+|------|----------|
+| gp3 | General purpose SSD |
+| io2 | High-performance databases |
+| st1 | Throughput-intensive HDD |
+| sc1 | Cold HDD |
+
+---
+
+### Follow-up
+
+Difference between EBS and Instance Store?
+
+| EBS | Instance Store |
+|------|----------------|
+| Persistent | Temporary |
+| Supports snapshots | No snapshots |
+| Survives reboot | Lost if instance is terminated (ephemeral) |
+| Network attached | Local storage |
+
+---
+
+# Question 6
+
+## What is an EBS Snapshot?
+
+### Answer
+
+A snapshot is a point-in-time backup of an EBS volume stored in Amazon S3.
+
+Benefits
+
+- Backup
+- Disaster Recovery
+- Volume restoration
+- Cross-Region copy
+
+---
+
+# Question 7
+
+## Difference Between Stop, Start, Reboot and Terminate
+
+| Action | Instance ID | Public IP | Data on EBS |
+|----------|-------------|-----------|-------------|
+| Stop | Retained | May change | Preserved |
+| Start | Same | May change | Preserved |
+| Reboot | Same | Same | Preserved |
+| Terminate | Deleted | Released | Deleted unless configured otherwise |
+
+---
+
+### Follow-up
+
+When would you reboot instead of stopping an instance?
+
+Answer
+
+For application or operating system issues that don't require changing the underlying host or deallocating resources.
+
+---
+
+# Question 8
+
+## What is IAM?
+
+### Answer
+
+AWS Identity and Access Management (IAM) controls authentication and authorization for AWS resources.
+
+Supports
+
+- Users
+- Groups
+- Roles
+- Policies
+
+---
+
+# Question 9
+
+## IAM Components
+
+### User
+
+Represents an individual identity.
+
+---
+
+### Group
+
+Collection of users.
+
+---
+
+### Role
+
+Temporary permissions assumed by AWS services or identities.
+
+Examples
+
+- EC2 Role
+- EKS Node Role
+- Lambda Execution Role
+
+---
+
+### Policy
+
+JSON document defining permissions.
+
+---
+
+# Question 10
+
+## IAM Role vs IAM User
+
+| IAM User | IAM Role |
+|-----------|----------|
+| Permanent identity | Temporary permissions |
+| Long-term credentials | Temporary credentials |
+| Human users | AWS services or federated identities |
+
+---
+
+### Production Example
+
+Attach an IAM Role to an EC2 instance so applications can access Amazon S3 without storing access keys.
+
+---
+
+# Question 11
+
+## What is a VPC?
+
+### Answer
+
+Amazon VPC (Virtual Private Cloud) is a logically isolated virtual network within AWS.
+
+Components
+
+- Subnets
+- Route Tables
+- Internet Gateway
+- NAT Gateway
+- Security Groups
+- Network ACLs
+
+---
+
+# Question 12
+
+## Public vs Private Subnet
+
+| Public | Private |
+|----------|----------|
+| Internet access | No direct internet access |
+| Internet Gateway route | NAT Gateway for outbound internet |
+| ALB, Bastion Hosts | Databases, Application Servers |
+
+---
+
+# Question 13
+
+## Internet Gateway
+
+### Answer
+
+Provides internet connectivity for resources in public subnets.
+
+---
+
+### Workflow
+
+```text
+Internet
+
+↓
+
+Internet Gateway
+
+↓
+
+Public Subnet
+
+↓
+
+EC2
+```
+
+---
+
+# Question 14
+
+## NAT Gateway
+
+### Answer
+
+Allows instances in private subnets to access the internet for outbound traffic while preventing inbound internet connections.
+
+---
+
+### Production Example
+
+Private EC2 instances download OS updates through a NAT Gateway.
+
+---
+
+# Question 15
+
+## Security Group vs Network ACL
+
+| Security Group | Network ACL |
+|----------------|-------------|
+| Instance level | Subnet level |
+| Stateful | Stateless |
+| Allow rules only | Allow and Deny rules |
+| Applied to ENIs | Applied to subnets |
+
+---
+
+### Interview Tip
+
+This is one of the most frequently asked AWS interview questions.
+
+---
+
+# Question 16
+
+## Route Table
+
+### Answer
+
+Defines how network traffic is routed within a VPC.
+
+Contains
+
+- Destination CIDR
+- Target
+
+Targets
+
+- Internet Gateway
+- NAT Gateway
+- VPC Peering
+- Transit Gateway
+
+---
+
+# Question 17
+
+## What is Amazon S3?
+
+### Answer
+
+Amazon S3 is an object storage service.
+
+Common Use Cases
+
+- Backups
+- Static websites
+- Images
+- Videos
+- Logs
+- Terraform state
+
+---
+
+### S3 Storage Classes
+
+- Standard
+- Intelligent-Tiering
+- Standard-IA
+- One Zone-IA
+- Glacier Instant Retrieval
+- Glacier Flexible Retrieval
+- Glacier Deep Archive
+
+---
+
+# Question 18
+
+## S3 Versioning
+
+Purpose
+
+Maintain multiple versions of an object.
+
+Benefits
+
+- Recovery
+- Protection against accidental deletion
+- Rollback
+
+---
+
+# Question 19
+
+## What is an Elastic Load Balancer (ELB)?
+
+### Answer
+
+Distributes incoming traffic across multiple targets.
+
+Types
+
+- Application Load Balancer (ALB)
+- Network Load Balancer (NLB)
+- Gateway Load Balancer (GWLB)
+
+---
+
+# Question 20
+
+## Auto Scaling
+
+### Answer
+
+Automatically adjusts EC2 capacity based on demand.
+
+Benefits
+
+- High availability
+- Cost optimization
+- Automatic recovery
+
+---
+
+### Workflow
+
+```text
+High CPU
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+Auto Scaling Group
+
+↓
+
+Launch EC2
+
+↓
+
+Register with ALB
+```
+
+---
+
+# Production Scenario 1
+
+Users cannot access the application hosted on EC2.
+
+### Investigation
+
+1. Check EC2 instance state.
+2. Verify Security Group rules.
+3. Verify ALB target health.
+4. Check Route Table.
+5. Verify Internet Gateway.
+6. Review application logs.
+
+---
+
+# Production Scenario 2
+
+Private EC2 instances cannot download packages.
+
+### Investigation
+
+Verify
+
+- NAT Gateway status
+- Route Table
+- Security Group
+- Network ACL
+- DNS resolution
+
+---
+
+# Production Scenario 3
+
+Application becomes slow during peak traffic.
+
+### Investigation
+
+Review
+
+- CloudWatch CPU metrics
+- Auto Scaling activity
+- ALB request count
+- Target response time
+- EC2 resource utilization
+
+---
+
+# AWS Interview Tips
+
+When answering AWS questions:
+
+1. Explain the service.
+2. Describe its architecture.
+3. Mention a real production use case.
+4. Discuss security considerations.
+5. Explain monitoring and troubleshooting.
+
+This demonstrates both conceptual understanding and practical experience.
+
+---
+
+# Summary
+
+This section covered AWS fundamentals, Global Infrastructure, EC2, AMIs, EBS, IAM, VPC, subnets, Internet Gateway, NAT Gateway, Security Groups, Network ACLs, Route Tables, S3, Elastic Load Balancing, Auto Scaling, and production troubleshooting scenarios. These are among the most frequently asked AWS topics in DevOps interviews.
+
+---
+
