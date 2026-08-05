@@ -5518,3 +5518,715 @@ and business continues.
 
 ---
 
+# Chapter 9 - AWS Disaster Recovery Testing, Automation & Failover
+
+A Disaster Recovery (DR) plan is only valuable if it actually works during a real disaster.
+
+Many organizations spend months designing DR architectures but never test them.
+
+During an actual outage, they discover
+
+- Recovery scripts fail
+- Backups are corrupted
+- DNS doesn't switch
+- Applications cannot start
+- Databases cannot recover
+
+This is why AWS recommends **regular Disaster Recovery testing** and **automation**.
+
+---
+
+# Why Test Disaster Recovery?
+
+Imagine a company has
+
+- Daily backups
+- Cross-region replication
+- Route53 failover
+- Standby infrastructure
+
+But
+
+```text
+Disaster
+
+↓
+
+Recovery Script Fails
+
+↓
+
+Application Offline
+```
+
+The architecture existed,
+
+but recovery failed because it was never tested.
+
+---
+
+# Goals of Disaster Recovery Testing
+
+Testing verifies
+
+- Recovery Procedures
+- Infrastructure
+- Replication
+- Backups
+- DNS Failover
+- Application Availability
+- Recovery Time
+- Data Integrity
+
+---
+
+# Disaster Recovery Lifecycle
+
+```text
+Plan
+
+↓
+
+Implement
+
+↓
+
+Replicate
+
+↓
+
+Monitor
+
+↓
+
+Test
+
+↓
+
+Improve
+
+↓
+
+Repeat
+```
+
+Disaster Recovery is a continuous process.
+
+---
+
+# Types of Disaster Recovery Tests
+
+AWS environments commonly perform
+
+- Backup Restoration Test
+- Database Recovery Test
+- Regional Failover Test
+- Application Recovery Test
+- Network Failover Test
+- Complete Disaster Recovery Drill
+
+Each validates a different part of the architecture.
+
+---
+
+# Backup Restoration Test
+
+Purpose
+
+Verify backups can actually be restored.
+
+Workflow
+
+```text
+AWS Backup
+
+↓
+
+Restore
+
+↓
+
+New Environment
+
+↓
+
+Application Test
+```
+
+Creating backups alone is not enough.
+
+They must be restorable.
+
+---
+
+# Database Recovery Test
+
+Example
+
+```text
+Aurora
+
+↓
+
+Cross Region Replica
+
+↓
+
+Promote Replica
+
+↓
+
+Application Test
+```
+
+Verify
+
+- Data Integrity
+- Application Connectivity
+- Recovery Time
+
+---
+
+# Regional Failover Test
+
+Example
+
+```text
+Mumbai
+
+↓
+
+Disabled
+
+↓
+
+Route53
+
+↓
+
+Singapore
+
+↓
+
+Application Available
+```
+
+This validates Regional Disaster Recovery.
+
+---
+
+# Application Recovery Test
+
+Application testing verifies
+
+- APIs
+- Authentication
+- Database Connections
+- Background Jobs
+- Queues
+- Storage
+
+Infrastructure recovery alone is insufficient.
+
+Applications must function correctly.
+
+---
+
+# Network Recovery Test
+
+Verify
+
+```text
+Route53
+
+↓
+
+ALB
+
+↓
+
+Transit Gateway
+
+↓
+
+VPN
+
+↓
+
+Direct Connect
+```
+
+Networking must recover automatically.
+
+---
+
+# Complete Disaster Recovery Drill
+
+Enterprise organizations perform
+
+full disaster simulations.
+
+Workflow
+
+```text
+Primary Region
+
+↓
+
+Simulated Failure
+
+↓
+
+Recovery
+
+↓
+
+Validation
+
+↓
+
+Business Approval
+```
+
+These exercises often involve multiple teams.
+
+---
+
+# Recovery Validation
+
+After recovery,
+
+verify
+
+- Users can log in
+- APIs respond
+- Databases are healthy
+- Files are accessible
+- Monitoring works
+- Alerts function
+
+Recovery isn't complete until applications are fully operational.
+
+---
+
+# Measuring RTO
+
+Example
+
+```text
+Failure
+
+10:00
+
+↓
+
+Recovered
+
+10:08
+```
+
+Recovery Time
+
+```text
+8 Minutes
+```
+
+If business requires
+
+```text
+RTO
+
+10 Minutes
+```
+
+The test succeeds.
+
+---
+
+# Measuring RPO
+
+Example
+
+```text
+Latest Transaction
+
+09:59:30
+
+↓
+
+Failure
+
+10:00:00
+
+↓
+
+Recovery
+```
+
+Maximum Data Loss
+
+```text
+30 Seconds
+```
+
+This validates the RPO requirement.
+
+---
+
+# Infrastructure as Code
+
+Recovery should be automated.
+
+Example
+
+```text
+Terraform
+
+↓
+
+Infrastructure
+
+↓
+
+Deploy
+
+↓
+
+Application
+```
+
+Entire environments can be recreated automatically.
+
+---
+
+# CloudFormation
+
+AWS CloudFormation also supports Disaster Recovery automation.
+
+```text
+CloudFormation Template
+
+↓
+
+Deploy
+
+↓
+
+Infrastructure Ready
+```
+
+Infrastructure becomes repeatable.
+
+---
+
+# CI/CD for Disaster Recovery
+
+Modern enterprises automate recovery.
+
+```text
+Git
+
+↓
+
+Terraform
+
+↓
+
+CloudFormation
+
+↓
+
+AWS
+
+↓
+
+Recovery Environment
+```
+
+Infrastructure deployment becomes part of CI/CD.
+
+---
+
+# Automated Database Recovery
+
+```text
+Aurora Replica
+
+↓
+
+Promote
+
+↓
+
+Update Endpoint
+
+↓
+
+Application Running
+```
+
+Automation reduces human error.
+
+---
+
+# Route53 Automated Failover
+
+```text
+Health Check
+
+↓
+
+Failure
+
+↓
+
+Route53
+
+↓
+
+Secondary Region
+
+↓
+
+Users Connected
+```
+
+No manual DNS changes are required.
+
+---
+
+# Auto Scaling Recovery
+
+Suppose
+
+```text
+Primary Region
+
+↓
+
+Unavailable
+```
+
+Secondary Region
+
+```text
+Auto Scaling
+
+↓
+
+Increase Capacity
+
+↓
+
+Users Served
+```
+
+Capacity grows automatically after failover.
+
+---
+
+# Monitoring During Recovery
+
+Monitor
+
+- CloudWatch Metrics
+- Route53 Health Checks
+- Database Replication
+- EC2 Health
+- ALB Health
+- API Availability
+
+Recovery should be continuously monitored.
+
+---
+
+# CloudWatch Alarms
+
+```text
+Failure
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+SNS
+
+↓
+
+Operations Team
+```
+
+Engineers receive immediate notifications.
+
+---
+
+# Disaster Recovery Runbook
+
+Every enterprise should maintain a DR runbook.
+
+Typical contents
+
+- Recovery Steps
+- Contact Information
+- Recovery Order
+- Validation Checklist
+- Escalation Process
+- Rollback Procedures
+
+Runbooks reduce confusion during incidents.
+
+---
+
+# Recovery Sequence
+
+Typical recovery order
+
+```text
+Networking
+
+↓
+
+Identity
+
+↓
+
+Storage
+
+↓
+
+Databases
+
+↓
+
+Applications
+
+↓
+
+DNS
+
+↓
+
+Validation
+```
+
+Recovering components in the wrong order may delay recovery.
+
+---
+
+# Enterprise Banking Example
+
+Architecture
+
+```text
+Mumbai
+
+↓
+
+Failure
+
+↓
+
+Route53
+
+↓
+
+Singapore
+
+↓
+
+Aurora Promotion
+
+↓
+
+Auto Scaling
+
+↓
+
+Banking Application
+
+↓
+
+Customers Continue
+```
+
+Recovery is mostly automated.
+
+---
+
+# Disaster Recovery Maturity
+
+Organizations typically evolve through stages.
+
+```text
+Manual Recovery
+
+↓
+
+Documented Recovery
+
+↓
+
+Automated Recovery
+
+↓
+
+Continuous Testing
+
+↓
+
+Self-Healing Architecture
+```
+
+Modern cloud-native systems aim for automated recovery.
+
+---
+
+# Best Practices
+
+- Test Disaster Recovery regularly.
+- Automate infrastructure deployment.
+- Measure actual RTO and RPO.
+- Restore backups periodically.
+- Automate Route53 failover.
+- Keep DR runbooks updated.
+- Review Disaster Recovery after major application changes.
+- Include Disaster Recovery testing in annual compliance audits.
+
+---
+
+# Common Mistakes
+
+- Never testing backups.
+- Assuming replication guarantees recovery.
+- Manual infrastructure creation during disasters.
+- Ignoring application validation after recovery.
+- Outdated recovery documentation.
+- No monitoring during failover.
+- Not measuring recovery objectives.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why should Disaster Recovery plans be tested?
+- What is a Disaster Recovery runbook?
+- What should be validated after recovery?
+
+## Intermediate
+
+- How do you measure RTO and RPO during a DR test?
+- Explain how Infrastructure as Code improves Disaster Recovery.
+- Why is application validation important after failover?
+
+## Advanced
+
+- Design a fully automated Disaster Recovery process for a production banking application using Route53, CloudWatch, Auto Scaling, Aurora Global Database, Terraform, and AWS Backup.
+- Explain your complete Disaster Recovery testing strategy for a multinational enterprise operating across multiple AWS Regions.
+- A company has a documented Disaster Recovery plan but has never tested it. Explain how you would design, execute, validate, and improve a complete Disaster Recovery drill while ensuring business continuity and compliance.
+
+---
+
