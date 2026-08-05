@@ -5364,3 +5364,716 @@ No production workloads are directly exposed to the Internet.
 
 ---
 
+# Chapter 9 - AWS Data Security (Encryption, KMS, Secrets Manager & Certificate Management)
+
+Data is one of the most valuable assets in any organization.
+
+Even if your infrastructure is secure,
+
+a data breach can expose
+
+- Customer Information
+- Financial Records
+- API Keys
+- Passwords
+- Intellectual Property
+- Healthcare Records
+
+AWS provides multiple services to secure data throughout its lifecycle.
+
+Enterprise data security focuses on
+
+- Encryption
+- Key Management
+- Secret Management
+- Certificate Management
+- Secure Data Access
+
+---
+
+# Data Security Lifecycle
+
+```text
+Create
+
+↓
+
+Store
+
+↓
+
+Access
+
+↓
+
+Transfer
+
+↓
+
+Archive
+
+↓
+
+Delete
+```
+
+Every stage must be protected.
+
+---
+
+# Types of Data
+
+AWS classifies data into two major categories.
+
+```text
+Data at Rest
+
+↓
+
+Stored Data
+
+────────────────
+
+Data in Transit
+
+↓
+
+Moving Data
+```
+
+Each requires different protection mechanisms.
+
+---
+
+# Data at Rest
+
+Data stored on
+
+- Amazon S3
+- Amazon EBS
+- Amazon RDS
+- DynamoDB
+- EFS
+- FSx
+
+is called
+
+```text
+Data at Rest
+```
+
+This data should always be encrypted.
+
+---
+
+# Data in Transit
+
+Data moving between systems.
+
+Example
+
+```text
+User
+
+↓
+
+HTTPS
+
+↓
+
+Application
+
+↓
+
+TLS
+
+↓
+
+Database
+```
+
+Encryption protects traffic during transmission.
+
+---
+
+# Encryption
+
+Encryption converts readable information into unreadable data.
+
+```text
+Plain Text
+
+↓
+
+Encryption
+
+↓
+
+Cipher Text
+
+↓
+
+Decryption
+
+↓
+
+Plain Text
+```
+
+Without the encryption key,
+
+the data cannot be read.
+
+---
+
+# Symmetric Encryption
+
+Uses one key.
+
+```text
+Encrypt
+
+↓
+
+Key
+
+↓
+
+Decrypt
+
+↓
+
+Same Key
+```
+
+Examples
+
+- AES-256
+- AWS KMS Keys
+
+---
+
+# Asymmetric Encryption
+
+Uses two keys.
+
+```text
+Public Key
+
+↓
+
+Encrypt
+
+↓
+
+Private Key
+
+↓
+
+Decrypt
+```
+
+Commonly used for
+
+- TLS
+- SSL
+- Certificates
+
+---
+
+# AWS Key Management Service (KMS)
+
+AWS KMS manages encryption keys.
+
+It provides
+
+- Key Creation
+- Key Rotation
+- Key Policies
+- Auditing
+- Secure Storage
+
+Applications use KMS without managing encryption infrastructure.
+
+---
+
+# KMS Architecture
+
+```text
+Application
+
+↓
+
+AWS KMS
+
+↓
+
+Encryption Key
+
+↓
+
+Encrypted Data
+```
+
+Keys remain protected inside AWS.
+
+---
+
+# Customer Managed Keys (CMKs)
+
+Organizations create and manage their own keys.
+
+Benefits
+
+- Rotation Control
+- IAM Policies
+- Auditing
+- Compliance
+
+Suitable for enterprise workloads.
+
+---
+
+# AWS Managed Keys
+
+AWS automatically creates and manages keys.
+
+Example
+
+```text
+Amazon RDS
+
+↓
+
+AWS Managed Key
+```
+
+Simpler,
+
+but offers less administrative control.
+
+---
+
+# Envelope Encryption
+
+AWS commonly uses envelope encryption.
+
+```text
+Data
+
+↓
+
+Data Key
+
+↓
+
+KMS Key
+
+↓
+
+Encrypted Data Key
+```
+
+This provides high performance and strong security.
+
+---
+
+# Amazon S3 Encryption
+
+Amazon S3 supports multiple encryption options.
+
+- SSE-S3
+- SSE-KMS
+- SSE-C
+- Client-Side Encryption
+
+---
+
+# SSE-S3
+
+AWS manages encryption automatically.
+
+```text
+Object
+
+↓
+
+Amazon S3
+
+↓
+
+Encrypted
+```
+
+Easy to enable.
+
+---
+
+# SSE-KMS
+
+Uses AWS KMS.
+
+```text
+Object
+
+↓
+
+AWS KMS
+
+↓
+
+Encrypted Object
+```
+
+Provides auditing and fine-grained access control.
+
+---
+
+# Client-Side Encryption
+
+Data is encrypted before reaching AWS.
+
+```text
+Application
+
+↓
+
+Encrypt
+
+↓
+
+Amazon S3
+```
+
+AWS never sees plaintext.
+
+---
+
+# Amazon EBS Encryption
+
+Example
+
+```text
+EC2
+
+↓
+
+Encrypted EBS Volume
+
+↓
+
+AWS KMS
+```
+
+Snapshots remain encrypted.
+
+---
+
+# Amazon RDS Encryption
+
+RDS supports encryption using AWS KMS.
+
+```text
+Application
+
+↓
+
+Amazon RDS
+
+↓
+
+Encrypted Storage
+```
+
+Backups and snapshots are also encrypted.
+
+---
+
+# DynamoDB Encryption
+
+DynamoDB encrypts data automatically.
+
+Architecture
+
+```text
+Application
+
+↓
+
+DynamoDB
+
+↓
+
+AWS KMS
+```
+
+No application changes are required.
+
+---
+
+# What is AWS Secrets Manager?
+
+Applications need
+
+- Database Passwords
+- API Keys
+- Tokens
+- Certificates
+
+Hardcoding these values is insecure.
+
+Secrets Manager securely stores and rotates secrets.
+
+---
+
+# Secrets Manager Architecture
+
+```text
+Application
+
+↓
+
+Secrets Manager
+
+↓
+
+Retrieve Secret
+
+↓
+
+Database
+```
+
+Applications request secrets at runtime.
+
+---
+
+# Benefits
+
+- Automatic Rotation
+- Encryption
+- Audit Logging
+- IAM Integration
+- Centralized Secret Storage
+
+---
+
+# Systems Manager Parameter Store
+
+Parameter Store also stores
+
+- Configuration
+- Secrets
+- Environment Variables
+
+Architecture
+
+```text
+Application
+
+↓
+
+Parameter Store
+
+↓
+
+Configuration
+```
+
+Often used for application settings.
+
+---
+
+# Secrets Manager vs Parameter Store
+
+| Secrets Manager | Parameter Store |
+|-----------------|-----------------|
+| Secret Rotation | Manual or Basic |
+| Database Integration | Limited |
+| Designed for Secrets | General Configuration |
+| Higher Cost | Lower Cost |
+
+---
+
+# Certificate Management
+
+Applications using HTTPS require SSL/TLS certificates.
+
+AWS Certificate Manager (ACM) manages
+
+- Certificate Issuance
+- Renewal
+- Deployment
+
+---
+
+# AWS Certificate Manager
+
+Architecture
+
+```text
+Users
+
+↓
+
+HTTPS
+
+↓
+
+ACM Certificate
+
+↓
+
+Application Load Balancer
+```
+
+Certificates renew automatically.
+
+---
+
+# TLS Communication
+
+```text
+Client
+
+↓
+
+HTTPS
+
+↓
+
+ALB
+
+↓
+
+Application
+```
+
+Traffic remains encrypted.
+
+---
+
+# Enterprise Banking Example
+
+```text
+Customers
+
+↓
+
+HTTPS
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Secrets Manager
+
+↓
+
+Aurora
+
+↓
+
+AWS KMS Encryption
+```
+
+Sensitive data remains protected throughout the application.
+
+---
+
+# Enterprise Encryption Architecture
+
+```text
+Application
+
+↓
+
+TLS
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Secrets Manager
+
+↓
+
+Amazon RDS
+
+↓
+
+AWS KMS
+
+↓
+
+Encrypted Storage
+```
+
+Every layer implements encryption.
+
+---
+
+# Best Practices
+
+- Encrypt all sensitive data at rest.
+- Encrypt all traffic using TLS.
+- Use AWS KMS for enterprise encryption.
+- Store secrets in AWS Secrets Manager.
+- Rotate secrets automatically.
+- Enable encryption for EBS, RDS, and S3.
+- Use ACM for certificate management.
+- Audit KMS usage with CloudTrail.
+
+---
+
+# Common Mistakes
+
+- Hardcoding database passwords.
+- Storing secrets in Git repositories.
+- Disabling encryption for databases.
+- Using HTTP instead of HTTPS.
+- Sharing encryption keys.
+- Never rotating secrets.
+- Using the same key for every workload.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS KMS?
+- Data at Rest vs Data in Transit.
+- What is AWS Secrets Manager?
+
+## Intermediate
+
+- SSE-S3 vs SSE-KMS.
+- Secrets Manager vs Parameter Store.
+- Symmetric vs Asymmetric Encryption.
+- What is Envelope Encryption?
+
+## Advanced
+
+- Design a secure banking application using AWS KMS, Secrets Manager, ACM, Amazon RDS encryption, and TLS.
+- Explain how encryption works from the user's browser to an encrypted Amazon RDS database.
+- Design an enterprise key management strategy for a multi-account AWS organization, including KMS key policies, Secrets Manager, certificate management, automatic key rotation, and auditing with CloudTrail.
+
+---
+
