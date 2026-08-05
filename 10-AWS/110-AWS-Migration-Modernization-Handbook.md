@@ -1130,3 +1130,677 @@ This reduces business disruption.
 
 ---
 
+# Chapter 3 - AWS Cloud Adoption Framework (CAF) Deep Dive
+
+Successful cloud migration is not just a technical project.
+
+Many cloud migration failures happen because organizations focus only on moving servers while ignoring
+
+- Business Goals
+- People
+- Skills
+- Governance
+- Security
+- Operations
+
+To address these challenges, AWS created the **Cloud Adoption Framework (CAF)**.
+
+CAF provides a structured approach to help organizations successfully adopt AWS by aligning technology, business, and people.
+
+---
+
+# What is AWS Cloud Adoption Framework (CAF)?
+
+The AWS Cloud Adoption Framework (CAF) is a set of best practices that helps organizations prepare for cloud adoption.
+
+It provides guidance for
+
+- Planning
+- Governance
+- Technology
+- Security
+- Operations
+- Organizational Change
+
+CAF helps reduce migration risks and improve business outcomes.
+
+---
+
+# Why AWS CAF?
+
+Without a structured framework
+
+```text
+Cloud Migration
+
+↓
+
+Infrastructure Moved
+
+↓
+
+Poor Governance
+
+↓
+
+Security Issues
+
+↓
+
+Operational Problems
+```
+
+With AWS CAF
+
+```text
+Business Strategy
+
+↓
+
+People
+
+↓
+
+Governance
+
+↓
+
+Platform
+
+↓
+
+Security
+
+↓
+
+Operations
+
+↓
+
+Successful Migration
+```
+
+---
+
+# CAF Perspectives
+
+AWS CAF consists of six perspectives.
+
+```text
+Business
+
+↓
+
+People
+
+↓
+
+Governance
+
+↓
+
+Platform
+
+↓
+
+Security
+
+↓
+
+Operations
+```
+
+Each perspective addresses a different aspect of cloud adoption.
+
+---
+
+# Business Perspective
+
+The Business Perspective ensures that cloud migration supports organizational goals.
+
+Focus Areas
+
+- Business Value
+- Cost Optimization
+- Investment Planning
+- Return on Investment (ROI)
+- Risk Management
+
+---
+
+# Business Perspective Architecture
+
+```text
+Business Goals
+
+↓
+
+Cloud Strategy
+
+↓
+
+Migration Plan
+
+↓
+
+Business Outcomes
+```
+
+Cloud adoption should always align with business objectives.
+
+---
+
+# People Perspective
+
+Technology alone does not guarantee success.
+
+Organizations must prepare their workforce.
+
+Focus Areas
+
+- Training
+- Skills Development
+- Organizational Structure
+- Change Management
+- Cloud Culture
+
+---
+
+# People Perspective Example
+
+```text
+Employees
+
+↓
+
+AWS Training
+
+↓
+
+Certification
+
+↓
+
+Cloud Teams
+
+↓
+
+Successful Adoption
+```
+
+Skilled teams accelerate cloud transformation.
+
+---
+
+# Governance Perspective
+
+Governance ensures cloud resources are managed responsibly.
+
+Focus Areas
+
+- Policies
+- Compliance
+- Cost Control
+- Resource Management
+- Risk Assessment
+
+---
+
+# Governance Architecture
+
+```text
+Governance Policies
+
+↓
+
+AWS Organizations
+
+↓
+
+Accounts
+
+↓
+
+Compliance
+```
+
+Governance provides consistency across cloud environments.
+
+---
+
+# Platform Perspective
+
+The Platform Perspective focuses on the technical foundation.
+
+Includes
+
+- Networking
+- Compute
+- Storage
+- Databases
+- Landing Zone
+- Automation
+
+---
+
+# Platform Architecture
+
+```text
+Landing Zone
+
+↓
+
+Networking
+
+↓
+
+Identity
+
+↓
+
+Shared Services
+
+↓
+
+Applications
+```
+
+A strong platform simplifies future migrations.
+
+---
+
+# Security Perspective
+
+Security should be integrated into every migration phase.
+
+Focus Areas
+
+- IAM
+- Encryption
+- Network Security
+- Logging
+- Compliance
+- Monitoring
+
+---
+
+# Security Architecture
+
+```text
+IAM
+
+↓
+
+Encryption
+
+↓
+
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+```
+
+Security becomes part of the platform rather than an afterthought.
+
+---
+
+# Operations Perspective
+
+Operations ensure workloads remain healthy after migration.
+
+Focus Areas
+
+- Monitoring
+- Incident Response
+- Backup
+- Disaster Recovery
+- Automation
+- Continuous Improvement
+
+---
+
+# Operations Architecture
+
+```text
+CloudWatch
+
+↓
+
+Alarms
+
+↓
+
+Operations Team
+
+↓
+
+Incident Response
+```
+
+Reliable operations improve availability.
+
+---
+
+# CAF Assessment
+
+Before migration,
+
+organizations assess their readiness.
+
+Assessment Areas
+
+```text
+Business
+
+↓
+
+People
+
+↓
+
+Governance
+
+↓
+
+Platform
+
+↓
+
+Security
+
+↓
+
+Operations
+```
+
+Assessment identifies gaps that must be addressed.
+
+---
+
+# Cloud Readiness Assessment
+
+Typical questions include
+
+- Are employees trained?
+- Is governance defined?
+- Is networking ready?
+- Are security controls established?
+- Is the operating model prepared?
+- Are business objectives documented?
+
+---
+
+# Enterprise Migration Using CAF
+
+```text
+Assessment
+
+↓
+
+Gap Analysis
+
+↓
+
+Landing Zone
+
+↓
+
+Pilot Migration
+
+↓
+
+Production Migration
+
+↓
+
+Optimization
+```
+
+CAF supports the entire migration lifecycle.
+
+---
+
+# Landing Zone
+
+A Landing Zone is the secure AWS foundation.
+
+It includes
+
+- AWS Organizations
+- IAM Identity Center
+- Networking
+- Logging
+- Security
+- Shared Services
+
+Architecture
+
+```text
+Landing Zone
+
+↓
+
+Security
+
+↓
+
+Networking
+
+↓
+
+Accounts
+
+↓
+
+Applications
+```
+
+---
+
+# CAF and AWS MAP
+
+CAF works together with the AWS Migration Acceleration Program (MAP).
+
+```text
+CAF
+
+↓
+
+Assess Readiness
+
+↓
+
+MAP
+
+↓
+
+Mobilize
+
+↓
+
+Migrate
+
+↓
+
+Modernize
+```
+
+CAF prepares the organization,
+
+MAP executes the migration journey.
+
+---
+
+# Enterprise Example
+
+A manufacturing company plans to migrate 200 applications.
+
+Business Team
+
+```text
+Business Goals
+
+↓
+
+Cloud Cost Savings
+```
+
+People Team
+
+```text
+Training
+
+↓
+
+AWS Certifications
+```
+
+Platform Team
+
+```text
+Landing Zone
+
+↓
+
+Networking
+
+↓
+
+Identity
+```
+
+Security Team
+
+```text
+IAM
+
+↓
+
+CloudTrail
+
+↓
+
+Encryption
+```
+
+Operations Team
+
+```text
+Monitoring
+
+↓
+
+Incident Response
+```
+
+All teams work together under the CAF model.
+
+---
+
+# Benefits of AWS CAF
+
+- Reduced Migration Risk
+- Better Governance
+- Improved Security
+- Faster Cloud Adoption
+- Organizational Alignment
+- Better Operational Readiness
+- Long-Term Scalability
+
+---
+
+# CAF vs AWS MAP
+
+| AWS CAF | AWS MAP |
+|----------|----------|
+| Readiness Framework | Migration Program |
+| Organizational Preparation | Migration Execution |
+| Focuses on Business & Technology | Focuses on Migration Journey |
+| Six Perspectives | Three Phases |
+
+---
+
+# Enterprise Architecture
+
+```text
+Business
+
+↓
+
+People
+
+↓
+
+Governance
+
+↓
+
+Landing Zone
+
+↓
+
+Migration
+
+↓
+
+Modernization
+
+↓
+
+Operations
+```
+
+CAF provides the foundation for sustainable cloud adoption.
+
+---
+
+# Best Practices
+
+- Perform a CAF assessment before migration.
+- Align cloud strategy with business goals.
+- Invest in employee training and certifications.
+- Build a secure landing zone before migrating workloads.
+- Establish governance policies early.
+- Integrate security into every migration phase.
+- Automate operations wherever possible.
+- Continuously reassess cloud maturity.
+
+---
+
+# Common Mistakes
+
+- Treating migration as only a technical project.
+- Ignoring employee training.
+- Skipping governance planning.
+- Building workloads before creating a landing zone.
+- Delaying security implementation.
+- Migrating without business alignment.
+- Neglecting operational readiness after migration.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is the AWS Cloud Adoption Framework (CAF)?
+- Why is CAF important?
+- What are the six CAF perspectives?
+
+## Intermediate
+
+- AWS CAF vs AWS MAP.
+- Explain the Business and Governance perspectives.
+- What is a Landing Zone, and how does CAF support it?
+
+## Advanced
+
+- Design a cloud adoption strategy for a multinational enterprise using the AWS Cloud Adoption Framework, covering business, people, governance, platform, security, and operations.
+- Explain how AWS CAF helps reduce migration risks while improving organizational readiness and long-term cloud success.
+- A financial institution is migrating to AWS but has skill gaps, inconsistent governance, and strict compliance requirements. Explain how each AWS CAF perspective addresses these challenges and supports a successful cloud transformation.
