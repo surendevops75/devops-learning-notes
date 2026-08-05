@@ -7289,3 +7289,850 @@ Entire deployment completes in under 10 minutes without downtime.
 
 ---
 
+# Chapter 11 - Performance Optimization, Cost Optimization & Troubleshooting
+
+Running applications successfully is only the beginning.
+
+Enterprise DevOps teams continuously optimize
+
+- Performance
+- Cost
+- Availability
+- Reliability
+- Resource Utilization
+
+A well-designed Fargate platform should provide maximum performance with minimum operational cost.
+
+---
+
+# Performance Optimization
+
+Performance depends on multiple factors.
+
+```text
+Application
+
+↓
+
+CPU
+
+↓
+
+Memory
+
+↓
+
+Networking
+
+↓
+
+Storage
+
+↓
+
+Container Image
+
+↓
+
+Database
+```
+
+Optimizing only one layer rarely solves production issues.
+
+---
+
+# CPU Optimization
+
+Choosing the correct CPU allocation is critical.
+
+Example
+
+```text
+Application
+
+↓
+
+0.25 vCPU
+
+↓
+
+CPU reaches 100%
+
+↓
+
+Slow Response
+```
+
+Increasing CPU
+
+```text
+Application
+
+↓
+
+1 vCPU
+
+↓
+
+CPU 45%
+
+↓
+
+Better Performance
+```
+
+Always monitor actual CPU utilization before changing task sizes.
+
+---
+
+# Memory Optimization
+
+Memory shortages are one of the most common causes of container failures.
+
+Example
+
+```text
+Application
+
+↓
+
+Memory Limit
+
+↓
+
+Exceeded
+
+↓
+
+OOM Kill
+
+↓
+
+Task Restart
+```
+
+Symptoms
+
+- Random container restarts
+- Increased latency
+- Failed requests
+- ECS replacing tasks frequently
+
+---
+
+# CPU vs Memory Bottleneck
+
+CPU Bottleneck
+
+```text
+CPU
+
+95%
+
+Memory
+
+40%
+```
+
+Increase CPU.
+
+---
+
+Memory Bottleneck
+
+```text
+CPU
+
+35%
+
+Memory
+
+98%
+```
+
+Increase memory.
+
+Understanding which resource is exhausted prevents unnecessary cost increases.
+
+---
+
+# Container Image Optimization
+
+Large images increase deployment time.
+
+Example
+
+Bad
+
+```text
+Docker Image
+
+↓
+
+2.8 GB
+```
+
+Problems
+
+- Slow image download
+- Longer deployments
+- Higher startup time
+
+---
+
+Better
+
+```text
+Docker Image
+
+↓
+
+220 MB
+```
+
+Benefits
+
+- Faster deployments
+- Faster scaling
+- Reduced network usage
+
+---
+
+# Reduce Image Size
+
+Best practices
+
+- Use multi-stage builds.
+- Remove unnecessary packages.
+- Clean package caches.
+- Avoid development tools in runtime images.
+- Use lightweight base images appropriate for your workload.
+
+---
+
+# Startup Time Optimization
+
+A slow startup delays deployments.
+
+Workflow
+
+```text
+Task Launch
+
+↓
+
+Image Download
+
+↓
+
+Application Startup
+
+↓
+
+Health Check
+
+↓
+
+Ready
+```
+
+Reduce startup time by
+
+- Smaller images
+- Faster application initialization
+- Lazy loading where appropriate
+- Efficient dependency management
+
+---
+
+# Database Connection Pooling
+
+Bad
+
+```text
+Every Request
+
+↓
+
+New Database Connection
+```
+
+High overhead.
+
+---
+
+Better
+
+```text
+Application
+
+↓
+
+Connection Pool
+
+↓
+
+Database
+```
+
+Benefits
+
+- Lower latency
+- Better throughput
+- Fewer database connections
+
+---
+
+# Caching
+
+Instead of repeatedly querying the database,
+
+cache frequently accessed data.
+
+```text
+Application
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Database
+```
+
+Benefits
+
+- Faster response
+- Lower database load
+- Better scalability
+
+---
+
+# Networking Optimization
+
+Use
+
+- Private Subnets
+- VPC Endpoints
+- Security Groups
+- Internal ALBs where appropriate
+
+Avoid unnecessary internet routing.
+
+---
+
+# Auto Scaling Optimization
+
+Incorrect
+
+```text
+Minimum Tasks
+
+10
+
+↓
+
+Low Traffic
+```
+
+High cost.
+
+Better
+
+```text
+Minimum
+
+2
+
+↓
+
+Scale Automatically
+```
+
+---
+
+# Cost Optimization
+
+Fargate pricing is based primarily on
+
+- vCPU
+- Memory
+- Operating System
+- Architecture
+- Running Time
+
+Unlike EC2,
+
+you pay only for the resources allocated to running tasks.
+
+---
+
+# Cost Factors
+
+```text
+Task
+
+↓
+
+CPU
+
+↓
+
+Memory
+
+↓
+
+Running Time
+
+↓
+
+Monthly Cost
+```
+
+Oversized tasks significantly increase cost.
+
+---
+
+# Right Sizing
+
+Bad
+
+```text
+Application
+
+Uses
+
+0.3 CPU
+
+↓
+
+Allocated
+
+4 vCPU
+```
+
+Large waste.
+
+---
+
+Better
+
+```text
+Uses
+
+0.4 CPU
+
+↓
+
+Allocate
+
+0.5 vCPU
+```
+
+Monitor before resizing.
+
+---
+
+# Fargate Spot
+
+Background workloads can reduce costs.
+
+Example
+
+```text
+Batch Processing
+
+↓
+
+Fargate Spot
+```
+
+Production APIs
+
+↓
+
+Standard Fargate
+
+Mixing both provides good cost efficiency.
+
+---
+
+# Schedule Non-Production Workloads
+
+Development environments often run 24×7 unnecessarily.
+
+Instead
+
+```text
+Office Hours
+
+↓
+
+Start Tasks
+
+Night
+
+↓
+
+Stop Tasks
+```
+
+Reduces monthly cost.
+
+---
+
+# CloudWatch Cost Monitoring
+
+Monitor
+
+- CPU
+- Memory
+- Running Tasks
+- Scaling Events
+- Idle Capacity
+
+Optimization should be data-driven.
+
+---
+
+# Common Performance Issues
+
+## High CPU
+
+Symptoms
+
+- Slow responses
+- High latency
+- Scaling events
+
+Check
+
+- CPU metrics
+- Infinite loops
+- Application profiling
+- Thread utilization
+
+---
+
+## High Memory
+
+Symptoms
+
+- OOMKilled
+- Task restarts
+- Application crashes
+
+Check
+
+- Memory leaks
+- JVM heap
+- Cache size
+- Large objects
+
+---
+
+## Slow Startup
+
+Possible causes
+
+- Large Docker image
+- Heavy initialization
+- Database migration during startup
+- Dependency downloads
+
+---
+
+## Image Pull Delay
+
+Check
+
+- Image size
+- ECR connectivity
+- Execution Role
+- Network latency
+
+---
+
+## ALB Health Check Failure
+
+Possible causes
+
+- Wrong health endpoint
+- Slow startup
+- Port mismatch
+- Security Groups
+- Application crash
+
+---
+
+## Cannot Access AWS Services
+
+Verify
+
+- Task Role
+- IAM Policy
+- Security Groups
+- VPC Endpoints
+- Network ACLs
+
+---
+
+## Cannot Pull Secrets
+
+Check
+
+- Execution Role
+- Task Role
+- Secrets Manager permissions
+- Secret ARN
+- Region
+
+---
+
+## Task Stops Immediately
+
+Possible causes
+
+- Application crash
+- Missing environment variables
+- Invalid command
+- Dependency failure
+- Memory exhaustion
+
+---
+
+## ECS Service Never Becomes Stable
+
+Verify
+
+- Desired Count
+- Health Checks
+- Load Balancer
+- Container Logs
+- Task Definition
+- CPU and Memory
+- Networking
+
+---
+
+# Production Incident Example
+
+A payment API experiences
+
+```text
+CPU
+
+95%
+
+↓
+
+Response Time
+
+8 Seconds
+
+↓
+
+Customers Report Slowness
+```
+
+Investigation
+
+```text
+CloudWatch
+
+↓
+
+CPU High
+
+↓
+
+Application Profile
+
+↓
+
+Database Queries Slow
+
+↓
+
+Added ElastiCache
+
+↓
+
+CPU Reduced
+
+↓
+
+Latency Improved
+```
+
+Root cause analysis is more important than simply increasing CPU.
+
+---
+
+# Enterprise Cost Optimization Strategy
+
+```text
+Production
+
+↓
+
+Standard Fargate
+
+↓
+
+Auto Scaling
+
+↓
+
+CloudWatch
+
+↓
+
+Performance Monitoring
+
+Development
+
+↓
+
+Scheduled Shutdown
+
+↓
+
+Fargate Spot
+
+↓
+
+Lower Cost
+```
+
+This combination balances availability and operational cost.
+
+---
+
+# Production Architecture
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon ECS Service
+
+↓
+
+AWS Fargate
+
+↓
+
+CloudWatch
+
+↓
+
+Container Insights
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Amazon EFS
+
+↓
+
+Amazon S3
+```
+
+Characteristics
+
+- Multi-AZ
+- Auto Scaling
+- Self Healing
+- Optimized Resources
+- Central Monitoring
+- Cost Efficient
+
+---
+
+# Best Practices
+
+- Monitor before resizing tasks.
+- Keep Docker images small.
+- Use Auto Scaling.
+- Use Fargate Spot for interruptible workloads.
+- Optimize database queries.
+- Enable Container Insights.
+- Configure CloudWatch Alarms.
+- Profile applications regularly.
+- Review resource utilization monthly.
+
+---
+
+# Common Mistakes
+
+- Allocating excessive CPU and memory.
+- Running development environments continuously.
+- Ignoring CloudWatch metrics.
+- Using Fargate Spot for critical production APIs.
+- Deploying large container images.
+- Scaling without identifying the bottleneck.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How is Fargate priced?
+- What causes OOMKilled?
+- Why should Docker images be small?
+
+## Intermediate
+
+- How would you optimize Fargate costs?
+- CPU bottleneck vs Memory bottleneck.
+- Explain Fargate Spot usage.
+- How do you troubleshoot slow container startup?
+
+## Advanced
+
+- Design a cost-optimized Fargate platform for 500 microservices.
+- Explain your troubleshooting process when an ECS Service cannot reach a stable state.
+- A payment API running on Fargate suddenly experiences high latency and frequent task restarts. Explain your step-by-step investigation and resolution process.
+
+---
+
+# Quick Revision Cheat Sheet
+
+| Requirement | AWS Service / Feature |
+|-------------|----------------------|
+| Serverless Containers | AWS Fargate |
+| Container Orchestration | Amazon ECS / Amazon EKS |
+| Container Registry | Amazon ECR |
+| Application Permissions | IAM Task Role |
+| Infrastructure Permissions | Execution Role |
+| Persistent Shared Storage | Amazon EFS |
+| Object Storage | Amazon S3 |
+| Managed Database | Amazon RDS |
+| In-Memory Cache | Amazon ElastiCache |
+| Logging | CloudWatch Logs |
+| Metrics | CloudWatch Metrics |
+| Advanced Monitoring | Container Insights |
+| Service Discovery | AWS Cloud Map |
+| Load Balancing | Application Load Balancer |
+| Auto Scaling | ECS Service Auto Scaling |
+| Low-Cost Compute | Fargate Spot |
+| Secret Management | AWS Secrets Manager |
+| Configuration Management | Systems Manager Parameter Store |
+| Zero-Downtime Deployment | Rolling / Blue-Green |
+| Vulnerability Scanning | Amazon ECR Image Scanning |
+| CI/CD | GitHub Actions / Jenkins / CodePipeline |
