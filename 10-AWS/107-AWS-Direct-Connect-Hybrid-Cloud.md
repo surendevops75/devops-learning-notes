@@ -1160,3 +1160,617 @@ A single Direct Connect connection provides access to multiple AWS environments.
 
 ---
 
+# Chapter 3 - AWS Direct Connect Gateway, Virtual Private Gateway & Transit Gateway Integration
+
+As organizations grow, they rarely have only one VPC.
+
+A large enterprise may have
+
+- Production VPC
+- Development VPC
+- Security VPC
+- Shared Services VPC
+- Networking VPC
+
+Connecting Direct Connect individually to every VPC quickly becomes difficult to manage.
+
+AWS provides multiple gateway services to solve this problem.
+
+---
+
+# Gateway Components
+
+The primary AWS gateway components used with Direct Connect are
+
+- Virtual Private Gateway (VGW)
+- Direct Connect Gateway (DXGW)
+- Transit Gateway (TGW)
+
+Each serves a different purpose.
+
+---
+
+# High-Level Architecture
+
+```text
+On-Premises
+
+↓
+
+Customer Router
+
+↓
+
+Direct Connect
+
+↓
+
+Direct Connect Gateway
+
+↓
+
+Transit Gateway
+
+↓
+
+Multiple VPCs
+```
+
+This is the preferred enterprise architecture.
+
+---
+
+# Virtual Private Gateway (VGW)
+
+A Virtual Private Gateway is attached directly to a single VPC.
+
+Architecture
+
+```text
+On-Premises
+
+↓
+
+Private VIF
+
+↓
+
+VGW
+
+↓
+
+VPC
+```
+
+It provides private connectivity between
+
+- On-Premises
+- AWS VPC
+
+---
+
+# VGW Characteristics
+
+- Attached to one VPC
+- Supports VPN
+- Supports Direct Connect
+- Uses BGP
+- Simple architecture
+
+Suitable for
+
+- Small deployments
+- Single VPC environments
+
+---
+
+# VGW Limitation
+
+Suppose an organization has
+
+```text
+Production VPC
+
+Development VPC
+
+Security VPC
+```
+
+Each VPC would require its own connection.
+
+Architecture
+
+```text
+Direct Connect
+
+↓
+
+VGW-1
+
+↓
+
+VPC-1
+
+VGW-2
+
+↓
+
+VPC-2
+
+VGW-3
+
+↓
+
+VPC-3
+```
+
+Management becomes complex.
+
+---
+
+# What is a Direct Connect Gateway?
+
+A Direct Connect Gateway (DXGW) is a global AWS resource that allows a single Direct Connect connection to reach multiple VPCs.
+
+Architecture
+
+```text
+Direct Connect
+
+↓
+
+Direct Connect Gateway
+
+↓
+
+VGW
+
+↓
+
+VPC
+```
+
+Instead of connecting separately,
+
+AWS centralizes connectivity.
+
+---
+
+# Why Direct Connect Gateway?
+
+Without DXGW
+
+```text
+Direct Connect
+
+↓
+
+VGW-1
+
+VGW-2
+
+VGW-3
+```
+
+Multiple configurations are required.
+
+With DXGW
+
+```text
+Direct Connect
+
+↓
+
+DX Gateway
+
+↓
+
+Multiple VPCs
+```
+
+Simpler management.
+
+---
+
+# Direct Connect Gateway Architecture
+
+```text
+Customer Data Center
+
+↓
+
+Direct Connect
+
+↓
+
+DX Gateway
+
+├── Production VPC
+
+├── Development VPC
+
+├── DR VPC
+```
+
+One Direct Connect can connect multiple VPCs.
+
+---
+
+# Benefits of Direct Connect Gateway
+
+- Simplified Routing
+- Multi-VPC Connectivity
+- Cross-Region Support
+- Centralized Management
+- Better Scalability
+
+---
+
+# Direct Connect Gateway Limitations
+
+DX Gateway
+
+- Does not perform packet routing between VPCs.
+- Does not replace Transit Gateway.
+- Primarily extends Direct Connect connectivity.
+
+---
+
+# What is Transit Gateway?
+
+Transit Gateway (TGW) is AWS's central networking hub.
+
+Instead of creating
+
+```text
+VPC ↔ VPC
+
+VPC ↔ VPN
+
+VPC ↔ Direct Connect
+```
+
+individually,
+
+everything connects to Transit Gateway.
+
+---
+
+# Transit Gateway Architecture
+
+```text
+Transit Gateway
+
+├── Production VPC
+
+├── Security VPC
+
+├── Shared Services VPC
+
+├── Development VPC
+
+└── VPN
+```
+
+Every VPC connects only once.
+
+---
+
+# Why Transit Gateway?
+
+Without TGW
+
+```text
+VPC-1 ↔ VPC-2
+
+VPC-1 ↔ VPC-3
+
+VPC-2 ↔ VPC-3
+
+...
+
+Many Connections
+```
+
+Mesh networking becomes difficult.
+
+With TGW
+
+```text
+All VPCs
+
+↓
+
+Transit Gateway
+```
+
+Hub-and-spoke architecture.
+
+---
+
+# Transit Gateway + Direct Connect
+
+Modern enterprise architecture
+
+```text
+On-Premises
+
+↓
+
+Direct Connect
+
+↓
+
+Transit VIF
+
+↓
+
+Transit Gateway
+
+├── Production
+
+├── Development
+
+├── Shared
+
+├── Security
+```
+
+One connection serves the entire AWS environment.
+
+---
+
+# Packet Flow
+
+Suppose an employee accesses
+
+```text
+EC2
+
+Production VPC
+```
+
+Workflow
+
+```text
+Corporate Office
+
+↓
+
+Customer Router
+
+↓
+
+Direct Connect
+
+↓
+
+Transit VIF
+
+↓
+
+Transit Gateway
+
+↓
+
+Production VPC
+
+↓
+
+EC2
+```
+
+Traffic never traverses the Internet.
+
+---
+
+# Direct Connect Gateway vs Transit Gateway
+
+| Direct Connect Gateway | Transit Gateway |
+|-------------------------|-----------------|
+| Extends Direct Connect | Central Router |
+| Connects Direct Connect to VPCs | Connects VPCs together |
+| No VPC Routing | Full VPC Routing |
+| Connectivity Resource | Routing Resource |
+
+Both services are often used together.
+
+---
+
+# Direct Connect Gateway + Transit Gateway
+
+```text
+On-Premises
+
+↓
+
+Direct Connect
+
+↓
+
+DX Gateway
+
+↓
+
+Transit Gateway
+
+↓
+
+Multiple VPCs
+```
+
+This is one of the most common enterprise designs.
+
+---
+
+# Cross-Region Connectivity
+
+One Direct Connect Gateway can connect to VPCs in different AWS Regions.
+
+Example
+
+```text
+Mumbai
+
+↓
+
+Production
+
+Singapore
+
+↓
+
+DR
+
+Frankfurt
+
+↓
+
+Analytics
+```
+
+One Direct Connect connection reaches all supported Regions.
+
+---
+
+# Shared Services Architecture
+
+Large organizations centralize common services.
+
+```text
+Shared Services VPC
+
+↓
+
+Active Directory
+
+DNS
+
+Monitoring
+
+Git
+
+↓
+
+Transit Gateway
+
+↓
+
+Other VPCs
+```
+
+Every workload accesses centralized services.
+
+---
+
+# Enterprise Banking Architecture
+
+```text
+Corporate Data Center
+
+↓
+
+Direct Connect
+
+↓
+
+DX Gateway
+
+↓
+
+Transit Gateway
+
+├── Core Banking VPC
+
+├── Payment VPC
+
+├── Fraud Detection VPC
+
+├── Shared Services
+
+└── Disaster Recovery
+```
+
+One hybrid connection supports the entire AWS platform.
+
+---
+
+# Migration Architecture
+
+Cloud migration often happens in phases.
+
+```text
+Phase 1
+
+↓
+
+VPN
+
+↓
+
+Phase 2
+
+↓
+
+Direct Connect
+
+↓
+
+Phase 3
+
+↓
+
+Transit Gateway
+
+↓
+
+Multiple VPCs
+```
+
+Network architecture evolves as cloud adoption grows.
+
+---
+
+# Best Practices
+
+- Use Transit Gateway for multi-VPC environments.
+- Use Direct Connect Gateway for centralized Direct Connect management.
+- Deploy redundant Direct Connect connections.
+- Separate production and non-production VPCs.
+- Document route propagation.
+- Monitor BGP sessions.
+
+---
+
+# Common Mistakes
+
+- Connecting Direct Connect separately to every VPC.
+- Confusing DX Gateway with Transit Gateway.
+- Using VGW for large enterprise architectures.
+- Building full-mesh VPC connectivity.
+- Ignoring centralized routing.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Virtual Private Gateway?
+- What is a Direct Connect Gateway?
+- What is a Transit Gateway?
+
+## Intermediate
+
+- Direct Connect Gateway vs Transit Gateway.
+- Why is Transit Gateway preferred for enterprises?
+- Explain hub-and-spoke networking.
+
+## Advanced
+
+- Design a hybrid cloud network for an enterprise with 50 VPCs across three AWS Regions.
+- Explain how Direct Connect Gateway and Transit Gateway work together.
+- Describe the packet flow from an on-premises application to an EC2 instance located in a different AWS Region using Direct Connect, Direct Connect Gateway, and Transit Gateway.
+
+---
+
