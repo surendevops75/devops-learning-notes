@@ -4589,3 +4589,800 @@ Results appear within milliseconds because
 
 ---
 
+# Chapter 7 - Index Lifecycle Management (ILM), Data Tiers & Index Management
+
+As OpenSearch clusters grow,
+
+one of the biggest operational challenges is managing old data.
+
+A production cluster may store
+
+- Billions of documents
+- Hundreds of indices
+- Several terabytes of logs every day
+
+Keeping every index forever is expensive and unnecessary.
+
+This is where **Index Lifecycle Management (ILM)** becomes essential.
+
+---
+
+# What is Index Lifecycle Management (ILM)?
+
+ILM automatically manages an index throughout its lifecycle.
+
+Instead of manually
+
+- Creating indices
+- Moving data
+- Deleting old logs
+
+OpenSearch performs these actions automatically.
+
+Workflow
+
+```text
+Create Index
+
+↓
+
+Active Use
+
+↓
+
+Move to Warm Storage
+
+↓
+
+Archive
+
+↓
+
+Delete
+```
+
+---
+
+# Why ILM?
+
+Imagine a Kubernetes platform generating
+
+```text
+500 GB Logs
+
+Every Day
+```
+
+One Year
+
+```text
+500 × 365
+
+=
+
+182 TB
+```
+
+Keeping every log on high-performance storage is extremely expensive.
+
+Instead,
+
+older logs can be moved to lower-cost storage.
+
+---
+
+# Typical Index Lifecycle
+
+```text
+Hot
+
+↓
+
+Warm
+
+↓
+
+Cold
+
+↓
+
+Delete
+```
+
+Each stage has a different purpose.
+
+---
+
+# Hot Phase
+
+Hot indices receive
+
+- New Writes
+- Frequent Searches
+- High Traffic
+
+Architecture
+
+```text
+Applications
+
+↓
+
+Hot Index
+
+↓
+
+Frequent Queries
+```
+
+Characteristics
+
+- Fast SSD Storage
+- High CPU
+- High Memory
+- Maximum Performance
+
+---
+
+# Warm Phase
+
+After a few days,
+
+logs become less active.
+
+```text
+Hot
+
+↓
+
+Warm
+```
+
+Warm indices
+
+- Rarely receive writes
+- Occasionally searched
+- Lower performance requirements
+
+Suitable for
+
+- Weekly reports
+- Incident investigations
+- Compliance
+
+---
+
+# Cold Phase
+
+Old logs are rarely accessed.
+
+```text
+Warm
+
+↓
+
+Cold
+```
+
+Characteristics
+
+- Lowest cost
+- Rare searches
+- Long-term retention
+
+Typical use cases
+
+- Audit Logs
+- Compliance
+- Regulatory Requirements
+
+---
+
+# Delete Phase
+
+Eventually,
+
+data becomes unnecessary.
+
+```text
+Cold
+
+↓
+
+Delete
+```
+
+The index is removed automatically.
+
+Benefits
+
+- Saves storage
+- Reduces costs
+- Improves cluster performance
+
+---
+
+# Complete Lifecycle
+
+Example
+
+```text
+Day 1-7
+
+↓
+
+Hot
+
+Day 8-30
+
+↓
+
+Warm
+
+Day 31-180
+
+↓
+
+Cold
+
+After 180 Days
+
+↓
+
+Delete
+```
+
+This is a common enterprise strategy.
+
+---
+
+# ILM Architecture
+
+```text
+Applications
+
+↓
+
+OpenSearch
+
+↓
+
+Hot Index
+
+↓
+
+Warm Index
+
+↓
+
+Cold Index
+
+↓
+
+Delete
+```
+
+Everything is automatic.
+
+---
+
+# Why Daily Indices?
+
+Instead of one massive index,
+
+logs are commonly divided by date.
+
+Example
+
+```text
+logs-2026-08-01
+
+logs-2026-08-02
+
+logs-2026-08-03
+```
+
+Advantages
+
+- Easier deletion
+- Better performance
+- Faster recovery
+- Simpler lifecycle management
+
+---
+
+# Monthly Indices
+
+Some organizations use monthly indices.
+
+Example
+
+```text
+logs-2026-08
+
+logs-2026-09
+
+logs-2026-10
+```
+
+Suitable when daily log volume is relatively small.
+
+---
+
+# Choosing Index Size
+
+Very Small Indices
+
+```text
+Thousands
+
+↓
+
+Too Much Metadata
+```
+
+Very Large Indices
+
+```text
+Several TB
+
+↓
+
+Slow Recovery
+```
+
+Balanced index sizing is critical.
+
+---
+
+# Index Rollover
+
+Instead of waiting for a calendar date,
+
+OpenSearch can create a new index based on
+
+- Size
+- Age
+- Document Count
+
+Example
+
+```text
+logs-active
+
+↓
+
+100 GB
+
+↓
+
+Create New Index
+
+↓
+
+logs-active-000002
+```
+
+Applications continue writing without interruption.
+
+---
+
+# Why Rollover?
+
+Suppose one index grows to
+
+```text
+5 TB
+```
+
+Problems
+
+- Slow recovery
+- Long shard movement
+- Slow searches
+
+Instead
+
+```text
+100 GB
+
+↓
+
+New Index
+```
+
+Cluster performance remains consistent.
+
+---
+
+# Aliases
+
+Applications should not write directly to
+
+```text
+logs-2026-08-05
+```
+
+Instead
+
+```text
+logs-current
+```
+
+Alias
+
+↓
+
+Current Index
+
+When rollover occurs,
+
+the alias points to the new index automatically.
+
+Applications require no changes.
+
+---
+
+# Alias Architecture
+
+```text
+Application
+
+↓
+
+logs-current
+
+↓
+
+logs-000001
+
+↓
+
+Rollover
+
+↓
+
+logs-000002
+```
+
+Alias remains constant.
+
+---
+
+# Read Alias vs Write Alias
+
+Production environments often separate
+
+```text
+Write Alias
+
+↓
+
+Current Index
+
+Read Alias
+
+↓
+
+All Historical Indices
+```
+
+Benefits
+
+- Easier maintenance
+- Transparent rollover
+- Better search flexibility
+
+---
+
+# Force Merge
+
+Older indices usually become read-only.
+
+OpenSearch can optimize them.
+
+Workflow
+
+```text
+Read Only
+
+↓
+
+Force Merge
+
+↓
+
+Fewer Segments
+
+↓
+
+Better Search
+```
+
+Useful for
+
+- Warm
+- Cold
+
+indices.
+
+---
+
+# Shrink Index
+
+Suppose
+
+Hot Index
+
+```text
+12 Shards
+```
+
+After becoming read-only,
+
+traffic decreases.
+
+Shrink
+
+```text
+12
+
+↓
+
+3 Shards
+```
+
+Benefits
+
+- Lower memory usage
+- Easier management
+- Better efficiency
+
+---
+
+# Read Only Indices
+
+Older indices can become
+
+```text
+Read Only
+```
+
+Benefits
+
+- Prevent accidental writes
+- Improve stability
+- Optimize storage
+
+---
+
+# Snapshot Before Deletion
+
+Many enterprises create snapshots before deleting data.
+
+Workflow
+
+```text
+Cold Index
+
+↓
+
+Snapshot
+
+↓
+
+Amazon S3
+
+↓
+
+Delete Index
+```
+
+Data remains recoverable.
+
+---
+
+# Enterprise Logging Example
+
+A financial institution
+
+Generates
+
+```text
+2 TB Logs
+
+Every Day
+```
+
+Lifecycle
+
+```text
+7 Days
+
+↓
+
+Hot
+
+30 Days
+
+↓
+
+Warm
+
+180 Days
+
+↓
+
+Cold
+
+↓
+
+Snapshot
+
+↓
+
+Amazon S3
+
+↓
+
+Delete
+```
+
+Storage costs decrease significantly.
+
+---
+
+# Multi-Tenant Architecture
+
+Different applications may use separate lifecycle policies.
+
+```text
+Payment Logs
+
+↓
+
+180 Days
+
+Application Logs
+
+↓
+
+30 Days
+
+Audit Logs
+
+↓
+
+7 Years
+```
+
+Each workload follows its own retention policy.
+
+---
+
+# ILM Policy Example
+
+```text
+Logs
+
+↓
+
+Hot
+
+↓
+
+7 Days
+
+↓
+
+Warm
+
+↓
+
+30 Days
+
+↓
+
+Cold
+
+↓
+
+180 Days
+
+↓
+
+Delete
+```
+
+Policy applies automatically to matching indices.
+
+---
+
+# Production Architecture
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+OpenSearch
+
+↓
+
+Write Alias
+
+↓
+
+Hot Indices
+
+↓
+
+Warm Indices
+
+↓
+
+Cold Indices
+
+↓
+
+Snapshots
+
+↓
+
+Amazon S3
+```
+
+Everything is automated.
+
+---
+
+# Best Practices
+
+- Use ILM for every production cluster.
+- Use aliases instead of hardcoded index names.
+- Use rollover based on size and age.
+- Separate Hot, Warm, and Cold data.
+- Take snapshots before deletion.
+- Monitor storage growth continuously.
+- Define retention policies based on business requirements.
+
+---
+
+# Common Mistakes
+
+- Keeping every index forever.
+- Creating one giant index.
+- Deleting data manually.
+- Not using aliases.
+- Ignoring rollover.
+- No snapshot strategy before deletion.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Index Lifecycle Management?
+- Why use ILM?
+- What is an Index Alias?
+
+## Intermediate
+
+- Hot vs Warm vs Cold indices.
+- Why use rollover?
+- Daily indices vs Monthly indices.
+- Explain Force Merge and Shrink Index.
+
+## Advanced
+
+- Design an ILM policy for a platform generating 5 TB of logs per day.
+- Explain how aliases enable zero-downtime index rollover.
+- Design a long-term log retention strategy balancing performance, compliance, and storage cost for an enterprise OpenSearch deployment.
+
+---
+
