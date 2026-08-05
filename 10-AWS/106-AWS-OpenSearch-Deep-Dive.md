@@ -2063,3 +2063,830 @@ The platform continues serving queries even if one Data Node becomes unavailable
 
 ---
 
+# Chapter 4 - Mapping, Dynamic Mapping, Data Types & Index Templates
+
+One of the biggest reasons OpenSearch clusters become slow or unstable is **poor mapping design**.
+
+Mappings define **how OpenSearch stores and indexes every field** inside a document.
+
+Choosing the correct mapping improves
+
+- Search Performance
+- Storage Efficiency
+- Aggregation Speed
+- Query Accuracy
+
+Poor mappings lead to
+
+- Large indices
+- Slow searches
+- High memory usage
+- Incorrect search results
+
+---
+
+# What is Mapping?
+
+A Mapping defines
+
+- Field Name
+- Data Type
+- Indexing Behavior
+- Search Behavior
+
+Think of it as a schema for an Index.
+
+Example
+
+```text
+Document
+
+↓
+
+Mapping
+
+↓
+
+Store Correctly
+
+↓
+
+Search Efficiently
+```
+
+---
+
+# Mapping Architecture
+
+```text
+Index
+
+↓
+
+Mapping
+
+├── customerName
+
+├── amount
+
+├── timestamp
+
+├── status
+
+└── service
+```
+
+Every field has a defined data type.
+
+---
+
+# Why Mapping is Important
+
+Suppose
+
+```text
+Amount
+
+500
+```
+
+If stored as
+
+```text
+Text
+```
+
+Sorting becomes inefficient.
+
+If stored as
+
+```text
+Integer
+```
+
+Sorting and aggregations become much faster.
+
+Choosing the correct data type directly impacts performance.
+
+---
+
+# Dynamic Mapping
+
+By default,
+
+OpenSearch automatically detects new fields.
+
+Example
+
+Application sends
+
+```json
+{
+ "customer":"John",
+ "amount":500
+}
+```
+
+OpenSearch automatically creates
+
+```text
+customer → text
+
+amount → long
+```
+
+No manual schema creation is required.
+
+---
+
+# Dynamic Mapping Workflow
+
+```text
+Application
+
+↓
+
+New Field
+
+↓
+
+OpenSearch Detects Type
+
+↓
+
+Creates Mapping
+
+↓
+
+Stores Document
+```
+
+Very convenient for development.
+
+---
+
+# Problems with Dynamic Mapping
+
+Suppose different applications send
+
+Application-A
+
+```json
+{
+ "amount":500
+}
+```
+
+Application-B
+
+```json
+{
+ "amount":"500"
+}
+```
+
+Now the same field has different types.
+
+This may cause
+
+- Mapping conflicts
+- Failed indexing
+- Query failures
+
+Large enterprises usually avoid relying entirely on Dynamic Mapping.
+
+---
+
+# Explicit Mapping
+
+Instead of automatic detection,
+
+developers define mappings manually.
+
+Example
+
+```text
+amount
+
+↓
+
+integer
+
+status
+
+↓
+
+keyword
+
+timestamp
+
+↓
+
+date
+```
+
+Benefits
+
+- Predictable
+- Better performance
+- Easier maintenance
+- No unexpected field types
+
+---
+
+# Mapping Comparison
+
+| Dynamic Mapping | Explicit Mapping |
+|-----------------|------------------|
+| Automatic | Manual |
+| Easy to start | Better for production |
+| Less control | Full control |
+| Risk of conflicts | Predictable schema |
+
+---
+
+# Common Data Types
+
+OpenSearch supports many field types.
+
+---
+
+## Text
+
+Used for
+
+- Full-text search
+- Articles
+- Log Messages
+- Product Descriptions
+
+Example
+
+```text
+Payment failed because database timeout
+```
+
+Supports
+
+- Tokenization
+- Stemming
+- Full-text search
+
+---
+
+## Keyword
+
+Stores values exactly as received.
+
+Examples
+
+```text
+SUCCESS
+
+FAILED
+
+PAYMENT
+
+LOGIN
+```
+
+Suitable for
+
+- Filtering
+- Sorting
+- Aggregations
+- Exact Match
+
+---
+
+# Text vs Keyword
+
+Example
+
+Search
+
+```text
+database timeout
+```
+
+Use
+
+```text
+text
+```
+
+---
+
+Filter
+
+```text
+status = SUCCESS
+```
+
+Use
+
+```text
+keyword
+```
+
+This is one of the most common OpenSearch interview questions.
+
+---
+
+# Numeric Types
+
+Supported
+
+```text
+integer
+
+long
+
+float
+
+double
+
+short
+
+byte
+```
+
+Examples
+
+```text
+Amount
+
+↓
+
+double
+
+Age
+
+↓
+
+integer
+
+Response Time
+
+↓
+
+float
+```
+
+---
+
+# Date Type
+
+Logs almost always contain timestamps.
+
+Example
+
+```text
+2026-08-05T11:45:20Z
+```
+
+Stored as
+
+```text
+date
+```
+
+Benefits
+
+- Time-based searches
+- Sorting
+- Dashboards
+- Time filters
+
+---
+
+# Boolean Type
+
+Stores
+
+```text
+true
+
+false
+```
+
+Example
+
+```json
+{
+ "success":true
+}
+```
+
+---
+
+# IP Type
+
+Useful for
+
+- Security Analytics
+- Firewall Logs
+- VPC Flow Logs
+
+Example
+
+```text
+192.168.1.10
+
+10.0.1.25
+```
+
+Stored efficiently for IP searches.
+
+---
+
+# Object Type
+
+Example
+
+```json
+{
+ "customer":{
+    "id":101,
+    "name":"John"
+ }
+}
+```
+
+The object contains nested fields.
+
+---
+
+# Nested Type
+
+Suppose
+
+```json
+Order
+
+↓
+
+Items
+
+↓
+
+Product
+
+↓
+
+Quantity
+```
+
+Nested fields preserve relationships inside arrays of objects.
+
+Frequently used in
+
+- E-commerce
+- Inventory
+- Order Management
+
+---
+
+# Multi Fields
+
+One field can be indexed in multiple ways.
+
+Example
+
+```text
+customerName
+
+↓
+
+text
+
+↓
+
+keyword
+```
+
+Benefits
+
+Search
+
+```text
+text
+```
+
+Filtering
+
+```text
+keyword
+```
+
+Best of both worlds.
+
+---
+
+# Indexing
+
+Every indexed field becomes searchable.
+
+Example
+
+```text
+service
+
+↓
+
+Indexed
+
+↓
+
+Search Possible
+```
+
+---
+
+# Non-Indexed Fields
+
+Sometimes fields are stored but not searchable.
+
+Example
+
+```text
+Large Debug Payload
+
+↓
+
+Store Only
+
+↓
+
+No Index
+```
+
+Benefits
+
+- Smaller index
+- Faster indexing
+- Reduced storage
+
+---
+
+# Doc Values
+
+OpenSearch stores Doc Values for
+
+- Sorting
+- Aggregations
+- Filtering
+
+Example
+
+```text
+Sales Report
+
+↓
+
+Aggregation
+
+↓
+
+Doc Values
+```
+
+Doc Values improve query performance.
+
+---
+
+# Field Explosion
+
+Suppose logs contain
+
+```text
+field1
+
+field2
+
+field3
+
+...
+
+field50000
+```
+
+Dynamic Mapping creates thousands of fields.
+
+Problems
+
+- High memory usage
+- Slow cluster state
+- Mapping explosion
+
+Production systems often restrict the number of fields.
+
+---
+
+# Index Templates
+
+Creating mappings manually for every index is inefficient.
+
+Instead,
+
+OpenSearch uses Index Templates.
+
+Architecture
+
+```text
+Template
+
+↓
+
+New Index
+
+↓
+
+Mapping Applied
+
+↓
+
+Settings Applied
+```
+
+---
+
+# Example
+
+Template
+
+```text
+logs-*
+```
+
+Automatically applies to
+
+```text
+logs-2026-08
+
+logs-2026-09
+
+logs-2026-10
+```
+
+Every new log index receives identical mappings.
+
+---
+
+# What Can Templates Configure?
+
+Templates can define
+
+- Number of Shards
+- Replica Count
+- Mappings
+- Index Settings
+- Aliases
+- Lifecycle Policies
+
+Everything is applied automatically.
+
+---
+
+# Component Templates
+
+Large organizations divide templates.
+
+Example
+
+```text
+Common Mapping
+
+↓
+
+Security Settings
+
+↓
+
+Lifecycle Policy
+
+↓
+
+Index Template
+```
+
+Reusable templates reduce configuration duplication.
+
+---
+
+# Enterprise Logging Example
+
+A company creates
+
+```text
+payment-logs
+
+↓
+
+Template Applied
+
+↓
+
+5 Shards
+
+↓
+
+1 Replica
+
+↓
+
+Timestamp Mapping
+
+↓
+
+Keyword Fields
+
+↓
+
+Lifecycle Policy
+```
+
+Every monthly index follows the same standards.
+
+---
+
+# Production Architecture
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+OpenSearch
+
+↓
+
+Index Template
+
+↓
+
+Mapping
+
+↓
+
+Primary Shards
+
+↓
+
+Replica Shards
+```
+
+Every new index is created automatically using predefined templates.
+
+---
+
+# Best Practices
+
+- Prefer explicit mappings for production.
+- Use keyword for filtering.
+- Use text for full-text search.
+- Store timestamps as date fields.
+- Use index templates.
+- Prevent field explosion.
+- Review mappings before large-scale ingestion.
+
+---
+
+# Common Mistakes
+
+- Relying entirely on Dynamic Mapping.
+- Using text instead of keyword.
+- Creating thousands of unnecessary fields.
+- Storing numbers as strings.
+- Ignoring index templates.
+- Allowing uncontrolled mapping growth.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Mapping?
+- What is Dynamic Mapping?
+- What is an Index Template?
+
+## Intermediate
+
+- Text vs Keyword.
+- Dynamic Mapping vs Explicit Mapping.
+- Why use Multi Fields?
+- What are Doc Values?
+
+## Advanced
+
+- Design mappings for a centralized logging platform ingesting billions of log records.
+- Explain how Index Templates simplify large enterprise deployments.
+- How would you prevent mapping explosion in an OpenSearch cluster receiving logs from hundreds of microservices?
+
+---
+
