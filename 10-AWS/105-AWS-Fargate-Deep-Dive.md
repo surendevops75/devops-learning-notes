@@ -3580,3 +3580,768 @@ Characteristics
 
 ---
 
+# Chapter 6 - Service Auto Scaling, Capacity Providers & Fargate Spot
+
+One of the biggest advantages of AWS Fargate is that applications can scale automatically without provisioning additional EC2 instances.
+
+Unlike traditional infrastructure where engineers first scale servers and then applications, Fargate provisions compute automatically whenever new tasks are required.
+
+This makes scaling much simpler and more responsive.
+
+---
+
+# Understanding Scaling
+
+Consider an e-commerce application.
+
+Normal traffic
+
+```text
+Users
+
+↓
+
+200 Requests/Minute
+
+↓
+
+2 Tasks
+```
+
+During a sale
+
+```text
+Users
+
+↓
+
+10,000 Requests/Minute
+
+↓
+
+20 Tasks
+```
+
+Instead of manually launching servers,
+
+Amazon ECS automatically launches additional Fargate tasks.
+
+---
+
+# Types of Scaling
+
+ECS supports three major scaling mechanisms.
+
+| Scaling Type | Purpose |
+|--------------|---------|
+| Service Auto Scaling | Scale the number of tasks |
+| Cluster Auto Scaling | Scale EC2 instances (EC2 Launch Type only) |
+| Application Auto Scaling | Underlying AWS scaling service used by ECS |
+
+For AWS Fargate,
+
+only **Service Auto Scaling** is required because AWS manages the compute infrastructure.
+
+---
+
+# Service Auto Scaling Architecture
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon ECS Service
+
+↓
+
+CloudWatch Metrics
+
+↓
+
+Application Auto Scaling
+
+↓
+
+Increase Tasks
+
+↓
+
+AWS Fargate
+```
+
+The scaling decision is automatic.
+
+---
+
+# Service Auto Scaling Workflow
+
+```text
+CPU Utilization
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+Application Auto Scaling
+
+↓
+
+ECS Service
+
+↓
+
+Launch New Task
+
+↓
+
+Fargate Provisions Compute
+
+↓
+
+Application Capacity Increased
+```
+
+No EC2 instances are launched.
+
+Only new Fargate tasks are created.
+
+---
+
+# Desired Count vs Running Count
+
+Every ECS Service maintains
+
+```text
+Desired Count
+```
+
+Example
+
+```text
+Desired
+
+4
+
+Running
+
+4
+```
+
+If Auto Scaling increases capacity
+
+```text
+Desired
+
+10
+
+↓
+
+Scheduler
+
+↓
+
+Running
+
+10
+```
+
+The Service always tries to match the desired count.
+
+---
+
+# Scaling Metrics
+
+Auto Scaling can use multiple metrics.
+
+Common metrics
+
+- CPU Utilization
+- Memory Utilization
+- Request Count
+- ALB Target Response Time
+- SQS Queue Length
+- Custom CloudWatch Metrics
+
+Example
+
+```text
+CPU
+
+85%
+
+↓
+
+Scale Out
+```
+
+---
+
+# Target Tracking Scaling
+
+The most commonly used scaling policy.
+
+Goal
+
+Maintain a target utilization.
+
+Example
+
+```text
+Target CPU
+
+50%
+```
+
+Scenario
+
+```text
+CPU
+
+30%
+
+↓
+
+No Action
+
+CPU
+
+70%
+
+↓
+
+Scale Out
+
+CPU
+
+15%
+
+↓
+
+Scale In
+```
+
+AWS continuously adjusts the number of running tasks to maintain the target.
+
+---
+
+# Step Scaling
+
+Scaling occurs in predefined steps.
+
+Example
+
+| CPU | Action |
+|------|--------|
+|60%|Add 2 Tasks|
+|75%|Add 5 Tasks|
+|90%|Add 10 Tasks|
+
+Useful for applications with predictable traffic spikes.
+
+---
+
+# Scheduled Scaling
+
+Applications with known traffic patterns can scale based on time.
+
+Example
+
+```text
+08:00 AM
+
+↓
+
+10 Tasks
+
+12:00 PM
+
+↓
+
+25 Tasks
+
+09:00 PM
+
+↓
+
+5 Tasks
+```
+
+Useful for
+
+- Business applications
+- Office portals
+- Daily batch processing
+
+---
+
+# Predictive Scaling
+
+AWS analyzes historical traffic patterns to predict future demand.
+
+Although commonly associated with EC2 Auto Scaling, predictive approaches can complement container workloads depending on the overall architecture.
+
+---
+
+# Scale Out Process
+
+Suppose CPU reaches
+
+```text
+85%
+```
+
+Workflow
+
+```text
+CloudWatch
+
+↓
+
+Alarm Triggered
+
+↓
+
+Application Auto Scaling
+
+↓
+
+Increase Desired Count
+
+↓
+
+Scheduler
+
+↓
+
+Launch Fargate Task
+
+↓
+
+Load Balancer Registers Task
+```
+
+Traffic is automatically distributed.
+
+---
+
+# Scale In Process
+
+Traffic decreases.
+
+```text
+CPU
+
+15%
+
+↓
+
+CloudWatch
+
+↓
+
+Decrease Desired Count
+
+↓
+
+Stop Excess Tasks
+
+↓
+
+Release Compute
+```
+
+AWS immediately stops billing for released Fargate resources.
+
+---
+
+# Cooldown Period
+
+Without cooldown,
+
+Auto Scaling may continuously add and remove tasks.
+
+Example
+
+```text
+Scale Out
+
+↓
+
+Traffic Drops
+
+↓
+
+Scale In
+
+↓
+
+Traffic Rises
+
+↓
+
+Scale Out Again
+```
+
+This causes scaling oscillation.
+
+Cooldown allows the system to stabilize before another scaling decision.
+
+---
+
+# Minimum and Maximum Capacity
+
+Example
+
+```text
+Minimum Tasks
+
+2
+
+Maximum Tasks
+
+25
+```
+
+Even during low traffic,
+
+at least
+
+```text
+2 Tasks
+```
+
+remain available.
+
+---
+
+# Scaling Example
+
+Morning
+
+```text
+2 Tasks
+```
+
+Lunch
+
+```text
+8 Tasks
+```
+
+Evening Sale
+
+```text
+20 Tasks
+```
+
+Night
+
+```text
+2 Tasks
+```
+
+Everything happens automatically.
+
+---
+
+# Capacity Providers
+
+Capacity Providers determine **where ECS runs your tasks**.
+
+Instead of manually selecting compute every time,
+
+the Service uses a Capacity Provider strategy.
+
+---
+
+# Capacity Provider Types
+
+| Capacity Provider | Compute |
+|-------------------|---------|
+| Fargate | Standard Fargate |
+| Fargate Spot | Spare AWS capacity |
+| EC2 Capacity Provider | ECS EC2 Instances |
+
+---
+
+# Fargate Capacity Provider
+
+Architecture
+
+```text
+ECS Service
+
+↓
+
+Fargate Capacity Provider
+
+↓
+
+AWS Fargate
+```
+
+AWS provisions on-demand compute.
+
+Highly reliable.
+
+Suitable for production.
+
+---
+
+# Fargate Spot
+
+AWS often has unused compute capacity.
+
+Instead of leaving it idle,
+
+AWS offers it at a significant discount.
+
+Architecture
+
+```text
+Unused AWS Capacity
+
+↓
+
+Fargate Spot
+
+↓
+
+Container Workloads
+```
+
+---
+
+# Benefits of Fargate Spot
+
+- Lower cost
+- No infrastructure management
+- Automatic provisioning
+- Same developer experience as standard Fargate
+
+Savings can be substantial depending on workload characteristics.
+
+---
+
+# Limitation of Fargate Spot
+
+AWS can reclaim Spot capacity when needed.
+
+Workflow
+
+```text
+AWS Needs Capacity
+
+↓
+
+Spot Interruption Notice
+
+↓
+
+Task Stops
+
+↓
+
+Capacity Removed
+```
+
+Therefore,
+
+Spot should only be used for interruptible workloads.
+
+---
+
+# Suitable Spot Workloads
+
+Examples
+
+- Batch Jobs
+- Data Processing
+- Machine Learning Training
+- CI/CD Pipelines
+- Image Processing
+- Background Workers
+
+Avoid Spot for
+
+- Payment APIs
+- Authentication Services
+- Banking Transactions
+- Critical Production Workloads without fallback
+
+---
+
+# Mixing Fargate and Fargate Spot
+
+Production services often combine both.
+
+Example
+
+```text
+10 Tasks
+
+↓
+
+2 Standard Fargate
+
+↓
+
+8 Fargate Spot
+```
+
+If Spot capacity disappears,
+
+critical tasks continue running on standard Fargate.
+
+---
+
+# Capacity Provider Strategy
+
+Example
+
+```text
+Base
+
+2 Tasks
+
+↓
+
+Standard Fargate
+
+Weight
+
+8
+
+↓
+
+Fargate Spot
+```
+
+The first two tasks always use standard Fargate.
+
+Additional tasks prefer Spot capacity.
+
+This balances reliability and cost.
+
+---
+
+# Enterprise Architecture
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon ECS Service
+
+↓
+
+Capacity Provider Strategy
+
+├── Fargate
+
+└── Fargate Spot
+
+↓
+
+AWS Fargate
+
+↓
+
+Running Tasks
+```
+
+---
+
+# Production Example
+
+An online retail platform experiences
+
+- Normal traffic during weekdays
+- Massive spikes during festive sales
+
+Configuration
+
+```text
+Minimum
+
+4 Standard Tasks
+
+↓
+
+Auto Scaling
+
+↓
+
+Additional Tasks
+
+↓
+
+Fargate Spot
+```
+
+Benefits
+
+- High availability
+- Reduced infrastructure cost
+- Automatic scaling
+- Minimal operational effort
+
+---
+
+# Best Practices
+
+- Use Target Tracking for most applications.
+- Set sensible minimum and maximum task counts.
+- Configure cooldown periods.
+- Use CloudWatch metrics for scaling decisions.
+- Use Fargate Spot only for interruptible workloads.
+- Mix Fargate and Fargate Spot for production.
+- Continuously monitor scaling events.
+
+---
+
+# Common Mistakes
+
+- Scaling only on CPU when memory is the bottleneck.
+- Minimum task count set to one for production APIs.
+- Using only Spot capacity for critical services.
+- Aggressive cooldown settings causing oscillation.
+- Ignoring CloudWatch alarms.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is ECS Service Auto Scaling?
+- What metrics can trigger scaling?
+- What is Fargate Spot?
+
+## Intermediate
+
+- Target Tracking vs Step Scaling.
+- Explain Capacity Providers.
+- How does Fargate Spot reduce costs?
+- Explain the scale-out workflow.
+
+## Advanced
+
+- Design an auto-scaling architecture for a payment platform.
+- Explain how you would combine Fargate and Fargate Spot in production.
+- Design a cost-optimized ECS architecture that can handle unpredictable traffic spikes while maintaining high availability.
+
+---
+
