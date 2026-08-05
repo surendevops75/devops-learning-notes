@@ -648,3 +648,586 @@ easy to manage.
 
 ---
 
+# Chapter 5 - AWS Direct Connect
+
+## What is AWS Direct Connect?
+
+AWS Direct Connect (DX) is a dedicated private network connection between an organization's on-premises data center and AWS.
+
+Unlike Site-to-Site VPN, Direct Connect does **not** use the public internet.
+
+Traffic flows through a dedicated physical circuit provided by an AWS Direct Connect Partner or at an AWS Direct Connect Location.
+
+---
+
+# Why Direct Connect?
+
+Consider a financial organization hosting:
+
+- Core Banking System
+- Oracle Databases
+- SAP
+- VMware Infrastructure
+
+These systems require:
+
+- Low latency
+- High bandwidth
+- Predictable performance
+- Private connectivity
+
+Using the public internet is not ideal.
+
+Direct Connect provides a dedicated private path.
+
+---
+
+# Direct Connect Architecture
+
+```text
+             On-Premises Data Center
+
+                      │
+
+                Corporate Router
+
+                      │
+
+            Dedicated Fiber Circuit
+
+                      │
+
+          AWS Direct Connect Location
+
+                      │
+
+             AWS Direct Connect
+
+                      │
+
+        Direct Connect Gateway
+
+                      │
+
+            Transit Gateway / VGW
+
+                      │
+
+                Amazon VPC
+```
+
+---
+
+# Direct Connect Components
+
+| Component | Purpose |
+|-----------|---------|
+| Customer Router | Enterprise edge router |
+| Direct Connect Location | AWS partner facility |
+| Dedicated Connection | Physical fiber connection |
+| Virtual Interface (VIF) | Logical network connection |
+| Direct Connect Gateway | Connects DX to multiple VPCs |
+| Transit Gateway | Enterprise routing |
+
+---
+
+# How Direct Connect Works
+
+Packet flow
+
+```text
+Application
+
+↓
+
+Amazon EC2
+
+↓
+
+Transit Gateway
+
+↓
+
+Direct Connect Gateway
+
+↓
+
+Direct Connect
+
+↓
+
+Customer Router
+
+↓
+
+On-Premises Server
+```
+
+Traffic never traverses the public internet.
+
+---
+
+# Direct Connect Speeds
+
+AWS supports multiple connection speeds.
+
+Common options
+
+- 1 Gbps
+- 10 Gbps
+- 100 Gbps
+
+Hosted connections may offer smaller bandwidths such as:
+
+- 50 Mbps
+- 100 Mbps
+- 200 Mbps
+- 500 Mbps
+
+Choose based on workload requirements.
+
+---
+
+# Direct Connect Connection Types
+
+## Dedicated Connection
+
+Provisioned directly by AWS.
+
+Characteristics
+
+- High bandwidth
+- Single customer
+- Enterprise workloads
+- Consistent performance
+
+---
+
+## Hosted Connection
+
+Provisioned through a Direct Connect Partner.
+
+Characteristics
+
+- Flexible bandwidth
+- Faster provisioning
+- Lower entry cost
+- Suitable for smaller environments
+
+---
+
+# Virtual Interfaces (VIF)
+
+A Virtual Interface (VIF) is a logical connection over the physical Direct Connect link.
+
+Types
+
+| VIF | Purpose |
+|------|---------|
+| Private VIF | Access private VPC resources |
+| Public VIF | Access AWS public services |
+| Transit VIF | Connect to Transit Gateway through Direct Connect Gateway |
+
+---
+
+## Private VIF
+
+Used to access private resources.
+
+```text
+On-Premises
+
+↓
+
+Private VIF
+
+↓
+
+VPC
+
+↓
+
+EC2
+
+↓
+
+RDS
+```
+
+Traffic stays private.
+
+---
+
+## Public VIF
+
+Provides access to AWS public services.
+
+Example
+
+```text
+On-Premises
+
+↓
+
+Public VIF
+
+↓
+
+Amazon S3
+
+↓
+
+DynamoDB
+
+↓
+
+CloudFront
+```
+
+Although these services have public endpoints, traffic uses AWS's private backbone after entering AWS.
+
+---
+
+## Transit VIF
+
+Used with Direct Connect Gateway and Transit Gateway.
+
+Architecture
+
+```text
+On-Premises
+
+↓
+
+Transit VIF
+
+↓
+
+Direct Connect Gateway
+
+↓
+
+Transit Gateway
+
+↓
+
+Multiple VPCs
+```
+
+This is the recommended architecture for enterprise environments.
+
+---
+
+# Direct Connect Gateway (DXGW)
+
+## What is Direct Connect Gateway?
+
+A Direct Connect Gateway enables a single Direct Connect connection to access multiple VPCs, even across different AWS Regions (supported scenarios).
+
+Without DXGW
+
+```text
+Direct Connect
+
+↓
+
+VPC-A
+```
+
+Only one VPC.
+
+---
+
+With DXGW
+
+```text
+Direct Connect
+
+↓
+
+Direct Connect Gateway
+
+↓
+
+Transit Gateway
+
+↓
+
+Production
+
+↓
+
+Development
+
+↓
+
+Shared Services
+```
+
+One connection.
+
+Multiple VPCs.
+
+---
+
+# Direct Connect + Transit Gateway
+
+Modern enterprise architecture
+
+```text
+               On-Premises
+
+                     │
+
+             Direct Connect
+
+                     │
+
+        Direct Connect Gateway
+
+                     │
+
+            Transit Gateway
+
+      ┌─────────┼─────────┐
+
+    Dev       QA      Production
+
+          Shared Services
+```
+
+Advantages
+
+- Central routing
+- Hybrid connectivity
+- Easy expansion
+- Reduced operational complexity
+
+---
+
+# Direct Connect vs Site-to-Site VPN
+
+| Feature | Direct Connect | Site-to-Site VPN |
+|----------|----------------|------------------|
+| Network | Dedicated | Public Internet |
+| Encryption | Optional (MACsec/IPsec depending on design) | IPSec |
+| Latency | Lower and more consistent | Higher and variable |
+| Bandwidth | High | Internet dependent |
+| Reliability | High | ISP dependent |
+| Cost | Higher | Lower |
+| Enterprise Workloads | Excellent | Good |
+
+---
+
+# Common Production Use Cases
+
+## Database Access
+
+```text
+Oracle Database
+
+↓
+
+Direct Connect
+
+↓
+
+Amazon EKS
+```
+
+---
+
+## VMware Migration
+
+```text
+VMware
+
+↓
+
+Direct Connect
+
+↓
+
+Amazon EC2
+```
+
+---
+
+## SAP
+
+```text
+SAP
+
+↓
+
+Direct Connect
+
+↓
+
+AWS
+```
+
+---
+
+## Backup
+
+```text
+AWS Backup
+
+↓
+
+Direct Connect
+
+↓
+
+Data Center
+```
+
+---
+
+# Best Practices
+
+- Deploy redundant Direct Connect circuits.
+- Use Transit Gateway for enterprise routing.
+- Configure VPN as backup.
+- Monitor BGP sessions.
+- Monitor bandwidth utilization.
+- Test failover regularly.
+- Avoid overlapping CIDRs.
+
+---
+
+# Common Mistakes
+
+- No backup VPN.
+- Single Direct Connect circuit.
+- Ignoring BGP monitoring.
+- Using VGW for large enterprise environments instead of TGW where centralized routing is needed.
+- Poor CIDR planning.
+
+---
+
+# Interview Questions
+
+### Basic
+
+- What is AWS Direct Connect?
+- Why use Direct Connect instead of VPN?
+- What is a Virtual Interface?
+
+### Intermediate
+
+- Private VIF vs Public VIF vs Transit VIF.
+- What is a Direct Connect Gateway?
+- Explain Direct Connect architecture.
+
+### Advanced
+
+- Design enterprise hybrid networking using Direct Connect.
+- Explain packet flow from AWS to an on-premises database.
+- Design highly available Direct Connect architecture.
+
+---
+
+# Chapter 6 - Direct Connect Gateway (DXGW)
+
+## Why Direct Connect Gateway?
+
+Without Direct Connect Gateway,
+
+every VPC requires separate connectivity.
+
+Example
+
+```text
+Direct Connect
+
+↓
+
+Production VPC
+
+Another Connection
+
+↓
+
+Development VPC
+```
+
+Not scalable.
+
+---
+
+With Direct Connect Gateway
+
+```text
+                Direct Connect
+
+                      │
+
+        Direct Connect Gateway
+
+                      │
+
+             Transit Gateway
+
+      ┌─────────┼─────────┐
+
+   Production   Development
+
+        │
+
+  Shared Services
+```
+
+One enterprise connection.
+
+---
+
+# Benefits
+
+- Centralized connectivity
+- Multiple VPC access
+- Better scalability
+- Simplified routing
+- Enterprise architecture
+
+---
+
+# Packet Flow
+
+```text
+Application
+
+↓
+
+Transit Gateway
+
+↓
+
+Direct Connect Gateway
+
+↓
+
+Direct Connect
+
+↓
+
+Corporate Router
+
+↓
+
+Application Server
+```
+
+---
+
+# Best Practices
+
+- Pair DXGW with Transit Gateway.
+- Use redundant Direct Connect links.
+- Monitor BGP.
+- Use AWS RAM for centralized networking.
+- Test disaster recovery procedures.
+
+---
+
