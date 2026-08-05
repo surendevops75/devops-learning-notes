@@ -3898,3 +3898,1255 @@ Every dependency must be identified before migration.
 
 ---
 
+# Chapter 7 - AWS Application Migration Service (AWS MGN) Deep Dive
+
+Migrating hundreds of physical servers and virtual machines manually is
+
+- Time Consuming
+- Error Prone
+- Expensive
+- Risky
+
+AWS provides **AWS Application Migration Service (AWS MGN)** to simplify server migration.
+
+AWS MGN enables organizations to migrate
+
+- Physical Servers
+- Virtual Machines
+- Cloud VMs
+
+to AWS with
+
+- Minimal Downtime
+- Continuous Replication
+- Automated Cutover
+- Low Risk
+
+It is the primary AWS service for **Lift-and-Shift (Rehost)** migrations.
+
+---
+
+# What is AWS Application Migration Service?
+
+AWS MGN is a server migration service that replicates source servers into AWS continuously.
+
+Architecture
+
+```text
+On-Prem Server
+
+↓
+
+Replication Agent
+
+↓
+
+AWS Replication Server
+
+↓
+
+Amazon EC2
+```
+
+Applications are migrated with minimal changes.
+
+---
+
+# Why AWS MGN?
+
+Without AWS MGN
+
+```text
+Manual Server Build
+
+↓
+
+Install OS
+
+↓
+
+Install Applications
+
+↓
+
+Copy Data
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+Problems
+
+- Long Downtime
+- Manual Errors
+- High Cost
+- Slow Migration
+
+---
+
+Using AWS MGN
+
+```text
+Source Server
+
+↓
+
+Continuous Replication
+
+↓
+
+AWS
+
+↓
+
+Cutover
+
+↓
+
+Production
+```
+
+Migration becomes automated.
+
+---
+
+# AWS MGN Workflow
+
+```text
+Source Server
+
+↓
+
+Replication Agent
+
+↓
+
+AWS Staging Area
+
+↓
+
+Continuous Replication
+
+↓
+
+Launch Test Instance
+
+↓
+
+Cutover
+
+↓
+
+Production
+```
+
+Downtime is minimized.
+
+---
+
+# Core Components
+
+AWS MGN consists of
+
+- Replication Agent
+- Staging Area
+- Replication Server
+- Test Launch
+- Cutover Launch
+
+---
+
+# Replication Agent
+
+A lightweight agent is installed on the source server.
+
+The agent
+
+- Captures Disk Changes
+- Compresses Data
+- Encrypts Traffic
+- Sends Data to AWS
+
+Minimal CPU and memory are consumed.
+
+---
+
+# Continuous Replication
+
+Instead of copying data once,
+
+AWS continuously replicates disk changes.
+
+```text
+Source Server
+
+↓
+
+Disk Changes
+
+↓
+
+AWS
+```
+
+The target remains synchronized.
+
+---
+
+# AWS Staging Area
+
+Replicated data is stored in a staging area.
+
+Architecture
+
+```text
+Replication Agent
+
+↓
+
+Staging Subnet
+
+↓
+
+Low-Cost Replication Servers
+```
+
+The staging environment is temporary.
+
+---
+
+# Replication Process
+
+```text
+Source Server
+
+↓
+
+Initial Replication
+
+↓
+
+Incremental Replication
+
+↓
+
+Ready for Cutover
+```
+
+Only changed blocks are transferred after the initial sync.
+
+---
+
+# Test Launch
+
+Before production cutover,
+
+AWS MGN launches a test instance.
+
+```text
+Replicated Data
+
+↓
+
+EC2 Test Instance
+
+↓
+
+Application Validation
+```
+
+Testing reduces migration risk.
+
+---
+
+# Cutover Launch
+
+After successful testing,
+
+AWS launches the production instance.
+
+```text
+Replication Complete
+
+↓
+
+Stop Source
+
+↓
+
+Launch Production EC2
+
+↓
+
+Users Access AWS
+```
+
+Downtime is limited to the final synchronization and cutover.
+
+---
+
+# Migration Architecture
+
+```text
+Data Center
+
+↓
+
+Replication Agent
+
+↓
+
+AWS Replication Server
+
+↓
+
+Amazon EC2
+
+↓
+
+Production
+```
+
+Applications continue running during replication.
+
+---
+
+# Supported Source Environments
+
+AWS MGN supports
+
+- Physical Servers
+- VMware
+- Hyper-V
+- KVM
+- Other Cloud Providers
+- Existing AWS Instances
+
+Almost any x86 server can be migrated.
+
+---
+
+# Operating System Support
+
+Commonly supported
+
+- Windows Server
+- Linux
+- Ubuntu
+- Red Hat Enterprise Linux
+- SUSE Linux
+- CentOS
+
+---
+
+# Network Connectivity
+
+Replication uses
+
+- Internet
+- AWS Direct Connect
+- AWS Site-to-Site VPN
+
+Choose connectivity based on bandwidth, security, and latency requirements.
+
+---
+
+# Migration Waves
+
+Organizations migrate applications in batches.
+
+Example
+
+```text
+Wave 1
+
+↓
+
+Development
+
+────────────
+
+Wave 2
+
+↓
+
+Internal Applications
+
+────────────
+
+Wave 3
+
+↓
+
+Production
+```
+
+Migration becomes manageable.
+
+---
+
+# Launch Templates
+
+AWS MGN uses EC2 Launch Templates.
+
+They define
+
+- Instance Type
+- Security Groups
+- IAM Roles
+- Storage
+- Networking
+
+This standardizes migrated servers.
+
+---
+
+# Post-Launch Actions
+
+AWS can automate tasks after migration.
+
+Examples
+
+- Install SSM Agent
+- Join Active Directory
+- Install Monitoring Tools
+- Configure Security Software
+
+Automation reduces manual work.
+
+---
+
+# Enterprise Example
+
+```text
+500 On-Prem Servers
+
+↓
+
+AWS MGN
+
+↓
+
+Continuous Replication
+
+↓
+
+Testing
+
+↓
+
+Cutover
+
+↓
+
+Amazon EC2
+```
+
+Hundreds of servers can be migrated efficiently.
+
+---
+
+# Banking Example
+
+```text
+Payment Server
+
+↓
+
+Replication
+
+↓
+
+AWS
+
+↓
+
+Validation
+
+↓
+
+Production
+```
+
+Migration occurs with minimal business disruption.
+
+---
+
+# High Availability
+
+After migration,
+
+servers can use AWS features such as
+
+- Auto Scaling
+- Elastic Load Balancer
+- Multi-AZ Architectures
+- Amazon EBS Snapshots
+
+These improve resilience beyond the original environment.
+
+---
+
+# Security
+
+AWS MGN integrates with
+
+- IAM
+- AWS KMS
+- Amazon VPC
+- CloudTrail
+
+Security Features
+
+- Encrypted Replication
+- Access Control
+- Audit Logging
+
+---
+
+# Monitoring
+
+CloudWatch provides visibility into
+
+- Replication Health
+- Replication Lag
+- Server Status
+- Launch Progress
+
+Migration teams can monitor every server.
+
+---
+
+# AWS MGN vs AWS DMS
+
+| AWS MGN | AWS DMS |
+|----------|----------|
+| Server Migration | Database Migration |
+| Entire Machine | Database Only |
+| EC2 Target | Managed Databases |
+| Lift-and-Shift | Database Modernization |
+
+---
+
+# AWS MGN vs VM Import/Export
+
+| AWS MGN | VM Import/Export |
+|----------|------------------|
+| Continuous Replication | One-Time Import |
+| Minimal Downtime | Longer Downtime |
+| Automated Cutover | Manual Process |
+| Production Migrations | Small-Scale VM Imports |
+
+---
+
+# Migration Best Practices
+
+- Perform application discovery before migration.
+- Test every migrated server before production.
+- Migrate using migration waves.
+- Use Direct Connect for large-scale migrations when possible.
+- Automate post-launch configuration.
+- Validate application functionality after cutover.
+- Monitor replication continuously.
+- Keep rollback plans ready until migration is verified.
+
+---
+
+# Common Mistakes
+
+- Skipping test launches.
+- Migrating production servers before development environments.
+- Ignoring application dependencies.
+- Underestimating required network bandwidth.
+- Forgetting post-launch configuration.
+- Not validating migrated applications.
+- Decommissioning source servers too early.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS Application Migration Service (MGN)?
+- What types of servers can AWS MGN migrate?
+- What is continuous replication?
+
+## Intermediate
+
+- Explain the AWS MGN migration workflow.
+- Test Launch vs Cutover Launch.
+- AWS MGN vs VM Import/Export.
+- AWS MGN vs AWS DMS.
+
+## Advanced
+
+- Design a migration strategy using AWS Application Migration Service for a company with 700 on-premises Windows and Linux servers while minimizing downtime and business disruption.
+- Explain how AWS MGN performs continuous replication, testing, and cutover, and why it is preferred for Lift-and-Shift migrations.
+- A financial institution needs to migrate hundreds of mission-critical virtual machines to AWS with near-zero downtime. Design the complete migration architecture using AWS MGN, including replication, migration waves, networking, security, validation, monitoring, rollback planning, and post-migration optimization.
+
+---
+
+# Chapter 8 - AWS Database Migration Service (AWS DMS) Deep Dive
+
+Applications are only one part of migration.
+
+The most valuable asset for any organization is its **data**.
+
+Migrating databases presents unique challenges because organizations must maintain
+
+- Data Integrity
+- High Availability
+- Minimal Downtime
+- Continuous Business Operations
+
+AWS provides **AWS Database Migration Service (AWS DMS)** to migrate databases securely with minimal downtime.
+
+AWS DMS supports
+
+- Homogeneous Migrations
+- Heterogeneous Migrations
+- Continuous Data Replication
+
+making it one of the most important services for enterprise cloud migrations.
+
+---
+
+# What is AWS Database Migration Service (DMS)?
+
+AWS DMS is a fully managed database migration service.
+
+It helps migrate data between databases while keeping the source database operational.
+
+Architecture
+
+```text
+Source Database
+
+↓
+
+AWS DMS
+
+↓
+
+Target Database
+```
+
+Applications continue using the source database during migration.
+
+---
+
+# Why AWS DMS?
+
+Without DMS
+
+```text
+Stop Database
+
+↓
+
+Export Data
+
+↓
+
+Import Data
+
+↓
+
+Restart Database
+```
+
+Problems
+
+- Long Downtime
+- Business Disruption
+- High Risk
+- Manual Errors
+
+---
+
+Using AWS DMS
+
+```text
+Source Database
+
+↓
+
+Continuous Replication
+
+↓
+
+Target Database
+```
+
+Migration occurs while applications remain online.
+
+---
+
+# DMS Workflow
+
+```text
+Source Database
+
+↓
+
+Replication Instance
+
+↓
+
+Target Database
+
+↓
+
+Continuous Sync
+```
+
+Applications experience minimal interruption.
+
+---
+
+# Core Components
+
+AWS DMS consists of
+
+- Source Endpoint
+- Target Endpoint
+- Replication Instance
+- Replication Task
+
+---
+
+# Source Endpoint
+
+The source endpoint defines
+
+- Database Type
+- Hostname
+- Port
+- Credentials
+
+Examples
+
+- Oracle
+- SQL Server
+- MySQL
+- PostgreSQL
+
+---
+
+# Target Endpoint
+
+The destination database.
+
+Examples
+
+```text
+Amazon RDS
+
+↓
+
+Amazon Aurora
+
+↓
+
+Amazon Redshift
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Replication Instance
+
+The Replication Instance performs
+
+- Data Reading
+- Data Transformation
+- Data Replication
+- Change Processing
+
+Architecture
+
+```text
+Source
+
+↓
+
+Replication Instance
+
+↓
+
+Target
+```
+
+It acts as the migration engine.
+
+---
+
+# Replication Task
+
+The replication task defines
+
+- What to migrate
+- When to migrate
+- How to migrate
+
+Typical options
+
+- Full Load
+- CDC
+- Full Load + CDC
+
+---
+
+# Full Load
+
+Migrates all existing data.
+
+```text
+Source Database
+
+↓
+
+Complete Copy
+
+↓
+
+Target Database
+```
+
+Suitable for initial migration.
+
+---
+
+# Change Data Capture (CDC)
+
+CDC continuously replicates changes.
+
+```text
+Insert
+
+↓
+
+Update
+
+↓
+
+Delete
+
+↓
+
+Target Database
+```
+
+Keeps both databases synchronized.
+
+---
+
+# Full Load + CDC
+
+Most enterprise migrations use
+
+```text
+Full Data Copy
+
+↓
+
+Continuous Replication
+
+↓
+
+Cutover
+```
+
+Applications experience minimal downtime.
+
+---
+
+# Migration Timeline
+
+```text
+Full Load
+
+↓
+
+Continuous CDC
+
+↓
+
+Validation
+
+↓
+
+Application Cutover
+
+↓
+
+Production
+```
+
+---
+
+# Homogeneous Migration
+
+Source and target use
+
+the same database engine.
+
+Example
+
+```text
+Oracle
+
+↓
+
+Oracle
+
+────────────
+
+MySQL
+
+↓
+
+Amazon RDS MySQL
+```
+
+Schema changes are minimal.
+
+---
+
+# Heterogeneous Migration
+
+Source and target use
+
+different database engines.
+
+Example
+
+```text
+Oracle
+
+↓
+
+Amazon Aurora PostgreSQL
+```
+
+Schema conversion is required.
+
+---
+
+# AWS Schema Conversion Tool (SCT)
+
+For heterogeneous migrations,
+
+AWS recommends using
+
+AWS Schema Conversion Tool (SCT).
+
+SCT converts
+
+- Tables
+- Views
+- Stored Procedures
+- Functions
+- Triggers
+
+before DMS migrates the data.
+
+Architecture
+
+```text
+Oracle Schema
+
+↓
+
+AWS SCT
+
+↓
+
+PostgreSQL Schema
+
+↓
+
+AWS DMS
+
+↓
+
+Data Migration
+```
+
+---
+
+# Supported Sources
+
+Examples include
+
+- Oracle
+- SQL Server
+- MySQL
+- MariaDB
+- PostgreSQL
+- IBM Db2
+- SAP ASE
+- MongoDB
+
+---
+
+# Supported Targets
+
+Examples include
+
+- Amazon RDS
+- Amazon Aurora
+- Amazon Redshift
+- Amazon DynamoDB
+- Amazon S3
+- OpenSearch
+
+---
+
+# Migration Example
+
+```text
+Oracle
+
+↓
+
+AWS SCT
+
+↓
+
+Aurora PostgreSQL Schema
+
+↓
+
+AWS DMS
+
+↓
+
+Data
+
+↓
+
+Production
+```
+
+---
+
+# Data Validation
+
+After migration
+
+validate
+
+- Record Count
+- Constraints
+- Indexes
+- Relationships
+- Application Functionality
+
+Validation ensures migration success.
+
+---
+
+# Continuous Replication
+
+Applications continue writing
+
+to the source database.
+
+```text
+Source
+
+↓
+
+CDC
+
+↓
+
+Target
+```
+
+Both databases remain synchronized until cutover.
+
+---
+
+# Cutover
+
+Once synchronization completes
+
+```text
+Stop Applications
+
+↓
+
+Final Sync
+
+↓
+
+Switch Connection
+
+↓
+
+Target Database
+```
+
+Downtime is minimized.
+
+---
+
+# Enterprise Example
+
+```text
+Oracle Database
+
+↓
+
+AWS SCT
+
+↓
+
+AWS DMS
+
+↓
+
+Amazon Aurora PostgreSQL
+```
+
+Applications migrate without long outages.
+
+---
+
+# Banking Example
+
+```text
+Core Banking Database
+
+↓
+
+CDC
+
+↓
+
+Amazon Aurora
+
+↓
+
+Validation
+
+↓
+
+Production
+```
+
+Financial transactions remain protected.
+
+---
+
+# Security
+
+AWS DMS integrates with
+
+- IAM
+- AWS KMS
+- Amazon VPC
+- CloudTrail
+
+Security Features
+
+- Encryption
+- Access Control
+- Audit Logging
+
+---
+
+# Monitoring
+
+CloudWatch provides metrics for
+
+- Replication Latency
+- CPU Usage
+- Memory Usage
+- Task Status
+- Throughput
+- Replication Errors
+
+---
+
+# AWS DMS vs AWS MGN
+
+| AWS DMS | AWS MGN |
+|----------|----------|
+| Database Migration | Server Migration |
+| Database Objects | Entire Server |
+| CDC Support | Block-Level Replication |
+| Database Modernization | Lift-and-Shift |
+
+---
+
+# AWS DMS vs Database Backup
+
+| AWS DMS | Backup/Restore |
+|----------|----------------|
+| Minimal Downtime | Long Downtime |
+| Continuous Replication | One-Time Copy |
+| Ongoing Synchronization | Static Backup |
+| Migration Focus | Disaster Recovery Focus |
+
+---
+
+# Best Practices
+
+- Use Full Load + CDC for production migrations.
+- Use AWS SCT for heterogeneous migrations.
+- Validate schema before migrating data.
+- Test migration in non-production environments.
+- Monitor replication latency continuously.
+- Secure endpoints with IAM and encryption.
+- Perform cutover during low-traffic windows.
+- Keep rollback plans until migration is verified.
+
+---
+
+# Common Mistakes
+
+- Skipping schema conversion for heterogeneous databases.
+- Migrating directly to production without testing.
+- Ignoring replication latency.
+- Performing cutover before validation.
+- Under-sizing the replication instance.
+- Forgetting to migrate stored procedures and triggers.
+- Decommissioning the source database immediately after cutover.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS Database Migration Service (DMS)?
+- What is Change Data Capture (CDC)?
+- What is a Replication Instance?
+
+## Intermediate
+
+- Full Load vs CDC.
+- Homogeneous vs Heterogeneous migration.
+- Why is AWS Schema Conversion Tool (SCT) required?
+- AWS DMS vs AWS MGN.
+
+## Advanced
+
+- Design a production database migration from Oracle to Amazon Aurora PostgreSQL with minimal downtime using AWS DMS and AWS SCT.
+- Explain how Full Load, Change Data Capture, validation, and cutover work together in an enterprise database migration.
+- A multinational bank must migrate hundreds of mission-critical databases to AWS while maintaining continuous availability and ensuring zero data loss. Design the complete migration architecture using AWS DMS, AWS SCT, replication instances, CDC, monitoring, validation, rollback planning, and security controls.
+
+---
+
