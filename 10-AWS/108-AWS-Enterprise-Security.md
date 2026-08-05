@@ -6770,3 +6770,875 @@ Every action is monitored.
 
 ---
 
+# Chapter 11 - AWS Enterprise Security Best Practices, Compliance & Production Security Architecture
+
+Enterprise security is much more than enabling IAM and encryption.
+
+Organizations operating in
+
+- Banking
+- Healthcare
+- Government
+- Retail
+- SaaS
+- Manufacturing
+
+must satisfy strict security and compliance requirements while maintaining high availability and scalability.
+
+AWS provides a comprehensive security ecosystem, but securing workloads requires proper architecture, governance, monitoring, automation, and continuous improvement.
+
+This chapter combines AWS security best practices with real enterprise architecture patterns and compliance requirements.
+
+---
+
+# Enterprise Security Pillars
+
+A mature AWS security architecture consists of multiple pillars.
+
+```text
+Identity
+
+↓
+
+Network
+
+↓
+
+Application
+
+↓
+
+Data
+
+↓
+
+Monitoring
+
+↓
+
+Compliance
+
+↓
+
+Incident Response
+```
+
+Weakness in any one pillar can compromise the entire environment.
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Internet
+
+↓
+
+AWS Shield
+
+↓
+
+AWS WAF
+
+↓
+
+CloudFront
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Subnets
+
+↓
+
+Amazon EKS
+
+↓
+
+IAM Roles
+
+↓
+
+Secrets Manager
+
+↓
+
+Amazon RDS
+
+↓
+
+AWS KMS
+
+↓
+
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+SOC Team
+```
+
+Security exists at every layer.
+
+---
+
+# AWS Well-Architected Security Pillar
+
+AWS recommends
+
+- Strong Identity Foundation
+- Traceability
+- Security at Every Layer
+- Automated Security Best Practices
+- Data Protection
+- Incident Preparation
+
+These principles form the AWS Security Pillar.
+
+---
+
+# Identity Best Practices
+
+Use
+
+- IAM Identity Center
+- IAM Roles
+- Temporary Credentials
+- Least Privilege
+- Multi-Factor Authentication
+- Permission Boundaries
+
+Avoid
+
+- Shared IAM Users
+- Long-Lived Credentials
+- Root User Access
+
+---
+
+# Network Security Best Practices
+
+Deploy
+
+```text
+Public
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Private Subnets
+
+↓
+
+Application
+
+↓
+
+Private Database
+```
+
+Never expose databases directly to the Internet.
+
+---
+
+# Data Security Best Practices
+
+Protect
+
+- Customer Data
+- Financial Data
+- API Keys
+- Encryption Keys
+- Backups
+
+Use
+
+- AWS KMS
+- Secrets Manager
+- TLS
+- Encryption at Rest
+- Encryption in Transit
+
+---
+
+# Application Security
+
+Secure applications using
+
+- Secure Coding
+- Input Validation
+- Dependency Scanning
+- Container Scanning
+- Secret Management
+- Vulnerability Management
+
+Security begins during development.
+
+---
+
+# DevSecOps
+
+Modern CI/CD pipelines integrate security into every deployment.
+
+Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Deploy
+
+↓
+
+Amazon EKS
+```
+
+Security checks occur automatically.
+
+---
+
+# Infrastructure as Code Security
+
+Infrastructure should be version controlled.
+
+```text
+Terraform
+
+↓
+
+Security Scan
+
+↓
+
+Code Review
+
+↓
+
+Deployment
+```
+
+Benefits
+
+- Repeatability
+- Auditability
+- Compliance
+
+---
+
+# Security Automation
+
+Automate
+
+- Vulnerability Scanning
+- Patch Management
+- IAM Audits
+- Compliance Checks
+- Secret Rotation
+
+Automation reduces operational risk.
+
+---
+
+# Logging Strategy
+
+Enterprise logging
+
+```text
+AWS Accounts
+
+↓
+
+CloudTrail
+
+↓
+
+Central Logging Account
+
+↓
+
+Amazon S3
+
+↓
+
+Security Team
+```
+
+Logs should be immutable.
+
+---
+
+# Threat Detection
+
+Security monitoring
+
+```text
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+Inspector
+
+↓
+
+SNS
+
+↓
+
+Security Operations Center
+```
+
+Threat detection becomes centralized.
+
+---
+
+# Compliance
+
+Many organizations must comply with
+
+- PCI-DSS
+- HIPAA
+- ISO 27001
+- SOC 2
+- GDPR
+- NIST
+- CIS Benchmarks
+
+AWS provides services that help organizations meet these requirements.
+
+---
+
+# AWS Artifact
+
+AWS Artifact provides
+
+- Compliance Reports
+- Audit Documents
+- Certifications
+
+Examples
+
+- SOC Reports
+- ISO Reports
+- PCI Reports
+
+Useful during compliance audits.
+
+---
+
+# AWS Audit Manager
+
+Audit Manager automates evidence collection.
+
+Architecture
+
+```text
+AWS Resources
+
+↓
+
+Audit Manager
+
+↓
+
+Evidence
+
+↓
+
+Compliance Report
+```
+
+Reduces manual audit effort.
+
+---
+
+# Security Incident Response
+
+Typical workflow
+
+```text
+Security Alert
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+SOC Investigation
+
+↓
+
+Containment
+
+↓
+
+Recovery
+
+↓
+
+Lessons Learned
+```
+
+Preparation reduces recovery time.
+
+---
+
+# Security Operations Center (SOC)
+
+Large enterprises operate
+
+24×7 Security Operations Centers.
+
+Responsibilities
+
+- Monitor Alerts
+- Investigate Threats
+- Respond to Incidents
+- Coordinate Recovery
+
+AWS security services integrate directly with SOC workflows.
+
+---
+
+# Enterprise Banking Example
+
+```text
+Customer
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+IAM Roles
+
+↓
+
+Secrets Manager
+
+↓
+
+Aurora
+
+↓
+
+AWS KMS
+
+↓
+
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+SOC Team
+```
+
+Multiple security controls protect customer transactions.
+
+---
+
+# Healthcare Example
+
+Requirements
+
+- Patient Privacy
+- Encryption
+- Audit Trails
+- Regulatory Compliance
+
+Architecture
+
+```text
+Doctors
+
+↓
+
+IAM Identity Center
+
+↓
+
+Application
+
+↓
+
+Encrypted Database
+
+↓
+
+CloudTrail
+
+↓
+
+Audit Manager
+```
+
+Sensitive records remain protected and auditable.
+
+---
+
+# Security Maturity Model
+
+Organizations typically evolve through stages.
+
+```text
+Basic IAM
+
+↓
+
+Network Security
+
+↓
+
+Encryption
+
+↓
+
+Centralized Logging
+
+↓
+
+Threat Detection
+
+↓
+
+Security Automation
+
+↓
+
+Continuous Compliance
+
+↓
+
+Zero Trust
+```
+
+Security maturity increases over time.
+
+---
+
+# Enterprise Security Checklist
+
+Before production deployment verify
+
+✓ MFA Enabled
+
+✓ Root Account Secured
+
+✓ IAM Roles Used
+
+✓ Least Privilege
+
+✓ Security Groups Reviewed
+
+✓ Private Subnets
+
+✓ Encryption Enabled
+
+✓ Secrets Stored Securely
+
+✓ CloudTrail Enabled
+
+✓ GuardDuty Enabled
+
+✓ Security Hub Enabled
+
+✓ AWS Config Enabled
+
+✓ Backup Encryption
+
+✓ Disaster Recovery Tested
+
+✓ Compliance Requirements Verified
+
+---
+
+# Security Architecture Review Checklist
+
+Review
+
+- IAM Permissions
+- Security Groups
+- Network ACLs
+- Encryption
+- Logging
+- Backup Strategy
+- Monitoring
+- Threat Detection
+- Compliance Controls
+- Disaster Recovery
+
+Security reviews should occur regularly.
+
+---
+
+# Enterprise Best Practices
+
+## Identity
+
+- Prefer IAM Identity Center.
+- Use IAM Roles.
+- Enable MFA.
+- Avoid long-lived credentials.
+
+---
+
+## Network
+
+- Use private subnets.
+- Enable AWS WAF.
+- Enable AWS Shield.
+- Use VPC Endpoints.
+- Restrict Security Groups.
+
+---
+
+## Data
+
+- Encrypt everything.
+- Rotate secrets automatically.
+- Use AWS KMS.
+- Enable TLS.
+
+---
+
+## Monitoring
+
+- Enable CloudTrail.
+- Enable GuardDuty.
+- Enable Security Hub.
+- Enable AWS Config.
+- Centralize logs.
+
+---
+
+## Operations
+
+- Automate security checks.
+- Regularly review IAM permissions.
+- Test Disaster Recovery.
+- Patch systems regularly.
+- Perform penetration testing where permitted.
+
+---
+
+# Common Enterprise Security Mistakes
+
+- Using the Root User daily.
+- Sharing AWS accounts.
+- Disabling CloudTrail.
+- Publicly exposing databases.
+- Hardcoding secrets.
+- Using AdministratorAccess for all users.
+- Ignoring GuardDuty findings.
+- Never reviewing Security Groups.
+- Storing logs in workload accounts.
+- Not testing Disaster Recovery.
+
+---
+
+# Enterprise Interview Scenarios
+
+## Scenario 1
+
+Design a secure AWS architecture for a multinational bank that must satisfy PCI-DSS while supporting millions of daily transactions.
+
+---
+
+## Scenario 2
+
+Your company operates 300 AWS accounts across multiple Regions.
+
+Design a centralized security architecture using
+
+- AWS Organizations
+- IAM Identity Center
+- GuardDuty
+- Security Hub
+- CloudTrail
+- AWS Config
+
+---
+
+## Scenario 3
+
+An attacker obtains a developer's AWS credentials.
+
+Explain how
+
+- MFA
+- IAM Roles
+- AWS STS
+- CloudTrail
+- GuardDuty
+- Security Hub
+
+limit the impact and help detect the compromise.
+
+---
+
+## Scenario 4
+
+Your security team discovers that several production S3 buckets are publicly accessible.
+
+Explain
+
+- Investigation
+- Immediate Containment
+- Root Cause Analysis
+- Permanent Prevention
+
+using AWS security services.
+
+---
+
+## Scenario 5
+
+Design a complete DevSecOps platform where every infrastructure change, application deployment, container image, and API request is continuously scanned, monitored, logged, and audited while satisfying enterprise compliance requirements.
+
+---
+
+# Quick Revision Cheat Sheet
+
+| Requirement | AWS Service |
+|-------------|-------------|
+| Identity Management | IAM Identity Center |
+| Workforce Authentication | IAM Identity Center + MFA |
+| Temporary Credentials | AWS STS |
+| Least Privilege | IAM Policies |
+| Organization Governance | AWS Organizations |
+| Permission Guardrails | SCP |
+| Firewall | Security Groups |
+| Subnet Firewall | Network ACL |
+| Layer 7 Protection | AWS WAF |
+| DDoS Protection | AWS Shield |
+| Advanced Network Inspection | AWS Network Firewall |
+| Encryption | AWS KMS |
+| Secret Storage | Secrets Manager |
+| Certificate Management | AWS ACM |
+| Audit Logs | CloudTrail |
+| Operational Monitoring | CloudWatch |
+| Threat Detection | GuardDuty |
+| Security Dashboard | Security Hub |
+| Vulnerability Scanning | Amazon Inspector |
+| Configuration Compliance | AWS Config |
+| External Access Analysis | IAM Access Analyzer |
+| Compliance Reports | AWS Artifact |
+| Audit Evidence | AWS Audit Manager |
+
+---
+
+# File Completed
+
+**File Name:** `108-AWS-Enterprise-Security.md`
+
+This handbook now includes:
+
+- ✅ Enterprise Security Fundamentals
+- ✅ Shared Responsibility Model
+- ✅ IAM Deep Dive
+- ✅ IAM Roles & AWS STS
+- ✅ Cross-Account Access
+- ✅ IAM Policies & Permission Boundaries
+- ✅ MFA & Root Account Security
+- ✅ IAM Identity Center (AWS SSO)
+- ✅ Identity Federation
+- ✅ AWS Organizations & SCPs
+- ✅ Network Security
+- ✅ Security Groups & NACLs
+- ✅ AWS WAF & Shield
+- ✅ AWS Network Firewall
+- ✅ Data Encryption
+- ✅ AWS KMS
+- ✅ AWS Secrets Manager
+- ✅ AWS Certificate Manager
+- ✅ CloudTrail
+- ✅ CloudWatch
+- ✅ GuardDuty
+- ✅ Security Hub
+- ✅ Amazon Inspector
+- ✅ AWS Config
+- ✅ IAM Access Analyzer
+- ✅ AWS Artifact
+- ✅ AWS Audit Manager
+- ✅ DevSecOps Security
+- ✅ Enterprise Security Architecture
+- ✅ Compliance
+- ✅ Production Best Practices
+- ✅ FAANG-Level Interview Scenarios
+- ✅ Quick Revision Cheat Sheet
