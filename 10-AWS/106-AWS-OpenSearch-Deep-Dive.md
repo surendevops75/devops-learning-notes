@@ -6930,3 +6930,903 @@ Characteristics
 
 ---
 
+# Chapter 10 - Monitoring, Performance Tuning & Troubleshooting
+
+Operating OpenSearch in production is not just about storing and searching data.
+
+A healthy OpenSearch cluster requires continuous monitoring of
+
+- Cluster Health
+- Node Health
+- CPU
+- Memory
+- JVM
+- Disk
+- Search Performance
+- Indexing Performance
+- Shards
+- Network
+
+Most production incidents are caused by insufficient monitoring rather than software bugs.
+
+---
+
+# Monitoring Architecture
+
+```text
+Applications
+
+↓
+
+OpenSearch Cluster
+
+↓
+
+CloudWatch
+
+↓
+
+Dashboards
+
+↓
+
+Alarms
+
+↓
+
+DevOps Team
+```
+
+Every component should be continuously monitored.
+
+---
+
+# What Should Be Monitored?
+
+Production monitoring includes
+
+- Cluster Health
+- Node Status
+- CPU Usage
+- JVM Heap
+- Disk Usage
+- Search Latency
+- Indexing Rate
+- Thread Pools
+- Shard Allocation
+- Network Traffic
+
+Ignoring any of these metrics can lead to cluster instability.
+
+---
+
+# Cluster Health
+
+OpenSearch reports three cluster health states.
+
+```text
+Green
+
+Yellow
+
+Red
+```
+
+This is one of the most common interview topics.
+
+---
+
+# Green Status
+
+```text
+Green
+```
+
+Meaning
+
+- All Primary Shards available
+- All Replica Shards available
+
+Cluster is fully healthy.
+
+---
+
+# Yellow Status
+
+```text
+Yellow
+```
+
+Meaning
+
+- Primary Shards available
+- Replica Shards unavailable
+
+Applications continue working,
+
+but redundancy is reduced.
+
+Common causes
+
+- Single-node cluster
+- Node failure
+- Insufficient nodes for replicas
+
+---
+
+# Red Status
+
+```text
+Red
+```
+
+Meaning
+
+- Primary Shards missing
+
+Some data becomes unavailable.
+
+Immediate investigation is required.
+
+---
+
+# Cluster Health Workflow
+
+```text
+Applications
+
+↓
+
+OpenSearch
+
+↓
+
+Health Check
+
+↓
+
+Green
+
+↓
+
+Continue
+
+Yellow
+
+↓
+
+Investigate
+
+Red
+
+↓
+
+Critical Incident
+```
+
+---
+
+# Node Health
+
+Each node should be monitored for
+
+- CPU
+- Memory
+- Disk
+- Network
+- JVM Heap
+
+Example
+
+```text
+Node-1
+
+↓
+
+CPU
+
+35%
+
+Memory
+
+60%
+
+Disk
+
+48%
+```
+
+---
+
+# CPU Monitoring
+
+High CPU usually indicates
+
+- Heavy Search Queries
+- Large Aggregations
+- Excessive Indexing
+- Too Many Shards
+
+Example
+
+```text
+CPU
+
+95%
+
+↓
+
+Slow Queries
+
+↓
+
+High Latency
+```
+
+---
+
+# Memory Monitoring
+
+OpenSearch heavily depends on memory.
+
+Monitor
+
+- JVM Heap
+- OS Memory
+- Cache Usage
+
+High memory usage often leads to
+
+```text
+Garbage Collection
+
+↓
+
+Slow Searches
+
+↓
+
+Node Instability
+```
+
+---
+
+# JVM Heap
+
+OpenSearch runs on the Java Virtual Machine.
+
+JVM Heap stores
+
+- Search Data
+- Query Cache
+- Field Data
+- Cluster State
+
+Example
+
+```text
+Heap Usage
+
+45%
+
+↓
+
+Healthy
+```
+
+---
+
+# High JVM Heap
+
+```text
+Heap
+
+95%
+
+↓
+
+Frequent Garbage Collection
+
+↓
+
+Performance Drops
+```
+
+Symptoms
+
+- Slow Queries
+- Timeouts
+- High CPU
+- Node Restarts
+
+---
+
+# Garbage Collection (GC)
+
+Garbage Collection frees unused memory.
+
+Workflow
+
+```text
+Application
+
+↓
+
+Memory Used
+
+↓
+
+GC
+
+↓
+
+Memory Released
+```
+
+Too much GC indicates memory pressure.
+
+---
+
+# Disk Monitoring
+
+Monitor
+
+```text
+Disk Usage
+
+↓
+
+80%
+
+↓
+
+Warning
+
+90%
+
+↓
+
+Critical
+```
+
+A nearly full disk can prevent new documents from being indexed.
+
+---
+
+# Watermarks
+
+OpenSearch uses disk watermarks.
+
+Example
+
+```text
+Low Watermark
+
+↓
+
+Warning
+
+High Watermark
+
+↓
+
+Stop Allocating Shards
+
+Flood Stage
+
+↓
+
+Read Only Index
+```
+
+This protects the cluster from running out of storage.
+
+---
+
+# Search Latency
+
+Measure
+
+```text
+Search Request
+
+↓
+
+Response Time
+```
+
+Healthy clusters generally respond within milliseconds depending on workload.
+
+Increasing latency usually indicates
+
+- Heavy queries
+- CPU pressure
+- Large shards
+- JVM pressure
+
+---
+
+# Indexing Rate
+
+Monitor
+
+```text
+Documents Indexed
+
+↓
+
+Per Second
+```
+
+Example
+
+```text
+25,000 Docs/sec
+```
+
+Sudden drops may indicate
+
+- Network problems
+- Disk bottlenecks
+- Thread pool saturation
+
+---
+
+# Thread Pools
+
+OpenSearch uses thread pools for
+
+- Search
+- Write
+- Bulk
+- Refresh
+- Snapshot
+
+Example
+
+```text
+Search Thread Pool
+
+↓
+
+Queue Full
+
+↓
+
+Requests Waiting
+```
+
+Large queues indicate resource contention.
+
+---
+
+# Search Queue
+
+```text
+Users
+
+↓
+
+Search Requests
+
+↓
+
+Thread Pool
+
+↓
+
+Results
+```
+
+If the queue fills,
+
+queries begin waiting,
+
+increasing latency.
+
+---
+
+# Bulk Queue
+
+Bulk indexing also uses dedicated thread pools.
+
+```text
+Fluent Bit
+
+↓
+
+Bulk Requests
+
+↓
+
+Bulk Thread Pool
+
+↓
+
+Index Documents
+```
+
+If the queue becomes full,
+
+indexing slows down.
+
+---
+
+# Shard Monitoring
+
+Monitor
+
+- Total Shards
+- Unassigned Shards
+- Relocating Shards
+- Initializing Shards
+
+Example
+
+```text
+Primary
+
+25
+
+Replica
+
+25
+
+Healthy
+```
+
+---
+
+# Unassigned Shards
+
+Problem
+
+```text
+Node Failure
+
+↓
+
+Replica Missing
+
+↓
+
+Yellow Cluster
+```
+
+Possible causes
+
+- Node unavailable
+- Disk full
+- Allocation rules
+- Insufficient nodes
+
+---
+
+# Shard Relocation
+
+Suppose
+
+New node added.
+
+```text
+Cluster
+
+↓
+
+Move Shards
+
+↓
+
+Balanced Cluster
+```
+
+Relocation is automatic.
+
+---
+
+# Cache Monitoring
+
+OpenSearch uses caches for faster queries.
+
+Examples
+
+- Query Cache
+- Request Cache
+- Field Data Cache
+
+Healthy cache usage improves search performance.
+
+---
+
+# Network Monitoring
+
+Monitor
+
+- Incoming Requests
+- Outgoing Traffic
+- Replication Traffic
+- Latency Between Nodes
+
+High latency affects
+
+- Replication
+- Search
+- Cluster Stability
+
+---
+
+# CloudWatch Integration
+
+Amazon OpenSearch publishes metrics to CloudWatch.
+
+Common metrics
+
+- CPUUtilization
+- FreeStorageSpace
+- JVMMemoryPressure
+- ClusterStatus
+- SearchLatency
+- IndexingRate
+
+CloudWatch alarms notify engineers before failures occur.
+
+---
+
+# OpenSearch Dashboards Monitoring
+
+Operations teams commonly monitor
+
+```text
+Cluster Health
+
+↓
+
+Search Rate
+
+↓
+
+Index Rate
+
+↓
+
+CPU
+
+↓
+
+Heap
+
+↓
+
+Disk
+
+↓
+
+Active Nodes
+```
+
+Everything is visible from a centralized dashboard.
+
+---
+
+# Common Production Issues
+
+## Cluster Turns Yellow
+
+Possible causes
+
+- Replica not allocated
+- Node unavailable
+- Single-node cluster
+- Insufficient capacity
+
+Check
+
+```text
+Cluster Health
+
+↓
+
+Shard Allocation
+
+↓
+
+Node Status
+```
+
+---
+
+## Cluster Turns Red
+
+Possible causes
+
+- Primary shard lost
+- Disk failure
+- Multiple node failures
+
+Resolution
+
+- Restore failed nodes
+- Recover shards
+- Restore snapshots if necessary
+
+---
+
+## High CPU
+
+Possible causes
+
+- Heavy aggregations
+- Expensive wildcard searches
+- Large dashboards
+- Too many concurrent users
+
+Resolution
+
+- Optimize queries
+- Increase Data Nodes
+- Add replicas
+
+---
+
+## High JVM Memory Pressure
+
+Possible causes
+
+- Large field data
+- Too many shards
+- Large aggregations
+
+Resolution
+
+- Increase heap
+- Reduce shard count
+- Optimize mappings
+
+---
+
+## Slow Searches
+
+Check
+
+- Query DSL
+- Wildcard queries
+- Large shards
+- Cache hit ratio
+- JVM usage
+
+---
+
+## Slow Indexing
+
+Check
+
+- Bulk request size
+- Disk I/O
+- Thread pool
+- Refresh interval
+- Replica count
+
+---
+
+## Unassigned Shards
+
+Verify
+
+- Available nodes
+- Disk space
+- Allocation awareness
+- Cluster settings
+
+---
+
+## Disk Full
+
+Symptoms
+
+```text
+Flood Stage Watermark
+
+↓
+
+Read Only Indices
+
+↓
+
+Indexing Stops
+```
+
+Resolution
+
+- Delete old indices
+- Expand storage
+- Apply ILM
+- Move data to Warm/Cold tiers
+
+---
+
+# Enterprise Monitoring Architecture
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Amazon OpenSearch
+
+↓
+
+CloudWatch Metrics
+
+↓
+
+CloudWatch Alarms
+
+↓
+
+SNS
+
+↓
+
+DevOps Team
+
+↓
+
+OpenSearch Dashboards
+```
+
+The operations team receives alerts before customers notice issues.
+
+---
+
+# Best Practices
+
+- Monitor Cluster Health continuously.
+- Keep JVM Heap below critical levels.
+- Monitor disk watermarks.
+- Enable CloudWatch alarms.
+- Monitor indexing and search latency.
+- Use dashboards for real-time visibility.
+- Review shard allocation regularly.
+- Implement ILM to control storage growth.
+
+---
+
+# Common Mistakes
+
+- Ignoring Yellow cluster status.
+- Allowing JVM memory to remain above 90%.
+- Running out of disk space.
+- Creating excessive shards.
+- Ignoring slow query logs.
+- No monitoring dashboards.
+- No alerting configured.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What do Green, Yellow, and Red cluster states mean?
+- Why is JVM Heap important?
+- What metrics should be monitored in OpenSearch?
+
+## Intermediate
+
+- Explain disk watermarks.
+- What causes a Yellow cluster?
+- How do thread pools affect performance?
+- How would you troubleshoot slow searches?
+
+## Advanced
+
+- Design a monitoring solution for an OpenSearch cluster processing 20 TB of logs per day.
+- Explain your step-by-step approach when an OpenSearch cluster suddenly changes from Green to Red.
+- A production OpenSearch cluster shows high JVM memory pressure, increasing search latency, and frequent garbage collection. Describe how you would investigate and resolve the issue.
+
+---
+
