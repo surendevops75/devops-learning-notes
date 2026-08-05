@@ -5823,3 +5823,780 @@ Each workload uses the appropriate migration service.
 
 ---
 
+# Chapter 10 - Modernizing Applications on AWS (Containers, Serverless & Microservices)
+
+Migrating applications to AWS is only the beginning.
+
+Many organizations initially perform a
+
+**Lift-and-Shift (Rehost)**
+
+migration to reduce migration risk.
+
+After workloads are stable,
+
+they begin **Modernization** to fully leverage cloud-native capabilities.
+
+Application modernization focuses on
+
+- Better Scalability
+- Higher Availability
+- Faster Deployments
+- Lower Operational Costs
+- Improved Security
+- Faster Innovation
+
+AWS provides multiple services that help organizations modernize existing applications.
+
+---
+
+# What is Application Modernization?
+
+Application modernization is the process of improving existing applications by adopting cloud-native architectures.
+
+Example
+
+Before
+
+```text
+Monolithic Application
+
+↓
+
+Virtual Machine
+```
+
+After
+
+```text
+Microservices
+
+↓
+
+Amazon EKS
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+```
+
+Applications become more scalable and resilient.
+
+---
+
+# Migration vs Modernization
+
+```text
+Migration
+
+↓
+
+Move Application
+
+↓
+
+AWS
+```
+
+Modernization
+
+```text
+Existing Application
+
+↓
+
+Cloud-Native Improvements
+
+↓
+
+Optimized AWS Architecture
+```
+
+Migration changes location.
+
+Modernization changes architecture.
+
+---
+
+# Modernization Goals
+
+Organizations modernize applications to achieve
+
+- Faster Releases
+- Independent Scaling
+- Fault Isolation
+- Automation
+- DevSecOps
+- Continuous Delivery
+
+---
+
+# Modernization Journey
+
+```text
+On-Premises
+
+↓
+
+Rehost
+
+↓
+
+Replatform
+
+↓
+
+Containers
+
+↓
+
+Microservices
+
+↓
+
+Serverless
+```
+
+Modernization happens gradually.
+
+---
+
+# Monolithic Architecture
+
+Traditional applications
+
+```text
+User
+
+↓
+
+Application
+
+↓
+
+Single Database
+```
+
+Characteristics
+
+- Single Deployment
+- Tight Coupling
+- Difficult Scaling
+
+---
+
+# Problems with Monoliths
+
+- Slow Releases
+- Large Deployments
+- Difficult Maintenance
+- Single Point of Failure
+- Limited Scalability
+
+---
+
+# Microservices Architecture
+
+Applications are divided into
+
+small independent services.
+
+```text
+API Gateway
+
+↓
+
+User Service
+
+↓
+
+Order Service
+
+↓
+
+Payment Service
+
+↓
+
+Inventory Service
+
+↓
+
+Notification Service
+```
+
+Each service can evolve independently.
+
+---
+
+# Benefits of Microservices
+
+- Independent Deployment
+- Independent Scaling
+- Better Fault Isolation
+- Faster Development
+- Easier Maintenance
+
+---
+
+# Containers
+
+Containers package
+
+- Application
+- Runtime
+- Libraries
+- Dependencies
+
+Architecture
+
+```text
+Application
+
+↓
+
+Docker Container
+
+↓
+
+Amazon EKS
+```
+
+Containers ensure consistency across environments.
+
+---
+
+# Kubernetes (Amazon EKS)
+
+Amazon EKS manages Kubernetes clusters.
+
+Architecture
+
+```text
+Users
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Services
+```
+
+Applications scale automatically.
+
+---
+
+# Container Modernization Workflow
+
+```text
+Monolith
+
+↓
+
+Containerization
+
+↓
+
+Docker
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Infrastructure becomes portable.
+
+---
+
+# Serverless Modernization
+
+Some workloads do not require servers.
+
+Architecture
+
+```text
+API Gateway
+
+↓
+
+Lambda
+
+↓
+
+DynamoDB
+```
+
+AWS manages infrastructure automatically.
+
+---
+
+# Lambda Use Cases
+
+Ideal for
+
+- APIs
+- Image Processing
+- Automation
+- Scheduled Jobs
+- Event Processing
+
+---
+
+# Event-Driven Modernization
+
+Traditional
+
+```text
+Application
+
+↓
+
+Direct API Calls
+```
+
+Modern
+
+```text
+Application
+
+↓
+
+EventBridge
+
+↓
+
+Consumers
+```
+
+Applications become loosely coupled.
+
+---
+
+# Workflow Automation
+
+Business processes can be modernized using
+
+AWS Step Functions.
+
+Example
+
+```text
+Order
+
+↓
+
+Payment
+
+↓
+
+Inventory
+
+↓
+
+Shipping
+
+↓
+
+Notification
+```
+
+Workflow logic is separated from application code.
+
+---
+
+# Database Modernization
+
+Example
+
+```text
+Oracle
+
+↓
+
+Amazon Aurora PostgreSQL
+```
+
+Benefits
+
+- Managed Backups
+- High Availability
+- Automatic Scaling
+- Lower Operational Overhead
+
+---
+
+# API Modernization
+
+Traditional
+
+```text
+Web Server
+
+↓
+
+REST API
+```
+
+Modern
+
+```text
+API Gateway
+
+↓
+
+Lambda
+
+↓
+
+Microservices
+```
+
+APIs become scalable and secure.
+
+---
+
+# CI/CD Modernization
+
+Modern deployments use
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Docker
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Deployments become automated.
+
+---
+
+# DevSecOps Modernization
+
+Security is integrated into CI/CD.
+
+```text
+GitHub
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+Security checks occur before production deployment.
+
+---
+
+# Infrastructure Modernization
+
+Instead of manual provisioning
+
+```text
+Engineer
+
+↓
+
+AWS Console
+```
+
+Use
+
+```text
+Terraform
+
+↓
+
+Git
+
+↓
+
+CI/CD
+
+↓
+
+AWS
+```
+
+Infrastructure becomes version controlled.
+
+---
+
+# Observability Modernization
+
+Applications should expose
+
+- Metrics
+- Logs
+- Alerts
+
+Architecture
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alertmanager
+```
+
+Operational visibility improves significantly.
+
+---
+
+# Enterprise Example
+
+Legacy Architecture
+
+```text
+Load Balancer
+
+↓
+
+Monolith
+
+↓
+
+Oracle Database
+```
+
+Modern Architecture
+
+```text
+CloudFront
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Aurora
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+SQS
+```
+
+The application becomes cloud-native.
+
+---
+
+# Banking Example
+
+Before
+
+```text
+Core Banking Monolith
+
+↓
+
+Oracle Database
+```
+
+After
+
+```text
+API Gateway
+
+↓
+
+Payment Service
+
+↓
+
+Fraud Service
+
+↓
+
+Notification Service
+
+↓
+
+Aurora
+
+↓
+
+EventBridge
+```
+
+Each service scales independently.
+
+---
+
+# Modernization Benefits
+
+- Faster Feature Delivery
+- Better Resource Utilization
+- Reduced Operational Costs
+- Improved Security
+- Higher Availability
+- Easier Disaster Recovery
+- Independent Team Ownership
+
+---
+
+# Modernization Challenges
+
+- Service Decomposition
+- Data Consistency
+- Distributed Transactions
+- Eventual Consistency
+- Monitoring Complexity
+- Team Skill Requirements
+
+Proper planning minimizes these challenges.
+
+---
+
+# Modernization Roadmap
+
+```text
+Assessment
+
+↓
+
+Containerization
+
+↓
+
+CI/CD
+
+↓
+
+Microservices
+
+↓
+
+Event-Driven Architecture
+
+↓
+
+Observability
+
+↓
+
+Continuous Optimization
+```
+
+Modernization is iterative rather than a one-time project.
+
+---
+
+# Best Practices
+
+- Modernize incrementally instead of rewriting everything at once.
+- Containerize applications before decomposing into microservices.
+- Use Amazon EKS for long-running containerized workloads.
+- Use AWS Lambda for event-driven or short-lived workloads.
+- Adopt EventBridge for loose coupling between services.
+- Automate deployments with CI/CD.
+- Manage infrastructure with Terraform or CloudFormation.
+- Implement centralized monitoring and logging from the beginning.
+
+---
+
+# Common Mistakes
+
+- Attempting a complete rewrite of every application.
+- Splitting applications into too many microservices too early.
+- Ignoring CI/CD automation.
+- Not implementing observability before production.
+- Migrating to containers without orchestration.
+- Treating serverless as a solution for every workload.
+- Ignoring security during modernization.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is application modernization?
+- Migration vs modernization.
+- Why do organizations adopt microservices?
+
+## Intermediate
+
+- Monolith vs Microservices.
+- Containers vs Serverless.
+- Why use Amazon EKS?
+- How does EventBridge support modernization?
+
+## Advanced
+
+- Design a modernization roadmap for a monolithic Java application migrating to AWS using Docker, Amazon EKS, EventBridge, Aurora PostgreSQL, CI/CD, and Terraform.
+- Explain how containers, Kubernetes, serverless, DevSecOps, Infrastructure as Code, and event-driven architecture work together to build a cloud-native platform.
+- A financial institution wants to modernize its legacy banking platform while maintaining continuous availability and regulatory compliance. Design the target cloud-native architecture, migration phases, deployment strategy, observability, security, and operational model using AWS services.
+
+---
+
