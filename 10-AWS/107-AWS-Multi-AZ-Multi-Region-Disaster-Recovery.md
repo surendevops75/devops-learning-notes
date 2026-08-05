@@ -1811,3 +1811,2121 @@ No single strategy is sufficient for enterprise systems.
 
 ---
 
+# Chapter 4 - Recovery Time Objective (RTO), Recovery Point Objective (RPO) & Business Continuity
+
+Every Disaster Recovery (DR) strategy starts with two business questions:
+
+1. **How quickly should the application recover?**
+2. **How much data can the business afford to lose?**
+
+The answers define the entire DR architecture.
+
+These two metrics are called
+
+- **Recovery Time Objective (RTO)**
+- **Recovery Point Objective (RPO)**
+
+Every enterprise application has different RTO and RPO requirements based on business impact.
+
+---
+
+# Business Continuity
+
+Business Continuity (BC) ensures that an organization can continue operating during and after a disruption.
+
+It includes
+
+- Disaster Recovery
+- Backup Strategy
+- Incident Response
+- Communication Plan
+- Recovery Procedures
+- Business Operations
+- Infrastructure Recovery
+
+Architecture
+
+```text
+Business Continuity
+
+├── Disaster Recovery
+
+├── Backup
+
+├── Recovery Plan
+
+├── Incident Response
+
+├── Monitoring
+
+└── Testing
+```
+
+Disaster Recovery is one part of Business Continuity.
+
+---
+
+# What is RTO?
+
+Recovery Time Objective (RTO) defines
+
+> **The maximum acceptable time required to restore an application after a failure.**
+
+Example
+
+```text
+Application Failure
+
+↓
+
+Recover
+
+↓
+
+20 Minutes
+```
+
+If the business defines
+
+```text
+RTO = 20 Minutes
+```
+
+the application must be restored within 20 minutes.
+
+---
+
+# RTO Timeline
+
+```text
+Application Failure
+
+↓
+
+Service Unavailable
+
+↓
+
+Recovery Activities
+
+↓
+
+Application Restored
+
+<----- RTO ----->
+```
+
+The recovery process must finish before the RTO expires.
+
+---
+
+# Real Example
+
+Online Shopping Website
+
+Business Requirement
+
+```text
+Maximum Downtime
+
+15 Minutes
+```
+
+Therefore
+
+```text
+RTO = 15 Minutes
+```
+
+Any recovery taking longer violates business requirements.
+
+---
+
+# What is RPO?
+
+Recovery Point Objective (RPO) defines
+
+> **The maximum acceptable amount of data loss during a disaster.**
+
+Example
+
+```text
+Database Backup
+
+↓
+
+10:00 AM
+
+Failure
+
+↓
+
+10:04 AM
+
+Recovery
+```
+
+Maximum data loss
+
+```text
+4 Minutes
+```
+
+---
+
+# RPO Timeline
+
+```text
+Backup
+
+↓
+
+New Transactions
+
+↓
+
+Failure
+
+↓
+
+Recovery
+
+<--- RPO --->
+```
+
+The time between the last recoverable copy and the failure represents potential data loss.
+
+---
+
+# Real Example
+
+Banking System
+
+Requirement
+
+```text
+Maximum Data Loss
+
+30 Seconds
+```
+
+Therefore
+
+```text
+RPO = 30 Seconds
+```
+
+The backup or replication strategy must ensure no more than 30 seconds of data can be lost.
+
+---
+
+# Understanding RTO
+
+Suppose an application crashes.
+
+```text
+09:00
+
+↓
+
+Failure
+
+↓
+
+09:20
+
+↓
+
+Recovered
+```
+
+Recovery Time
+
+```text
+20 Minutes
+```
+
+If
+
+```text
+RTO
+
+30 Minutes
+```
+
+Requirement is satisfied.
+
+---
+
+# Understanding RPO
+
+Suppose
+
+```text
+Last Replication
+
+09:55
+
+↓
+
+Failure
+
+10:00
+```
+
+Possible Data Loss
+
+```text
+5 Minutes
+```
+
+If
+
+```text
+RPO
+
+5 Minutes
+```
+
+Requirement is met.
+
+---
+
+# RTO vs RPO
+
+| RTO | RPO |
+|-----|-----|
+| Recovery Time | Data Loss |
+| Service Availability | Data Protection |
+| Minutes/Hours | Seconds/Minutes/Hours |
+| Focuses on Downtime | Focuses on Lost Data |
+
+This is one of the most frequently asked interview questions.
+
+---
+
+# Low RTO
+
+Example
+
+```text
+RTO
+
+5 Minutes
+```
+
+Requires
+
+- Automated Recovery
+- Warm Standby
+- Hot Standby
+- Load Balancing
+- Automation
+
+---
+
+# High RTO
+
+Example
+
+```text
+RTO
+
+24 Hours
+```
+
+Suitable for
+
+- Internal Applications
+- Reporting Systems
+- Development Environments
+
+---
+
+# Low RPO
+
+Example
+
+```text
+RPO
+
+30 Seconds
+```
+
+Requires
+
+- Continuous Replication
+- Database Replication
+- Streaming Replication
+- Real-Time Synchronization
+
+---
+
+# High RPO
+
+Example
+
+```text
+RPO
+
+24 Hours
+```
+
+Suitable for
+
+- Archive Systems
+- Historical Reports
+- Non-Critical Applications
+
+---
+
+# Different Business Requirements
+
+## Banking
+
+```text
+RTO
+
+5 Minutes
+
+RPO
+
+0–30 Seconds
+```
+
+---
+
+## E-Commerce
+
+```text
+RTO
+
+15 Minutes
+
+RPO
+
+5 Minutes
+```
+
+---
+
+## Internal HR Portal
+
+```text
+RTO
+
+4 Hours
+
+RPO
+
+1 Hour
+```
+
+---
+
+## Development Environment
+
+```text
+RTO
+
+24 Hours
+
+RPO
+
+24 Hours
+```
+
+---
+
+# Disaster Recovery Strategies Based on RTO/RPO
+
+| Strategy | RTO | RPO | Cost |
+|----------|-----|-----|------|
+| Backup & Restore | High | High | Low |
+| Pilot Light | Medium | Medium | Medium |
+| Warm Standby | Low | Low | High |
+| Multi-Site Active-Active | Very Low | Near Zero | Very High |
+
+We will explore each strategy in detail in the next chapter.
+
+---
+
+# Cost vs Recovery
+
+```text
+Lower Cost
+
+↓
+
+Higher RTO
+
+Higher RPO
+
+────────────────────────
+
+Higher Cost
+
+↓
+
+Lower RTO
+
+Lower RPO
+```
+
+Better recovery generally requires more infrastructure.
+
+---
+
+# Enterprise Banking Example
+
+Architecture
+
+```text
+Mumbai
+
+↓
+
+Primary Database
+
+↓
+
+Real-Time Replication
+
+↓
+
+Singapore
+
+↓
+
+Standby Database
+```
+
+Business Requirement
+
+```text
+RTO
+
+5 Minutes
+
+RPO
+
+30 Seconds
+```
+
+This requires continuous replication and automated failover.
+
+---
+
+# E-Commerce Example
+
+```text
+Users
+
+↓
+
+Mumbai
+
+↓
+
+Orders
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+Standby
+```
+
+Business Requirement
+
+```text
+RTO
+
+15 Minutes
+
+RPO
+
+5 Minutes
+```
+
+Acceptable because a small amount of order data can be recreated if necessary.
+
+---
+
+# Healthcare Example
+
+Electronic Medical Records
+
+Requirements
+
+```text
+RTO
+
+10 Minutes
+
+RPO
+
+1 Minute
+```
+
+Patient records cannot tolerate significant data loss.
+
+---
+
+# Determining RTO & RPO
+
+Before designing a DR solution, ask
+
+- How much downtime is acceptable?
+- How much data loss is acceptable?
+- What is the financial impact?
+- What are the compliance requirements?
+- What are customer expectations?
+
+These business answers drive the technical architecture.
+
+---
+
+# Enterprise Architecture
+
+```text
+Users
+
+↓
+
+Application
+
+↓
+
+Primary Region
+
+↓
+
+Continuous Replication
+
+↓
+
+Secondary Region
+
+↓
+
+Automatic Recovery
+```
+
+The replication method and failover design are selected based on the required RTO and RPO.
+
+---
+
+# Best Practices
+
+- Define RTO and RPO before designing the solution.
+- Align recovery objectives with business requirements.
+- Use automation to reduce recovery time.
+- Replicate critical data continuously.
+- Test Disaster Recovery regularly.
+- Review RTO and RPO after major application changes.
+- Document recovery procedures.
+
+---
+
+# Common Mistakes
+
+- Designing DR without business requirements.
+- Confusing RTO with RPO.
+- Assuming backups alone provide low RPO.
+- Never measuring actual recovery time.
+- Not testing whether recovery objectives can actually be achieved.
+- Applying the same RTO/RPO to every application.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is RTO?
+- What is RPO?
+- RTO vs RPO.
+
+## Intermediate
+
+- Why is RPO important for databases?
+- How do business requirements influence RTO and RPO?
+- Why do lower RTO and RPO generally increase costs?
+
+## Advanced
+
+- A banking application requires an RTO of 5 minutes and an RPO of 30 seconds. Design a Disaster Recovery architecture that satisfies these objectives.
+- Compare the DR requirements of an e-commerce platform, a healthcare system, and a development environment, explaining how their RTO and RPO values influence the overall architecture.
+- Your company currently restores applications in 2 hours after a disaster, but the business now requires recovery within 15 minutes. Explain the architectural changes you would recommend.
+
+---
+
+# Chapter 5 - Disaster Recovery Strategies (Backup & Restore, Pilot Light, Warm Standby & Multi-Site Active-Active)
+
+Not every application requires the same Disaster Recovery (DR) architecture.
+
+A development environment can tolerate hours of downtime, while an online banking system may require recovery within minutes.
+
+AWS provides multiple Disaster Recovery strategies to balance
+
+- Cost
+- Recovery Time (RTO)
+- Recovery Point (RPO)
+- Business Requirements
+
+Choosing the correct strategy is one of the most important architectural decisions.
+
+---
+
+# AWS Disaster Recovery Strategies
+
+AWS recommends four primary Disaster Recovery strategies.
+
+```text
+Backup & Restore
+
+↓
+
+Pilot Light
+
+↓
+
+Warm Standby
+
+↓
+
+Multi-Site Active-Active
+```
+
+As we move down the list,
+
+- Cost increases
+- Availability improves
+- Recovery time decreases
+
+---
+
+# Disaster Recovery Comparison
+
+| Strategy | Cost | RTO | RPO |
+|----------|------|------|------|
+| Backup & Restore | Low | High | High |
+| Pilot Light | Medium | Medium | Medium |
+| Warm Standby | High | Low | Low |
+| Active-Active | Very High | Near Zero | Near Zero |
+
+---
+
+# Strategy 1 - Backup & Restore
+
+This is the simplest Disaster Recovery strategy.
+
+Applications run only in the primary Region.
+
+Backups are stored separately.
+
+Architecture
+
+```text
+Primary Region
+
+↓
+
+Application
+
+↓
+
+Backup
+
+↓
+
+Amazon S3
+
+↓
+
+Disaster
+
+↓
+
+Restore
+```
+
+Infrastructure is created only after a disaster occurs.
+
+---
+
+# Backup & Restore Workflow
+
+```text
+Application
+
+↓
+
+Amazon RDS
+
+↓
+
+Backup
+
+↓
+
+Amazon S3
+
+↓
+
+Failure
+
+↓
+
+Restore
+
+↓
+
+Application Running
+```
+
+Recovery requires rebuilding infrastructure.
+
+---
+
+# Characteristics
+
+- Lowest Cost
+- Longest Recovery Time
+- Infrastructure created after failure
+- Suitable for non-critical workloads
+
+---
+
+# Example
+
+Development Environment
+
+```text
+EC2
+
+↓
+
+Daily Backup
+
+↓
+
+Amazon S3
+
+↓
+
+Restore When Needed
+```
+
+Losing several hours is acceptable.
+
+---
+
+# Advantages
+
+- Very inexpensive
+- Simple architecture
+- Minimal infrastructure
+- Easy to maintain
+
+---
+
+# Disadvantages
+
+- High RTO
+- High RPO
+- Manual recovery
+- Long application downtime
+
+---
+
+# Suitable Workloads
+
+- Development
+- Testing
+- Internal Applications
+- Archive Systems
+
+---
+
+# Strategy 2 - Pilot Light
+
+Pilot Light means
+
+Only the critical core infrastructure is always running.
+
+Everything else starts only during a disaster.
+
+---
+
+# Pilot Light Architecture
+
+```text
+Primary Region
+
+↓
+
+Production
+
+↓
+
+Continuous Database Replication
+
+↓
+
+Secondary Region
+
+↓
+
+Database Running
+
+↓
+
+Application Servers
+
+Stopped
+```
+
+The database is already available.
+
+Application servers start only during failover.
+
+---
+
+# Recovery Workflow
+
+```text
+Primary Failure
+
+↓
+
+Launch EC2
+
+↓
+
+Attach ALB
+
+↓
+
+Connect Database
+
+↓
+
+Application Available
+```
+
+Recovery is much faster than Backup & Restore.
+
+---
+
+# Characteristics
+
+- Medium Cost
+- Medium Recovery Time
+- Database Always Running
+- Infrastructure Created During Disaster
+
+---
+
+# Example
+
+E-Commerce Platform
+
+```text
+Primary
+
+↓
+
+EC2
+
+↓
+
+Database
+
+↓
+
+Replication
+
+↓
+
+Secondary
+
+↓
+
+Database Only
+```
+
+Application servers launch only after disaster.
+
+---
+
+# Advantages
+
+- Lower Cost
+- Faster Recovery
+- Continuous Data Replication
+- Smaller Secondary Environment
+
+---
+
+# Disadvantages
+
+- Recovery still requires automation
+- Infrastructure provisioning during disaster
+- Higher operational complexity
+
+---
+
+# Suitable Workloads
+
+- Medium Business Applications
+- Internal Business Systems
+- Moderate Availability Requirements
+
+---
+
+# Strategy 3 - Warm Standby
+
+Warm Standby means
+
+A fully functional but smaller version of production runs continuously.
+
+Architecture
+
+```text
+Primary Region
+
+↓
+
+Large Production
+
+↓
+
+Replication
+
+↓
+
+Secondary Region
+
+↓
+
+Small Production
+```
+
+Applications already run in both Regions.
+
+Secondary resources scale up after failover.
+
+---
+
+# Warm Standby Workflow
+
+```text
+Primary Failure
+
+↓
+
+Route53 Failover
+
+↓
+
+Scale Auto Scaling Group
+
+↓
+
+Users Continue
+```
+
+Recovery is much faster.
+
+---
+
+# Characteristics
+
+- Low RTO
+- Low RPO
+- Higher Cost
+- Continuous Operations
+
+---
+
+# Example
+
+Banking Portal
+
+```text
+Mumbai
+
+↓
+
+10 EC2
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+2 EC2
+```
+
+During failure
+
+```text
+2 EC2
+
+↓
+
+Auto Scaling
+
+↓
+
+10 EC2
+```
+
+---
+
+# Advantages
+
+- Fast Recovery
+- Continuous Testing
+- Lower Risk
+- Easier Failover
+
+---
+
+# Disadvantages
+
+- Higher Infrastructure Cost
+- Continuous Resource Consumption
+
+---
+
+# Suitable Workloads
+
+- Banking
+- Insurance
+- Healthcare
+- Enterprise SaaS
+
+---
+
+# Strategy 4 - Multi-Site Active-Active
+
+This is the most advanced Disaster Recovery strategy.
+
+Applications run simultaneously in multiple Regions.
+
+Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+├── Mumbai
+
+└── Singapore
+```
+
+Both Regions actively serve traffic.
+
+---
+
+# Active-Active Workflow
+
+Normal Operation
+
+```text
+Users
+
+↓
+
+Mumbai
+
+Singapore
+```
+
+Failure
+
+```text
+Mumbai
+
+↓
+
+Unavailable
+
+↓
+
+Singapore
+
+↓
+
+100% Traffic
+```
+
+No infrastructure needs to start.
+
+---
+
+# Characteristics
+
+- Near Zero RTO
+- Near Zero RPO
+- Highest Cost
+- Highest Availability
+
+---
+
+# Enterprise Banking Example
+
+```text
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Active
+
+──────────────
+
+Singapore
+
+↓
+
+Active
+```
+
+Database replication occurs continuously.
+
+Users are automatically routed to the healthy Region.
+
+---
+
+# Advantages
+
+- Extremely High Availability
+- Fastest Recovery
+- Minimal Data Loss
+- Continuous Production Testing
+
+---
+
+# Disadvantages
+
+- Very Expensive
+- Complex Architecture
+- Data Synchronization Challenges
+- Operational Complexity
+
+---
+
+# Suitable Workloads
+
+- Banking
+- Stock Trading
+- Payment Gateways
+- Airline Reservation Systems
+- Global SaaS Platforms
+
+---
+
+# Recovery Strategy Comparison
+
+```text
+Backup & Restore
+
+↓
+
+Hours
+
+────────────────
+
+Pilot Light
+
+↓
+
+Minutes
+
+────────────────
+
+Warm Standby
+
+↓
+
+Few Minutes
+
+────────────────
+
+Active-Active
+
+↓
+
+Seconds
+```
+
+Recovery time improves as investment increases.
+
+---
+
+# Cost Comparison
+
+```text
+Lowest
+
+↓
+
+Backup & Restore
+
+↓
+
+Pilot Light
+
+↓
+
+Warm Standby
+
+↓
+
+Active-Active
+
+↓
+
+Highest
+```
+
+Organizations choose based on business requirements.
+
+---
+
+# Choosing the Right Strategy
+
+| Business Requirement | Recommended Strategy |
+|----------------------|----------------------|
+| Development | Backup & Restore |
+| Internal Applications | Pilot Light |
+| Customer-Facing Applications | Warm Standby |
+| Mission-Critical Banking | Multi-Site Active-Active |
+
+---
+
+# Enterprise Architecture Example
+
+```text
+Users
+
+↓
+
+Amazon Route53
+
+↓
+
+Mumbai
+
+↓
+
+Application
+
+↓
+
+Amazon Aurora
+
+↓
+
+Cross-Region Replication
+
+↓
+
+Singapore
+
+↓
+
+Warm Standby
+
+↓
+
+Auto Scaling
+```
+
+Recovery occurs automatically after a regional failure.
+
+---
+
+# Best Practices
+
+- Choose the DR strategy based on business RTO and RPO.
+- Automate infrastructure provisioning using Infrastructure as Code.
+- Replicate critical databases continuously.
+- Test failover regularly.
+- Monitor replication health.
+- Keep recovery procedures documented.
+- Review DR architecture annually.
+
+---
+
+# Common Mistakes
+
+- Selecting Backup & Restore for mission-critical applications.
+- Never testing disaster recovery.
+- Ignoring replication lag.
+- Keeping outdated backups.
+- Depending on manual recovery.
+- Assuming backups alone provide business continuity.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are the four AWS Disaster Recovery strategies?
+- What is Pilot Light?
+- What is Warm Standby?
+
+## Intermediate
+
+- Backup & Restore vs Pilot Light.
+- Warm Standby vs Multi-Site Active-Active.
+- Which DR strategy provides the lowest RTO?
+
+## Advanced
+
+- Design a Disaster Recovery architecture for an online banking platform with an RTO of 5 minutes and an RPO of 30 seconds.
+- Explain how you would migrate an organization from Backup & Restore to Warm Standby as business availability requirements increase.
+- A global e-commerce company serves customers from multiple continents and requires continuous availability even during an AWS Region outage. Design the complete Multi-Site Active-Active architecture, explaining traffic routing, database replication, failover, and operational considerations.
+
+---
+
+# Chapter 6 - Multi-AZ Architecture (Deep Dive)
+
+High Availability in AWS is primarily achieved through **Multi-AZ Architecture**.
+
+Instead of running an application in a single Availability Zone, enterprise applications are deployed across multiple Availability Zones within the same AWS Region.
+
+This protects applications against
+
+- EC2 Failures
+- Rack Failures
+- Storage Failures
+- Network Failures
+- Complete Availability Zone Failures
+
+Multi-AZ is one of the most fundamental concepts in AWS architecture and appears in almost every Solutions Architect interview.
+
+---
+
+# What is Multi-AZ?
+
+Multi-AZ means deploying application components across two or more Availability Zones inside the same AWS Region.
+
+Example
+
+```text
+Mumbai Region
+
+├── AZ-A
+
+└── AZ-B
+```
+
+Applications are distributed between both AZs.
+
+---
+
+# Single-AZ Architecture
+
+Consider an application deployed only in one Availability Zone.
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+EC2
+
+↓
+
+AZ-A
+```
+
+If AZ-A experiences an outage,
+
+```text
+Application
+
+↓
+
+Unavailable
+```
+
+This architecture has a Single Point of Failure.
+
+---
+
+# Multi-AZ Architecture
+
+Instead,
+
+deploy instances across multiple AZs.
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+───────────────
+
+AZ-A
+
+↓
+
+EC2
+
+───────────────
+
+AZ-B
+
+↓
+
+EC2
+```
+
+If one Availability Zone fails,
+
+the other continues serving requests.
+
+---
+
+# How Multi-AZ Works
+
+Workflow
+
+```text
+Client Request
+
+↓
+
+Application Load Balancer
+
+↓
+
+Health Check
+
+↓
+
+Healthy Instance
+
+↓
+
+Response
+```
+
+Traffic is automatically distributed among healthy instances.
+
+---
+
+# Failure Scenario
+
+Normal Operation
+
+```text
+ALB
+
+↓
+
+EC2-A
+
+↓
+
+AZ-A
+
+────────────
+
+EC2-B
+
+↓
+
+AZ-B
+```
+
+Failure
+
+```text
+AZ-A
+
+↓
+
+Unavailable
+```
+
+Recovery
+
+```text
+ALB
+
+↓
+
+EC2-B
+
+↓
+
+AZ-B
+```
+
+Users continue accessing the application.
+
+---
+
+# Components of Multi-AZ Architecture
+
+Typical architecture includes
+
+- Multiple Availability Zones
+- Application Load Balancer
+- Auto Scaling Group
+- Private Subnets
+- NAT Gateway
+- Databases
+- Monitoring
+
+Each component contributes to High Availability.
+
+---
+
+# Multi-AZ with Auto Scaling
+
+Architecture
+
+```text
+Application Load Balancer
+
+↓
+
+Auto Scaling Group
+
+↓
+
+AZ-A
+
+↓
+
+EC2
+
+────────────
+
+AZ-B
+
+↓
+
+EC2
+```
+
+If an instance fails,
+
+Auto Scaling automatically launches a replacement.
+
+---
+
+# Auto Scaling During Failure
+
+Suppose
+
+```text
+EC2-A
+
+↓
+
+Failure
+```
+
+Auto Scaling detects
+
+↓
+
+Launch New EC2
+
+↓
+
+Healthy
+
+↓
+
+Added to Load Balancer
+
+Recovery happens automatically.
+
+---
+
+# Health Checks
+
+The Application Load Balancer continuously checks instance health.
+
+Workflow
+
+```text
+ALB
+
+↓
+
+Health Check
+
+↓
+
+Healthy
+
+↓
+
+Receive Traffic
+
+────────────
+
+Unhealthy
+
+↓
+
+Remove From Rotation
+```
+
+Only healthy instances receive requests.
+
+---
+
+# Private Subnets
+
+Production EC2 instances should usually run in private subnets.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+ALB
+
+↓
+
+Private Subnet
+
+↓
+
+EC2
+```
+
+Direct Internet access is avoided.
+
+---
+
+# Public vs Private Components
+
+Typical deployment
+
+```text
+Public
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private
+
+↓
+
+Application Servers
+
+↓
+
+Private
+
+↓
+
+Database
+```
+
+Only the Load Balancer is publicly accessible.
+
+---
+
+# NAT Gateway in Multi-AZ
+
+Private instances may still require outbound Internet access.
+
+Example
+
+```text
+Private EC2
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+AWS recommends deploying one NAT Gateway per Availability Zone.
+
+---
+
+# Multi-AZ NAT Architecture
+
+```text
+AZ-A
+
+EC2
+
+↓
+
+NAT Gateway-A
+
+──────────────
+
+AZ-B
+
+EC2
+
+↓
+
+NAT Gateway-B
+```
+
+This avoids cross-AZ dependency.
+
+---
+
+# Multi-AZ Database
+
+Amazon RDS supports Multi-AZ deployments.
+
+Architecture
+
+```text
+Primary Database
+
+↓
+
+AZ-A
+
+↓
+
+Synchronous Replication
+
+↓
+
+Standby Database
+
+↓
+
+AZ-B
+```
+
+AWS automatically manages replication.
+
+---
+
+# Database Failure
+
+Suppose
+
+```text
+Primary Database
+
+↓
+
+Failure
+```
+
+AWS automatically promotes
+
+```text
+Standby
+
+↓
+
+Primary
+```
+
+Applications reconnect with minimal downtime.
+
+---
+
+# Storage High Availability
+
+Amazon EFS automatically stores data across multiple Availability Zones.
+
+Architecture
+
+```text
+EC2
+
+↓
+
+Amazon EFS
+
+↓
+
+Multiple AZs
+```
+
+Applications continue accessing shared files during an AZ failure.
+
+---
+
+# Multi-AZ Networking
+
+Typical architecture
+
+```text
+VPC
+
+├── Public Subnet AZ-A
+
+├── Public Subnet AZ-B
+
+├── Private Subnet AZ-A
+
+└── Private Subnet AZ-B
+```
+
+Every Availability Zone contains both public and private resources.
+
+---
+
+# Complete Multi-AZ Web Application
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+──────────────
+
+AZ-A
+
+↓
+
+EC2
+
+↓
+
+RDS Primary
+
+──────────────
+
+AZ-B
+
+↓
+
+EC2
+
+↓
+
+RDS Standby
+```
+
+This is a common production architecture.
+
+---
+
+# Multi-AZ Kubernetes (Amazon EKS)
+
+Production EKS clusters distribute worker nodes across Availability Zones.
+
+Architecture
+
+```text
+Amazon EKS
+
+├── Node Group
+
+│
+
+├── AZ-A
+
+├── AZ-B
+
+└── AZ-C
+```
+
+Pods are automatically scheduled across nodes.
+
+---
+
+# EKS Failure
+
+Suppose
+
+```text
+AZ-A
+
+↓
+
+Unavailable
+```
+
+Kubernetes automatically schedules new Pods on healthy nodes in
+
+```text
+AZ-B
+
+AZ-C
+```
+
+Applications continue running.
+
+---
+
+# Multi-AZ ECS
+
+Amazon ECS services can also span Availability Zones.
+
+```text
+Application Load Balancer
+
+↓
+
+Fargate Task
+
+AZ-A
+
+────────────
+
+Fargate Task
+
+AZ-B
+```
+
+Traffic continues even if one task or AZ fails.
+
+---
+
+# Enterprise Banking Example
+
+```text
+Customers
+
+↓
+
+Route53
+
+↓
+
+ALB
+
+↓
+
+AZ-A
+
+↓
+
+Payment API
+
+↓
+
+AZ-B
+
+↓
+
+Payment API
+
+↓
+
+RDS Multi-AZ
+```
+
+Failure of an entire Availability Zone does not interrupt payment processing.
+
+---
+
+# Benefits
+
+- High Availability
+- Automatic Failover
+- Better Reliability
+- Load Distribution
+- Reduced Downtime
+- Improved Fault Isolation
+
+---
+
+# Best Practices
+
+- Always deploy production workloads across multiple Availability Zones.
+- Use Application Load Balancers.
+- Use Auto Scaling Groups.
+- Deploy NAT Gateways in each AZ.
+- Enable Multi-AZ for RDS.
+- Spread workloads evenly across Availability Zones.
+- Monitor Availability Zone health.
+- Regularly test failover.
+
+---
+
+# Common Mistakes
+
+- Deploying all EC2 instances in one Availability Zone.
+- Using only one NAT Gateway for a Multi-AZ architecture.
+- Ignoring database redundancy.
+- Running all Kubernetes worker nodes in one AZ.
+- Not configuring health checks.
+- Assuming Multi-AZ protects against Region failure.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Multi-AZ?
+- Why is Multi-AZ important?
+- What happens if an Availability Zone fails?
+
+## Intermediate
+
+- Explain how an Application Load Balancer supports Multi-AZ deployments.
+- Why should NAT Gateways be deployed in each Availability Zone?
+- Explain RDS Multi-AZ architecture.
+
+## Advanced
+
+- Design a highly available three-tier web application using Multi-AZ architecture.
+- Explain how Amazon EKS achieves High Availability across Availability Zones.
+- A production application deployed in two Availability Zones loses one entire AZ. Explain, step by step, how the Application Load Balancer, Auto Scaling Group, EC2 instances, and RDS Multi-AZ work together to keep the application available.
+
+---
+
