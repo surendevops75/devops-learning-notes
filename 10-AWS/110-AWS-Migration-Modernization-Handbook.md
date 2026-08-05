@@ -1804,3 +1804,745 @@ CAF provides the foundation for sustainable cloud adoption.
 - Design a cloud adoption strategy for a multinational enterprise using the AWS Cloud Adoption Framework, covering business, people, governance, platform, security, and operations.
 - Explain how AWS CAF helps reduce migration risks while improving organizational readiness and long-term cloud success.
 - A financial institution is migrating to AWS but has skill gaps, inconsistent governance, and strict compliance requirements. Explain how each AWS CAF perspective addresses these challenges and supports a successful cloud transformation.
+
+---
+
+# Chapter 4 - AWS Migration Acceleration Program (MAP) Deep Dive
+
+Migrating hundreds or thousands of workloads to AWS is a complex undertaking.
+
+Organizations often struggle with
+
+- Planning
+- Skills
+- Governance
+- Security
+- Cost Estimation
+- Large-Scale Migration
+
+To help enterprises migrate successfully, AWS introduced the **Migration Acceleration Program (MAP)**.
+
+MAP is a proven cloud migration methodology based on AWS's experience helping thousands of organizations migrate to AWS.
+
+It combines
+
+- Best Practices
+- Tools
+- Training
+- Funding Programs
+- Migration Guidance
+
+to reduce migration risk and accelerate cloud adoption.
+
+---
+
+# What is AWS MAP?
+
+The AWS Migration Acceleration Program (MAP) is an AWS framework that helps organizations
+
+- Assess cloud readiness
+- Prepare the AWS environment
+- Migrate workloads
+- Modernize applications
+
+MAP provides technical guidance, business support, and financial incentives.
+
+---
+
+# Why AWS MAP?
+
+Without MAP
+
+```text
+Migration
+
+↓
+
+Poor Planning
+
+↓
+
+Unexpected Costs
+
+↓
+
+Delays
+
+↓
+
+Business Risk
+```
+
+Using MAP
+
+```text
+Assessment
+
+↓
+
+Preparation
+
+↓
+
+Migration
+
+↓
+
+Modernization
+```
+
+Migration becomes structured and predictable.
+
+---
+
+# MAP Phases
+
+AWS MAP consists of
+
+```text
+Assess
+
+↓
+
+Mobilize
+
+↓
+
+Migrate & Modernize
+```
+
+Every enterprise migration follows these three phases.
+
+---
+
+# MAP Overview
+
+```text
+Current Environment
+
+↓
+
+Assess
+
+↓
+
+Mobilize
+
+↓
+
+Migration
+
+↓
+
+Modernization
+
+↓
+
+Cloud Operations
+```
+
+---
+
+# Phase 1 - Assess
+
+The objective is
+
+understanding the current environment.
+
+Activities include
+
+- Business Case
+- Application Inventory
+- Infrastructure Assessment
+- Cloud Readiness
+- Cost Analysis
+- Risk Assessment
+
+---
+
+# Assess Phase Architecture
+
+```text
+Applications
+
+↓
+
+Servers
+
+↓
+
+Databases
+
+↓
+
+Dependencies
+
+↓
+
+Assessment Report
+```
+
+Everything is documented before migration begins.
+
+---
+
+# Assess Phase Deliverables
+
+Outputs include
+
+- Migration Strategy
+- Application Inventory
+- Dependency Map
+- Business Case
+- Cloud Readiness Report
+- Initial Migration Plan
+
+---
+
+# Cloud Readiness Assessment
+
+Assessment focuses on
+
+```text
+Business
+
+↓
+
+People
+
+↓
+
+Governance
+
+↓
+
+Platform
+
+↓
+
+Security
+
+↓
+
+Operations
+```
+
+This aligns closely with AWS CAF.
+
+---
+
+# Application Discovery
+
+Organizations identify
+
+- Applications
+- Servers
+- Databases
+- Dependencies
+- Network Connectivity
+
+This prevents migration surprises.
+
+---
+
+# Dependency Mapping
+
+Example
+
+```text
+Web Server
+
+↓
+
+Application Server
+
+↓
+
+Database
+
+↓
+
+Storage
+```
+
+Dependencies determine migration order.
+
+---
+
+# Phase 2 - Mobilize
+
+After assessment,
+
+organizations prepare AWS.
+
+Activities include
+
+- Landing Zone
+- Identity
+- Networking
+- Security
+- Governance
+- Automation
+- Team Training
+
+---
+
+# Mobilize Phase Architecture
+
+```text
+Landing Zone
+
+↓
+
+AWS Organizations
+
+↓
+
+IAM Identity Center
+
+↓
+
+Networking
+
+↓
+
+Security
+
+↓
+
+Logging
+```
+
+The cloud foundation is established.
+
+---
+
+# Landing Zone
+
+A Landing Zone provides
+
+- Multi-Account Structure
+- Networking
+- Security
+- Logging
+- Identity
+- Shared Services
+
+Every enterprise migration should begin with a Landing Zone.
+
+---
+
+# Team Enablement
+
+Organizations train teams in
+
+- AWS Services
+- DevOps
+- Security
+- Infrastructure as Code
+- Operations
+
+Migration success depends on skilled teams.
+
+---
+
+# Governance
+
+Mobilization establishes
+
+- Naming Standards
+- IAM Policies
+- SCPs
+- Tagging Standards
+- Cost Allocation
+- Compliance Controls
+
+Governance is implemented before workloads move.
+
+---
+
+# Migration Factory
+
+Large organizations often build a
+
+Migration Factory.
+
+Architecture
+
+```text
+Migration Team
+
+↓
+
+Automation
+
+↓
+
+Multiple Applications
+
+↓
+
+AWS
+```
+
+Hundreds of applications can be migrated consistently.
+
+---
+
+# Phase 3 - Migrate & Modernize
+
+Applications are migrated using
+
+- AWS MGN
+- AWS DMS
+- DataSync
+- Snow Family
+
+After migration,
+
+applications are modernized.
+
+---
+
+# Migration Workflow
+
+```text
+On-Premises
+
+↓
+
+Replication
+
+↓
+
+Testing
+
+↓
+
+Cutover
+
+↓
+
+AWS
+```
+
+Downtime is minimized.
+
+---
+
+# Modernization Activities
+
+Typical modernization includes
+
+```text
+Monolith
+
+↓
+
+Containers
+
+↓
+
+Amazon EKS
+
+────────────
+
+VM
+
+↓
+
+Lambda
+
+────────────
+
+Traditional APIs
+
+↓
+
+EventBridge
+```
+
+Applications become cloud-native.
+
+---
+
+# Continuous Optimization
+
+Migration is not the final step.
+
+Organizations continue improving
+
+- Performance
+- Security
+- Cost
+- Automation
+- Reliability
+
+Cloud optimization is continuous.
+
+---
+
+# AWS Tools Used in MAP
+
+Common services include
+
+- AWS Migration Hub
+- AWS Application Migration Service (MGN)
+- AWS Database Migration Service (DMS)
+- AWS DataSync
+- AWS Organizations
+- IAM Identity Center
+- CloudWatch
+- CloudTrail
+
+---
+
+# Migration Timeline
+
+```text
+Assessment
+
+↓
+
+Landing Zone
+
+↓
+
+Pilot Migration
+
+↓
+
+Wave 1
+
+↓
+
+Wave 2
+
+↓
+
+Wave 3
+
+↓
+
+Optimization
+```
+
+Applications move in migration waves.
+
+---
+
+# Migration Waves
+
+Applications are grouped.
+
+Example
+
+```text
+Wave 1
+
+↓
+
+Low-Risk Applications
+
+────────────
+
+Wave 2
+
+↓
+
+Business Applications
+
+────────────
+
+Wave 3
+
+↓
+
+Mission-Critical Systems
+```
+
+Risk is reduced.
+
+---
+
+# Pilot Migration
+
+Organizations typically migrate
+
+small workloads first.
+
+```text
+Pilot
+
+↓
+
+Testing
+
+↓
+
+Validation
+
+↓
+
+Production Migration
+```
+
+Lessons learned improve later migrations.
+
+---
+
+# Enterprise Example
+
+Suppose a company has
+
+- 400 Servers
+- 120 Applications
+- 35 Databases
+
+Migration Plan
+
+```text
+Assess
+
+↓
+
+Landing Zone
+
+↓
+
+Pilot
+
+↓
+
+Migration Waves
+
+↓
+
+Modernization
+
+↓
+
+Optimization
+```
+
+Applications move gradually instead of all at once.
+
+---
+
+# MAP Benefits
+
+- Proven Methodology
+- Lower Migration Risk
+- Faster Migration
+- Better Governance
+- Improved Security
+- Structured Planning
+- Operational Readiness
+- Long-Term Cloud Success
+
+---
+
+# MAP and CAF
+
+Relationship
+
+```text
+CAF
+
+↓
+
+Organizational Readiness
+
+↓
+
+MAP
+
+↓
+
+Migration Execution
+```
+
+CAF prepares the organization.
+
+MAP executes the migration.
+
+---
+
+# Enterprise Architecture
+
+```text
+Assessment
+
+↓
+
+AWS Landing Zone
+
+↓
+
+Migration Hub
+
+↓
+
+Application Migration
+
+↓
+
+Modernization
+
+↓
+
+Cloud Operations
+```
+
+Every migration follows a structured lifecycle.
+
+---
+
+# Best Practices
+
+- Complete the Assess phase before migrating workloads.
+- Build a secure Landing Zone during Mobilization.
+- Train engineering teams before production migration.
+- Migrate applications in waves.
+- Perform pilot migrations first.
+- Automate migration wherever possible.
+- Modernize applications after stabilization.
+- Continuously optimize cloud environments.
+
+---
+
+# Common Mistakes
+
+- Skipping the Assess phase.
+- Migrating production workloads without a Landing Zone.
+- Ignoring application dependencies.
+- Migrating all applications simultaneously.
+- Failing to train engineering teams.
+- Treating migration as a one-time activity.
+- Not modernizing applications after migration.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS Migration Acceleration Program (MAP)?
+- What are the three MAP phases?
+- Why is MAP important?
+
+## Intermediate
+
+- Assess vs Mobilize.
+- What happens during the Mobilize phase?
+- Why are migration waves recommended?
+- MAP vs CAF.
+
+## Advanced
+
+- Design a migration strategy for a multinational enterprise using AWS MAP, explaining how you would assess workloads, build the Landing Zone, organize migration waves, and modernize applications after migration.
+- Explain how AWS MAP reduces migration risk compared to an unstructured migration approach.
+- A company with 800 on-premises servers wants to migrate to AWS while minimizing downtime and maintaining compliance. Design the complete migration journey using AWS MAP, including assessment, mobilization, migration tooling, pilot migrations, modernization, governance, and continuous optimization.
+
+---
+
