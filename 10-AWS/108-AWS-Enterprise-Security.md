@@ -1238,3 +1238,697 @@ Every workload follows least privilege.
 
 ---
 
+# Chapter 3 - IAM Roles, AWS STS & Cross-Account Access (Deep Dive)
+
+As AWS environments grow,
+
+organizations quickly realize that creating IAM users for every application, server, or AWS account is not scalable.
+
+Instead, AWS recommends using **IAM Roles** with **AWS Security Token Service (STS)**.
+
+This approach provides
+
+- Temporary Credentials
+- Better Security
+- Automatic Credential Rotation
+- Cross-Account Access
+- Federated Authentication
+
+IAM Roles are one of the most important AWS security concepts and are used extensively in enterprise environments.
+
+---
+
+# Why IAM Roles?
+
+Suppose an EC2 instance needs to read objects from Amazon S3.
+
+One approach is
+
+```text
+EC2
+
+↓
+
+Access Keys
+
+↓
+
+Amazon S3
+```
+
+Problems
+
+- Keys stored on server
+- Manual rotation
+- Risk of credential leakage
+- Operational overhead
+
+Instead
+
+```text
+EC2
+
+↓
+
+IAM Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Amazon S3
+```
+
+No permanent credentials exist.
+
+---
+
+# What is an IAM Role?
+
+An IAM Role is an AWS identity that
+
+- Has permissions
+- Has no permanent credentials
+- Can be assumed temporarily
+- Is designed for users, applications, or AWS services
+
+Roles improve both security and manageability.
+
+---
+
+# IAM Role Architecture
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Service
+```
+
+The application never stores credentials.
+
+---
+
+# IAM Role Components
+
+Every IAM Role contains
+
+- Trust Policy
+- Permission Policy
+- Temporary Credentials
+- Session Duration
+
+These components determine
+
+- Who can assume the role
+- What permissions the role has
+- How long access lasts
+
+---
+
+# Trust Policy
+
+A Trust Policy defines
+
+**Who can assume the role.**
+
+Example
+
+```text
+EC2
+
+↓
+
+Assume Role
+
+↓
+
+IAM Role
+```
+
+If EC2 is trusted,
+
+AWS allows the request.
+
+---
+
+# Permission Policy
+
+A Permission Policy defines
+
+**What the role can do.**
+
+Example
+
+```text
+IAM Role
+
+↓
+
+Read Objects
+
+↓
+
+Amazon S3
+```
+
+Even after assuming the role,
+
+permissions remain limited.
+
+---
+
+# AWS Security Token Service (STS)
+
+AWS STS issues
+
+temporary security credentials.
+
+Architecture
+
+```text
+User
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Resources
+```
+
+Temporary credentials automatically expire.
+
+---
+
+# Benefits of STS
+
+- Short-lived Credentials
+- Automatic Rotation
+- Reduced Risk
+- Better Auditability
+- No Credential Storage
+
+---
+
+# Temporary Credentials
+
+STS generates
+
+```text
+Access Key
+
+↓
+
+Secret Key
+
+↓
+
+Session Token
+```
+
+These credentials remain valid only for a limited time.
+
+---
+
+# Credential Lifecycle
+
+```text
+Assume Role
+
+↓
+
+STS Generates Credentials
+
+↓
+
+Application Uses Credentials
+
+↓
+
+Credentials Expire
+
+↓
+
+New Credentials Generated
+```
+
+No manual rotation is required.
+
+---
+
+# EC2 with IAM Role
+
+Example
+
+```text
+Amazon EC2
+
+↓
+
+IAM Role
+
+↓
+
+Amazon S3
+
+↓
+
+Read Objects
+```
+
+The application running on EC2 automatically receives temporary credentials.
+
+---
+
+# Lambda with IAM Role
+
+Architecture
+
+```text
+Lambda Function
+
+↓
+
+IAM Role
+
+↓
+
+DynamoDB
+```
+
+Lambda securely accesses DynamoDB without Access Keys.
+
+---
+
+# ECS Task Role
+
+Amazon ECS tasks receive permissions through IAM Roles.
+
+```text
+Amazon ECS Task
+
+↓
+
+IAM Task Role
+
+↓
+
+Amazon SQS
+
+↓
+
+Receive Messages
+```
+
+Each task receives its own credentials.
+
+---
+
+# EKS IAM Role
+
+Kubernetes workloads use
+
+IAM Roles for Service Accounts (IRSA).
+
+Architecture
+
+```text
+Kubernetes Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+Amazon S3
+```
+
+Each Pod gets only the permissions it requires.
+
+---
+
+# Fargate Task Role
+
+Amazon Fargate uses Task Roles.
+
+```text
+Fargate Task
+
+↓
+
+IAM Role
+
+↓
+
+Amazon Secrets Manager
+```
+
+Applications securely retrieve secrets.
+
+---
+
+# Cross-Account Access
+
+Large organizations often use multiple AWS accounts.
+
+Example
+
+```text
+Development Account
+
+↓
+
+Assume Role
+
+↓
+
+Production Account
+```
+
+Developers never receive permanent production credentials.
+
+---
+
+# Cross-Account Architecture
+
+```text
+Account A
+
+↓
+
+IAM User
+
+↓
+
+Assume Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Account B
+```
+
+This is the recommended enterprise architecture.
+
+---
+
+# Cross-Account S3 Access
+
+Example
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+Account B
+
+↓
+
+Amazon S3 Bucket
+```
+
+No credential sharing is required.
+
+---
+
+# Cross-Account DevOps Example
+
+A CI/CD pipeline
+
+```text
+GitHub Actions
+
+↓
+
+IAM Role
+
+↓
+
+Production Account
+
+↓
+
+Deploy ECS
+```
+
+GitHub assumes an IAM Role to deploy infrastructure securely.
+
+---
+
+# Identity Federation
+
+Employees often authenticate using corporate identity providers.
+
+Example
+
+```text
+Employee
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+IAM Identity Center
+
+↓
+
+AWS STS
+
+↓
+
+AWS Console
+```
+
+Employees use existing corporate credentials.
+
+---
+
+# AssumeRole API
+
+Applications use the
+
+```text
+AssumeRole
+```
+
+API to request temporary credentials.
+
+Workflow
+
+```text
+Application
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Resources
+```
+
+---
+
+# Session Duration
+
+Roles have configurable session durations.
+
+Example
+
+```text
+1 Hour
+
+↓
+
+Credentials Expire
+
+↓
+
+New Session Required
+```
+
+Short sessions improve security.
+
+---
+
+# Role Chaining
+
+A role can assume another role.
+
+Example
+
+```text
+Developer
+
+↓
+
+Role A
+
+↓
+
+Role B
+
+↓
+
+Production
+```
+
+AWS limits role chaining duration to improve security.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+IAM Identity Center
+
+↓
+
+IAM Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Production Account
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon S3
+
+↓
+
+CloudWatch
+```
+
+Every request uses temporary credentials.
+
+---
+
+# Security Benefits
+
+Using IAM Roles provides
+
+- No Hardcoded Credentials
+- Automatic Credential Rotation
+- Least Privilege
+- Better Auditing
+- Secure Cross-Account Access
+- Temporary Authentication
+
+---
+
+# Best Practices
+
+- Use IAM Roles instead of Access Keys.
+- Use temporary credentials whenever possible.
+- Enable IAM Roles for EC2, ECS, Lambda, and EKS.
+- Use IAM Roles for cross-account access.
+- Limit session duration.
+- Follow least privilege.
+- Audit AssumeRole activity using CloudTrail.
+- Use IAM Identity Center for workforce access.
+
+---
+
+# Common Mistakes
+
+- Hardcoding Access Keys in applications.
+- Sharing AWS credentials between accounts.
+- Using long-lived IAM Users for automation.
+- Granting excessive permissions to roles.
+- Ignoring Trust Policies.
+- Never auditing role usage.
+- Using the root account instead of IAM Roles.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an IAM Role?
+- What is AWS STS?
+- Why are IAM Roles more secure than Access Keys?
+
+## Intermediate
+
+- IAM User vs IAM Role.
+- Explain AssumeRole.
+- What is Cross-Account Access?
+- What are temporary credentials?
+
+## Advanced
+
+- Design a secure multi-account AWS environment where developers deploy applications into production without using permanent credentials.
+- Explain how IAM Roles, AWS STS, Trust Policies, and Permission Policies work together during a cross-account deployment.
+- Design an Amazon EKS platform where each Kubernetes microservice securely accesses different AWS services using IAM Roles for Service Accounts (IRSA), ensuring least-privilege access and complete auditability.
+
+---
+
