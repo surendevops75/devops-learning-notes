@@ -5719,3 +5719,1573 @@ Alerts are sent to the DevOps team through Amazon SNS whenever thresholds are ex
 
 ---
 
+# Chapter 8 - Logging, Monitoring, Observability & Security
+
+Running containers in production is not enough.
+
+Enterprise environments require complete visibility into
+
+- Application Health
+- Infrastructure Health
+- Performance
+- Errors
+- Security
+- User Traffic
+
+Without proper observability,
+
+troubleshooting production incidents becomes extremely difficult.
+
+---
+
+# Observability Pillars
+
+Modern observability consists of three pillars.
+
+```text
+                 Observability
+
+        ┌──────────┼──────────┐
+
+        Logs     Metrics     Traces
+```
+
+Although distributed tracing is optional depending on the observability stack, **Logs** and **Metrics** are essential for every Fargate workload.
+
+---
+
+# Logging Architecture
+
+Every application writes logs to
+
+```text
+stdout
+
+stderr
+```
+
+AWS captures these streams automatically.
+
+```text
+Application
+
+↓
+
+stdout
+
+↓
+
+awslogs Driver
+
+↓
+
+CloudWatch Logs
+
+↓
+
+CloudWatch Insights
+```
+
+No log files need to be managed inside the container.
+
+---
+
+# Why Log to stdout?
+
+Containers are ephemeral.
+
+If logs remain inside the container,
+
+they disappear when the task stops.
+
+Instead
+
+```text
+Container
+
+↓
+
+stdout
+
+↓
+
+CloudWatch Logs
+```
+
+Logs remain available even after the task is terminated.
+
+---
+
+# CloudWatch Logs
+
+CloudWatch Logs provides
+
+- Centralized logging
+- Search
+- Retention
+- Export
+- Log Insights
+- Metric Filters
+
+Architecture
+
+```text
+Application
+
+↓
+
+CloudWatch Logs
+
+↓
+
+Log Groups
+
+↓
+
+Log Streams
+```
+
+---
+
+# Log Group
+
+A Log Group stores logs for an application.
+
+Example
+
+```text
+/payment-service
+
+/order-service
+
+/inventory-service
+```
+
+Retention policies are configured at the Log Group level.
+
+---
+
+# Log Stream
+
+Each running task creates its own Log Stream.
+
+Example
+
+```text
+Payment Service
+
+↓
+
+Task-1
+
+↓
+
+Log Stream
+
+Task-2
+
+↓
+
+Log Stream
+
+Task-3
+
+↓
+
+Log Stream
+```
+
+This makes troubleshooting individual tasks much easier.
+
+---
+
+# CloudWatch Logs Insights
+
+Logs can be queried using CloudWatch Logs Insights.
+
+Example questions
+
+- Which requests failed?
+- Which task generated the error?
+- How many exceptions occurred?
+- Which endpoint is slow?
+
+Instead of manually reading logs,
+
+engineers can search millions of log entries efficiently.
+
+---
+
+# Structured Logging
+
+Avoid
+
+```text
+Database Error
+```
+
+Prefer
+
+```json
+{
+  "timestamp":"2026-08-05T09:30:00Z",
+  "service":"payment-api",
+  "requestId":"12345",
+  "userId":"56789",
+  "status":"FAILED",
+  "error":"Database Connection Timeout"
+}
+```
+
+Structured logs are easier to search and analyze.
+
+---
+
+# Logging Best Practices
+
+Include
+
+- Timestamp
+- Log Level
+- Service Name
+- Request ID
+- Correlation ID
+- User ID (where appropriate)
+- Error Details
+
+Avoid logging
+
+- Passwords
+- API Keys
+- Tokens
+- Secrets
+- Personally identifiable information (PII)
+
+---
+
+# CloudWatch Metrics
+
+Metrics measure application and infrastructure health.
+
+Common metrics
+
+- CPU Utilization
+- Memory Utilization
+- Task Count
+- Network In
+- Network Out
+- Running Tasks
+- Failed Tasks
+
+Architecture
+
+```text
+Fargate Task
+
+↓
+
+CloudWatch Metrics
+
+↓
+
+Dashboard
+
+↓
+
+Alarm
+```
+
+---
+
+# CloudWatch Alarms
+
+Alarms notify engineers when thresholds are exceeded.
+
+Example
+
+```text
+CPU > 80%
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+DevOps Team
+```
+
+Other examples
+
+- Memory > 90%
+- Running Tasks < Desired Count
+- High Error Rate
+- ALB 5XX Errors
+
+---
+
+# Container Insights
+
+CloudWatch Container Insights provides detailed metrics for ECS and Fargate workloads.
+
+It collects
+
+- CPU Usage
+- Memory Usage
+- Task Count
+- Service Metrics
+- Network Statistics
+
+Architecture
+
+```text
+Amazon ECS
+
+↓
+
+Container Insights
+
+↓
+
+CloudWatch
+
+↓
+
+Dashboard
+```
+
+Container Insights provides much deeper visibility than standard CloudWatch metrics.
+
+---
+
+# Monitoring Dashboard
+
+A typical production dashboard displays
+
+```text
+CPU
+
+Memory
+
+Running Tasks
+
+Response Time
+
+ALB Requests
+
+HTTP Errors
+
+Network Traffic
+```
+
+Operations teams can identify issues quickly.
+
+---
+
+# Health Checks
+
+Two levels of health checks are commonly used.
+
+### Container Health Check
+
+Checks whether the application inside the container is healthy.
+
+```text
+Application
+
+↓
+
+/health
+
+↓
+
+Healthy
+```
+
+---
+
+### Load Balancer Health Check
+
+The Application Load Balancer determines whether traffic should be sent to a task.
+
+```text
+ALB
+
+↓
+
+Task
+
+↓
+
+200 OK
+
+↓
+
+Healthy
+```
+
+If unhealthy,
+
+traffic is automatically redirected to healthy tasks.
+
+---
+
+# Security Architecture
+
+Security begins before the container starts.
+
+```text
+Developer
+
+↓
+
+Build Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Image Scan
+
+↓
+
+Fargate
+
+↓
+
+IAM Roles
+
+↓
+
+Application
+```
+
+Security exists throughout the deployment lifecycle.
+
+---
+
+# Image Security
+
+Container images should
+
+- Be minimal
+- Be updated regularly
+- Use trusted base images
+- Remove unnecessary packages
+- Avoid root user
+
+Example
+
+Instead of
+
+```text
+ubuntu:latest
+```
+
+Prefer a minimal, well-maintained base image appropriate for your application.
+
+Smaller images
+
+- Download faster
+- Contain fewer vulnerabilities
+- Improve startup time
+
+---
+
+# Image Scanning
+
+Amazon ECR supports vulnerability scanning.
+
+Workflow
+
+```text
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Image Scan
+
+↓
+
+Security Report
+```
+
+Detected issues should be remediated before deployment.
+
+---
+
+# Secrets Management
+
+Never store
+
+- Passwords
+- API Keys
+- Certificates
+
+inside
+
+- Dockerfile
+- Source Code
+- Git Repository
+- Container Image
+
+Instead
+
+```text
+Application
+
+↓
+
+Task Role
+
+↓
+
+Secrets Manager
+
+↓
+
+Database Password
+```
+
+---
+
+# Network Security
+
+Production architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Subnet
+
+↓
+
+Fargate Tasks
+
+↓
+
+Amazon RDS
+```
+
+Security Groups control communication between every layer.
+
+---
+
+# IAM Security
+
+Use
+
+- Task Role
+- Execution Role
+- Least Privilege
+
+Never
+
+- Use AdministratorAccess unnecessarily
+- Embed Access Keys
+- Share IAM Roles across unrelated services
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Developer
+
+↓
+
+CI/CD
+
+↓
+
+Amazon ECR
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECS
+
+↓
+
+Fargate
+
+↓
+
+Task Role
+
+↓
+
+Secrets Manager
+
+↓
+
+Application
+```
+
+Every stage has security controls.
+
+---
+
+# Production Monitoring Example
+
+A payment platform monitors
+
+- CPU Utilization
+- Memory Usage
+- ALB Response Time
+- HTTP 5XX Errors
+- Running Tasks
+- Failed Deployments
+- CloudWatch Logs
+- Container Insights
+
+Alerts are sent to the DevOps team through Amazon SNS whenever thresholds are exceeded.
+
+---
+
+# Best Practices
+
+- Use structured logging.
+- Store logs in CloudWatch.
+- Enable Container Insights.
+- Configure CloudWatch Alarms.
+- Scan container images regularly.
+- Use Secrets Manager.
+- Keep containers in private subnets.
+- Follow least privilege IAM.
+- Monitor deployment failures.
+
+---
+
+# Common Mistakes
+
+- Logging secrets.
+- Using unstructured logs.
+- Ignoring log retention policies.
+- Running containers as root.
+- Disabling image scanning.
+- Ignoring CloudWatch alarms.
+- No monitoring dashboards.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Where are Fargate logs stored?
+- What is CloudWatch Logs?
+- What is Container Insights?
+
+## Intermediate
+
+- CloudWatch Metrics vs CloudWatch Logs.
+- Explain Container Insights.
+- Why should applications log to stdout?
+- How do you securely manage secrets?
+
+## Advanced
+
+- Design an observability solution for 200 Fargate microservices.
+- Explain a production monitoring architecture using CloudWatch, Container Insights, and SNS.
+- Design a secure Fargate deployment with image scanning, IAM Roles, Secrets Manager, and private networking.
+
+---
+
+# Chapter 10 - CI/CD, Image Management & Production Deployment
+
+AWS Fargate is only one part of a production container platform.
+
+A complete enterprise deployment pipeline includes
+
+- Source Code
+- Build
+- Testing
+- Security Scanning
+- Container Registry
+- Deployment
+- Monitoring
+- Rollback
+
+Modern DevOps pipelines automate every stage.
+
+---
+
+# Complete Deployment Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions / Jenkins
+
+↓
+
+Build Docker Image
+
+↓
+
+Unit Testing
+
+↓
+
+SonarQube
+
+↓
+
+Trivy Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon ECS Service
+
+↓
+
+AWS Fargate
+
+↓
+
+Application Load Balancer
+
+↓
+
+Users
+```
+
+This is one of the most common production architectures.
+
+---
+
+# Container Build Workflow
+
+Step 1
+
+Developer pushes code.
+
+```text
+Git Push
+
+↓
+
+GitHub
+```
+
+---
+
+Step 2
+
+Pipeline starts automatically.
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+```
+
+or
+
+```text
+GitHub
+
+↓
+
+Jenkins
+```
+
+---
+
+Step 3
+
+Docker Image is built.
+
+```text
+Dockerfile
+
+↓
+
+Docker Build
+
+↓
+
+Container Image
+```
+
+---
+
+Step 4
+
+Image is scanned.
+
+```text
+Docker Image
+
+↓
+
+Trivy
+
+↓
+
+Vulnerability Report
+```
+
+Critical vulnerabilities should block deployment.
+
+---
+
+Step 5
+
+Push Image
+
+```text
+Docker Image
+
+↓
+
+Amazon ECR
+```
+
+Every image should use immutable version tags.
+
+---
+
+Step 6
+
+Deploy
+
+```text
+Amazon ECS
+
+↓
+
+Update Service
+
+↓
+
+Rolling Deployment
+
+↓
+
+AWS Fargate
+```
+
+No manual deployment is required.
+
+---
+
+# Amazon ECR
+
+Amazon Elastic Container Registry stores Docker images.
+
+Architecture
+
+```text
+Developer
+
+↓
+
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon ECS
+
+↓
+
+AWS Fargate
+```
+
+---
+
+# Why Amazon ECR?
+
+Benefits
+
+- Fully managed
+- Private registry
+- High availability
+- Image scanning
+- IAM integration
+- Lifecycle policies
+- Cross-account support
+
+---
+
+# Image Tagging Strategy
+
+Bad
+
+```text
+latest
+```
+
+Problem
+
+Impossible to know which version is running.
+
+---
+
+Good
+
+```text
+payment-api
+
+1.0.0
+
+1.0.1
+
+1.0.2
+```
+
+or
+
+```text
+payment-api
+
+Git Commit SHA
+```
+
+Every deployment becomes traceable.
+
+---
+
+# Immutable Images
+
+Production images should never change.
+
+Example
+
+Bad
+
+```text
+latest
+
+↓
+
+Overwrite
+```
+
+Good
+
+```text
+payment-api:1.4.7
+```
+
+Every deployment references a unique image.
+
+---
+
+# ECR Lifecycle Policies
+
+Old images accumulate over time.
+
+Lifecycle policies automatically remove unused images.
+
+Example
+
+```text
+Keep
+
+Latest 20 Images
+
+↓
+
+Delete Older Images
+```
+
+Benefits
+
+- Lower storage cost
+- Cleaner repository
+- Easier management
+
+---
+
+# Image Scanning
+
+Amazon ECR supports vulnerability scanning.
+
+Workflow
+
+```text
+Push Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Scan
+
+↓
+
+Critical Vulnerability?
+
+↓
+
+Fail Pipeline
+```
+
+Security should be integrated into CI/CD.
+
+---
+
+# Multi-Stage Docker Builds
+
+Production Dockerfiles should use multi-stage builds.
+
+Example
+
+```text
+Build Stage
+
+↓
+
+Compile Application
+
+↓
+
+Runtime Stage
+
+↓
+
+Small Production Image
+```
+
+Benefits
+
+- Smaller image size
+- Faster downloads
+- Better security
+- Reduced attack surface
+
+---
+
+# Image Optimization
+
+Avoid
+
+```text
+Ubuntu
+
+↓
+
+2 GB Image
+```
+
+Prefer
+
+```text
+Minimal Runtime Image
+
+↓
+
+200 MB
+```
+
+Smaller images improve deployment speed.
+
+---
+
+# Deployment Workflow
+
+```text
+GitHub
+
+↓
+
+CI/CD Pipeline
+
+↓
+
+Amazon ECR
+
+↓
+
+New Image
+
+↓
+
+Task Definition Revision
+
+↓
+
+ECS Service Update
+
+↓
+
+Rolling Deployment
+
+↓
+
+Traffic Shift
+
+↓
+
+Deployment Complete
+```
+
+---
+
+# Task Definition Revision Update
+
+Every deployment creates
+
+```text
+Task Definition
+
+Revision 18
+
+↓
+
+Revision 19
+```
+
+Old revisions remain available.
+
+Rollback becomes simple.
+
+---
+
+# Rolling Deployment Process
+
+```text
+Old Tasks
+
+↓
+
+Launch New Tasks
+
+↓
+
+Health Checks
+
+↓
+
+Register with ALB
+
+↓
+
+Traffic Shift
+
+↓
+
+Old Tasks Removed
+```
+
+No service interruption.
+
+---
+
+# Rollback
+
+Suppose
+
+Version
+
+```
+2.1.0
+```
+
+contains a bug.
+
+Rollback
+
+```text
+Revision 21
+
+↓
+
+Revision 20
+
+↓
+
+Deployment Complete
+```
+
+Rollback usually takes only a few minutes.
+
+---
+
+# Blue-Green Deployment with CodeDeploy
+
+Architecture
+
+```text
+Application Load Balancer
+
+↓
+
+Blue Target Group
+
+↓
+
+Version 1
+
+Green Target Group
+
+↓
+
+Version 2
+```
+
+Traffic shifts only after validation.
+
+---
+
+# Canary Deployment
+
+Traffic Distribution
+
+```text
+95%
+
+↓
+
+Version 1
+
+5%
+
+↓
+
+Version 2
+```
+
+If healthy
+
+```text
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Risk remains low.
+
+---
+
+# Deployment Pipeline Example
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+ECS Update Service
+
+↓
+
+AWS Fargate
+
+↓
+
+CloudWatch Verification
+```
+
+Deployment is completely automated.
+
+---
+
+# CI/CD Best Practices
+
+- Use immutable image tags.
+- Scan every image.
+- Enable automatic testing.
+- Keep Docker images small.
+- Use Task Definition revisions.
+- Deploy using rolling or Blue-Green strategy.
+- Automate rollback.
+- Never deploy manually in production.
+
+---
+
+# Enterprise Production Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon ECS
+
+↓
+
+AWS Fargate
+
+↓
+
+Application Load Balancer
+
+↓
+
+CloudWatch
+
+↓
+
+Amazon SNS
+```
+
+This architecture provides
+
+- Continuous Integration
+- Continuous Delivery
+- Security Scanning
+- Automated Deployments
+- Central Monitoring
+- Automatic Rollback
+
+---
+
+# Common Production Problems
+
+## Image Pull Failure
+
+Symptoms
+
+```text
+CannotPullContainerError
+```
+
+Possible causes
+
+- Wrong image tag
+- ECR permissions
+- Missing Execution Role
+- Deleted image
+- Network connectivity issues
+
+---
+
+## Deployment Stuck
+
+Possible causes
+
+- Health check failures
+- Insufficient CPU or memory
+- Incorrect Task Definition
+- Security Group configuration
+- Load Balancer target registration issues
+
+---
+
+## Rollback Triggered
+
+Possible causes
+
+- New application crashes
+- Health checks fail
+- Container exits immediately
+- Startup timeout
+- Missing environment variables
+
+---
+
+## Slow Deployment
+
+Check
+
+- Image size
+- ECR download time
+- Health check interval
+- ALB deregistration delay
+- Container startup time
+
+---
+
+# Production Case Study
+
+An enterprise manages
+
+- 180 microservices
+- 45 development teams
+- 12 deployments per day
+
+Pipeline
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Quality Checks
+
+↓
+
+Security Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon ECS
+
+↓
+
+AWS Fargate
+
+↓
+
+Rolling Deployment
+
+↓
+
+CloudWatch
+
+↓
+
+Production
+```
+
+Average deployment time
+
+- Build: 3 minutes
+- Security Scan: 2 minutes
+- Deployment: 4 minutes
+
+Entire deployment completes in under 10 minutes without downtime.
+
+---
+
+# Best Practices
+
+- Version every image.
+- Never use `latest` in production.
+- Scan images before deployment.
+- Automate deployments.
+- Keep Task Definitions immutable.
+- Monitor deployments.
+- Enable automatic rollback.
+- Store Dockerfiles in version control.
+
+---
+
+# Common Mistakes
+
+- Deploying unscanned images.
+- Using mutable image tags.
+- Manual production deployments.
+- Skipping rollback testing.
+- Ignoring failed health checks.
+- Large Docker images increasing deployment time.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Amazon ECR?
+- Why should we avoid the `latest` tag?
+- What is a Task Definition revision?
+
+## Intermediate
+
+- Explain a complete CI/CD pipeline for ECS Fargate.
+- Rolling Deployment vs Blue-Green Deployment.
+- How does ECS deploy a new container version?
+
+## Advanced
+
+- Design an enterprise CI/CD pipeline for 300 microservices running on AWS Fargate.
+- Explain how you would integrate SonarQube, Trivy, Amazon ECR, ECS, and CloudWatch into a secure deployment pipeline.
+- Design a zero-downtime deployment strategy with automatic rollback for a mission-critical payment application.
+
+---
+
