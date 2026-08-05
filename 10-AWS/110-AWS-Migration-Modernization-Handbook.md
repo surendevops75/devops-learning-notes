@@ -2546,3 +2546,1355 @@ Every migration follows a structured lifecycle.
 
 ---
 
+# Chapter 5 - AWS Migration Discovery, Assessment & Dependency Mapping
+
+Before migrating applications to AWS,
+
+organizations must understand
+
+- What applications exist?
+- Which servers host them?
+- Which databases are used?
+- How applications communicate?
+- Which systems are business critical?
+
+Migrating without discovery often leads to
+
+- Downtime
+- Missing Dependencies
+- Failed Migrations
+- Application Outages
+- Unexpected Costs
+
+AWS provides several services to discover, assess, and analyze existing workloads before migration begins.
+
+---
+
+# Why Discovery is Important
+
+Imagine migrating only the application server.
+
+```text
+Application Server
+
+↓
+
+Migrated
+
+↓
+
+Database
+
+↓
+
+Still On-Premises
+```
+
+The application may fail because its database dependency was not migrated.
+
+Discovery prevents these issues.
+
+---
+
+# Migration Discovery Workflow
+
+```text
+Inventory
+
+↓
+
+Dependency Discovery
+
+↓
+
+Application Assessment
+
+↓
+
+Migration Planning
+
+↓
+
+Migration Waves
+```
+
+Each phase builds on the previous one.
+
+---
+
+# Discovery Objectives
+
+A proper discovery process identifies
+
+- Applications
+- Servers
+- Databases
+- Storage
+- Network Dependencies
+- Business Owners
+- Resource Utilization
+
+---
+
+# Application Inventory
+
+The first step is creating an inventory.
+
+Example
+
+```text
+Application A
+
+↓
+
+Windows Server
+
+↓
+
+SQL Server
+
+────────────
+
+Application B
+
+↓
+
+Linux
+
+↓
+
+Oracle Database
+
+────────────
+
+Application C
+
+↓
+
+VMware
+
+↓
+
+MySQL
+```
+
+Every workload should be documented.
+
+---
+
+# Infrastructure Inventory
+
+Inventory includes
+
+- Physical Servers
+- Virtual Machines
+- Databases
+- Storage
+- Load Balancers
+- Firewalls
+- Network Devices
+
+Nothing should be overlooked.
+
+---
+
+# Business Classification
+
+Applications are categorized by importance.
+
+```text
+Mission Critical
+
+↓
+
+Customer Portal
+
+────────────
+
+Business Critical
+
+↓
+
+ERP
+
+────────────
+
+Non-Critical
+
+↓
+
+Development Tools
+```
+
+Business priority influences migration order.
+
+---
+
+# Technical Assessment
+
+Each application is evaluated for
+
+- Operating System
+- CPU
+- Memory
+- Storage
+- Network Usage
+- Software Versions
+- Licensing
+
+---
+
+# Dependency Mapping
+
+Applications rarely operate independently.
+
+Example
+
+```text
+Web Server
+
+↓
+
+Application Server
+
+↓
+
+Database
+
+↓
+
+Storage
+```
+
+Dependency mapping identifies communication paths.
+
+---
+
+# Network Dependency Example
+
+```text
+Application A
+
+↓
+
+REST API
+
+↓
+
+Application B
+
+↓
+
+Database
+```
+
+Breaking these connections can cause outages.
+
+---
+
+# Database Dependencies
+
+Example
+
+```text
+CRM
+
+↓
+
+SQL Server
+
+↓
+
+Reporting Database
+
+↓
+
+Backup Server
+```
+
+Databases often support multiple applications.
+
+---
+
+# Application Communication
+
+Discovery identifies
+
+```text
+Application
+
+↓
+
+HTTP
+
+↓
+
+API
+
+↓
+
+Message Queue
+
+↓
+
+Database
+```
+
+This information determines migration sequencing.
+
+---
+
+# AWS Application Discovery Service
+
+AWS Application Discovery Service collects information about on-premises workloads.
+
+It discovers
+
+- Servers
+- Installed Software
+- CPU Usage
+- Memory Usage
+- Network Connections
+
+---
+
+# Application Discovery Architecture
+
+```text
+On-Premises
+
+↓
+
+Discovery Agent
+
+↓
+
+AWS Application Discovery Service
+
+↓
+
+Migration Assessment
+```
+
+Collected data helps build migration plans.
+
+---
+
+# Agent-Based Discovery
+
+AWS Discovery Agents collect
+
+- Operating System Details
+- Running Processes
+- Performance Metrics
+- Network Connections
+
+Provides detailed visibility.
+
+---
+
+# Agentless Discovery
+
+VMware environments support
+
+agentless discovery.
+
+Architecture
+
+```text
+VMware
+
+↓
+
+vCenter
+
+↓
+
+AWS Discovery
+```
+
+No software installation is required on virtual machines.
+
+---
+
+# AWS Migration Hub
+
+Migration Hub provides
+
+a centralized dashboard for migration projects.
+
+Features
+
+- Application Tracking
+- Migration Progress
+- Tool Integration
+- Status Monitoring
+
+---
+
+# Migration Hub Architecture
+
+```text
+Discovery
+
+↓
+
+Migration Hub
+
+↓
+
+Migration Status
+
+↓
+
+Reports
+```
+
+Migration teams monitor progress from one location.
+
+---
+
+# Application Grouping
+
+Applications are grouped into
+
+Migration Waves.
+
+Example
+
+```text
+Wave 1
+
+↓
+
+Development
+
+────────────
+
+Wave 2
+
+↓
+
+Internal Applications
+
+────────────
+
+Wave 3
+
+↓
+
+Production Systems
+```
+
+Dependencies remain intact.
+
+---
+
+# Resource Utilization Analysis
+
+Collected metrics include
+
+```text
+CPU
+
+↓
+
+Memory
+
+↓
+
+Disk
+
+↓
+
+Network
+```
+
+These metrics help right-size AWS resources.
+
+---
+
+# Right-Sizing Example
+
+Before
+
+```text
+32 vCPU
+
+↓
+
+256 GB RAM
+```
+
+Actual Usage
+
+```text
+6 vCPU
+
+↓
+
+24 GB RAM
+```
+
+Migration Recommendation
+
+```text
+8 vCPU
+
+↓
+
+32 GB RAM
+```
+
+This reduces cloud costs.
+
+---
+
+# Licensing Assessment
+
+Discovery identifies
+
+- Windows Licenses
+- SQL Server Licenses
+- Oracle Licenses
+- Third-Party Software
+
+Licensing affects migration planning.
+
+---
+
+# Risk Assessment
+
+Applications are evaluated based on
+
+- Downtime Tolerance
+- Business Impact
+- Technical Complexity
+- Compliance
+- Security
+
+High-risk applications migrate later.
+
+---
+
+# Migration Readiness
+
+Each application is categorized.
+
+```text
+Ready
+
+↓
+
+Minor Changes
+
+────────────
+
+Needs Modernization
+
+────────────
+
+Retain
+
+────────────
+
+Retire
+```
+
+This aligns with the AWS 7 Rs.
+
+---
+
+# Enterprise Example
+
+Suppose an organization has
+
+```text
+250 Applications
+
+↓
+
+Discovery
+
+↓
+
+Dependency Mapping
+
+↓
+
+Assessment
+
+↓
+
+Migration Waves
+
+↓
+
+AWS
+```
+
+Migration becomes predictable.
+
+---
+
+# Banking Example
+
+```text
+Customer Portal
+
+↓
+
+API Gateway
+
+↓
+
+Payment Service
+
+↓
+
+Oracle Database
+
+↓
+
+Fraud Detection
+```
+
+Every dependency must be identified before migration.
+
+---
+
+# Benefits
+
+- Reduced Migration Risk
+- Accurate Planning
+- Better Right-Sizing
+- Dependency Visibility
+- Lower Costs
+- Fewer Migration Failures
+
+---
+
+# Best Practices
+
+- Perform complete application discovery before migration.
+- Document all application dependencies.
+- Right-size AWS resources using actual utilization data.
+- Group applications into migration waves.
+- Validate business owners for every application.
+- Assess licensing before migration.
+- Prioritize low-risk workloads first.
+- Continuously update the migration inventory.
+
+---
+
+# Common Mistakes
+
+- Migrating applications without dependency mapping.
+- Ignoring database dependencies.
+- Overlooking network communication.
+- Copying oversized servers to AWS without right-sizing.
+- Not identifying application owners.
+- Migrating production workloads before testing.
+- Ignoring software licensing requirements.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is application discovery important before migration?
+- What is AWS Application Discovery Service?
+- What is dependency mapping?
+
+## Intermediate
+
+- Agent-based vs Agentless discovery.
+- What is AWS Migration Hub?
+- Why is right-sizing important?
+- How do migration waves reduce risk?
+
+## Advanced
+
+- Design a migration assessment process for a company with 500 on-premises applications, explaining application discovery, dependency mapping, right-sizing, migration wave planning, and risk assessment.
+- Explain how AWS Application Discovery Service and AWS Migration Hub work together to improve enterprise migration planning.
+- A global enterprise plans to migrate its ERP, CRM, payment systems, and analytics platform to AWS. Describe how you would perform application discovery, classify workloads, identify dependencies, create migration waves, and minimize business disruption during migration.
+
+---
+
+# Chapter 5 - AWS Migration Discovery, Assessment & Dependency Mapping
+
+Before migrating applications to AWS,
+
+organizations must understand
+
+- What applications exist?
+- Which servers host them?
+- Which databases are used?
+- How applications communicate?
+- Which systems are business critical?
+
+Migrating without discovery often leads to
+
+- Downtime
+- Missing Dependencies
+- Failed Migrations
+- Application Outages
+- Unexpected Costs
+
+AWS provides several services to discover, assess, and analyze existing workloads before migration begins.
+
+---
+
+# Why Discovery is Important
+
+Imagine migrating only the application server.
+
+```text
+Application Server
+
+↓
+
+Migrated
+
+↓
+
+Database
+
+↓
+
+Still On-Premises
+```
+
+The application may fail because its database dependency was not migrated.
+
+Discovery prevents these issues.
+
+---
+
+# Migration Discovery Workflow
+
+```text
+Inventory
+
+↓
+
+Dependency Discovery
+
+↓
+
+Application Assessment
+
+↓
+
+Migration Planning
+
+↓
+
+Migration Waves
+```
+
+Each phase builds on the previous one.
+
+---
+
+# Discovery Objectives
+
+A proper discovery process identifies
+
+- Applications
+- Servers
+- Databases
+- Storage
+- Network Dependencies
+- Business Owners
+- Resource Utilization
+
+---
+
+# Application Inventory
+
+The first step is creating an inventory.
+
+Example
+
+```text
+Application A
+
+↓
+
+Windows Server
+
+↓
+
+SQL Server
+
+────────────
+
+Application B
+
+↓
+
+Linux
+
+↓
+
+Oracle Database
+
+────────────
+
+Application C
+
+↓
+
+VMware
+
+↓
+
+MySQL
+```
+
+Every workload should be documented.
+
+---
+
+# Infrastructure Inventory
+
+Inventory includes
+
+- Physical Servers
+- Virtual Machines
+- Databases
+- Storage
+- Load Balancers
+- Firewalls
+- Network Devices
+
+Nothing should be overlooked.
+
+---
+
+# Business Classification
+
+Applications are categorized by importance.
+
+```text
+Mission Critical
+
+↓
+
+Customer Portal
+
+────────────
+
+Business Critical
+
+↓
+
+ERP
+
+────────────
+
+Non-Critical
+
+↓
+
+Development Tools
+```
+
+Business priority influences migration order.
+
+---
+
+# Technical Assessment
+
+Each application is evaluated for
+
+- Operating System
+- CPU
+- Memory
+- Storage
+- Network Usage
+- Software Versions
+- Licensing
+
+---
+
+# Dependency Mapping
+
+Applications rarely operate independently.
+
+Example
+
+```text
+Web Server
+
+↓
+
+Application Server
+
+↓
+
+Database
+
+↓
+
+Storage
+```
+
+Dependency mapping identifies communication paths.
+
+---
+
+# Network Dependency Example
+
+```text
+Application A
+
+↓
+
+REST API
+
+↓
+
+Application B
+
+↓
+
+Database
+```
+
+Breaking these connections can cause outages.
+
+---
+
+# Database Dependencies
+
+Example
+
+```text
+CRM
+
+↓
+
+SQL Server
+
+↓
+
+Reporting Database
+
+↓
+
+Backup Server
+```
+
+Databases often support multiple applications.
+
+---
+
+# Application Communication
+
+Discovery identifies
+
+```text
+Application
+
+↓
+
+HTTP
+
+↓
+
+API
+
+↓
+
+Message Queue
+
+↓
+
+Database
+```
+
+This information determines migration sequencing.
+
+---
+
+# AWS Application Discovery Service
+
+AWS Application Discovery Service collects information about on-premises workloads.
+
+It discovers
+
+- Servers
+- Installed Software
+- CPU Usage
+- Memory Usage
+- Network Connections
+
+---
+
+# Application Discovery Architecture
+
+```text
+On-Premises
+
+↓
+
+Discovery Agent
+
+↓
+
+AWS Application Discovery Service
+
+↓
+
+Migration Assessment
+```
+
+Collected data helps build migration plans.
+
+---
+
+# Agent-Based Discovery
+
+AWS Discovery Agents collect
+
+- Operating System Details
+- Running Processes
+- Performance Metrics
+- Network Connections
+
+Provides detailed visibility.
+
+---
+
+# Agentless Discovery
+
+VMware environments support
+
+agentless discovery.
+
+Architecture
+
+```text
+VMware
+
+↓
+
+vCenter
+
+↓
+
+AWS Discovery
+```
+
+No software installation is required on virtual machines.
+
+---
+
+# AWS Migration Hub
+
+Migration Hub provides
+
+a centralized dashboard for migration projects.
+
+Features
+
+- Application Tracking
+- Migration Progress
+- Tool Integration
+- Status Monitoring
+
+---
+
+# Migration Hub Architecture
+
+```text
+Discovery
+
+↓
+
+Migration Hub
+
+↓
+
+Migration Status
+
+↓
+
+Reports
+```
+
+Migration teams monitor progress from one location.
+
+---
+
+# Application Grouping
+
+Applications are grouped into
+
+Migration Waves.
+
+Example
+
+```text
+Wave 1
+
+↓
+
+Development
+
+────────────
+
+Wave 2
+
+↓
+
+Internal Applications
+
+────────────
+
+Wave 3
+
+↓
+
+Production Systems
+```
+
+Dependencies remain intact.
+
+---
+
+# Resource Utilization Analysis
+
+Collected metrics include
+
+```text
+CPU
+
+↓
+
+Memory
+
+↓
+
+Disk
+
+↓
+
+Network
+```
+
+These metrics help right-size AWS resources.
+
+---
+
+# Right-Sizing Example
+
+Before
+
+```text
+32 vCPU
+
+↓
+
+256 GB RAM
+```
+
+Actual Usage
+
+```text
+6 vCPU
+
+↓
+
+24 GB RAM
+```
+
+Migration Recommendation
+
+```text
+8 vCPU
+
+↓
+
+32 GB RAM
+```
+
+This reduces cloud costs.
+
+---
+
+# Licensing Assessment
+
+Discovery identifies
+
+- Windows Licenses
+- SQL Server Licenses
+- Oracle Licenses
+- Third-Party Software
+
+Licensing affects migration planning.
+
+---
+
+# Risk Assessment
+
+Applications are evaluated based on
+
+- Downtime Tolerance
+- Business Impact
+- Technical Complexity
+- Compliance
+- Security
+
+High-risk applications migrate later.
+
+---
+
+# Migration Readiness
+
+Each application is categorized.
+
+```text
+Ready
+
+↓
+
+Minor Changes
+
+────────────
+
+Needs Modernization
+
+────────────
+
+Retain
+
+────────────
+
+Retire
+```
+
+This aligns with the AWS 7 Rs.
+
+---
+
+# Enterprise Example
+
+Suppose an organization has
+
+```text
+250 Applications
+
+↓
+
+Discovery
+
+↓
+
+Dependency Mapping
+
+↓
+
+Assessment
+
+↓
+
+Migration Waves
+
+↓
+
+AWS
+```
+
+Migration becomes predictable.
+
+---
+
+# Banking Example
+
+```text
+Customer Portal
+
+↓
+
+API Gateway
+
+↓
+
+Payment Service
+
+↓
+
+Oracle Database
+
+↓
+
+Fraud Detection
+```
+
+Every dependency must be identified before migration.
+
+---
+
+# Benefits
+
+- Reduced Migration Risk
+- Accurate Planning
+- Better Right-Sizing
+- Dependency Visibility
+- Lower Costs
+- Fewer Migration Failures
+
+---
+
+# Best Practices
+
+- Perform complete application discovery before migration.
+- Document all application dependencies.
+- Right-size AWS resources using actual utilization data.
+- Group applications into migration waves.
+- Validate business owners for every application.
+- Assess licensing before migration.
+- Prioritize low-risk workloads first.
+- Continuously update the migration inventory.
+
+---
+
+# Common Mistakes
+
+- Migrating applications without dependency mapping.
+- Ignoring database dependencies.
+- Overlooking network communication.
+- Copying oversized servers to AWS without right-sizing.
+- Not identifying application owners.
+- Migrating production workloads before testing.
+- Ignoring software licensing requirements.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is application discovery important before migration?
+- What is AWS Application Discovery Service?
+- What is dependency mapping?
+
+## Intermediate
+
+- Agent-based vs Agentless discovery.
+- What is AWS Migration Hub?
+- Why is right-sizing important?
+- How do migration waves reduce risk?
+
+## Advanced
+
+- Design a migration assessment process for a company with 500 on-premises applications, explaining application discovery, dependency mapping, right-sizing, migration wave planning, and risk assessment.
+- Explain how AWS Application Discovery Service and AWS Migration Hub work together to improve enterprise migration planning.
+- A global enterprise plans to migrate its ERP, CRM, payment systems, and analytics platform to AWS. Describe how you would perform application discovery, classify workloads, identify dependencies, create migration waves, and minimize business disruption during migration.
+
+---
+
