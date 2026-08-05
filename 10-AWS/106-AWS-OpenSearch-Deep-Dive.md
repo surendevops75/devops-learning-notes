@@ -546,3 +546,735 @@ It complements—not replaces—databases like PostgreSQL, MySQL, or Amazon RDS.
 
 ---
 
+# Chapter 2 - OpenSearch Cluster Architecture & Internal Working
+
+Understanding the internal architecture of OpenSearch is essential for designing scalable and highly available production environments.
+
+A search request passes through multiple components before returning results.
+
+Knowing how these components interact helps in designing, scaling, and troubleshooting enterprise OpenSearch clusters.
+
+---
+
+# High-Level Architecture
+
+```text
+Applications
+
+↓
+
+REST API
+
+↓
+
+OpenSearch Cluster
+
+↓
+
+Coordinator Node
+
+↓
+
+Data Nodes
+
+↓
+
+Shards
+
+↓
+
+Documents
+
+↓
+
+Search Results
+```
+
+Every request enters through the cluster and is routed to the appropriate nodes.
+
+---
+
+# Cluster Architecture
+
+A production cluster typically consists of multiple nodes.
+
+```text
+               OpenSearch Cluster
+
+        ┌──────────┼──────────┐
+
+   Manager Node   Data Node   Data Node
+
+                     │
+
+                 Replica Node
+
+                     │
+
+              OpenSearch Dashboards
+```
+
+Each node performs a different responsibility.
+
+---
+
+# What is a Cluster Manager Node?
+
+Earlier versions used the term **Master Node**.
+
+OpenSearch now uses the term **Cluster Manager Node**.
+
+Its responsibilities include
+
+- Managing cluster state
+- Creating indices
+- Allocating shards
+- Node discovery
+- Cluster health
+- Leader election
+
+It does **not** process large volumes of search data.
+
+---
+
+# Cluster Manager Workflow
+
+```text
+New Node
+
+↓
+
+Join Cluster
+
+↓
+
+Cluster Manager
+
+↓
+
+Update Cluster State
+
+↓
+
+Notify Other Nodes
+```
+
+The Cluster Manager coordinates the cluster.
+
+---
+
+# What is a Data Node?
+
+Data Nodes store
+
+- Documents
+- Shards
+- Replicas
+
+They perform
+
+- Search
+- Indexing
+- Aggregations
+- Filtering
+
+Most cluster resources are consumed by Data Nodes.
+
+---
+
+# Data Node Architecture
+
+```text
+Data Node
+
+├── Primary Shards
+
+├── Replica Shards
+
+├── Search Engine
+
+└── Storage
+```
+
+Adding more Data Nodes increases cluster capacity.
+
+---
+
+# Coordinating Node
+
+Every node can act as a coordinating node.
+
+Responsibilities
+
+- Receive client request
+- Forward request
+- Merge responses
+- Return final result
+
+Workflow
+
+```text
+Client
+
+↓
+
+Coordinator
+
+↓
+
+Shard 1
+
+Shard 2
+
+Shard 3
+
+↓
+
+Merge Results
+
+↓
+
+Response
+```
+
+The coordinating node does not permanently store data unless it also has the data role.
+
+---
+
+# Ingest Node
+
+Some organizations preprocess documents before indexing.
+
+Example
+
+```text
+Application
+
+↓
+
+Ingest Pipeline
+
+↓
+
+Convert Timestamp
+
+↓
+
+Remove Fields
+
+↓
+
+GeoIP Lookup
+
+↓
+
+Index Document
+```
+
+This work is performed by an Ingest Node.
+
+---
+
+# Dedicated Node Roles
+
+Large production clusters separate responsibilities.
+
+```text
+Cluster
+
+├── Manager Nodes
+
+├── Data Nodes
+
+├── Ingest Nodes
+
+├── Coordinating Nodes
+
+└── Dashboards
+```
+
+Benefits
+
+- Better scalability
+- Easier troubleshooting
+- Independent scaling
+- Improved stability
+
+---
+
+# Small Cluster Architecture
+
+Development
+
+```text
+Single Node
+
+↓
+
+Manager
+
+↓
+
+Data
+
+↓
+
+Coordinator
+
+↓
+
+Ingest
+```
+
+Everything runs on one node.
+
+Suitable only for development.
+
+---
+
+# Enterprise Architecture
+
+```text
+              Load Balancer
+
+                    │
+
+          Coordinating Nodes
+
+                    │
+
+      ┌─────────────┼─────────────┐
+
+  Manager-1     Manager-2     Manager-3
+
+      │
+
+──────────────────────────────────────────
+
+Data-1   Data-2   Data-3   Data-4   Data-5
+
+      │
+
+──────────────────────────────────────────
+
+Dedicated Ingest Nodes
+```
+
+This architecture is commonly used in production.
+
+---
+
+# Cluster Discovery
+
+When a node starts
+
+```text
+New Node
+
+↓
+
+Discover Manager
+
+↓
+
+Join Cluster
+
+↓
+
+Receive Cluster State
+
+↓
+
+Start Processing
+```
+
+Cluster discovery is automatic once configured.
+
+---
+
+# Cluster State
+
+Cluster State contains
+
+- Nodes
+- Indices
+- Shards
+- Replicas
+- Routing Information
+- Mappings
+- Templates
+
+Every node keeps an updated copy.
+
+---
+
+# Leader Election
+
+Suppose
+
+```text
+Manager Node
+
+↓
+
+Failure
+```
+
+Remaining manager-eligible nodes perform an election.
+
+```text
+Manager-1
+
+↓
+
+Failure
+
+↓
+
+Election
+
+↓
+
+Manager-2
+
+↓
+
+New Cluster Manager
+```
+
+This minimizes downtime.
+
+---
+
+# Why Three Manager Nodes?
+
+Production recommendation
+
+```text
+Manager-1
+
+Manager-2
+
+Manager-3
+```
+
+Why not two?
+
+With only two nodes,
+
+network issues can cause a split-brain scenario where both nodes believe they are the leader.
+
+Three manager nodes provide quorum-based decision making.
+
+---
+
+# Quorum
+
+Example
+
+```text
+3 Manager Nodes
+
+↓
+
+2 Available
+
+↓
+
+Cluster Continues
+```
+
+But
+
+```text
+3 Manager Nodes
+
+↓
+
+Only 1 Available
+
+↓
+
+Cluster Cannot Elect Leader
+```
+
+Majority is required.
+
+---
+
+# Node Communication
+
+Nodes constantly exchange
+
+- Cluster State
+- Health Information
+- Shard Allocation
+- Replication Updates
+
+Architecture
+
+```text
+Node A
+
+↔
+
+Node B
+
+↔
+
+Node C
+```
+
+Communication is continuous.
+
+---
+
+# REST API
+
+Applications communicate with OpenSearch using REST APIs.
+
+Example
+
+```text
+Application
+
+↓
+
+HTTPS
+
+↓
+
+OpenSearch
+
+↓
+
+JSON Response
+```
+
+This makes integration simple across different programming languages.
+
+---
+
+# Search Request Flow
+
+Suppose a user searches
+
+```text
+payment timeout
+```
+
+Flow
+
+```text
+Application
+
+↓
+
+Coordinator Node
+
+↓
+
+Shard Search
+
+↓
+
+Merge Results
+
+↓
+
+Sort Results
+
+↓
+
+Return JSON
+```
+
+The application receives only the final merged response.
+
+---
+
+# Index Request Flow
+
+Adding a new document
+
+```text
+Application
+
+↓
+
+Coordinator
+
+↓
+
+Primary Shard
+
+↓
+
+Replica Shard
+
+↓
+
+Acknowledgement
+
+↓
+
+Success
+```
+
+Replication occurs automatically.
+
+---
+
+# Scaling the Cluster
+
+Need more storage?
+
+```text
+Add Data Nodes
+```
+
+Need better coordination?
+
+```text
+Add Coordinating Nodes
+```
+
+Need more ingestion throughput?
+
+```text
+Add Ingest Nodes
+```
+
+Each role scales independently.
+
+---
+
+# High Availability
+
+Production clusters should use multiple Availability Zones.
+
+```text
+Availability Zone A
+
+↓
+
+Manager
+
+↓
+
+Data
+
+────────────────
+
+Availability Zone B
+
+↓
+
+Manager
+
+↓
+
+Data
+
+────────────────
+
+Availability Zone C
+
+↓
+
+Manager
+
+↓
+
+Data
+```
+
+A single Availability Zone failure should not stop the cluster.
+
+---
+
+# Enterprise Production Example
+
+A retail platform generates
+
+- 900 GB logs/day
+- 15 billion documents
+- 400 searches/second
+
+Architecture
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Load Balancer
+
+↓
+
+Coordinating Nodes
+
+↓
+
+Data Nodes
+
+↓
+
+OpenSearch Dashboards
+
+↓
+
+Operations Team
+```
+
+The platform continues operating even if individual nodes fail.
+
+---
+
+# Best Practices
+
+- Use three dedicated Cluster Manager nodes in production.
+- Separate Manager and Data Nodes for large clusters.
+- Deploy across multiple Availability Zones.
+- Scale Data Nodes independently.
+- Monitor cluster health continuously.
+- Avoid running production on a single node.
+
+---
+
+# Common Mistakes
+
+- Single-node production clusters.
+- Using only one Manager node.
+- Running Manager and Data roles together in very large clusters.
+- Ignoring cluster health warnings.
+- Not distributing nodes across Availability Zones.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an OpenSearch Cluster?
+- What is a Data Node?
+- What is a Cluster Manager Node?
+
+## Intermediate
+
+- Explain Coordinating Nodes.
+- Explain Ingest Nodes.
+- Why are three Manager nodes recommended?
+
+## Advanced
+
+- Design a highly available OpenSearch cluster for processing 5 TB of logs per day.
+- Explain the complete search request flow inside an OpenSearch cluster.
+- How does OpenSearch maintain availability when a Manager node fails?
+
+---
+
