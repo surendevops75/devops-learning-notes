@@ -2890,3 +2890,880 @@ Every new index is created automatically using predefined templates.
 
 ---
 
+# Chapter 5 - Indexing, Search Process & Query Execution
+
+One of the biggest strengths of OpenSearch is its ability to search billions of documents in milliseconds.
+
+To understand why it is so fast, you need to understand
+
+- How documents are indexed
+- How searches are executed
+- How queries are distributed across shards
+- How results are merged
+
+These concepts are frequently discussed in senior DevOps, Platform Engineering, and Solutions Architect interviews.
+
+---
+
+# What is Indexing?
+
+Indexing is the process of storing a document inside OpenSearch in a format optimized for searching.
+
+Unlike relational databases,
+
+OpenSearch doesn't simply save JSON.
+
+It analyzes the document and builds multiple internal data structures.
+
+Workflow
+
+```text
+Application
+
+↓
+
+JSON Document
+
+↓
+
+OpenSearch
+
+↓
+
+Analyzer
+
+↓
+
+Inverted Index
+
+↓
+
+Stored Document
+
+↓
+
+Search Ready
+```
+
+---
+
+# Document Indexing Flow
+
+Suppose an application sends
+
+```json
+{
+ "service":"payment-api",
+ "status":"SUCCESS",
+ "message":"Payment completed successfully"
+}
+```
+
+OpenSearch performs
+
+```text
+Receive Document
+
+↓
+
+Validate Mapping
+
+↓
+
+Choose Primary Shard
+
+↓
+
+Analyze Fields
+
+↓
+
+Create Inverted Index
+
+↓
+
+Store Document
+
+↓
+
+Replicate
+
+↓
+
+Success
+```
+
+Only after indexing can the document be searched.
+
+---
+
+# Internal Storage Process
+
+Every document goes through several stages.
+
+```text
+Application
+
+↓
+
+Coordinator Node
+
+↓
+
+Primary Shard
+
+↓
+
+Analyzer
+
+↓
+
+Index Writer
+
+↓
+
+Disk
+
+↓
+
+Replica Shard
+```
+
+This entire process happens automatically.
+
+---
+
+# How Does OpenSearch Choose a Shard?
+
+When a document is indexed,
+
+OpenSearch calculates
+
+```text
+Hash(Document ID)
+
+↓
+
+Primary Shard
+```
+
+Example
+
+```text
+Document-1001
+
+↓
+
+Hash
+
+↓
+
+Shard-2
+```
+
+Every document always belongs to one primary shard.
+
+---
+
+# Custom Routing
+
+By default,
+
+OpenSearch uses the document ID.
+
+However,
+
+applications can provide a routing key.
+
+Example
+
+```text
+Customer ID
+
+↓
+
+Hash
+
+↓
+
+Specific Shard
+```
+
+Benefits
+
+- Related documents stored together
+- Faster searches
+- Better performance
+
+Used carefully in enterprise environments.
+
+---
+
+# What is an Analyzer?
+
+An Analyzer prepares text before indexing.
+
+Example
+
+```text
+Payment Failed Due To Database Timeout
+```
+
+Analyzer performs
+
+```text
+Lowercase
+
+↓
+
+Tokenize
+
+↓
+
+Remove Punctuation
+
+↓
+
+Normalize
+
+↓
+
+Index Tokens
+```
+
+Instead of storing one long sentence,
+
+OpenSearch stores searchable terms.
+
+---
+
+# Analyzer Pipeline
+
+```text
+Original Text
+
+↓
+
+Character Filter
+
+↓
+
+Tokenizer
+
+↓
+
+Token Filter
+
+↓
+
+Indexed Tokens
+```
+
+Every text field passes through an analyzer.
+
+---
+
+# Character Filters
+
+Character Filters clean the text.
+
+Example
+
+```text
+Payment-API
+```
+
+may become
+
+```text
+Payment API
+```
+
+before tokenization.
+
+Useful for
+
+- HTML removal
+- Character replacement
+- Text normalization
+
+---
+
+# Tokenizer
+
+The tokenizer splits text into searchable terms.
+
+Example
+
+```text
+Payment completed successfully
+```
+
+becomes
+
+```text
+Payment
+
+Completed
+
+Successfully
+```
+
+Each token becomes searchable.
+
+---
+
+# Token Filters
+
+After tokenization,
+
+OpenSearch applies filters.
+
+Example
+
+```text
+Payments
+
+↓
+
+payment
+```
+
+Plural and singular forms can become searchable using stemming.
+
+Filters may also
+
+- Convert to lowercase
+- Remove stop words
+- Normalize text
+
+---
+
+# Inverted Index
+
+This is the core data structure that makes OpenSearch fast.
+
+Instead of
+
+```text
+Document
+
+↓
+
+Words
+```
+
+OpenSearch stores
+
+```text
+Word
+
+↓
+
+Documents
+```
+
+This is called an **Inverted Index**.
+
+---
+
+# Traditional Database Search
+
+Suppose
+
+```text
+Search
+
+Payment
+```
+
+Database
+
+```text
+Row-1
+
+↓
+
+No
+
+Row-2
+
+↓
+
+Yes
+
+Row-3
+
+↓
+
+No
+
+...
+
+Millions of Rows
+```
+
+Every row may need to be scanned.
+
+---
+
+# Inverted Index Search
+
+OpenSearch stores
+
+```text
+Payment
+
+↓
+
+Document-2
+
+↓
+
+Document-7
+
+↓
+
+Document-15
+```
+
+Search becomes almost instantaneous.
+
+---
+
+# Example
+
+Documents
+
+```text
+Doc-1
+
+Payment Completed
+
+Doc-2
+
+Payment Failed
+
+Doc-3
+
+Database Timeout
+```
+
+Inverted Index
+
+```text
+Payment
+
+↓
+
+Doc-1
+
+↓
+
+Doc-2
+
+Completed
+
+↓
+
+Doc-1
+
+Failed
+
+↓
+
+Doc-2
+
+Database
+
+↓
+
+Doc-3
+```
+
+Searching becomes extremely efficient.
+
+---
+
+# Search Workflow
+
+Suppose a user searches
+
+```text
+payment failed
+```
+
+Workflow
+
+```text
+User
+
+↓
+
+Coordinator Node
+
+↓
+
+Query All Relevant Shards
+
+↓
+
+Each Shard Searches
+
+↓
+
+Results Returned
+
+↓
+
+Coordinator Merges
+
+↓
+
+Sort Results
+
+↓
+
+Return Response
+```
+
+---
+
+# Parallel Searching
+
+Imagine
+
+```text
+Index
+
+↓
+
+5 Primary Shards
+```
+
+Instead of searching one after another,
+
+OpenSearch searches all shards simultaneously.
+
+```text
+Coordinator
+
+↓
+
+Shard-1
+
+Shard-2
+
+Shard-3
+
+Shard-4
+
+Shard-5
+
+↓
+
+Merge Results
+```
+
+Parallel execution significantly improves performance.
+
+---
+
+# Search on Replicas
+
+Search requests are not limited to primary shards.
+
+They can also use replicas.
+
+Example
+
+```text
+Primary
+
+↓
+
+Search
+
+Replica
+
+↓
+
+Search
+```
+
+Benefits
+
+- Better throughput
+- Lower load
+- Faster response
+
+---
+
+# Query Phase
+
+Every shard executes the query independently.
+
+```text
+Coordinator
+
+↓
+
+Query
+
+↓
+
+Shard
+
+↓
+
+Matching Documents
+
+↓
+
+Return Results
+```
+
+No shard knows about other shards.
+
+---
+
+# Fetch Phase
+
+After matching documents,
+
+OpenSearch retrieves the full documents.
+
+Workflow
+
+```text
+Matching IDs
+
+↓
+
+Fetch Documents
+
+↓
+
+Coordinator
+
+↓
+
+Final Response
+```
+
+This two-phase approach improves efficiency.
+
+---
+
+# Search Request Lifecycle
+
+```text
+Client
+
+↓
+
+REST API
+
+↓
+
+Coordinator Node
+
+↓
+
+Shard Query
+
+↓
+
+Replica Participation
+
+↓
+
+Merge Results
+
+↓
+
+Sort
+
+↓
+
+JSON Response
+```
+
+Every search follows this lifecycle.
+
+---
+
+# Write Request Lifecycle
+
+```text
+Application
+
+↓
+
+Coordinator
+
+↓
+
+Primary Shard
+
+↓
+
+Replica Shards
+
+↓
+
+Acknowledgement
+
+↓
+
+Success
+```
+
+Only after replicas acknowledge (depending on configuration) is the write considered complete.
+
+---
+
+# Refresh Operation
+
+Newly indexed documents are not immediately searchable.
+
+They become searchable after a refresh.
+
+Workflow
+
+```text
+Index Document
+
+↓
+
+Memory Buffer
+
+↓
+
+Refresh
+
+↓
+
+Search Available
+```
+
+OpenSearch performs automatic refreshes at configurable intervals.
+
+---
+
+# Near Real-Time Search
+
+OpenSearch is a **Near Real-Time (NRT)** search engine.
+
+Example
+
+```text
+Index Document
+
+↓
+
+1 Second
+
+↓
+
+Searchable
+```
+
+There is usually a very small delay between indexing and search availability.
+
+---
+
+# Enterprise Example
+
+A payment platform generates
+
+- 25,000 log events/second
+
+Flow
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+OpenSearch
+
+↓
+
+Primary Shards
+
+↓
+
+Replica Shards
+
+↓
+
+Dashboards
+
+↓
+
+DevOps Team
+```
+
+When an incident occurs,
+
+engineers search
+
+```text
+payment timeout
+```
+
+Results appear within milliseconds despite billions of indexed documents.
+
+---
+
+# Best Practices
+
+- Use appropriate analyzers.
+- Avoid unnecessary custom analyzers.
+- Use keyword fields for exact matching.
+- Keep shard sizes balanced.
+- Monitor indexing latency.
+- Monitor search latency.
+- Use replicas to improve search throughput.
+
+---
+
+# Common Mistakes
+
+- Assuming documents become searchable instantly.
+- Creating unnecessary custom analyzers.
+- Using text fields for filtering.
+- Ignoring refresh behavior.
+- Running searches against oversized shards.
+- Using OpenSearch like a transactional database.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is indexing?
+- What is an Inverted Index?
+- Why is OpenSearch called a Near Real-Time search engine?
+
+## Intermediate
+
+- Explain the document indexing process.
+- Explain the search request lifecycle.
+- What is the purpose of an Analyzer?
+- What is the difference between the Query Phase and Fetch Phase?
+
+## Advanced
+
+- Explain how OpenSearch searches billions of documents in milliseconds.
+- Design an indexing architecture for a platform ingesting 100,000 log events per second.
+- Describe the complete journey of a document from the application to becoming searchable in an OpenSearch cluster.
+
+---
+
