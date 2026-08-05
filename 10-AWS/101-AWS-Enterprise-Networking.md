@@ -2662,3 +2662,718 @@ Benefits
 - Tag all shared resources consistently.
 - Monitor usage and capacity of shared services.
 
+---
+
+# Chapter 7 - Cross-VPC Communication
+
+## What is Cross-VPC Communication?
+
+Cross-VPC communication enables resources deployed in different Virtual Private Clouds (VPCs) to communicate securely using private IP addresses.
+
+In enterprise environments, applications are rarely deployed inside a single VPC.
+
+Example
+
+```text
+Development VPC
+
+↓
+
+QA VPC
+
+↓
+
+Production VPC
+
+↓
+
+Shared Services VPC
+```
+
+These VPCs often need to communicate while maintaining isolation.
+
+---
+
+# Why Multiple VPCs?
+
+Organizations create multiple VPCs for:
+
+- Environment isolation
+- Security
+- Business unit separation
+- Compliance
+- CIDR management
+- Independent application teams
+- Disaster Recovery
+
+Example
+
+```text
+VPC
+
+↓
+
+Payroll
+
+VPC
+
+↓
+
+HR
+
+VPC
+
+↓
+
+Finance
+
+VPC
+
+↓
+
+Engineering
+```
+
+---
+
+# Cross-VPC Communication Options
+
+AWS provides several methods.
+
+| Method | Best Use Case |
+|----------|--------------|
+| VPC Peering | Two VPCs |
+| Transit Gateway | Hundreds of VPCs |
+| AWS PrivateLink | Share a specific service |
+| Shared VPC | Central networking |
+| Site-to-Site VPN | Hybrid Cloud |
+| Direct Connect | Enterprise Hybrid |
+
+---
+
+# Choosing the Right Option
+
+```text
+Need to connect VPCs?
+
+        │
+
+        ├── Two VPCs
+
+        │
+
+        └── VPC Peering
+
+        │
+
+        ├── Hundreds of VPCs
+
+        │
+
+        └── Transit Gateway
+
+        │
+
+        ├── Share one Application
+
+        │
+
+        └── PrivateLink
+
+        │
+
+        ├── Shared Infrastructure
+
+        │
+
+        └── Shared VPC
+
+        │
+
+        └── On-Premises
+
+               │
+
+               VPN / Direct Connect
+```
+
+---
+
+# Cross-VPC Routing
+
+Communication always depends on routing.
+
+```text
+Application
+
+↓
+
+Route Table
+
+↓
+
+Routing Decision
+
+↓
+
+Networking Service
+
+↓
+
+Destination VPC
+```
+
+If routes are missing,
+
+communication fails.
+
+---
+
+# Cross-VPC DNS
+
+Applications should never communicate using IP addresses.
+
+Bad
+
+```
+10.20.15.25
+```
+
+Good
+
+```
+db.internal.company.com
+```
+
+Use
+
+- Route53 Private Hosted Zones
+- Route53 Resolver
+- Private DNS
+
+Benefits
+
+- Easier migration
+- Better maintainability
+- No application changes after IP updates
+
+---
+
+# Security
+
+Cross-VPC communication should always follow least privilege.
+
+Recommended controls
+
+- Security Groups
+- Network ACLs
+- IAM
+- Endpoint Policies
+- AWS Network Firewall
+
+Never expose internal applications publicly just because another VPC needs access.
+
+---
+
+# Production Architecture Example
+
+```text
+                 Transit Gateway
+
+      ┌──────────┼───────────┐
+
+ Dev VPC      QA VPC      Prod VPC
+
+      │            │            │
+
+      └────────────┼────────────┘
+
+          Shared Services VPC
+```
+
+Communication
+
+Development
+
+↓
+
+Jenkins
+
+↓
+
+Artifactory
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+
+Everything remains private.
+
+---
+
+# Best Practices
+
+- Use DNS instead of IP addresses.
+- Avoid overlapping CIDRs.
+- Keep routing simple.
+- Use Transit Gateway for enterprise environments.
+- Expose applications using PrivateLink when only one service is needed.
+- Keep communication private.
+
+---
+
+# Chapter 8 - Enterprise Network Design Patterns
+
+Enterprise networking is based on reusable architecture patterns.
+
+---
+
+## Pattern 1 - Hub and Spoke
+
+Most common enterprise architecture.
+
+```text
+                Transit Gateway
+
+      ┌──────────┼──────────┐
+
+     Dev        QA       Production
+
+            Shared Services
+```
+
+Advantages
+
+- Central routing
+- Easy expansion
+- Better monitoring
+- Easier troubleshooting
+
+---
+
+## Pattern 2 - Shared Services
+
+```text
+Shared Services
+
+↓
+
+DNS
+
+↓
+
+Jenkins
+
+↓
+
+GitLab
+
+↓
+
+Artifactory
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+OpenSearch
+```
+
+Every workload consumes shared services.
+
+---
+
+## Pattern 3 - Centralized Internet Egress
+
+Instead of
+
+```text
+Every VPC
+
+↓
+
+Own NAT Gateway
+```
+
+Enterprise
+
+```text
+Application VPC
+
+↓
+
+Transit Gateway
+
+↓
+
+Egress VPC
+
+↓
+
+Firewall
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+Advantages
+
+- Central firewall
+- Central logging
+- Lower operational effort
+
+---
+
+## Pattern 4 - Inspection VPC
+
+Traffic inspection before reaching production.
+
+```text
+Application VPC
+
+↓
+
+Transit Gateway
+
+↓
+
+Inspection VPC
+
+↓
+
+Firewall
+
+↓
+
+Destination
+```
+
+Commonly used by
+
+- Banks
+- Government
+- Healthcare
+
+---
+
+## Pattern 5 - Shared Security
+
+```text
+Security Account
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+Inspector
+
+↓
+
+CloudTrail
+```
+
+Security is managed centrally.
+
+---
+
+## Pattern 6 - Multi-Region
+
+```text
+Mumbai
+
+↓
+
+Singapore
+
+↓
+
+London
+```
+
+Used for
+
+- Disaster Recovery
+- Global Applications
+- Low Latency
+
+---
+
+# Enterprise Design Principles
+
+Large AWS environments should follow these principles.
+
+### Simplicity
+
+Complex routing increases operational risk.
+
+---
+
+### Isolation
+
+Separate
+
+- Development
+- Testing
+- Production
+- Security
+- Logging
+
+---
+
+### Automation
+
+Everything should be created using
+
+- Terraform
+- CloudFormation
+
+Avoid manual networking changes.
+
+---
+
+### High Availability
+
+Always deploy networking resources across multiple Availability Zones.
+
+Examples
+
+- NAT Gateway
+- VPN
+- Load Balancer
+
+---
+
+### Scalability
+
+Design for
+
+```
+Today
+
+10 VPCs
+
+Tomorrow
+
+300 VPCs
+```
+
+---
+
+# Cost Optimization
+
+Reduce networking cost by
+
+- Using Gateway Endpoints for S3
+- Sharing Transit Gateway
+- Centralizing Shared Services
+- Removing unused Peerings
+- Cleaning unused Elastic IPs
+- Monitoring NAT Gateway traffic
+
+---
+
+# Monitoring Enterprise Networks
+
+Monitor
+
+- VPC Flow Logs
+- CloudWatch
+- Transit Gateway metrics
+- VPN metrics
+- Direct Connect metrics
+- Route changes
+- DNS failures
+- Security Group changes
+
+---
+
+# Enterprise Networking Troubleshooting
+
+## Problem 1
+
+Cannot reach another VPC
+
+Check
+
+- Route Tables
+- Security Groups
+- NACL
+- Peering
+- Transit Gateway
+
+---
+
+## Problem 2
+
+DNS Failure
+
+Check
+
+- Route53
+- Private Hosted Zone
+- Resolver Rules
+- Private DNS
+
+---
+
+## Problem 3
+
+High Latency
+
+Check
+
+- Cross Region traffic
+- NAT Gateway
+- Routing path
+- Direct Connect
+- VPN utilization
+
+---
+
+## Problem 4
+
+Application Timeout
+
+Check
+
+- Security Groups
+- Network ACLs
+- Health Checks
+- Endpoint Status
+
+---
+
+# Production Case Study
+
+A global SaaS company has:
+
+- 150 AWS Accounts
+- 320 VPCs
+- 45 Amazon EKS Clusters
+- 3 AWS Regions
+- 2 On-Premises Data Centers
+
+Architecture
+
+```text
+AWS Organizations
+
+↓
+
+Network Account
+
+↓
+
+Transit Gateway
+
+↓
+
+Shared Services
+
+↓
+
+Application VPCs
+
+↓
+
+Direct Connect
+
+↓
+
+Primary Data Center
+
+↓
+
+Site-to-Site VPN
+
+↓
+
+Disaster Recovery
+```
+
+The company uses
+
+- Transit Gateway for routing
+- AWS RAM for resource sharing
+- PrivateLink for internal platform APIs
+- Gateway Endpoints for Amazon S3
+- Interface Endpoints for AWS services
+- Shared Services VPC for CI/CD, monitoring, and logging
+
+Benefits
+
+- Centralized networking
+- Reduced operational complexity
+- Secure private communication
+- Simplified multi-account management
+- Lower networking costs
+- Highly available enterprise architecture
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Cross-VPC Communication?
+- What are the methods to connect VPCs?
+- What is a Shared VPC?
+
+## Intermediate
+
+- VPC Peering vs Transit Gateway
+- PrivateLink vs Interface Endpoint
+- Shared VPC vs VPC Peering
+- Why use AWS RAM?
+
+## Advanced
+
+- Design networking for 300 AWS accounts.
+- Explain Hub-and-Spoke architecture.
+- Design a centralized Shared Services platform.
+- How would you centralize internet egress?
+- How would you connect multiple EKS clusters securely?
+- Explain networking for a multi-region enterprise platform.
+
+---
+
+# Quick Revision Cheat Sheet
+
+| Requirement | Recommended AWS Service |
+|--------------|------------------------|
+| Connect 2 VPCs | VPC Peering |
+| Connect 100+ VPCs | Transit Gateway |
+| Share one application | PrivateLink |
+| Private access to S3 | Gateway Endpoint |
+| Private AWS APIs | Interface Endpoint |
+| Share infrastructure | AWS RAM |
+| Hybrid connectivity | Site-to-Site VPN |
+| Dedicated hybrid connectivity | Direct Connect |
+| Shared networking | Shared VPC |
+| Enterprise routing | Transit Gateway |
+| Shared CI/CD & Monitoring | Shared Services VPC |
