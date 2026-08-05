@@ -6077,3 +6077,696 @@ Every layer implements encryption.
 
 ---
 
+# Chapter 10 - AWS Logging, Monitoring, Threat Detection & Security Auditing
+
+Enterprise security does not end after deploying secure infrastructure.
+
+Even with
+
+- IAM
+- Encryption
+- Firewalls
+- MFA
+- Secure Networking
+
+organizations must continuously monitor their AWS environment.
+
+The goal is to quickly answer questions such as
+
+- Who accessed my resources?
+- Who deleted an EC2 instance?
+- Who modified an IAM policy?
+- Is someone attacking my AWS account?
+- Is sensitive data exposed?
+
+AWS provides several services for monitoring, auditing, and threat detection.
+
+---
+
+# Security Monitoring Architecture
+
+```text
+AWS Resources
+
+↓
+
+CloudTrail
+
+↓
+
+CloudWatch
+
+↓
+
+Security Hub
+
+↓
+
+GuardDuty
+
+↓
+
+SNS
+
+↓
+
+Security Team
+```
+
+Every activity is monitored continuously.
+
+---
+
+# Security Monitoring Goals
+
+Enterprise monitoring focuses on
+
+- Visibility
+- Threat Detection
+- Compliance
+- Auditing
+- Incident Response
+- Continuous Monitoring
+
+---
+
+# Amazon CloudTrail
+
+CloudTrail records every API call made in AWS.
+
+Examples
+
+- Launch EC2
+- Delete S3 Bucket
+- Create IAM User
+- Modify Security Group
+- Assume IAM Role
+
+CloudTrail answers
+
+```text
+Who
+
+Did
+
+What
+
+When
+```
+
+---
+
+# CloudTrail Architecture
+
+```text
+User
+
+↓
+
+AWS API
+
+↓
+
+CloudTrail
+
+↓
+
+Amazon S3
+
+↓
+
+Audit Logs
+```
+
+Every API request becomes an audit record.
+
+---
+
+# What Does CloudTrail Record?
+
+CloudTrail records
+
+- IAM Activities
+- EC2 Operations
+- S3 Operations
+- Lambda Invocations
+- VPC Changes
+- Route53 Changes
+- KMS Usage
+- STS AssumeRole Events
+
+Nearly every AWS service integrates with CloudTrail.
+
+---
+
+# CloudTrail Event Types
+
+AWS records
+
+- Management Events
+- Data Events
+- Insights Events
+
+Each serves a different purpose.
+
+---
+
+# Management Events
+
+Examples
+
+```text
+Create IAM User
+
+Delete EC2
+
+Modify VPC
+
+Update Route Table
+```
+
+Enabled by default.
+
+---
+
+# Data Events
+
+Track resource-level access.
+
+Examples
+
+```text
+Read S3 Object
+
+Write DynamoDB Item
+
+Lambda Invoke
+```
+
+Useful for sensitive workloads.
+
+---
+
+# CloudTrail Insights
+
+CloudTrail Insights identifies
+
+unusual API activity.
+
+Example
+
+```text
+Normal
+
+↓
+
+5 API Calls
+
+────────────
+
+Suddenly
+
+↓
+
+5,000 API Calls
+
+↓
+
+CloudTrail Insight
+```
+
+Potential compromise is detected.
+
+---
+
+# Amazon CloudWatch
+
+CloudWatch provides
+
+- Metrics
+- Logs
+- Dashboards
+- Alarms
+- Events
+
+Unlike CloudTrail,
+
+CloudWatch focuses on operational monitoring.
+
+---
+
+# CloudWatch Architecture
+
+```text
+AWS Resources
+
+↓
+
+CloudWatch Metrics
+
+↓
+
+Alarm
+
+↓
+
+SNS
+
+↓
+
+Operations Team
+```
+
+---
+
+# CloudWatch Logs
+
+Applications send logs to CloudWatch.
+
+Example
+
+```text
+EC2
+
+↓
+
+Application Logs
+
+↓
+
+CloudWatch Logs
+```
+
+Logs become searchable.
+
+---
+
+# CloudWatch Alarms
+
+Monitor
+
+- CPU
+- Memory
+- Disk
+- Network
+- Lambda Errors
+- Application Health
+
+Workflow
+
+```text
+Metric
+
+↓
+
+Threshold Exceeded
+
+↓
+
+Alarm
+
+↓
+
+SNS
+```
+
+---
+
+# Amazon GuardDuty
+
+GuardDuty is AWS's intelligent threat detection service.
+
+It continuously analyzes
+
+- CloudTrail
+- VPC Flow Logs
+- DNS Logs
+- EKS Audit Logs
+- S3 Events
+
+to detect suspicious activity.
+
+---
+
+# GuardDuty Architecture
+
+```text
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Threat Detection
+
+↓
+
+Finding
+```
+
+No agents are required.
+
+---
+
+# Threats Detected by GuardDuty
+
+Examples
+
+- Credential Theft
+- Cryptocurrency Mining
+- Port Scanning
+- Malware Activity
+- Unusual API Calls
+- Suspicious Login Locations
+
+---
+
+# Amazon Security Hub
+
+Security Hub provides
+
+a centralized security dashboard.
+
+It aggregates findings from
+
+- GuardDuty
+- Inspector
+- IAM Access Analyzer
+- AWS Config
+- Firewall Manager
+
+---
+
+# Security Hub Architecture
+
+```text
+GuardDuty
+
+↓
+
+Inspector
+
+↓
+
+AWS Config
+
+↓
+
+IAM Access Analyzer
+
+↓
+
+Security Hub
+
+↓
+
+Security Dashboard
+```
+
+---
+
+# Amazon Inspector
+
+Inspector continuously scans
+
+- EC2
+- ECR Images
+- Lambda Functions
+
+for
+
+- Vulnerabilities
+- Missing Patches
+- CVEs
+- Software Risks
+
+---
+
+# Inspector Workflow
+
+```text
+EC2
+
+↓
+
+Amazon Inspector
+
+↓
+
+Vulnerability Report
+```
+
+---
+
+# AWS Config
+
+AWS Config records
+
+configuration changes.
+
+Examples
+
+```text
+Security Group Modified
+
+↓
+
+AWS Config
+
+↓
+
+History Available
+```
+
+Useful for compliance.
+
+---
+
+# AWS Config Rules
+
+Rules automatically evaluate resources.
+
+Example
+
+```text
+S3 Bucket
+
+↓
+
+Public?
+
+↓
+
+Non-Compliant
+```
+
+Organizations receive alerts immediately.
+
+---
+
+# IAM Access Analyzer
+
+Access Analyzer identifies
+
+resources that are publicly or externally accessible.
+
+Examples
+
+- Public S3 Buckets
+- Cross-Account Access
+- KMS Keys
+- IAM Roles
+
+---
+
+# AWS Trusted Advisor
+
+Trusted Advisor analyzes
+
+- Security
+- Performance
+- Cost
+- Fault Tolerance
+- Service Limits
+
+Security checks include
+
+- MFA
+- Open Security Groups
+- Root Account Usage
+
+---
+
+# Amazon Detective
+
+Detective helps investigate security incidents.
+
+Workflow
+
+```text
+GuardDuty Finding
+
+↓
+
+Amazon Detective
+
+↓
+
+Investigation
+
+↓
+
+Root Cause
+```
+
+Useful for incident response.
+
+---
+
+# Centralized Logging
+
+Large organizations centralize logs.
+
+```text
+AWS Accounts
+
+↓
+
+CloudTrail
+
+↓
+
+Central Logging Account
+
+↓
+
+Amazon S3
+
+↓
+
+Security Team
+```
+
+Logs remain protected.
+
+---
+
+# Security Incident Workflow
+
+```text
+Threat
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+SNS
+
+↓
+
+Security Team
+
+↓
+
+Investigation
+```
+
+Detection and response become automated.
+
+---
+
+# Enterprise Banking Example
+
+```text
+Customer
+
+↓
+
+Banking Application
+
+↓
+
+CloudTrail
+
+↓
+
+GuardDuty
+
+↓
+
+Security Hub
+
+↓
+
+SOC Team
+
+↓
+
+Incident Response
+```
+
+Every action is monitored.
+
+---
+
+# Best Practices
+
+- Enable CloudTrail in every AWS account.
+- Store CloudTrail logs in a centralized logging account.
+- Enable GuardDuty organization-wide.
+- Use Security Hub as the central security dashboard.
+- Enable AWS Config rules.
+- Scan workloads using Amazon Inspector.
+- Monitor CloudWatch alarms continuously.
+- Enable IAM Access Analyzer.
+- Regularly review Trusted Advisor recommendations.
+
+---
+
+# Common Mistakes
+
+- Disabling CloudTrail.
+- Storing audit logs in workload accounts.
+- Ignoring GuardDuty findings.
+- Never reviewing Security Hub.
+- No CloudWatch alarms.
+- No centralized logging.
+- Not monitoring IAM changes.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS CloudTrail?
+- CloudTrail vs CloudWatch.
+- What is GuardDuty?
+
+## Intermediate
+
+- Security Hub vs GuardDuty.
+- AWS Config vs CloudTrail.
+- Inspector vs GuardDuty.
+- What is IAM Access Analyzer?
+
+## Advanced
+
+- Design a centralized security monitoring solution for a multi-account AWS organization using CloudTrail, GuardDuty, Security Hub, AWS Config, Inspector, CloudWatch, and SNS.
+- Explain how a suspicious IAM credential compromise is detected and investigated using GuardDuty, CloudTrail, Security Hub, Amazon Detective, and CloudWatch.
+- Your organization must satisfy PCI-DSS compliance while operating hundreds of AWS accounts. Design a centralized logging, monitoring, auditing, and threat detection architecture that provides continuous compliance, automated alerting, and enterprise-scale visibility.
+
+---
+
