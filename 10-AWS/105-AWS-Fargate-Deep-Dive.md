@@ -2788,3 +2788,795 @@ Infrastructure permissions and application permissions remain completely separat
 
 ---
 
+# Chapter 5 - Amazon ECS Services, Tasks & Scheduling
+
+One of the most important concepts in Amazon ECS is understanding the relationship between:
+
+- Task Definition
+- Task
+- Service
+- Cluster
+
+Many engineers use these terms interchangeably, but they have completely different responsibilities.
+
+Understanding these concepts is essential for designing highly available Fargate applications.
+
+---
+
+# ECS Deployment Hierarchy
+
+```text
+Cluster
+
+↓
+
+Service
+
+↓
+
+Task
+
+↓
+
+Container
+
+↓
+
+Application
+```
+
+Everything starts with a Task Definition.
+
+---
+
+# What is an ECS Task?
+
+A Task is a **running instance** of a Task Definition.
+
+Think of it like this:
+
+```text
+Docker Image
+
+↓
+
+Task Definition
+
+↓
+
+Task
+
+↓
+
+Running Application
+```
+
+If a Task Definition is a blueprint,
+
+then a Task is the actual running application.
+
+---
+
+# Example
+
+Task Definition
+
+```text
+payment-api:v5
+```
+
+Run Task
+
+↓
+
+AWS launches
+
+```text
+Task-1
+```
+
+Run again
+
+↓
+
+AWS launches
+
+```text
+Task-2
+```
+
+Both tasks use the same Task Definition.
+
+---
+
+# Task Lifecycle
+
+```text
+Provisioning
+
+↓
+
+Pending
+
+↓
+
+Pulling Image
+
+↓
+
+Starting
+
+↓
+
+Running
+
+↓
+
+Stopping
+
+↓
+
+Stopped
+```
+
+AWS automatically removes infrastructure after the task finishes.
+
+---
+
+# Task States
+
+| State | Meaning |
+|---------|---------|
+| PROVISIONING | Resources being allocated |
+| PENDING | Waiting to start |
+| ACTIVATING | Preparing networking and storage |
+| RUNNING | Application executing |
+| DEACTIVATING | Cleaning resources |
+| STOPPING | Task shutting down |
+| STOPPED | Task completed |
+
+Understanding these states helps during troubleshooting.
+
+---
+
+# What is an ECS Service?
+
+An ECS Service ensures that a specified number of Tasks are always running.
+
+Without a Service,
+
+tasks stop permanently after failure.
+
+Example
+
+```text
+Run Task
+
+↓
+
+Application
+
+↓
+
+Crash
+
+↓
+
+Nothing Happens
+```
+
+Application remains unavailable.
+
+---
+
+With a Service
+
+```text
+Task
+
+↓
+
+Crash
+
+↓
+
+Service Detects Failure
+
+↓
+
+Launch New Task
+
+↓
+
+Application Restored
+```
+
+Self-healing is automatic.
+
+---
+
+# Why Services Exist
+
+Suppose you need
+
+```
+5 Running Containers
+```
+
+A Service continuously maintains
+
+```
+Desired Count = 5
+```
+
+If one task crashes
+
+```text
+5
+
+↓
+
+4
+
+↓
+
+Service Detects
+
+↓
+
+Launch New Task
+
+↓
+
+5
+```
+
+The desired count is restored automatically.
+
+---
+
+# ECS Service Architecture
+
+```text
+Application Load Balancer
+
+           │
+
+      ECS Service
+
+           │
+
+   Desired Tasks = 3
+
+     │      │      │
+
+   Task1  Task2  Task3
+```
+
+The Service manages all running tasks.
+
+---
+
+# Desired Count
+
+Desired Count specifies
+
+**How many tasks should always remain running?**
+
+Example
+
+```text
+Desired Count
+
+3
+```
+
+Running
+
+```text
+Task-1
+
+Task-2
+
+Task-3
+```
+
+One crashes
+
+↓
+
+Service launches
+
+↓
+
+Task-4
+
+Desired Count remains
+
+```
+3
+```
+
+---
+
+# Run Task vs Create Service
+
+This is one of the most common interview questions.
+
+| Run Task | ECS Service |
+|-----------|-------------|
+| One-time execution | Long-running application |
+| No self-healing | Self-healing |
+| Manual scaling | Auto Scaling supported |
+| Batch jobs | APIs & Microservices |
+| Stops after completion | Continuously maintained |
+
+---
+
+# When to Use Run Task
+
+Examples
+
+- Database Migration
+- Batch Processing
+- One-time Scripts
+- Report Generation
+- Data Import
+- Scheduled Jobs
+
+Architecture
+
+```text
+Run Task
+
+↓
+
+Execute
+
+↓
+
+Complete
+
+↓
+
+Stopped
+```
+
+---
+
+# When to Use ECS Service
+
+Examples
+
+- REST API
+- Web Application
+- Payment Service
+- Authentication Service
+- Notification Service
+
+Architecture
+
+```text
+Service
+
+↓
+
+Tasks Always Running
+
+↓
+
+Load Balancer
+
+↓
+
+Users
+```
+
+---
+
+# ECS Scheduler
+
+The ECS Scheduler determines
+
+- Where tasks run
+- Which Availability Zone
+- Which subnet
+- Which compute capacity
+- Resource availability
+
+Flow
+
+```text
+Run Service
+
+↓
+
+Scheduler
+
+↓
+
+Capacity Check
+
+↓
+
+Launch Task
+
+↓
+
+Running
+```
+
+---
+
+# Service Scheduler vs Task Scheduler
+
+Task Scheduler
+
+- Launches tasks
+
+Service Scheduler
+
+- Maintains desired task count
+- Replaces failed tasks
+- Performs deployments
+- Handles scaling
+
+---
+
+# ECS Cluster
+
+An ECS Cluster is a logical grouping of ECS Services and Tasks.
+
+Architecture
+
+```text
+Cluster
+
+├── Payment Service
+
+├── User Service
+
+├── Inventory Service
+
+├── Order Service
+
+└── Notification Service
+```
+
+Clusters organize workloads.
+
+---
+
+# Cluster with Fargate
+
+```text
+Amazon ECS Cluster
+
+        │
+
+────────────────────────
+
+Payment Service
+
+↓
+
+Fargate Tasks
+
+────────────────────────
+
+Order Service
+
+↓
+
+Fargate Tasks
+
+────────────────────────
+
+Inventory Service
+
+↓
+
+Fargate Tasks
+```
+
+AWS provisions compute independently for every task.
+
+---
+
+# Service Discovery
+
+Instead of hardcoding IP addresses,
+
+services communicate using DNS.
+
+Example
+
+Bad
+
+```text
+10.0.15.26
+```
+
+Good
+
+```text
+payment.internal
+
+inventory.internal
+
+orders.internal
+```
+
+Benefits
+
+- Easier scaling
+- Easier deployments
+- No IP dependency
+
+---
+
+# Load Balancer Integration
+
+Most production services sit behind an Application Load Balancer.
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+ECS Service
+
+↓
+
+Task-1
+
+Task-2
+
+Task-3
+```
+
+The ALB distributes traffic.
+
+---
+
+# Health Checks
+
+The ALB continuously checks task health.
+
+```text
+ALB
+
+↓
+
+/health
+
+↓
+
+200 OK
+
+↓
+
+Healthy
+```
+
+If a task becomes unhealthy
+
+```text
+ALB
+
+↓
+
+Unhealthy
+
+↓
+
+ECS Service
+
+↓
+
+Replace Task
+```
+
+---
+
+# Rolling Deployment
+
+Suppose
+
+Version
+
+```
+v1
+```
+
+is running.
+
+Deploy
+
+```
+v2
+```
+
+Flow
+
+```text
+Task-v1
+
+↓
+
+Launch Task-v2
+
+↓
+
+Health Check
+
+↓
+
+Traffic Shift
+
+↓
+
+Terminate Task-v1
+```
+
+Users experience little or no downtime.
+
+---
+
+# Deployment Configuration
+
+Important parameters
+
+Minimum Healthy Percent
+
+Maximum Percent
+
+Example
+
+Desired
+
+```
+4 Tasks
+```
+
+Maximum Percent
+
+```
+200%
+```
+
+AWS may temporarily run
+
+```
+8 Tasks
+```
+
+during deployment.
+
+---
+
+# Service Auto Recovery
+
+Scenario
+
+```text
+Task
+
+↓
+
+Application Crash
+
+↓
+
+Health Check Fails
+
+↓
+
+Task Stops
+
+↓
+
+Service Launches New Task
+```
+
+Recovery is automatic.
+
+---
+
+# Production Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon ECS Service
+
+↓
+
+AWS Fargate
+
+↓
+
+Task-1
+
+Task-2
+
+Task-3
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ElastiCache
+```
+
+Characteristics
+
+- Multi-AZ
+- Self-healing
+- Load balanced
+- Auto scalable
+- Highly available
+
+---
+
+# Best Practices
+
+- Use Services for long-running workloads.
+- Use Run Task for batch jobs.
+- Deploy behind an ALB.
+- Enable health checks.
+- Use rolling deployments.
+- Keep desired count greater than one in production.
+- Distribute tasks across multiple Availability Zones.
+
+---
+
+# Common Mistakes
+
+- Using Run Task for production APIs.
+- Desired Count set to one for critical services.
+- Ignoring ALB health checks.
+- Running all tasks in one Availability Zone.
+- Hardcoding service IP addresses.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an ECS Task?
+- What is an ECS Service?
+- What is an ECS Cluster?
+
+## Intermediate
+
+- Run Task vs ECS Service.
+- Explain Desired Count.
+- Explain ECS Scheduler.
+- How does ECS replace failed tasks?
+
+## Advanced
+
+- Design a highly available payment service using ECS Fargate.
+- Explain the complete deployment flow from Task Definition to Running Service.
+- How does ECS maintain application availability during rolling deployments?
+
+---
+
