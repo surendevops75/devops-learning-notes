@@ -6864,3 +6864,956 @@ The platform remains loosely coupled and highly scalable.
 
 ---
 
+# Chapter 10 - Building Event-Driven Architectures on AWS (Real-World Enterprise Architectures)
+
+Understanding individual AWS messaging services is only the first step.
+
+In real-world production environments,
+
+architects combine multiple AWS services to build
+
+- Highly Available Systems
+- Fault-Tolerant Applications
+- Loosely Coupled Microservices
+- Real-Time Analytics Platforms
+- Enterprise Integration Solutions
+
+This chapter focuses on how AWS messaging services work together in enterprise architectures.
+
+---
+
+# Enterprise Event-Driven Architecture
+
+A typical AWS event-driven architecture consists of
+
+```text
+Clients
+
+↓
+
+API Gateway
+
+↓
+
+Microservices
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+SQS
+
+↓
+
+Lambda
+
+↓
+
+Step Functions
+
+↓
+
+Databases
+
+↓
+
+Analytics
+```
+
+Each component has a specific responsibility.
+
+---
+
+# Core Building Blocks
+
+AWS event-driven systems commonly use
+
+- Amazon EventBridge
+- Amazon SNS
+- Amazon SQS
+- AWS Lambda
+- AWS Step Functions
+- Amazon Kinesis
+- Amazon DynamoDB
+- Amazon S3
+
+---
+
+# End-to-End Workflow
+
+```text
+Customer
+
+↓
+
+API Gateway
+
+↓
+
+Order Service
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+SQS
+
+↓
+
+Lambda
+
+↓
+
+Database
+
+↓
+
+Analytics
+```
+
+Every service works independently.
+
+---
+
+# Scenario 1 – E-Commerce Platform
+
+Suppose a customer places an order.
+
+Traditional Architecture
+
+```text
+Order Service
+
+↓
+
+Inventory
+
+↓
+
+Payment
+
+↓
+
+Shipping
+
+↓
+
+Notification
+```
+
+Every service depends on the previous one.
+
+---
+
+# Event-Driven Architecture
+
+```text
+Customer
+
+↓
+
+API Gateway
+
+↓
+
+Order Service
+
+↓
+
+EventBridge
+
+↓
+
+Inventory
+
+↓
+
+Payment
+
+↓
+
+Shipping
+
+↓
+
+Notification
+
+↓
+
+Analytics
+```
+
+Every service processes the event independently.
+
+---
+
+# Order Processing Flow
+
+```text
+Customer
+
+↓
+
+Create Order
+
+↓
+
+Order Created Event
+
+↓
+
+EventBridge
+
+↓
+
+SNS Fan-Out
+
+↓
+
+SQS Queues
+
+↓
+
+Microservices
+```
+
+Each microservice receives its own workload.
+
+---
+
+# Inventory Service
+
+```text
+Order Created
+
+↓
+
+Inventory Queue
+
+↓
+
+Lambda
+
+↓
+
+Update Stock
+```
+
+Inventory updates independently.
+
+---
+
+# Payment Service
+
+```text
+Order Created
+
+↓
+
+Payment Queue
+
+↓
+
+Payment Service
+
+↓
+
+Success Event
+```
+
+Payment processing is isolated.
+
+---
+
+# Shipping Service
+
+```text
+Payment Completed
+
+↓
+
+Shipping Queue
+
+↓
+
+Shipping Service
+
+↓
+
+Dispatch Order
+```
+
+Shipping begins only after payment succeeds.
+
+---
+
+# Notification Service
+
+```text
+Order Completed
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+SMS
+
+↓
+
+Push Notification
+```
+
+Customers receive updates immediately.
+
+---
+
+# Analytics Pipeline
+
+```text
+Order Event
+
+↓
+
+Kinesis
+
+↓
+
+Firehose
+
+↓
+
+Amazon S3
+
+↓
+
+Redshift
+
+↓
+
+QuickSight
+```
+
+Business dashboards update in real time.
+
+---
+
+# Scenario 2 – Banking Platform
+
+ATM Transaction
+
+```text
+ATM
+
+↓
+
+Transaction Event
+
+↓
+
+EventBridge
+
+↓
+
+Fraud Detection
+
+↓
+
+Balance Update
+
+↓
+
+SMS
+
+↓
+
+Audit
+
+↓
+
+Analytics
+```
+
+One transaction drives multiple business processes.
+
+---
+
+# Fraud Detection
+
+```text
+Transaction Event
+
+↓
+
+Kinesis
+
+↓
+
+Real-Time Analytics
+
+↓
+
+Fraud Engine
+```
+
+Suspicious transactions are identified instantly.
+
+---
+
+# Compliance Logging
+
+```text
+Transaction Event
+
+↓
+
+SQS
+
+↓
+
+Audit Service
+
+↓
+
+Amazon S3
+```
+
+Every transaction is archived.
+
+---
+
+# Customer Notification
+
+```text
+Transaction Completed
+
+↓
+
+SNS
+
+↓
+
+SMS
+
+↓
+
+Email
+```
+
+Notifications are delivered immediately.
+
+---
+
+# Scenario 3 – IoT Platform
+
+Millions of sensors continuously send data.
+
+Architecture
+
+```text
+IoT Devices
+
+↓
+
+IoT Core
+
+↓
+
+Kinesis
+
+↓
+
+Lambda
+
+↓
+
+EventBridge
+
+↓
+
+Analytics
+
+↓
+
+Dashboard
+```
+
+Streaming data is processed continuously.
+
+---
+
+# Alert Processing
+
+Suppose
+
+Temperature > 80°C
+
+```text
+Sensor
+
+↓
+
+Kinesis
+
+↓
+
+Lambda
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+Operations Team
+```
+
+Alerts are generated automatically.
+
+---
+
+# Scenario 4 – DevSecOps Platform
+
+CI/CD Pipeline
+
+```text
+Git Push
+
+↓
+
+CodePipeline
+
+↓
+
+Build
+
+↓
+
+Deploy
+
+↓
+
+Deployment Event
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+Slack
+
+↓
+
+CloudWatch
+
+↓
+
+Audit
+```
+
+Every deployment generates events.
+
+---
+
+# Scenario 5 – Media Processing Platform
+
+User uploads a video.
+
+```text
+Upload
+
+↓
+
+Amazon S3
+
+↓
+
+S3 Event
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+MediaConvert
+
+↓
+
+SNS
+
+↓
+
+Customer
+```
+
+Video processing becomes asynchronous.
+
+---
+
+# Scenario 6 – Healthcare Platform
+
+Patient uploads medical reports.
+
+```text
+Upload
+
+↓
+
+Amazon S3
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+Medical AI
+
+↓
+
+Doctor Notification
+
+↓
+
+Audit
+```
+
+Healthcare workflows remain event-driven.
+
+---
+
+# Event Chaining
+
+Events can generate additional events.
+
+Example
+
+```text
+Order Created
+
+↓
+
+Payment Completed
+
+↓
+
+Shipment Created
+
+↓
+
+Order Delivered
+```
+
+Each event triggers the next business process.
+
+---
+
+# Long-Running Workflow
+
+Loan Approval
+
+```text
+Application
+
+↓
+
+Step Functions
+
+↓
+
+Credit Check
+
+↓
+
+Fraud Check
+
+↓
+
+Manager Approval
+
+↓
+
+Disbursement
+```
+
+Step Functions coordinate the workflow.
+
+---
+
+# Fan-Out Architecture
+
+```text
+Order Created
+
+↓
+
+SNS
+
+├── Inventory Queue
+
+├── Shipping Queue
+
+├── Analytics Queue
+
+└── Notification Queue
+```
+
+Each service scales independently.
+
+---
+
+# Queue-Based Processing
+
+```text
+SNS
+
+↓
+
+SQS
+
+↓
+
+Auto Scaling Workers
+```
+
+Traffic spikes are absorbed by queues.
+
+---
+
+# Event Replay
+
+Critical events are archived.
+
+```text
+EventBridge
+
+↓
+
+Archive
+
+↓
+
+Replay
+
+↓
+
+Recovery
+```
+
+Useful after application failures.
+
+---
+
+# Multi-Region Architecture
+
+```text
+Region A
+
+↓
+
+EventBridge
+
+↓
+
+Replication
+
+↓
+
+Region B
+
+↓
+
+Disaster Recovery
+```
+
+Supports business continuity.
+
+---
+
+# Monitoring Architecture
+
+```text
+EventBridge
+
+↓
+
+CloudWatch
+
+↓
+
+CloudTrail
+
+↓
+
+SNS
+
+↓
+
+Operations Team
+```
+
+Every event is monitored.
+
+---
+
+# Security
+
+Secure messaging systems using
+
+- IAM Roles
+- AWS KMS
+- VPC Endpoints
+- CloudTrail
+- CloudWatch
+
+Every event should be authenticated, authorized, encrypted, and audited.
+
+---
+
+# Enterprise Reference Architecture
+
+```text
+Users
+
+↓
+
+CloudFront
+
+↓
+
+API Gateway
+
+↓
+
+Microservices
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+SQS
+
+↓
+
+Lambda
+
+↓
+
+Step Functions
+
+↓
+
+Kinesis
+
+↓
+
+Amazon S3
+
+↓
+
+Redshift
+
+↓
+
+QuickSight
+```
+
+This architecture supports
+
+- Scalability
+- Reliability
+- Fault Tolerance
+- Real-Time Analytics
+- Loose Coupling
+
+---
+
+# Best Practices
+
+- Use EventBridge as the central event router.
+- Use SNS for fan-out messaging.
+- Use SQS for durable asynchronous processing.
+- Use Step Functions for workflow orchestration.
+- Use Kinesis for high-volume streaming.
+- Archive important events.
+- Monitor all messaging services with CloudWatch.
+- Encrypt messages using AWS KMS.
+- Design consumers to be idempotent.
+
+---
+
+# Common Mistakes
+
+- Building tightly coupled microservices.
+- Using synchronous APIs for long-running operations.
+- Ignoring retries and Dead-Letter Queues.
+- Not archiving critical events.
+- Mixing streaming workloads with queue-based workloads.
+- Forgetting monitoring and alerting.
+- Hardcoding business workflows into application code instead of using Step Functions.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How do AWS messaging services work together?
+- Why is EventBridge commonly used as the event router?
+- What role does SQS play in microservices?
+
+## Intermediate
+
+- Design an event-driven order processing system using EventBridge, SNS, SQS, Lambda, and Step Functions.
+- Explain how Kinesis differs from EventBridge in an enterprise architecture.
+- Why are Dead-Letter Queues important?
+
+## Advanced
+
+- Design a highly available, event-driven e-commerce platform capable of processing millions of orders per day using EventBridge, SNS, SQS, Lambda, Step Functions, Kinesis, Amazon S3, and Redshift.
+- Explain how you would build a real-time fraud detection system for a global banking platform using AWS event-driven services.
+- Your organization is migrating from a monolithic application to microservices. Design the target event-driven architecture, explaining service communication, messaging patterns, workflow orchestration, monitoring, security, retries, disaster recovery, and scalability considerations.
+
+---
+
