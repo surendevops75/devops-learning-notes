@@ -1242,3 +1242,738 @@ No static AWS credentials are required.
 
 ---
 
+# Chapter 7 - Cross-Account Resource Access
+
+Enterprise AWS environments frequently require one AWS account to access resources that belong to another AWS account.
+
+Examples
+
+- Production reads container images from a Shared ECR.
+- Security Account audits CloudTrail logs from all accounts.
+- Backup Account stores snapshots from Production.
+- Logging Account collects logs from every workload account.
+
+Cross-account resource sharing enables this securely.
+
+---
+
+# Cross-Account Amazon S3
+
+One of the most common scenarios.
+
+Architecture
+
+```text
+Development Account
+
+↓
+
+IAM Role
+
+↓
+
+Production Account
+
+↓
+
+Amazon S3
+```
+
+Instead of copying data,
+
+the application securely accesses the bucket.
+
+---
+
+## How It Works
+
+Authentication
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Bucket Policy
+
+↓
+
+Amazon S3
+
+Both IAM permissions and Bucket Policy must allow access.
+
+---
+
+## Required Components
+
+- IAM Role
+- Trust Policy
+- IAM Permission Policy
+- Bucket Policy
+
+If any one is incorrect,
+
+access is denied.
+
+---
+
+# Cross-Account Amazon ECR
+
+Many enterprises maintain one centralized ECR.
+
+Example
+
+```text
+Shared Services Account
+
+↓
+
+Amazon ECR
+
+↓
+
+Development
+
+↓
+
+QA
+
+↓
+
+Production
+```
+
+Instead of maintaining three repositories,
+
+all environments pull images from one repository.
+
+---
+
+## Benefits
+
+- Single Image Repository
+- Consistent Deployments
+- Easier Version Management
+- Reduced Storage
+- Better Security
+
+---
+
+# Cross-Account EKS Deployment
+
+A common interview scenario.
+
+Architecture
+
+```text
+GitHub Actions
+
+↓
+
+Shared Services Account
+
+↓
+
+AssumeRole
+
+↓
+
+Production Account
+
+↓
+
+Amazon EKS
+```
+
+Pipeline exists in one account.
+
+Cluster exists in another.
+
+Authentication uses STS.
+
+---
+
+# Cross-Account Lambda
+
+Lambda functions may access resources in another account.
+
+Example
+
+```text
+Lambda
+
+↓
+
+AssumeRole
+
+↓
+
+DynamoDB
+
+↓
+
+Different Account
+```
+
+---
+
+# Cross-Account CloudWatch
+
+Security teams often monitor applications across multiple accounts.
+
+Architecture
+
+```text
+CloudWatch
+
+↓
+
+Monitoring Account
+
+↓
+
+Application Accounts
+```
+
+Benefits
+
+- Central dashboards
+- Central alarms
+- Enterprise monitoring
+
+---
+
+# Cross-Account CloudTrail
+
+Large organizations centralize audit logs.
+
+```text
+All Accounts
+
+↓
+
+CloudTrail
+
+↓
+
+Logging Account
+
+↓
+
+Amazon S3
+```
+
+Advantages
+
+- Immutable audit trail
+- Compliance
+- Easier investigations
+
+---
+
+# Cross-Account KMS
+
+Encrypted resources may need access across accounts.
+
+Example
+
+```text
+Production Account
+
+↓
+
+Encrypted S3
+
+↓
+
+KMS Key
+
+↓
+
+Security Account
+```
+
+Key Policies must explicitly allow access.
+
+---
+
+# Cross-Account Secrets Manager
+
+Shared secrets
+
+Example
+
+```text
+Shared Services
+
+↓
+
+Secrets Manager
+
+↓
+
+Production
+
+↓
+
+Development
+```
+
+Only authorized roles retrieve secrets.
+
+---
+
+# Best Practices
+
+- Use IAM Roles.
+- Avoid IAM Users.
+- Use temporary credentials.
+- Restrict resource policies.
+- Enable CloudTrail.
+- Rotate permissions regularly.
+
+---
+
+# Chapter 8 - Shared Services Account
+
+## What is a Shared Services Account?
+
+Instead of installing common tools in every AWS account,
+
+enterprises deploy them once inside a Shared Services Account.
+
+Applications consume these services securely.
+
+---
+
+# Architecture
+
+```text
+                 Shared Services
+
+         ┌──────────┼──────────┐
+
+      Jenkins    Artifactory   GitLab
+
+           │           │           │
+
+      Prometheus   Grafana    OpenSearch
+
+           │
+
+       Transit Gateway
+
+           │
+
+ Application Accounts
+```
+
+---
+
+# Why Shared Services?
+
+Without Shared Services
+
+```text
+Development
+
+↓
+
+Own Jenkins
+
+QA
+
+↓
+
+Own Jenkins
+
+Production
+
+↓
+
+Own Jenkins
+```
+
+Problems
+
+- Duplicate infrastructure
+- Higher cost
+- Multiple upgrades
+- Operational overhead
+
+---
+
+With Shared Services
+
+```text
+Shared Jenkins
+
+↓
+
+Development
+
+↓
+
+QA
+
+↓
+
+Production
+```
+
+One installation.
+
+Many consumers.
+
+---
+
+# Typical Shared Services
+
+CI/CD
+
+- Jenkins
+- GitHub Enterprise
+- GitLab
+- Argo CD
+
+Artifact Management
+
+- Artifactory
+- Harbor
+- Amazon ECR
+
+Monitoring
+
+- Prometheus
+- Grafana
+- OpenSearch
+- ELK
+
+Security
+
+- Vault
+- Secrets Manager
+- IAM Identity Center
+
+Networking
+
+- DNS
+- Bastion Hosts
+- Route53 Resolver
+
+---
+
+# Benefits
+
+- Central management
+- Standardization
+- Easier upgrades
+- Lower cost
+- Better governance
+
+---
+
+# Best Practices
+
+- Separate Shared Services from Production.
+- Use Transit Gateway.
+- Restrict access using IAM Roles.
+- Monitor service availability.
+- Backup shared platforms.
+
+---
+
+# Chapter 9 - Logging & Security Accounts
+
+Enterprise AWS environments separate operational responsibilities.
+
+Typical architecture
+
+```text
+AWS Organization
+
+├── Network
+├── Security
+├── Logging
+├── Shared Services
+├── Production
+├── Development
+└── QA
+```
+
+---
+
+# Logging Account
+
+Purpose
+
+Collect logs from every account.
+
+Sources
+
+- CloudTrail
+- VPC Flow Logs
+- CloudWatch Logs
+- AWS Config
+- Load Balancer Logs
+
+Architecture
+
+```text
+All Accounts
+
+↓
+
+CloudTrail
+
+↓
+
+Logging Account
+
+↓
+
+Amazon S3
+
+↓
+
+OpenSearch
+```
+
+---
+
+# Security Account
+
+Purpose
+
+Centralize security operations.
+
+Services
+
+- GuardDuty
+- Security Hub
+- IAM Identity Center
+- AWS Config
+- Inspector
+- Detective
+
+Architecture
+
+```text
+Application Accounts
+
+↓
+
+Security Hub
+
+↓
+
+Security Account
+```
+
+---
+
+# Benefits
+
+- Central monitoring
+- Easier auditing
+- Compliance
+- Incident response
+- Threat detection
+
+---
+
+# Landing Zone Architecture
+
+A Landing Zone is a pre-configured multi-account AWS environment following AWS best practices.
+
+Typical enterprise layout
+
+```text
+                     Root
+
+                      │
+
+              Management Account
+
+                      │
+
+     ┌────────┬────────┬────────┬────────┐
+
+ Network   Security   Logging   Shared
+
+                      │
+
+             Workloads OU
+
+       ┌────────┬────────┬────────┐
+
+     Development   QA   Production
+```
+
+Every new AWS account follows the same standards.
+
+---
+
+# Production Case Study
+
+A global fintech company operates
+
+- 220 AWS Accounts
+- 50 Development Teams
+- 4 AWS Regions
+- 35 Amazon EKS Clusters
+
+Architecture
+
+```text
+AWS Organizations
+
+↓
+
+Management Account
+
+↓
+
+Infrastructure OU
+
+↓
+
+Network Account
+
+↓
+
+Transit Gateway
+
+↓
+
+AWS RAM
+
+↓
+
+Production Accounts
+
+↓
+
+Shared Services
+
+↓
+
+Logging
+
+↓
+
+Security
+```
+
+Authentication
+
+- IAM Roles
+- STS
+- AssumeRole
+- IAM Identity Center
+
+Networking
+
+- Transit Gateway
+- Direct Connect
+- PrivateLink
+
+CI/CD
+
+- GitHub Actions
+- Jenkins
+- Argo CD
+
+Monitoring
+
+- Prometheus
+- Grafana
+- OpenSearch
+
+This architecture provides
+
+- Enterprise security
+- Central governance
+- Cross-account deployments
+- Shared infrastructure
+- Centralized monitoring
+- Simplified operations
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why use multiple AWS accounts?
+- What is AWS Organizations?
+- What is an Organizational Unit?
+- What is AWS STS?
+- What is AssumeRole?
+
+---
+
+## Intermediate
+
+- SCP vs IAM Policy
+- Trust Policy vs Permission Policy
+- Cross-account ECR
+- Cross-account S3
+- Shared Services Account
+- Logging Account
+- Security Account
+
+---
+
+## Advanced
+
+- Design AWS Organizations for 500 AWS accounts.
+- Design a secure multi-account Landing Zone.
+- Explain cross-account GitHub Actions deployment.
+- Design centralized logging architecture.
+- Explain authentication flow between Jenkins and Production.
+- Design networking for a global enterprise.
+
+---
+
+## FAANG / Architect Questions
+
+1. Design AWS Organizations for a multinational bank.
+
+2. How would you isolate Production while allowing centralized deployments?
+
+3. Design a Landing Zone for 1,000 AWS accounts.
+
+4. Explain how STS, AssumeRole, IAM Roles, and SCP work together.
+
+5. Design centralized logging and security for multiple AWS accounts.
+
+6. Explain how a Shared Services Account integrates with Transit Gateway and AWS RAM.
+
+---
+
+# Quick Revision Cheat Sheet
+
+| Requirement | AWS Service |
+|-------------|-------------|
+| Manage multiple AWS accounts | AWS Organizations |
+| Group accounts | Organizational Units (OU) |
+| Restrict permissions | Service Control Policy (SCP) |
+| Temporary credentials | AWS STS |
+| Cross-account access | AssumeRole |
+| Authenticate between accounts | IAM Role |
+| Share networking | AWS RAM |
+| Shared CI/CD | Shared Services Account |
+| Central logging | Logging Account |
+| Central security | Security Account |
+| Enterprise networking | Transit Gateway |
+| Hybrid connectivity | Direct Connect + VPN |
