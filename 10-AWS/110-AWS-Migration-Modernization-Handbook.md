@@ -5150,3 +5150,676 @@ CloudWatch provides metrics for
 
 ---
 
+# Chapter 9 - AWS Data Migration Services (DataSync, Snow Family & Transfer Family)
+
+Not all migrations involve applications or databases.
+
+Organizations also need to migrate
+
+- File Servers
+- NAS Storage
+- Backup Archives
+- Media Files
+- Log Files
+- Big Data
+- Petabytes of Historical Data
+
+AWS provides specialized services for moving large volumes of data efficiently and securely.
+
+The most commonly used services are
+
+- AWS DataSync
+- AWS Snow Family
+- AWS Transfer Family
+
+Each service addresses different migration scenarios.
+
+---
+
+# Data Migration Decision Tree
+
+```text
+Need Online File Transfer?
+
+↓
+
+AWS DataSync
+
+────────────
+
+Need Offline Petabyte Migration?
+
+↓
+
+AWS Snow Family
+
+────────────
+
+Need Secure FTP/SFTP Access?
+
+↓
+
+AWS Transfer Family
+```
+
+Selecting the correct service simplifies migration.
+
+---
+
+# AWS DataSync
+
+AWS DataSync is an online data transfer service.
+
+It automates moving data between
+
+- On-Premises Storage
+- AWS Storage
+- AWS Services
+
+Architecture
+
+```text
+On-Premises Storage
+
+↓
+
+DataSync Agent
+
+↓
+
+AWS DataSync
+
+↓
+
+Amazon S3
+
+↓
+
+Amazon EFS
+
+↓
+
+Amazon FSx
+```
+
+---
+
+# Why DataSync?
+
+Without DataSync
+
+```text
+Copy Files
+
+↓
+
+Manual Scripts
+
+↓
+
+Validation
+
+↓
+
+Repeat
+```
+
+Problems
+
+- Slow
+- Error-Prone
+- Manual
+- Difficult to Monitor
+
+---
+
+Using DataSync
+
+```text
+Source Storage
+
+↓
+
+Automatic Synchronization
+
+↓
+
+AWS Storage
+```
+
+Migration becomes automated.
+
+---
+
+# DataSync Workflow
+
+```text
+Source
+
+↓
+
+DataSync Agent
+
+↓
+
+AWS DataSync
+
+↓
+
+Destination Storage
+
+↓
+
+Verification
+```
+
+Integrity is automatically validated.
+
+---
+
+# DataSync Agent
+
+The DataSync Agent runs
+
+- On-Premises
+- VMware
+- Hyper-V
+- KVM
+
+It securely transfers data to AWS.
+
+---
+
+# Supported Sources
+
+Examples
+
+- NFS
+- SMB
+- Object Storage
+- Hadoop
+- Amazon EFS
+- Amazon FSx
+- Amazon S3
+
+---
+
+# Supported Destinations
+
+Examples
+
+- Amazon S3
+- Amazon EFS
+- Amazon FSx
+- On-Premises Storage
+- AWS Outposts
+
+---
+
+# Data Validation
+
+DataSync validates
+
+- File Integrity
+- Metadata
+- Permissions
+- Ownership
+
+Corrupted transfers are detected automatically.
+
+---
+
+# Incremental Synchronization
+
+After the first transfer,
+
+only changed files are copied.
+
+```text
+Initial Copy
+
+↓
+
+Changed Files
+
+↓
+
+Incremental Sync
+```
+
+Bandwidth usage is reduced.
+
+---
+
+# Scheduling
+
+DataSync supports
+
+```text
+Daily
+
+↓
+
+Hourly
+
+↓
+
+Weekly
+
+↓
+
+On Demand
+```
+
+Recurring synchronization is automated.
+
+---
+
+# Enterprise Example
+
+```text
+File Server
+
+↓
+
+AWS DataSync
+
+↓
+
+Amazon EFS
+```
+
+Users continue working while data is synchronized.
+
+---
+
+# AWS Snow Family
+
+Some organizations have
+
+hundreds of terabytes
+
+or
+
+petabytes
+
+of data.
+
+Internet transfer may take
+
+weeks or months.
+
+AWS Snow Family solves this problem by physically transporting storage devices.
+
+---
+
+# Snow Family Services
+
+```text
+AWS Snow Family
+
+├── Snowcone
+
+├── Snowball Edge
+
+└── Snowmobile
+```
+
+Each service supports different data sizes.
+
+---
+
+# Snowcone
+
+Snowcone is the smallest device.
+
+Suitable for
+
+- Remote Offices
+- Edge Locations
+- Small Migrations
+
+Typical use cases
+
+- Edge Computing
+- Small Data Transfers
+
+---
+
+# Snowball Edge
+
+Snowball Edge supports
+
+- Large Data Migration
+- Edge Computing
+- Local Processing
+
+Typical migration size
+
+```text
+TBs
+
+↓
+
+Hundreds of TBs
+```
+
+---
+
+# Snowmobile
+
+Snowmobile is designed for
+
+extremely large migrations.
+
+Typical capacity
+
+```text
+Petabytes
+
+↓
+
+Exabytes
+```
+
+It is literally a secure shipping container used for massive enterprise migrations.
+
+---
+
+# Snow Family Workflow
+
+```text
+AWS
+
+↓
+
+Snow Device
+
+↓
+
+Customer Data Center
+
+↓
+
+Copy Data
+
+↓
+
+Ship Device
+
+↓
+
+AWS
+
+↓
+
+Amazon S3
+```
+
+Large datasets bypass internet limitations.
+
+---
+
+# Security
+
+Snow devices provide
+
+- Hardware Encryption
+- Tamper Resistance
+- Trusted Platform Module (TPM)
+- Secure Erase
+
+Data remains protected throughout transportation.
+
+---
+
+# When to Use Snow Family?
+
+Choose Snow Family when
+
+- Internet bandwidth is limited.
+- Large datasets exceed practical online transfer times.
+- Remote sites lack reliable connectivity.
+- Compliance requires secure physical transport.
+
+---
+
+# AWS Transfer Family
+
+Many organizations still exchange files using
+
+- FTP
+- FTPS
+- SFTP
+
+AWS Transfer Family provides fully managed support for these protocols.
+
+---
+
+# Transfer Family Architecture
+
+```text
+Partner
+
+↓
+
+SFTP
+
+↓
+
+AWS Transfer Family
+
+↓
+
+Amazon S3
+
+↓
+
+Amazon EFS
+```
+
+Partners continue using familiar file transfer tools.
+
+---
+
+# Supported Protocols
+
+AWS Transfer Family supports
+
+- SFTP
+- FTPS
+- FTP
+
+No protocol changes are required.
+
+---
+
+# Authentication
+
+Transfer Family supports
+
+- IAM
+- AWS Directory Service
+- Custom Identity Providers
+
+Authentication is centrally managed.
+
+---
+
+# Enterprise Example
+
+```text
+Business Partner
+
+↓
+
+SFTP
+
+↓
+
+Transfer Family
+
+↓
+
+Amazon S3
+
+↓
+
+Processing Pipeline
+```
+
+Partners upload files securely.
+
+---
+
+# Banking Example
+
+```text
+Payment Files
+
+↓
+
+Transfer Family
+
+↓
+
+Amazon S3
+
+↓
+
+AWS Lambda
+
+↓
+
+Core Banking
+```
+
+Daily settlement files are processed automatically.
+
+---
+
+# Comparing Data Migration Services
+
+| Service | Primary Use | Best For |
+|----------|-------------|----------|
+| AWS DataSync | Online Data Transfer | File & Storage Migration |
+| Snow Family | Offline Physical Transfer | TB/PB Scale Migration |
+| AWS Transfer Family | Managed FTP/SFTP | Partner File Exchange |
+
+---
+
+# DataSync vs Snow Family
+
+| DataSync | Snow Family |
+|-----------|-------------|
+| Online Transfer | Offline Transfer |
+| Network Required | Physical Device |
+| Incremental Sync | Bulk Transfer |
+| Continuous Migration | One-Time Large Migration |
+
+---
+
+# DataSync vs Transfer Family
+
+| DataSync | Transfer Family |
+|-----------|-----------------|
+| Storage Synchronization | Secure File Exchange |
+| Automated Replication | Partner Uploads |
+| Internal Migration | External File Transfer |
+
+---
+
+# Enterprise Migration Architecture
+
+```text
+On-Prem NAS
+
+↓
+
+AWS DataSync
+
+↓
+
+Amazon EFS
+
+────────────
+
+Historical Archives
+
+↓
+
+Snowball Edge
+
+↓
+
+Amazon S3
+
+────────────
+
+Business Partners
+
+↓
+
+AWS Transfer Family
+
+↓
+
+Amazon S3
+
+↓
+
+Analytics
+```
+
+Each workload uses the appropriate migration service.
+
+---
+
+# Best Practices
+
+- Use DataSync for recurring online file synchronization.
+- Use Snow Family for multi-terabyte or petabyte migrations where network transfer is impractical.
+- Use Transfer Family for secure partner file exchanges.
+- Validate transferred data after migration.
+- Encrypt all migrated data.
+- Monitor transfer jobs using CloudWatch.
+- Automate recurring DataSync tasks.
+- Choose the migration service based on data size and connectivity.
+
+---
+
+# Common Mistakes
+
+- Using Snow Family for small datasets.
+- Attempting petabyte migrations over slow internet connections.
+- Using Transfer Family as a storage synchronization service.
+- Skipping transfer validation.
+- Leaving SFTP endpoints publicly accessible without proper controls.
+- Ignoring encryption requirements.
+- Underestimating network bandwidth during DataSync migrations.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS DataSync?
+- What is the AWS Snow Family?
+- What protocols does AWS Transfer Family support?
+
+## Intermediate
+
+- DataSync vs Snowball.
+- Snowball Edge vs Snowcone.
+- When should you use AWS Transfer Family?
+- Explain incremental synchronization in DataSync.
+
+## Advanced
+
+- Design a migration strategy for moving 2 PB of historical media files from an on-premises data center to Amazon S3 while minimizing migration time and ensuring data integrity.
+- Explain how AWS DataSync, Snow Family, and Transfer Family complement each other in an enterprise migration project.
+- A multinational bank needs to migrate NAS storage to Amazon EFS, import decades of archived transaction data into Amazon S3, and continue receiving daily settlement files from partners over SFTP. Design the complete data migration architecture, including service selection, security, validation, monitoring, and operational best practices.
+
+---
+
