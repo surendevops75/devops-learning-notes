@@ -5386,3 +5386,753 @@ Everything is automated.
 
 ---
 
+# Chapter 8 - Data Ingestion, Log Pipelines & OpenSearch Integration
+
+OpenSearch itself does not generate data.
+
+Applications, servers, containers, and cloud services continuously send data into OpenSearch through ingestion pipelines.
+
+A well-designed ingestion architecture is essential for
+
+- Scalability
+- Reliability
+- Performance
+- Security
+- Observability
+
+This chapter explains how data reaches OpenSearch in enterprise environments.
+
+---
+
+# What is Data Ingestion?
+
+Data ingestion is the process of collecting data from different sources and storing it in OpenSearch.
+
+Workflow
+
+```text
+Application
+
+↓
+
+Log Collector
+
+↓
+
+OpenSearch
+
+↓
+
+Index
+
+↓
+
+Search
+```
+
+Without ingestion,
+
+OpenSearch remains empty.
+
+---
+
+# Common Data Sources
+
+Enterprise OpenSearch clusters receive data from
+
+- Kubernetes Pods
+- EC2 Instances
+- AWS Lambda
+- Nginx
+- Apache
+- Spring Boot
+- Node.js
+- Python Applications
+- CloudTrail
+- VPC Flow Logs
+- AWS WAF
+- Application Load Balancer Logs
+- Databases
+
+Multiple data sources can send logs simultaneously.
+
+---
+
+# Enterprise Logging Architecture
+
+```text
+Applications
+
+↓
+
+Containers
+
+↓
+
+Fluent Bit
+
+↓
+
+OpenSearch
+
+↓
+
+Dashboards
+
+↓
+
+DevOps Team
+```
+
+Every application follows the same logging pipeline.
+
+---
+
+# Kubernetes Logging Pipeline
+
+In Kubernetes,
+
+containers write logs to
+
+```text
+stdout
+
+↓
+
+Container Runtime
+
+↓
+
+Node Log Files
+
+↓
+
+Fluent Bit
+
+↓
+
+OpenSearch
+```
+
+Developers do not send logs directly.
+
+The log collector performs that task.
+
+---
+
+# Why Use a Log Collector?
+
+Suppose
+
+1000 Pods
+
+↓
+
+Write Logs
+
+Without a collector,
+
+every application would need OpenSearch integration.
+
+Instead
+
+```text
+Applications
+
+↓
+
+stdout
+
+↓
+
+Fluent Bit
+
+↓
+
+OpenSearch
+```
+
+Applications remain simple.
+
+---
+
+# Fluent Bit
+
+Fluent Bit is one of the most popular lightweight log collectors.
+
+Features
+
+- Low Memory Usage
+- High Performance
+- Kubernetes Integration
+- Buffering
+- Retry Support
+- Multiple Outputs
+
+Common destinations
+
+- OpenSearch
+- Amazon S3
+- CloudWatch
+- Kafka
+
+---
+
+# Fluent Bit Architecture
+
+```text
+Container Logs
+
+↓
+
+Input Plugin
+
+↓
+
+Parser
+
+↓
+
+Filter
+
+↓
+
+Buffer
+
+↓
+
+Output Plugin
+
+↓
+
+OpenSearch
+```
+
+Every stage processes log data before indexing.
+
+---
+
+# Fluent Bit Pipeline
+
+```text
+Read Logs
+
+↓
+
+Parse JSON
+
+↓
+
+Add Metadata
+
+↓
+
+Filter Fields
+
+↓
+
+Buffer
+
+↓
+
+Retry Failed Requests
+
+↓
+
+OpenSearch
+```
+
+This pipeline improves reliability.
+
+---
+
+# Fluentd vs Fluent Bit
+
+| Fluent Bit | Fluentd |
+|-------------|----------|
+| Lightweight | Heavier |
+| C Language | Ruby |
+| Lower Memory | Higher Memory |
+| Edge Collection | Complex Processing |
+| Excellent for Kubernetes | Enterprise Pipelines |
+
+Many organizations use
+
+- Fluent Bit on Kubernetes Nodes
+- Fluentd for centralized aggregation
+
+---
+
+# Logstash
+
+Logstash is another popular ingestion tool.
+
+Architecture
+
+```text
+Applications
+
+↓
+
+Logstash
+
+↓
+
+Processing
+
+↓
+
+OpenSearch
+```
+
+Capabilities
+
+- Parsing
+- Transformation
+- Enrichment
+- Routing
+
+Logstash is powerful but requires more resources than Fluent Bit.
+
+---
+
+# Fluent Bit vs Logstash
+
+| Fluent Bit | Logstash |
+|-------------|-----------|
+| Lightweight | Heavy |
+| Low CPU | Higher CPU |
+| Fast | Flexible |
+| Kubernetes | Complex ETL |
+| Excellent for Containers | Advanced Transformations |
+
+---
+
+# Beats
+
+Elastic Beats can also send data.
+
+Examples
+
+```text
+Filebeat
+
+↓
+
+Log Files
+
+Metricbeat
+
+↓
+
+System Metrics
+
+Heartbeat
+
+↓
+
+Availability Monitoring
+```
+
+Although OpenSearch originated from Elasticsearch, many organizations still use Beats to collect data where appropriate.
+
+---
+
+# AWS Native Log Sources
+
+AWS services can integrate with OpenSearch.
+
+Examples
+
+```text
+CloudTrail
+
+↓
+
+OpenSearch
+
+VPC Flow Logs
+
+↓
+
+OpenSearch
+
+ALB Logs
+
+↓
+
+OpenSearch
+
+WAF Logs
+
+↓
+
+OpenSearch
+```
+
+This enables centralized AWS observability.
+
+---
+
+# Log Parsing
+
+Raw logs
+
+```text
+2026-08-05 Payment Failed User123
+```
+
+Parser converts them into structured JSON.
+
+```json
+{
+ "timestamp":"2026-08-05",
+ "service":"payment-api",
+ "status":"FAILED",
+ "user":"User123"
+}
+```
+
+Structured logs are much easier to search.
+
+---
+
+# Metadata Enrichment
+
+Before indexing,
+
+collectors often add metadata.
+
+Example
+
+```text
+Namespace
+
+Pod Name
+
+Container Name
+
+Node Name
+
+Cluster Name
+
+Environment
+
+AWS Region
+```
+
+Result
+
+```json
+{
+ "cluster":"production",
+ "namespace":"payments",
+ "pod":"payment-api-7f8d",
+ "container":"payment-api"
+}
+```
+
+This greatly improves troubleshooting.
+
+---
+
+# Filtering
+
+Not every field needs to be stored.
+
+Pipeline
+
+```text
+Raw Log
+
+↓
+
+Remove Debug Fields
+
+↓
+
+Remove Temporary Fields
+
+↓
+
+Index
+```
+
+Benefits
+
+- Smaller indices
+- Lower storage
+- Faster searches
+
+---
+
+# Buffering
+
+Suppose OpenSearch becomes temporarily unavailable.
+
+Without buffering
+
+```text
+Logs
+
+↓
+
+Lost
+```
+
+With buffering
+
+```text
+Logs
+
+↓
+
+Buffer
+
+↓
+
+Retry
+
+↓
+
+OpenSearch
+```
+
+Buffering improves reliability.
+
+---
+
+# Retry Mechanism
+
+If indexing fails
+
+```text
+OpenSearch
+
+↓
+
+Unavailable
+
+↓
+
+Retry
+
+↓
+
+Retry
+
+↓
+
+Success
+```
+
+Transient failures do not result in data loss.
+
+---
+
+# Bulk Indexing
+
+Instead of sending
+
+```text
+1 Document
+
+↓
+
+Network Request
+```
+
+for every log,
+
+collectors send batches.
+
+```text
+1000 Documents
+
+↓
+
+Bulk Request
+
+↓
+
+OpenSearch
+```
+
+Benefits
+
+- Fewer network calls
+- Higher throughput
+- Better indexing performance
+
+---
+
+# Bulk Index Workflow
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Buffer
+
+↓
+
+Bulk Request
+
+↓
+
+OpenSearch
+```
+
+This is how production logging systems achieve high throughput.
+
+---
+
+# Data Transformation
+
+Logs can be transformed before indexing.
+
+Example
+
+Input
+
+```text
+status=200
+```
+
+Output
+
+```json
+{
+ "status":"SUCCESS"
+}
+```
+
+Transformation standardizes data across applications.
+
+---
+
+# Multi-Cluster Logging
+
+Large enterprises often separate workloads.
+
+```text
+Development
+
+↓
+
+OpenSearch Cluster
+
+Production
+
+↓
+
+OpenSearch Cluster
+
+Security
+
+↓
+
+OpenSearch Cluster
+```
+
+This improves isolation and governance.
+
+---
+
+# Enterprise Production Architecture
+
+```text
+Applications
+
+↓
+
+Kubernetes
+
+↓
+
+Fluent Bit DaemonSet
+
+↓
+
+Load Balancer
+
+↓
+
+OpenSearch Cluster
+
+↓
+
+Dashboards
+
+↓
+
+DevOps
+
+↓
+
+Security Team
+```
+
+Characteristics
+
+- Centralized logging
+- High availability
+- Automatic retries
+- Metadata enrichment
+- Structured JSON
+- Bulk indexing
+
+---
+
+# Best Practices
+
+- Log to stdout.
+- Use Fluent Bit for Kubernetes.
+- Use structured JSON logs.
+- Enable buffering.
+- Use bulk indexing.
+- Add Kubernetes metadata.
+- Remove unnecessary fields before indexing.
+- Separate production and development clusters.
+
+---
+
+# Common Mistakes
+
+- Sending logs directly from applications to OpenSearch.
+- Storing unstructured text logs.
+- Disabling buffering.
+- Indexing unnecessary debug fields.
+- Creating one ingestion pipeline for every application.
+- Ignoring retry failures.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is data ingestion?
+- What is Fluent Bit?
+- Why use a log collector?
+
+## Intermediate
+
+- Fluent Bit vs Logstash.
+- Why is bulk indexing faster?
+- Explain log parsing and metadata enrichment.
+- Why should applications log to stdout?
+
+## Advanced
+
+- Design a centralized logging architecture for a Kubernetes platform with 2,000 Pods.
+- Explain how Fluent Bit collects, enriches, buffers, and indexes logs into OpenSearch.
+- Design a highly available log ingestion pipeline capable of processing 500,000 log events per second with minimal data loss.
+
+---
+
