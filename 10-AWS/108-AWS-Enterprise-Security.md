@@ -1932,3 +1932,746 @@ Using IAM Roles provides
 
 ---
 
+# Chapter 4 - IAM Policies, Permission Boundaries & Policy Evaluation Logic (Deep Dive)
+
+AWS IAM determines whether every API request should be allowed or denied.
+
+Every action such as
+
+- Launching an EC2 instance
+- Reading an S3 object
+- Creating an RDS database
+- Updating an IAM Role
+- Accessing Secrets Manager
+
+goes through AWS's **Policy Evaluation Engine**.
+
+Understanding how IAM policies are evaluated is one of the most important AWS security topics for Solutions Architect, DevOps Engineer, and Security Engineer interviews.
+
+---
+
+# What is an IAM Policy?
+
+An IAM Policy is a JSON document that defines
+
+- Who
+- Can perform
+- Which actions
+- On which resources
+- Under what conditions
+
+Policies determine permissions.
+
+---
+
+# IAM Policy Architecture
+
+```text
+User / Role
+
+↓
+
+IAM Policy
+
+↓
+
+AWS Policy Engine
+
+↓
+
+Allow
+
+OR
+
+Deny
+```
+
+Every AWS API request is evaluated.
+
+---
+
+# IAM Policy Components
+
+Every policy consists of
+
+- Version
+- Statement
+- Effect
+- Action
+- Resource
+- Condition
+
+These fields define access behavior.
+
+---
+
+# Policy Structure
+
+Example
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::company-bucket/*"
+    }
+  ]
+}
+```
+
+---
+
+# Version
+
+Example
+
+```text
+2012-10-17
+```
+
+This specifies the IAM policy language version.
+
+---
+
+# Statement
+
+A policy can contain multiple statements.
+
+Example
+
+```text
+Policy
+
+├── Statement 1
+
+├── Statement 2
+
+└── Statement 3
+```
+
+Each statement is evaluated independently.
+
+---
+
+# Effect
+
+Effect determines
+
+```text
+Allow
+
+OR
+
+Deny
+```
+
+AWS supports only two effects.
+
+---
+
+# Action
+
+Action specifies
+
+what operations are allowed.
+
+Examples
+
+```text
+ec2:RunInstances
+
+s3:GetObject
+
+lambda:InvokeFunction
+
+rds:CreateDBInstance
+```
+
+---
+
+# Resource
+
+Resource specifies
+
+where permissions apply.
+
+Example
+
+```text
+Amazon S3 Bucket
+
+↓
+
+company-data
+```
+
+Instead of
+
+```text
+*
+```
+
+Always restrict permissions to required resources.
+
+---
+
+# Condition
+
+Conditions make permissions more secure.
+
+Example
+
+```text
+Allow
+
+↓
+
+EC2 Start
+
+↓
+
+Only
+
+↓
+
+Business Hours
+```
+
+Conditions support
+
+- IP Address
+- Time
+- MFA
+- Tags
+- Region
+- VPC Endpoint
+
+---
+
+# IAM Policy Flow
+
+```text
+Request
+
+↓
+
+Authenticate
+
+↓
+
+Collect Policies
+
+↓
+
+Evaluate Policies
+
+↓
+
+Decision
+
+↓
+
+Allow
+
+OR
+
+Deny
+```
+
+AWS evaluates every request.
+
+---
+
+# Identity-Based Policies
+
+Attached to
+
+- Users
+- Groups
+- Roles
+
+Example
+
+```text
+Developer Role
+
+↓
+
+Amazon S3 Read
+```
+
+Most IAM policies are identity-based.
+
+---
+
+# Resource-Based Policies
+
+Attached directly to AWS resources.
+
+Examples
+
+- Amazon S3 Bucket Policy
+- SQS Queue Policy
+- SNS Topic Policy
+- KMS Key Policy
+
+Architecture
+
+```text
+User
+
+↓
+
+S3 Bucket Policy
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Managed Policies
+
+Reusable policies.
+
+Types
+
+```text
+AWS Managed
+
+↓
+
+Customer Managed
+```
+
+Reusable across multiple identities.
+
+---
+
+# Inline Policies
+
+Attached directly to one identity.
+
+```text
+Developer
+
+↓
+
+Inline Policy
+```
+
+Cannot be shared.
+
+---
+
+# Explicit Allow
+
+Example
+
+```text
+Allow
+
+↓
+
+s3:GetObject
+```
+
+If no Deny exists,
+
+access is granted.
+
+---
+
+# Explicit Deny
+
+Example
+
+```text
+Deny
+
+↓
+
+Delete S3 Bucket
+```
+
+Explicit Deny always wins.
+
+---
+
+# Implicit Deny
+
+By default
+
+everything is denied.
+
+Only explicitly allowed actions become accessible.
+
+```text
+No Policy
+
+↓
+
+Access Denied
+```
+
+---
+
+# Policy Evaluation Logic
+
+AWS follows this sequence.
+
+```text
+Request
+
+↓
+
+Authenticate
+
+↓
+
+Explicit Deny?
+
+↓
+
+Yes
+
+↓
+
+Denied
+
+────────────
+
+No
+
+↓
+
+Explicit Allow?
+
+↓
+
+Yes
+
+↓
+
+Allowed
+
+────────────
+
+No
+
+↓
+
+Implicit Deny
+```
+
+This evaluation order is critical.
+
+---
+
+# Example
+
+Suppose
+
+Developer Policy
+
+```text
+Allow
+
+↓
+
+Read S3
+```
+
+Another Policy
+
+```text
+Deny
+
+↓
+
+Delete Bucket
+```
+
+Results
+
+```text
+Read
+
+↓
+
+Allowed
+
+Delete
+
+↓
+
+Denied
+```
+
+The Deny overrides the Allow.
+
+---
+
+# Permission Boundaries
+
+Permission Boundaries define
+
+the **maximum permissions** an IAM User or Role can receive.
+
+Architecture
+
+```text
+IAM Role
+
+↓
+
+Permissions
+
+↓
+
+Permission Boundary
+
+↓
+
+Maximum Allowed
+```
+
+Even if another policy grants additional permissions,
+
+the boundary limits access.
+
+---
+
+# Example
+
+Developer Role
+
+```text
+Allow
+
+↓
+
+AdministratorAccess
+```
+
+Permission Boundary
+
+```text
+Only EC2
+
+Only CloudWatch
+```
+
+Effective permissions become
+
+```text
+EC2
+
+CloudWatch
+```
+
+Administrator permissions are restricted.
+
+---
+
+# Why Permission Boundaries?
+
+Large enterprises delegate IAM management.
+
+Example
+
+Security Team
+
+↓
+
+Creates Permission Boundary
+
+↓
+
+Development Team
+
+↓
+
+Creates Roles
+
+↓
+
+Cannot Exceed Boundary
+```
+
+This enables safe delegation.
+
+---
+
+# IAM Policy Conditions
+
+Policies can enforce additional requirements.
+
+Examples
+
+```text
+Require MFA
+
+↓
+
+Allow Delete
+
+──────────────
+
+Corporate IP Only
+
+↓
+
+AWS Console Access
+
+──────────────
+
+Specific AWS Region
+
+↓
+
+Launch EC2
+```
+
+Conditions significantly improve security.
+
+---
+
+# Tag-Based Access Control (ABAC)
+
+Instead of assigning permissions by user,
+
+AWS can evaluate resource tags.
+
+Example
+
+```text
+Developer
+
+↓
+
+Project=A
+
+↓
+
+Access
+
+↓
+
+EC2
+
+Project=A
+```
+
+Resources with different tags remain inaccessible.
+
+---
+
+# Least Privilege Example
+
+Instead of
+
+```text
+AmazonS3FullAccess
+```
+
+Grant
+
+```text
+GetObject
+
+PutObject
+
+Specific Bucket
+```
+
+Permissions remain limited.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+IAM Role
+
+↓
+
+Permission Boundary
+
+↓
+
+IAM Policy
+
+↓
+
+Amazon S3
+
+↓
+
+CloudWatch
+
+↓
+
+Amazon ECR
+```
+
+Every permission passes through multiple controls.
+
+---
+
+# Best Practices
+
+- Follow least privilege.
+- Prefer Customer Managed Policies.
+- Avoid wildcard (*) resources whenever possible.
+- Use Permission Boundaries for delegated administration.
+- Use Conditions to strengthen policies.
+- Audit permissions regularly.
+- Remove unused permissions.
+- Use AWS IAM Access Analyzer to identify overly permissive access.
+
+---
+
+# Common Mistakes
+
+- Using AdministratorAccess unnecessarily.
+- Granting Resource "*".
+- Ignoring Explicit Deny.
+- Creating duplicate policies.
+- Never reviewing permissions.
+- Not using Permission Boundaries in large organizations.
+- Ignoring policy conditions.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an IAM Policy?
+- What are the components of an IAM Policy?
+- What is the difference between Allow and Deny?
+
+## Intermediate
+
+- Identity-Based Policy vs Resource-Based Policy.
+- Managed Policy vs Inline Policy.
+- Explain IAM Policy Evaluation Logic.
+- What are Permission Boundaries?
+
+## Advanced
+
+- Design IAM policies for an enterprise where developers can manage EC2 resources but cannot modify IAM, billing, or production databases.
+- Explain how Explicit Deny, Permission Boundaries, IAM Policies, and Resource Policies work together during permission evaluation.
+- Design a secure tag-based access control (ABAC) model for a multinational organization with multiple departments, AWS accounts, and production environments while enforcing least privilege.
+
+---
+
