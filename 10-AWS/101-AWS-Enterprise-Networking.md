@@ -2244,3 +2244,421 @@ Networking remains centrally controlled.
 
 ---
 
+## Security Considerations
+
+AWS RAM only shares the resource.
+
+It **does not** automatically grant access.
+
+Example
+
+```text
+AWS RAM
+
+↓
+
+Shares Transit Gateway
+
+↓
+
+IAM
+
+↓
+
+Controls Who Can Use It
+```
+
+Security should always be implemented using:
+
+- IAM Policies
+- SCPs
+- Security Groups
+- Network ACLs
+- Resource Policies
+
+---
+
+## AWS RAM vs Cross-Account IAM
+
+| AWS RAM | Cross-Account IAM |
+|----------|-------------------|
+| Shares Resources | Shares Permissions |
+| Network Sharing | Identity Sharing |
+| No AssumeRole Required | Uses STS AssumeRole |
+| Central Infrastructure | Cross-Account Administration |
+
+Example
+
+Need to share Transit Gateway?
+
+✅ AWS RAM
+
+Need Jenkins in Account-A to deploy into Account-B?
+
+✅ Cross-Account IAM
+
+---
+
+## AWS RAM Best Practices
+
+- Create a dedicated Network Account.
+- Share networking resources instead of duplicating them.
+- Enable AWS Organizations integration.
+- Follow least privilege.
+- Monitor shared resources.
+- Regularly review unused shares.
+- Tag shared resources properly.
+
+---
+
+## Common Troubleshooting
+
+| Problem | Cause | Resolution |
+|----------|-------|------------|
+| Resource not visible | Share not accepted | Accept invitation |
+| Access denied | IAM Policy | Verify IAM permissions |
+| Cannot attach TGW | Resource not shared | Check RAM Share |
+| Share failed | Unsupported resource | Verify AWS RAM support |
+| Account cannot see resource | Organizations integration disabled | Enable sharing |
+
+---
+
+## Production Example
+
+A company has
+
+- 120 AWS Accounts
+- 180 VPCs
+- 1 Network Team
+- 40 Application Teams
+
+Instead of allowing every team to create networking resources,
+
+the Network Team owns:
+
+- Transit Gateway
+- Shared VPC
+- Route53 Resolver
+- Prefix Lists
+
+These are shared using AWS RAM.
+
+Benefits
+
+- Standardized networking
+- Lower costs
+- Better governance
+- Easier troubleshooting
+- Consistent security
+
+---
+
+## Interview Questions
+
+### Basic
+
+- What is AWS RAM?
+- Why is AWS RAM used?
+- Which AWS resources can be shared?
+
+### Intermediate
+
+- AWS RAM vs AssumeRole
+- AWS RAM vs VPC Peering
+- Can AWS RAM share resources outside an AWS Organization?
+
+### Advanced
+
+- Design networking for 300 AWS accounts.
+- Explain Shared VPC architecture.
+- How would you centralize networking in AWS?
+
+---
+
+# Chapter 6 - Shared VPC & Shared Services
+
+## What is a Shared VPC?
+
+A Shared VPC is a networking model where one AWS account owns the VPC, while other AWS accounts deploy resources into that VPC.
+
+The VPC owner manages networking.
+
+Application teams manage only their workloads.
+
+This model is commonly used in enterprises adopting AWS Organizations.
+
+---
+
+# Why Shared VPC?
+
+Without Shared VPC
+
+```text
+Dev Account
+
+↓
+
+Own VPC
+
+QA Account
+
+↓
+
+Own VPC
+
+Prod Account
+
+↓
+
+Own VPC
+```
+
+Problems
+
+- Hundreds of VPCs
+- Duplicate networking
+- CIDR planning complexity
+- High operational effort
+
+---
+
+With Shared VPC
+
+```text
+               Network Account
+
+                     │
+
+               Shared VPC
+
+       ┌─────────────┼─────────────┐
+
+       │             │             │
+
+ Dev Account     QA Account    Prod Account
+
+       │             │             │
+
+ EC2 / EKS      EC2 / EKS     EC2 / EKS
+```
+
+One networking team.
+
+Multiple application teams.
+
+---
+
+# Shared Responsibility
+
+| Network Team | Application Team |
+|--------------|------------------|
+| Create VPC | Deploy EC2 |
+| Create Subnets | Deploy EKS |
+| Configure Route Tables | Deploy Containers |
+| NAT Gateway | Deploy Applications |
+| Internet Gateway | Manage Application |
+| Security Architecture | Application Configuration |
+
+This separation improves governance.
+
+---
+
+# Shared Services VPC
+
+Large organizations centralize common infrastructure inside a dedicated VPC.
+
+Example
+
+```text
+             Shared Services VPC
+
+├── Jenkins
+
+├── GitLab
+
+├── SonarQube
+
+├── Artifactory
+
+├── Harbor
+
+├── Prometheus
+
+├── Grafana
+
+├── ELK
+
+├── Active Directory
+
+├── DNS
+
+└── Bastion Hosts
+```
+
+Every application environment consumes these services.
+
+---
+
+# Why Shared Services?
+
+Instead of
+
+```text
+Dev
+
+↓
+
+Own Jenkins
+
+QA
+
+↓
+
+Own Jenkins
+
+Prod
+
+↓
+
+Own Jenkins
+```
+
+Use
+
+```text
+Shared Jenkins
+
+↓
+
+Dev
+
+↓
+
+QA
+
+↓
+
+Prod
+```
+
+Benefits
+
+- Lower cost
+- Easier upgrades
+- Centralized backups
+- Consistent configuration
+- Better security
+
+---
+
+# Enterprise Shared Services Architecture
+
+```text
+                  AWS Organization
+
+                         │
+
+                  Shared Services
+
+                         │
+
+        ┌────────────────┼────────────────┐
+
+      Dev             QA             Production
+
+        │              │                  │
+
+        └──────────────┼──────────────────┘
+
+                 Transit Gateway
+```
+
+---
+
+# Typical Shared Services
+
+Infrastructure
+
+- Jenkins
+- GitLab
+- Artifactory
+- Harbor
+
+Monitoring
+
+- Prometheus
+- Grafana
+- ELK
+- OpenSearch
+
+Security
+
+- Active Directory
+- IAM Identity Center
+- Secrets Management
+- Certificate Services
+
+Networking
+
+- DNS
+- Route53 Resolver
+- Bastion
+- Proxy
+- Firewall
+
+---
+
+# Shared VPC vs VPC Peering
+
+| Shared VPC | VPC Peering |
+|------------|-------------|
+| One VPC | Multiple VPCs |
+| Centralized Network | Independent Networks |
+| AWS RAM | Peering Connection |
+| Easy Management | Complex at Scale |
+| Enterprise Standard | Small Environments |
+
+---
+
+# Production Example
+
+An enterprise has
+
+- 200 AWS Accounts
+- 40 Development Teams
+- 15 Amazon EKS Clusters
+
+Instead of every team building its own CI/CD platform,
+
+they deploy one centralized platform in a Shared Services VPC containing:
+
+- Jenkins
+- GitHub Actions Runners
+- SonarQube
+- Artifactory
+- Prometheus
+- Grafana
+- OpenSearch
+
+All EKS clusters securely access these shared services through Transit Gateway or PrivateLink, depending on the service and isolation requirements.
+
+Benefits
+
+- Centralized operations
+- Consistent tooling
+- Lower infrastructure cost
+- Easier upgrades
+- Stronger governance
+
+---
+
+# Best Practices
+
+- Keep networking in a dedicated Network Account.
+- Keep shared tools in a Shared Services Account.
+- Use AWS RAM for resource sharing.
+- Use Transit Gateway for large-scale connectivity.
+- Use PrivateLink for exposing internal platform services.
+- Tag all shared resources consistently.
+- Monitor usage and capacity of shared services.
+
