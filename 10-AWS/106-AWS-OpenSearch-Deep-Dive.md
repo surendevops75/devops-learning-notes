@@ -1278,3 +1278,788 @@ The platform continues operating even if individual nodes fail.
 
 ---
 
+# Chapter 3 - Indices, Documents, Fields, Shards & Replicas
+
+Understanding **Indices, Documents, Shards, and Replicas** is the foundation of OpenSearch.
+
+Nearly every production design and interview question revolves around these concepts.
+
+---
+
+# Data Organization
+
+OpenSearch stores data in the following hierarchy.
+
+```text
+Cluster
+
+↓
+
+Index
+
+↓
+
+Primary Shard
+
+↓
+
+Document
+
+↓
+
+Fields
+```
+
+Unlike relational databases, OpenSearch stores data as JSON documents.
+
+---
+
+# What is an Index?
+
+An Index is a logical collection of related documents.
+
+Think of it as similar to a table in a relational database.
+
+Example
+
+```text
+payment-logs
+
+user-logs
+
+nginx-access
+
+application-events
+
+audit-logs
+```
+
+Each index usually stores one type of data.
+
+---
+
+# Production Example
+
+A banking application may create separate indices.
+
+```text
+payment-logs
+
+↓
+
+Payment Transactions
+
+login-events
+
+↓
+
+Authentication Logs
+
+audit-events
+
+↓
+
+Compliance Logs
+
+application-logs
+
+↓
+
+Application Events
+```
+
+Separating data improves management and performance.
+
+---
+
+# Index Naming Best Practices
+
+Large organizations follow consistent naming.
+
+Example
+
+```text
+prod-payment-logs
+
+prod-order-logs
+
+prod-nginx-access
+
+dev-payment-logs
+
+test-payment-logs
+```
+
+This makes lifecycle management much easier.
+
+---
+
+# What is a Document?
+
+A Document is the smallest unit stored in OpenSearch.
+
+Documents are stored as JSON.
+
+Example
+
+```json
+{
+  "transactionId":"TX12345",
+  "customer":"Surendra",
+  "amount":5000,
+  "currency":"INR",
+  "status":"SUCCESS",
+  "timestamp":"2026-08-05T09:20:00Z"
+}
+```
+
+Every document belongs to exactly one index.
+
+---
+
+# Document Structure
+
+```text
+Document
+
+├── transactionId
+
+├── customer
+
+├── amount
+
+├── currency
+
+├── status
+
+└── timestamp
+```
+
+Each key is called a **Field**.
+
+---
+
+# What is a Field?
+
+A Field represents one attribute inside a document.
+
+Example
+
+```json
+{
+ "service":"payment-api"
+}
+```
+
+Field
+
+```text
+service
+```
+
+Value
+
+```text
+payment-api
+```
+
+---
+
+# Common Field Types
+
+OpenSearch supports many field types.
+
+Examples
+
+| Type | Example |
+|------|----------|
+| text | Payment Failed |
+| keyword | SUCCESS |
+| integer | 100 |
+| long | 900000 |
+| float | 95.5 |
+| boolean | true |
+| date | 2026-08-05 |
+| object | Nested JSON |
+| ip | 10.0.1.15 |
+
+Choosing the correct field type is important for performance.
+
+---
+
+# Text vs Keyword
+
+One of the most frequently asked interview topics.
+
+Suppose
+
+```text
+SUCCESS
+```
+
+stored as
+
+```text
+text
+```
+
+OpenSearch analyzes it.
+
+Suitable for
+
+- Full-text search
+- Natural language
+
+---
+
+Suppose
+
+```text
+SUCCESS
+```
+
+stored as
+
+```text
+keyword
+```
+
+Stored exactly as written.
+
+Suitable for
+
+- Filtering
+- Sorting
+- Aggregations
+
+---
+
+# Example
+
+Search
+
+```text
+payment failed because database timeout
+```
+
+Use
+
+```text
+text
+```
+
+---
+
+Status
+
+```text
+SUCCESS
+
+FAILED
+```
+
+Use
+
+```text
+keyword
+```
+
+---
+
+# What is a Shard?
+
+OpenSearch cannot store billions of documents inside a single file.
+
+Instead,
+
+it splits an Index into multiple pieces called **Shards**.
+
+Example
+
+```text
+payment-logs
+
+↓
+
+Shard-1
+
+Shard-2
+
+Shard-3
+```
+
+Each shard stores part of the data.
+
+---
+
+# Why Shards?
+
+Suppose an index contains
+
+```text
+10 Billion Documents
+```
+
+One server cannot efficiently store or search everything.
+
+Instead
+
+```text
+10 Billion
+
+↓
+
+Shard-1
+
+↓
+
+3.3 Billion
+
+Shard-2
+
+↓
+
+3.3 Billion
+
+Shard-3
+
+↓
+
+3.3 Billion
+```
+
+Now multiple servers work together.
+
+---
+
+# Primary Shards
+
+Primary Shards contain the original data.
+
+Example
+
+```text
+payment-index
+
+↓
+
+Primary-1
+
+Primary-2
+
+Primary-3
+```
+
+Every document is written to exactly one primary shard.
+
+---
+
+# Shard Distribution
+
+Cluster
+
+```text
+Node-1
+
+↓
+
+Primary-1
+
+Node-2
+
+↓
+
+Primary-2
+
+Node-3
+
+↓
+
+Primary-3
+```
+
+Data is distributed automatically.
+
+---
+
+# Search Across Shards
+
+Suppose a user searches
+
+```text
+Transaction Failed
+```
+
+Coordinator
+
+↓
+
+Query
+
+↓
+
+Primary-1
+
+Primary-2
+
+Primary-3
+
+↓
+
+Merge Results
+
+↓
+
+Return Response
+
+All shards search simultaneously.
+
+---
+
+# What is a Replica?
+
+A Replica is a copy of a Primary Shard.
+
+Purpose
+
+- High Availability
+- Faster Searches
+- Fault Tolerance
+
+Example
+
+```text
+Primary-1
+
+↓
+
+Replica-1
+```
+
+---
+
+# Replica Architecture
+
+```text
+Node-1
+
+↓
+
+Primary-1
+
+──────────────
+
+Node-2
+
+↓
+
+Replica-1
+```
+
+Primary and Replica are never placed on the same node.
+
+This protects against node failures.
+
+---
+
+# Write Operation
+
+Application
+
+↓
+
+Primary Shard
+
+↓
+
+Replica Shard
+
+↓
+
+Acknowledgement
+
+↓
+
+Success
+
+Data is copied automatically.
+
+---
+
+# Read Operation
+
+Search requests can be served by
+
+- Primary
+- Replica
+
+This improves search throughput.
+
+---
+
+# Why Replicas Improve Performance
+
+Without Replica
+
+```text
+100 Search Requests
+
+↓
+
+Primary
+```
+
+With Replica
+
+```text
+100 Requests
+
+↓
+
+Primary
+
+↓
+
+Replica
+
+↓
+
+Load Shared
+```
+
+Multiple copies increase query capacity.
+
+---
+
+# What Happens if a Node Fails?
+
+Example
+
+```text
+Node-1
+
+↓
+
+Primary-1
+
+↓
+
+Failure
+```
+
+Replica
+
+↓
+
+Promoted
+
+↓
+
+New Primary
+
+Applications continue operating.
+
+---
+
+# Replica Recovery
+
+Failed node returns.
+
+Workflow
+
+```text
+Node Returns
+
+↓
+
+Replica Rebuilt
+
+↓
+
+Cluster Balanced
+```
+
+Recovery happens automatically.
+
+---
+
+# Number of Shards
+
+Choosing shard count is important.
+
+Too Few
+
+```text
+Large Shards
+
+↓
+
+Slow Recovery
+```
+
+Too Many
+
+```text
+Thousands of Small Shards
+
+↓
+
+Memory Waste
+
+↓
+
+Slow Cluster
+```
+
+Both extremes reduce performance.
+
+---
+
+# Shard Sizing
+
+A balanced shard size simplifies
+
+- Recovery
+- Search
+- Storage
+- Cluster Management
+
+Enterprise clusters periodically review shard distribution as data grows.
+
+---
+
+# Routing
+
+When indexing a document,
+
+OpenSearch decides
+
+```text
+Document
+
+↓
+
+Hash Function
+
+↓
+
+Primary Shard
+```
+
+Applications do not choose the shard.
+
+Routing is automatic unless custom routing is configured.
+
+---
+
+# Search Flow
+
+```text
+Client
+
+↓
+
+Coordinator
+
+↓
+
+Primary
+
+↓
+
+Replica
+
+↓
+
+Merge Results
+
+↓
+
+Return JSON
+```
+
+Searches are executed in parallel.
+
+---
+
+# Enterprise Example
+
+A retail company generates
+
+- Product Search
+- Customer Logs
+- Payment Logs
+- Security Logs
+
+Architecture
+
+```text
+Cluster
+
+↓
+
+Product Index
+
+↓
+
+5 Primary Shards
+
+↓
+
+1 Replica
+
+↓
+
+10 Total Shards
+```
+
+The platform continues serving queries even if one Data Node becomes unavailable.
+
+---
+
+# Best Practices
+
+- Separate indices by workload.
+- Choose appropriate field types.
+- Use keyword for filtering.
+- Use text for full-text search.
+- Configure replicas in production.
+- Monitor shard distribution.
+- Avoid extremely small or extremely large shards.
+
+---
+
+# Common Mistakes
+
+- Creating hundreds of tiny indices.
+- Using text instead of keyword for exact matching.
+- Running production without replicas.
+- Creating excessive shard counts.
+- Ignoring shard rebalancing after cluster growth.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an Index?
+- What is a Document?
+- What is a Field?
+- What is a Shard?
+
+## Intermediate
+
+- Primary Shard vs Replica Shard.
+- Text vs Keyword.
+- Why does OpenSearch split data into shards?
+- How are search requests processed across shards?
+
+## Advanced
+
+- Design shard and replica strategy for a logging platform storing 8 TB of logs per day.
+- Explain what happens when a Data Node containing Primary Shards fails.
+- How would you optimize shard sizing for a rapidly growing OpenSearch cluster?
+
+---
+
