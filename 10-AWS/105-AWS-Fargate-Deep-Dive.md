@@ -5023,3 +5023,699 @@ Characteristics
 
 ---
 
+# Chapter 8 - Logging, Monitoring, Observability & Security
+
+Running containers in production is not enough.
+
+Enterprise environments require complete visibility into
+
+- Application Health
+- Infrastructure Health
+- Performance
+- Errors
+- Security
+- User Traffic
+
+Without proper observability,
+
+troubleshooting production incidents becomes extremely difficult.
+
+---
+
+# Observability Pillars
+
+Modern observability consists of three pillars.
+
+```text
+                 Observability
+
+        ┌──────────┼──────────┐
+
+        Logs     Metrics     Traces
+```
+
+Although distributed tracing is optional depending on the observability stack, **Logs** and **Metrics** are essential for every Fargate workload.
+
+---
+
+# Logging Architecture
+
+Every application writes logs to
+
+```text
+stdout
+
+stderr
+```
+
+AWS captures these streams automatically.
+
+```text
+Application
+
+↓
+
+stdout
+
+↓
+
+awslogs Driver
+
+↓
+
+CloudWatch Logs
+
+↓
+
+CloudWatch Insights
+```
+
+No log files need to be managed inside the container.
+
+---
+
+# Why Log to stdout?
+
+Containers are ephemeral.
+
+If logs remain inside the container,
+
+they disappear when the task stops.
+
+Instead
+
+```text
+Container
+
+↓
+
+stdout
+
+↓
+
+CloudWatch Logs
+```
+
+Logs remain available even after the task is terminated.
+
+---
+
+# CloudWatch Logs
+
+CloudWatch Logs provides
+
+- Centralized logging
+- Search
+- Retention
+- Export
+- Log Insights
+- Metric Filters
+
+Architecture
+
+```text
+Application
+
+↓
+
+CloudWatch Logs
+
+↓
+
+Log Groups
+
+↓
+
+Log Streams
+```
+
+---
+
+# Log Group
+
+A Log Group stores logs for an application.
+
+Example
+
+```text
+/payment-service
+
+/order-service
+
+/inventory-service
+```
+
+Retention policies are configured at the Log Group level.
+
+---
+
+# Log Stream
+
+Each running task creates its own Log Stream.
+
+Example
+
+```text
+Payment Service
+
+↓
+
+Task-1
+
+↓
+
+Log Stream
+
+Task-2
+
+↓
+
+Log Stream
+
+Task-3
+
+↓
+
+Log Stream
+```
+
+This makes troubleshooting individual tasks much easier.
+
+---
+
+# CloudWatch Logs Insights
+
+Logs can be queried using CloudWatch Logs Insights.
+
+Example questions
+
+- Which requests failed?
+- Which task generated the error?
+- How many exceptions occurred?
+- Which endpoint is slow?
+
+Instead of manually reading logs,
+
+engineers can search millions of log entries efficiently.
+
+---
+
+# Structured Logging
+
+Avoid
+
+```text
+Database Error
+```
+
+Prefer
+
+```json
+{
+  "timestamp":"2026-08-05T09:30:00Z",
+  "service":"payment-api",
+  "requestId":"12345",
+  "userId":"56789",
+  "status":"FAILED",
+  "error":"Database Connection Timeout"
+}
+```
+
+Structured logs are easier to search and analyze.
+
+---
+
+# Logging Best Practices
+
+Include
+
+- Timestamp
+- Log Level
+- Service Name
+- Request ID
+- Correlation ID
+- User ID (where appropriate)
+- Error Details
+
+Avoid logging
+
+- Passwords
+- API Keys
+- Tokens
+- Secrets
+- Personally identifiable information (PII)
+
+---
+
+# CloudWatch Metrics
+
+Metrics measure application and infrastructure health.
+
+Common metrics
+
+- CPU Utilization
+- Memory Utilization
+- Task Count
+- Network In
+- Network Out
+- Running Tasks
+- Failed Tasks
+
+Architecture
+
+```text
+Fargate Task
+
+↓
+
+CloudWatch Metrics
+
+↓
+
+Dashboard
+
+↓
+
+Alarm
+```
+
+---
+
+# CloudWatch Alarms
+
+Alarms notify engineers when thresholds are exceeded.
+
+Example
+
+```text
+CPU > 80%
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+DevOps Team
+```
+
+Other examples
+
+- Memory > 90%
+- Running Tasks < Desired Count
+- High Error Rate
+- ALB 5XX Errors
+
+---
+
+# Container Insights
+
+CloudWatch Container Insights provides detailed metrics for ECS and Fargate workloads.
+
+It collects
+
+- CPU Usage
+- Memory Usage
+- Task Count
+- Service Metrics
+- Network Statistics
+
+Architecture
+
+```text
+Amazon ECS
+
+↓
+
+Container Insights
+
+↓
+
+CloudWatch
+
+↓
+
+Dashboard
+```
+
+Container Insights provides much deeper visibility than standard CloudWatch metrics.
+
+---
+
+# Monitoring Dashboard
+
+A typical production dashboard displays
+
+```text
+CPU
+
+Memory
+
+Running Tasks
+
+Response Time
+
+ALB Requests
+
+HTTP Errors
+
+Network Traffic
+```
+
+Operations teams can identify issues quickly.
+
+---
+
+# Health Checks
+
+Two levels of health checks are commonly used.
+
+### Container Health Check
+
+Checks whether the application inside the container is healthy.
+
+```text
+Application
+
+↓
+
+/health
+
+↓
+
+Healthy
+```
+
+---
+
+### Load Balancer Health Check
+
+The Application Load Balancer determines whether traffic should be sent to a task.
+
+```text
+ALB
+
+↓
+
+Task
+
+↓
+
+200 OK
+
+↓
+
+Healthy
+```
+
+If unhealthy,
+
+traffic is automatically redirected to healthy tasks.
+
+---
+
+# Security Architecture
+
+Security begins before the container starts.
+
+```text
+Developer
+
+↓
+
+Build Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Image Scan
+
+↓
+
+Fargate
+
+↓
+
+IAM Roles
+
+↓
+
+Application
+```
+
+Security exists throughout the deployment lifecycle.
+
+---
+
+# Image Security
+
+Container images should
+
+- Be minimal
+- Be updated regularly
+- Use trusted base images
+- Remove unnecessary packages
+- Avoid root user
+
+Example
+
+Instead of
+
+```text
+ubuntu:latest
+```
+
+Prefer a minimal, well-maintained base image appropriate for your application.
+
+Smaller images
+
+- Download faster
+- Contain fewer vulnerabilities
+- Improve startup time
+
+---
+
+# Image Scanning
+
+Amazon ECR supports vulnerability scanning.
+
+Workflow
+
+```text
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Image Scan
+
+↓
+
+Security Report
+```
+
+Detected issues should be remediated before deployment.
+
+---
+
+# Secrets Management
+
+Never store
+
+- Passwords
+- API Keys
+- Certificates
+
+inside
+
+- Dockerfile
+- Source Code
+- Git Repository
+- Container Image
+
+Instead
+
+```text
+Application
+
+↓
+
+Task Role
+
+↓
+
+Secrets Manager
+
+↓
+
+Database Password
+```
+
+---
+
+# Network Security
+
+Production architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Subnet
+
+↓
+
+Fargate Tasks
+
+↓
+
+Amazon RDS
+```
+
+Security Groups control communication between every layer.
+
+---
+
+# IAM Security
+
+Use
+
+- Task Role
+- Execution Role
+- Least Privilege
+
+Never
+
+- Use AdministratorAccess unnecessarily
+- Embed Access Keys
+- Share IAM Roles across unrelated services
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Developer
+
+↓
+
+CI/CD
+
+↓
+
+Amazon ECR
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECS
+
+↓
+
+Fargate
+
+↓
+
+Task Role
+
+↓
+
+Secrets Manager
+
+↓
+
+Application
+```
+
+Every stage has security controls.
+
+---
+
+# Production Monitoring Example
+
+A payment platform monitors
+
+- CPU Utilization
+- Memory Usage
+- ALB Response Time
+- HTTP 5XX Errors
+- Running Tasks
+- Failed Deployments
+- CloudWatch Logs
+- Container Insights
+
+Alerts are sent to the DevOps team through Amazon SNS whenever thresholds are exceeded.
+
+---
+
+# Best Practices
+
+- Use structured logging.
+- Store logs in CloudWatch.
+- Enable Container Insights.
+- Configure CloudWatch Alarms.
+- Scan container images regularly.
+- Use Secrets Manager.
+- Keep containers in private subnets.
+- Follow least privilege IAM.
+- Monitor deployment failures.
+
+---
+
+# Common Mistakes
+
+- Logging secrets.
+- Using unstructured logs.
+- Ignoring log retention policies.
+- Running containers as root.
+- Disabling image scanning.
+- Ignoring CloudWatch alarms.
+- No monitoring dashboards.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Where are Fargate logs stored?
+- What is CloudWatch Logs?
+- What is Container Insights?
+
+## Intermediate
+
+- CloudWatch Metrics vs CloudWatch Logs.
+- Explain Container Insights.
+- Why should applications log to stdout?
+- How do you securely manage secrets?
+
+## Advanced
+
+- Design an observability solution for 200 Fargate microservices.
+- Explain a production monitoring architecture using CloudWatch, Container Insights, and SNS.
+- Design a secure Fargate deployment with image scanning, IAM Roles, Secrets Manager, and private networking.
+
+---
+
