@@ -612,3 +612,629 @@ Multiple security controls protect every layer.
 
 ---
 
+# Chapter 2 - AWS Identity & Access Management (IAM) Deep Dive
+
+Identity is the foundation of AWS security.
+
+Before securing networks, applications, or data, AWS must answer two questions:
+
+1. **Who is making the request?**
+2. **What are they allowed to do?**
+
+AWS Identity and Access Management (IAM) is the service responsible for authentication and authorization across AWS.
+
+Every AWS service integrates with IAM.
+
+---
+
+# What is IAM?
+
+AWS Identity and Access Management (IAM) is a global AWS service that controls
+
+- Authentication
+- Authorization
+- Access Management
+- Permissions
+- Temporary Credentials
+
+IAM allows you to securely control access to AWS resources.
+
+---
+
+# IAM Architecture
+
+```text
+User
+
+↓
+
+Authenticate
+
+↓
+
+IAM
+
+↓
+
+Authorization
+
+↓
+
+AWS Resources
+```
+
+Every request passes through IAM before reaching AWS services.
+
+---
+
+# Core IAM Components
+
+IAM consists of
+
+- Users
+- Groups
+- Roles
+- Policies
+- Identity Providers
+- MFA
+- Access Keys
+
+Each component has a specific purpose.
+
+---
+
+# IAM Users
+
+An IAM User represents a person or application requiring AWS access.
+
+Example
+
+```text
+Developer
+
+↓
+
+IAM User
+
+↓
+
+AWS Console
+```
+
+Each user has unique credentials.
+
+---
+
+# IAM Groups
+
+Groups simplify permission management.
+
+Instead of assigning permissions individually,
+
+users inherit permissions from their group.
+
+Example
+
+```text
+Developers
+
+↓
+
+IAM Group
+
+↓
+
+Amazon EC2 Access
+```
+
+Adding a new developer automatically grants the required permissions.
+
+---
+
+# IAM Roles
+
+IAM Roles provide temporary permissions.
+
+Unlike users,
+
+roles do not have permanent credentials.
+
+Example
+
+```text
+EC2 Instance
+
+↓
+
+IAM Role
+
+↓
+
+Amazon S3
+```
+
+The EC2 instance receives temporary credentials automatically.
+
+---
+
+# IAM Policies
+
+Policies define permissions.
+
+Example
+
+```text
+Allow
+
+↓
+
+Amazon S3
+
+↓
+
+Read Objects
+```
+
+Policies answer
+
+```text
+What actions are allowed?
+```
+
+---
+
+# Authentication vs Authorization
+
+Authentication
+
+```text
+Who are you?
+```
+
+Authorization
+
+```text
+What can you do?
+```
+
+IAM performs both functions.
+
+---
+
+# IAM Policy Structure
+
+A policy contains
+
+- Effect
+- Action
+- Resource
+- Condition
+
+Example
+
+```json
+{
+  "Effect": "Allow",
+  "Action": "s3:GetObject",
+  "Resource": "*"
+}
+```
+
+---
+
+# IAM Policy Flow
+
+```text
+User
+
+↓
+
+IAM Policy
+
+↓
+
+Evaluation
+
+↓
+
+Allow
+
+OR
+
+Deny
+```
+
+Every AWS API request is evaluated against IAM policies.
+
+---
+
+# Types of IAM Policies
+
+AWS supports
+
+- Identity-Based Policies
+- Resource-Based Policies
+- Inline Policies
+- Managed Policies
+
+Each serves different use cases.
+
+---
+
+# AWS Managed Policies
+
+AWS provides predefined policies.
+
+Examples
+
+- AmazonS3ReadOnlyAccess
+- AmazonEC2ReadOnlyAccess
+- AmazonRDSFullAccess
+
+Advantages
+
+- Easy to use
+- Maintained by AWS
+- Frequently updated
+
+---
+
+# Customer Managed Policies
+
+Organizations create their own reusable policies.
+
+Example
+
+```text
+Company
+
+↓
+
+Custom Policy
+
+↓
+
+Read Production Logs
+```
+
+These policies follow organizational requirements.
+
+---
+
+# Inline Policies
+
+Inline policies are attached directly to
+
+- One User
+- One Group
+- One Role
+
+They cannot be reused.
+
+Suitable for
+
+special-case permissions.
+
+---
+
+# IAM Permission Evaluation
+
+AWS evaluates permissions in the following order.
+
+```text
+Request
+
+↓
+
+Authentication
+
+↓
+
+Policy Evaluation
+
+↓
+
+Explicit Deny?
+
+↓
+
+Yes
+
+↓
+
+Access Denied
+
+────────────
+
+No
+
+↓
+
+Explicit Allow?
+
+↓
+
+Yes
+
+↓
+
+Access Granted
+```
+
+An Explicit Deny always overrides Allow.
+
+---
+
+# Principle of Least Privilege
+
+One of AWS's most important security principles.
+
+Users receive
+
+only the permissions required to perform their jobs.
+
+Example
+
+Instead of
+
+```text
+AdministratorAccess
+```
+
+Use
+
+```text
+Read S3
+
+Write CloudWatch Logs
+
+Describe EC2
+```
+
+---
+
+# Multi-Factor Authentication (MFA)
+
+Passwords alone are insufficient.
+
+Enable MFA.
+
+Architecture
+
+```text
+User
+
+↓
+
+Password
+
+↓
+
+MFA Code
+
+↓
+
+AWS Console
+```
+
+Even if the password is stolen,
+
+attackers cannot log in without the second factor.
+
+---
+
+# Access Keys
+
+Applications may access AWS using
+
+- Access Key ID
+- Secret Access Key
+
+Example
+
+```text
+Application
+
+↓
+
+Access Keys
+
+↓
+
+AWS API
+```
+
+AWS recommends replacing long-lived keys with IAM Roles whenever possible.
+
+---
+
+# Temporary Credentials
+
+IAM Roles use temporary credentials issued by AWS STS.
+
+Architecture
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Services
+```
+
+Benefits
+
+- Automatic Rotation
+- Improved Security
+- No Hardcoded Secrets
+
+---
+
+# Cross-Account Access
+
+Organizations commonly allow one AWS account to access another.
+
+Architecture
+
+```text
+Account A
+
+↓
+
+AssumeRole
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Account B
+```
+
+No permanent credential sharing is required.
+
+---
+
+# Identity Federation
+
+Employees often log in using corporate identities.
+
+Example
+
+```text
+Employee
+
+↓
+
+Azure AD
+
+↓
+
+IAM Identity Center
+
+↓
+
+AWS
+```
+
+Users avoid separate AWS passwords.
+
+---
+
+# IAM Best Practices
+
+- Use IAM Roles instead of Access Keys.
+- Enable MFA for all privileged users.
+- Follow Least Privilege.
+- Rotate credentials regularly.
+- Use Groups instead of assigning permissions individually.
+- Avoid using the root account.
+- Review IAM permissions periodically.
+- Enable CloudTrail auditing.
+
+---
+
+# Common Mistakes
+
+- Sharing IAM Users.
+- Hardcoding Access Keys.
+- Granting AdministratorAccess unnecessarily.
+- Disabling MFA.
+- Using the Root User for daily work.
+- Never reviewing permissions.
+- Creating duplicate policies.
+
+---
+
+# Enterprise Example
+
+A production environment
+
+```text
+Developer
+
+↓
+
+IAM Group
+
+↓
+
+Read-Only Production
+
+──────────────
+
+EC2
+
+↓
+
+IAM Role
+
+↓
+
+Amazon S3
+
+──────────────
+
+Lambda
+
+↓
+
+IAM Role
+
+↓
+
+DynamoDB
+
+──────────────
+
+CloudTrail
+
+↓
+
+Audit Logs
+```
+
+Every workload follows least privilege.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is IAM?
+- IAM User vs IAM Role.
+- What is an IAM Policy?
+
+## Intermediate
+
+- IAM Role vs Access Keys.
+- AWS Managed Policy vs Customer Managed Policy.
+- Authentication vs Authorization.
+- Explain the Principle of Least Privilege.
+
+## Advanced
+
+- Design IAM permissions for an enterprise with Developers, DevOps Engineers, Security Engineers, and Auditors.
+- Explain how IAM Roles improve security compared to Access Keys.
+- Design a cross-account AWS architecture where applications in one account securely access S3 buckets and DynamoDB tables in another account without sharing credentials.
+
+---
+
