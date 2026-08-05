@@ -1776,3 +1776,471 @@ Benefits:
 
 ---
 
+## When Should You Use VPC Endpoints?
+
+### Use Gateway Endpoint When
+
+- Accessing Amazon S3
+- Accessing Amazon DynamoDB
+- Workloads are in private subnets
+- You want to eliminate NAT Gateway charges
+
+---
+
+### Use Interface Endpoint When
+
+- Accessing Secrets Manager
+- Using Systems Manager (SSM)
+- Pulling images from Amazon ECR
+- Sending logs to CloudWatch
+- Using KMS
+- Calling AWS APIs privately
+
+---
+
+# Endpoint Security
+
+Security is enforced at multiple layers.
+
+```text
+Application
+
+↓
+
+Security Group
+
+↓
+
+VPC Endpoint
+
+↓
+
+Endpoint Policy
+
+↓
+
+IAM Policy
+
+↓
+
+AWS Service
+```
+
+Even if one layer allows access, another layer can deny it.
+
+---
+
+# Endpoint Policies
+
+Endpoint Policies provide resource-level control.
+
+Example
+
+Allow only one S3 bucket.
+
+```json
+{
+    "Statement":[
+        {
+            "Effect":"Allow",
+            "Action":"s3:*",
+            "Resource":[
+                "arn:aws:s3:::company-backups",
+                "arn:aws:s3:::company-backups/*"
+            ]
+        }
+    ]
+}
+```
+
+Benefits
+
+- Least privilege
+- Prevent accidental access
+- Compliance
+- Data protection
+
+---
+
+# Private DNS
+
+Private DNS allows applications to use normal AWS service names.
+
+Without Private DNS
+
+```text
+Application
+
+↓
+
+vpce-abc123.amazonaws.com
+```
+
+With Private DNS
+
+```text
+Application
+
+↓
+
+s3.amazonaws.com
+```
+
+AWS automatically resolves it to the Interface Endpoint.
+
+Applications don't require configuration changes.
+
+---
+
+# VPC Endpoints vs NAT Gateway
+
+| Feature | VPC Endpoint | NAT Gateway |
+|----------|--------------|-------------|
+| Internet Required | ❌ | ✅ |
+| Private Access | ✅ | ❌ |
+| S3 Access | ✅ | ✅ |
+| Secrets Manager | ✅ | ✅ |
+| Security | High | Medium |
+| NAT Charges | None (Gateway Endpoint) | Yes |
+
+---
+
+# Production Use Cases
+
+## Private Amazon EKS Cluster
+
+```text
+Private Worker Nodes
+
+↓
+
+Interface Endpoints
+
+↓
+
+ECR
+
+↓
+
+Secrets Manager
+
+↓
+
+CloudWatch
+```
+
+No Internet Gateway.
+
+No NAT Gateway.
+
+Entire cluster remains private.
+
+---
+
+## Secure Financial Applications
+
+```text
+Application
+
+↓
+
+Gateway Endpoint
+
+↓
+
+Amazon S3
+```
+
+Sensitive customer documents never traverse the internet.
+
+---
+
+## Private CI/CD Pipeline
+
+```text
+Jenkins
+
+↓
+
+Interface Endpoint
+
+↓
+
+Amazon ECR
+
+↓
+
+Docker Images
+```
+
+Image pulls remain inside AWS.
+
+---
+
+# Best Practices
+
+- Use Gateway Endpoints for S3 and DynamoDB whenever possible.
+- Use Interface Endpoints for AWS APIs.
+- Enable Private DNS.
+- Restrict Endpoint Policies.
+- Monitor endpoint usage.
+- Remove unused endpoints.
+- Keep workloads in private subnets.
+
+---
+
+# Common Troubleshooting
+
+| Problem | Possible Cause | Resolution |
+|----------|---------------|------------|
+| Cannot access S3 | Route Table missing | Associate Gateway Endpoint |
+| DNS resolution fails | Private DNS disabled | Enable Private DNS |
+| Access Denied | Endpoint Policy | Review permissions |
+| Connection Timeout | Security Group | Allow HTTPS (443) |
+| Service Unreachable | Wrong endpoint | Verify endpoint service |
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a VPC Endpoint?
+- Why are VPC Endpoints used?
+- What are the types of VPC Endpoints?
+
+## Intermediate
+
+- Gateway Endpoint vs Interface Endpoint.
+- Why does S3 use Gateway Endpoint?
+- Explain Endpoint Policies.
+
+## Advanced
+
+- Design a fully private Amazon EKS cluster.
+- How can you eliminate NAT Gateway costs?
+- How do Interface Endpoints improve security?
+
+---
+
+# Chapter 5 - AWS Resource Access Manager (AWS RAM)
+
+## What is AWS RAM?
+
+AWS Resource Access Manager (AWS RAM) is a service that allows you to securely share supported AWS resources across multiple AWS accounts without duplicating them.
+
+Instead of creating the same resource in every account, AWS RAM lets one account own the resource while other accounts consume it.
+
+It is widely used in enterprise multi-account environments.
+
+---
+
+# Why AWS RAM?
+
+Imagine an organization with:
+
+- 60 AWS Accounts
+- Shared Transit Gateway
+- Shared Subnets
+- Shared Route53 Resolver
+- Shared License Manager
+
+Creating these resources separately in every account would increase cost and operational complexity.
+
+AWS RAM solves this by enabling centralized resource sharing.
+
+---
+
+# AWS RAM Architecture
+
+```text
+                 AWS Organization
+
+                        │
+
+          Network Account (Owner)
+
+                        │
+
+               AWS RAM Share
+
+        ┌───────────────┼───────────────┐
+        │               │               │
+      Dev Account     QA Account    Prod Account
+
+        │               │               │
+
+      Uses Shared Transit Gateway
+```
+
+The Network Account owns the Transit Gateway.
+
+Other accounts consume it without creating additional gateways.
+
+---
+
+# Resources Supported by AWS RAM
+
+Common resources include:
+
+- Transit Gateway
+- Subnets (Shared VPC)
+- Route53 Resolver Rules
+- License Manager Configurations
+- EC2 Capacity Reservations
+- Outposts
+- Prefix Lists
+
+The supported resource list continues to grow as AWS adds new integrations.
+
+---
+
+# How AWS RAM Works
+
+```text
+Create Resource
+
+↓
+
+Create Resource Share
+
+↓
+
+Select Accounts / Organization
+
+↓
+
+Accept Share (if required)
+
+↓
+
+Consume Shared Resource
+```
+
+If AWS Organizations sharing is enabled, accounts in the organization can often access shared resources automatically.
+
+---
+
+# Example - Shared Transit Gateway
+
+Without AWS RAM
+
+```text
+Dev Account
+
+↓
+
+Own TGW
+
+QA Account
+
+↓
+
+Own TGW
+
+Prod Account
+
+↓
+
+Own TGW
+```
+
+Three Transit Gateways.
+
+Higher cost.
+
+More management.
+
+---
+
+With AWS RAM
+
+```text
+Network Account
+
+↓
+
+Transit Gateway
+
+↓
+
+Shared Using AWS RAM
+
+↓
+
+Dev
+
+↓
+
+QA
+
+↓
+
+Prod
+```
+
+One Transit Gateway.
+
+Centralized routing.
+
+Lower operational overhead.
+
+---
+
+# Example - Shared VPC
+
+A networking team owns the VPC.
+
+Application teams deploy workloads into shared subnets.
+
+```text
+Network Account
+
+↓
+
+Shared VPC
+
+↓
+
+Application Account
+
+↓
+
+EC2
+
+↓
+
+Amazon EKS
+
+↓
+
+RDS
+```
+
+Application teams do not manage networking.
+
+Networking remains centrally controlled.
+
+---
+
+# Advantages
+
+- Centralized networking
+- Lower operational effort
+- Reduced infrastructure duplication
+- Consistent security controls
+- Better governance
+- Lower cost
+- Easier multi-account management
+
+---
+
+# Limitations
+
+- Only supported AWS resources can be shared.
+- Resource owner retains control.
+- IAM permissions are still required.
+- Not all AWS services support AWS RAM.
+
+---
+
