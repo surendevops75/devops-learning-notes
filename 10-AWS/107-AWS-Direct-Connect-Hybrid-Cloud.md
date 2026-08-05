@@ -1774,3 +1774,682 @@ Network architecture evolves as cloud adoption grows.
 
 ---
 
+# Chapter 4 - AWS Direct Connect Routing, BGP & Route Propagation (Deep Dive)
+
+One of the most important concepts in AWS Direct Connect is **routing**.
+
+A physical Direct Connect connection alone cannot send traffic between your data center and AWS.
+
+Routing is performed using **Border Gateway Protocol (BGP)**.
+
+Understanding BGP and route propagation is essential for troubleshooting production connectivity issues and is one of the most frequently asked AWS networking interview topics.
+
+---
+
+# Why Routing is Required
+
+Suppose your company network is
+
+```text
+10.10.0.0/16
+```
+
+and your AWS VPC is
+
+```text
+10.0.0.0/16
+```
+
+Without routing,
+
+neither network knows where the other network exists.
+
+```text
+On-Premises
+
+↓
+
+10.10.0.0/16
+
+?
+
+AWS Network Unknown
+```
+
+Traffic cannot reach AWS.
+
+---
+
+# Routing Architecture
+
+```text
+On-Premises
+
+↓
+
+Customer Router
+
+↓
+
+BGP
+
+↓
+
+AWS Router
+
+↓
+
+VPC Routes
+
+↓
+
+Amazon EC2
+```
+
+Both sides exchange network routes dynamically.
+
+---
+
+# What is BGP?
+
+Border Gateway Protocol (BGP) is the routing protocol used by Direct Connect.
+
+Its responsibilities include
+
+- Route Advertisement
+- Route Learning
+- Route Selection
+- Failover Detection
+- Path Optimization
+
+Instead of manually configuring routes,
+
+routers automatically exchange network information.
+
+---
+
+# Why BGP Instead of Static Routes?
+
+Without BGP
+
+```text
+Every New Network
+
+↓
+
+Manual Route Update
+
+↓
+
+High Operational Effort
+```
+
+With BGP
+
+```text
+New Network
+
+↓
+
+Advertised Automatically
+
+↓
+
+Routing Updated
+```
+
+BGP makes large enterprise networks manageable.
+
+---
+
+# BGP Session
+
+A BGP session is established between
+
+```text
+Customer Router
+
+⇄
+
+AWS Router
+```
+
+Once established,
+
+both routers exchange routing information continuously.
+
+---
+
+# BGP Neighbor Relationship
+
+```text
+Customer Router
+
+↓
+
+Neighbor
+
+↓
+
+AWS Router
+```
+
+Both routers trust each other only after successful BGP peering.
+
+---
+
+# Autonomous System Number (ASN)
+
+Every BGP router belongs to an Autonomous System (AS).
+
+Example
+
+```text
+Customer ASN
+
+65010
+
+↓
+
+AWS ASN
+
+64512
+```
+
+These ASNs identify routing domains.
+
+AWS provides a private ASN by default, or customers can use a public ASN if required.
+
+---
+
+# BGP Route Advertisement
+
+Customer advertises
+
+```text
+10.10.0.0/16
+```
+
+AWS advertises
+
+```text
+10.0.0.0/16
+```
+
+Result
+
+```text
+Customer
+
+Knows AWS Routes
+
+AWS
+
+Knows Customer Routes
+```
+
+Communication becomes possible.
+
+---
+
+# Route Exchange Workflow
+
+```text
+Customer Router
+
+↓
+
+Advertise
+
+10.10.0.0/16
+
+↓
+
+AWS Router
+
+↓
+
+Install Route
+
+↓
+
+AWS Resources Reach Customer
+```
+
+The reverse process occurs simultaneously.
+
+---
+
+# Dynamic Route Learning
+
+Suppose a new network is added.
+
+```text
+10.20.0.0/16
+```
+
+Customer router advertises
+
+↓
+
+AWS learns automatically
+
+↓
+
+Traffic begins flowing
+
+No manual route changes are required.
+
+---
+
+# Route Propagation
+
+Routes learned through BGP can be propagated into AWS routing components.
+
+Example
+
+```text
+Customer Router
+
+↓
+
+BGP
+
+↓
+
+VGW
+
+↓
+
+VPC Route Table
+```
+
+The VPC automatically learns on-premises routes.
+
+---
+
+# Route Tables
+
+Example
+
+```text
+Destination
+
+10.10.0.0/16
+
+↓
+
+Target
+
+Virtual Private Gateway
+```
+
+Now EC2 instances know where to send traffic.
+
+---
+
+# Packet Flow
+
+Suppose an EC2 instance accesses an on-premises database.
+
+```text
+EC2
+
+↓
+
+VPC Route Table
+
+↓
+
+VGW
+
+↓
+
+Direct Connect
+
+↓
+
+Customer Router
+
+↓
+
+Database
+```
+
+Every hop follows routing information learned through BGP.
+
+---
+
+# Multiple Routes
+
+Suppose AWS receives two paths.
+
+```text
+Path A
+
+↓
+
+Direct Connect
+
+Path B
+
+↓
+
+VPN
+```
+
+BGP selects the preferred route based on routing attributes.
+
+---
+
+# Route Failover
+
+Normal operation
+
+```text
+Direct Connect
+
+↓
+
+Traffic
+```
+
+Failure
+
+```text
+Direct Connect Down
+
+↓
+
+BGP Detects Failure
+
+↓
+
+VPN Route Preferred
+
+↓
+
+Traffic Continues
+```
+
+This provides automatic failover.
+
+---
+
+# Active-Standby Architecture
+
+```text
+Primary
+
+↓
+
+Direct Connect
+
+Backup
+
+↓
+
+VPN
+```
+
+Traffic normally uses Direct Connect.
+
+VPN becomes active only during failures.
+
+---
+
+# Active-Active Architecture
+
+```text
+Direct Connect 1
+
+↓
+
+Traffic
+
+────────────
+
+Direct Connect 2
+
+↓
+
+Traffic
+```
+
+Both links carry traffic simultaneously.
+
+Benefits
+
+- Higher bandwidth
+- Better availability
+- Load sharing (depending on routing design)
+
+---
+
+# Route Summarization
+
+Instead of advertising
+
+```text
+10.10.1.0/24
+
+10.10.2.0/24
+
+10.10.3.0/24
+```
+
+Advertise
+
+```text
+10.10.0.0/16
+```
+
+Benefits
+
+- Smaller routing tables
+- Faster convergence
+- Easier management
+
+---
+
+# Longest Prefix Match
+
+Suppose AWS receives
+
+```text
+10.10.0.0/16
+
+10.10.1.0/24
+```
+
+Traffic destined for
+
+```text
+10.10.1.25
+```
+
+uses
+
+```text
+10.10.1.0/24
+```
+
+because the most specific route always wins.
+
+---
+
+# BGP Convergence
+
+When a network changes
+
+```text
+Link Failure
+
+↓
+
+BGP Updates Routes
+
+↓
+
+Traffic Moves
+
+↓
+
+Communication Restored
+```
+
+This process is called convergence.
+
+Fast convergence minimizes downtime.
+
+---
+
+# Monitoring BGP
+
+Monitor
+
+- Session State
+- Advertised Routes
+- Received Routes
+- Prefix Count
+- Route Changes
+- Connection Status
+
+Loss of BGP sessions usually means loss of Direct Connect connectivity.
+
+---
+
+# Common Routing Problems
+
+## BGP Session Down
+
+Possible causes
+
+- Incorrect ASN
+- Wrong IP configuration
+- Physical link failure
+- Authentication mismatch
+- Firewall blocking BGP
+
+---
+
+## Routes Not Learned
+
+Check
+
+- BGP advertisements
+- Route filters
+- Prefix limits
+- Route propagation
+- Route tables
+
+---
+
+## EC2 Cannot Reach On-Premises
+
+Verify
+
+- VPC Route Table
+- Security Groups
+- Network ACLs
+- BGP Session
+- Customer Router Configuration
+
+---
+
+## On-Premises Cannot Reach AWS
+
+Verify
+
+- Customer routing table
+- AWS advertised prefixes
+- Virtual Interface configuration
+- VGW/TGW association
+- Firewall rules
+
+---
+
+# Enterprise Architecture
+
+```text
+Corporate Data Center
+
+↓
+
+Customer Router
+
+↓
+
+Direct Connect
+
+↓
+
+AWS Router
+
+↓
+
+BGP
+
+↓
+
+Transit Gateway
+
+↓
+
+Production VPC
+
+↓
+
+Application
+```
+
+Every route is learned dynamically.
+
+---
+
+# Best Practices
+
+- Use BGP instead of static routing.
+- Advertise summarized routes where possible.
+- Monitor BGP session health.
+- Use redundant Direct Connect links.
+- Configure VPN as backup.
+- Validate route propagation after network changes.
+- Keep routing tables simple.
+
+---
+
+# Common Mistakes
+
+- Using incorrect ASN values.
+- Forgetting route propagation.
+- Advertising overlapping CIDR ranges.
+- Depending on static routes.
+- No backup connectivity.
+- Ignoring BGP monitoring.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is BGP?
+- Why does Direct Connect use BGP?
+- What is an ASN?
+
+## Intermediate
+
+- Explain route propagation.
+- Active-Active vs Active-Standby Direct Connect.
+- What is route summarization?
+- Explain longest prefix match.
+
+## Advanced
+
+- Design a hybrid network where Direct Connect is the primary connection and Site-to-Site VPN provides automatic failover.
+- Explain the complete packet flow from an EC2 instance to an on-premises database using BGP.
+- A Direct Connect link is up, but EC2 instances cannot communicate with the on-premises network. Describe your step-by-step troubleshooting process.
+
+---
+
