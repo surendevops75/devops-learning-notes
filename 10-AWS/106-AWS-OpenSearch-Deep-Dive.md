@@ -6136,3 +6136,797 @@ Characteristics
 
 ---
 
+# Chapter 9 - Security, Authentication, Authorization & Encryption
+
+OpenSearch often stores some of an organization's most valuable data, including
+
+- Application Logs
+- Customer Activity
+- Audit Logs
+- Security Events
+- Payment Logs
+- Infrastructure Logs
+
+Because of this, securing an OpenSearch cluster is just as important as securing a production database.
+
+A production OpenSearch deployment should implement security at multiple layers.
+
+---
+
+# OpenSearch Security Layers
+
+```text
+                 OpenSearch Security
+
+        ┌──────────┼──────────┐
+
+ Network   Authentication   Encryption
+
+        │          │             │
+
+ Authorization   Audit Logs   Monitoring
+```
+
+Security is implemented using a defense-in-depth approach.
+
+---
+
+# Security Architecture
+
+```text
+Users
+
+↓
+
+IAM
+
+↓
+
+VPC
+
+↓
+
+Security Groups
+
+↓
+
+OpenSearch Domain
+
+↓
+
+Encrypted Storage
+
+↓
+
+Encrypted Communication
+```
+
+Every request passes through multiple security checks.
+
+---
+
+# Network Security
+
+The first layer of security is network isolation.
+
+Instead of exposing OpenSearch to the internet,
+
+production clusters should run inside a VPC.
+
+```text
+Internet
+
+×
+
+No Direct Access
+
+↓
+
+Private VPC
+
+↓
+
+OpenSearch
+```
+
+Only authorized applications can communicate with the cluster.
+
+---
+
+# VPC Deployment
+
+Production architecture
+
+```text
+Application
+
+↓
+
+Private Subnet
+
+↓
+
+Security Group
+
+↓
+
+OpenSearch
+
+↓
+
+Private Subnet
+```
+
+The cluster never receives public internet traffic.
+
+---
+
+# Security Groups
+
+Security Groups control
+
+- Who can connect
+- Which ports are allowed
+- Which applications have access
+
+Example
+
+```text
+Application SG
+
+↓
+
+Allow
+
+443
+
+↓
+
+OpenSearch SG
+```
+
+Only approved services can connect.
+
+---
+
+# Network ACLs
+
+Network ACLs provide subnet-level protection.
+
+Architecture
+
+```text
+Subnet
+
+↓
+
+Network ACL
+
+↓
+
+Security Group
+
+↓
+
+OpenSearch
+```
+
+They provide an additional security layer.
+
+---
+
+# Identity & Authentication
+
+OpenSearch supports multiple authentication methods.
+
+Examples
+
+- AWS IAM
+- SAML
+- Amazon Cognito
+- Internal User Database
+- Fine-Grained Access Control
+
+Authentication answers
+
+```text
+Who are you?
+```
+
+---
+
+# Authorization
+
+Authorization determines
+
+```text
+What are you allowed to do?
+```
+
+Example
+
+Developer
+
+↓
+
+Read Logs
+
+Operations Team
+
+↓
+
+Read + Write
+
+Administrator
+
+↓
+
+Full Access
+
+Every authenticated user does not receive the same permissions.
+
+---
+
+# IAM Authentication
+
+Applications running in AWS commonly use IAM.
+
+Architecture
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+AWS Signature V4
+
+↓
+
+OpenSearch
+```
+
+No usernames or passwords are required.
+
+---
+
+# Resource-Based Policies
+
+OpenSearch Domains support resource policies.
+
+Example
+
+```text
+Allow
+
+Production ECS Role
+
+↓
+
+OpenSearch
+```
+
+Deny
+
+```text
+All Others
+```
+
+Resource policies are similar to Amazon S3 bucket policies.
+
+---
+
+# Fine-Grained Access Control (FGAC)
+
+FGAC provides security inside the cluster.
+
+Instead of granting access to everything,
+
+permissions can be limited.
+
+Examples
+
+```text
+Developer
+
+↓
+
+Application Logs
+
+Security Team
+
+↓
+
+Security Indices
+
+Auditor
+
+↓
+
+Audit Logs
+```
+
+Users only see authorized data.
+
+---
+
+# Role-Based Access Control (RBAC)
+
+Roles simplify permission management.
+
+Example
+
+```text
+Admin
+
+↓
+
+Full Access
+
+DevOps
+
+↓
+
+Read Logs
+
+Developer
+
+↓
+
+Application Logs
+
+Auditor
+
+↓
+
+Read Only
+```
+
+Users inherit permissions from assigned roles.
+
+---
+
+# Index-Level Security
+
+Different teams often own different indices.
+
+Example
+
+```text
+payment-logs
+
+↓
+
+Payments Team
+
+audit-logs
+
+↓
+
+Compliance Team
+
+security-events
+
+↓
+
+SOC Team
+```
+
+Access is controlled at the index level.
+
+---
+
+# Document-Level Security
+
+Sometimes users can access an index,
+
+but not every document.
+
+Example
+
+```text
+Country
+
+↓
+
+India
+
+↓
+
+Indian Team
+
+Country
+
+↓
+
+USA
+
+↓
+
+US Team
+```
+
+The same index serves multiple teams securely.
+
+---
+
+# Field-Level Security
+
+Sensitive fields can be hidden.
+
+Document
+
+```json
+{
+ "customer":"John",
+ "creditCard":"XXXX",
+ "amount":500
+}
+```
+
+Developer
+
+↓
+
+Sees
+
+```text
+customer
+
+amount
+```
+
+Credit card information remains hidden.
+
+---
+
+# Encryption in Transit
+
+Data moving across the network should always be encrypted.
+
+```text
+Application
+
+↓
+
+HTTPS / TLS
+
+↓
+
+OpenSearch
+```
+
+Without TLS,
+
+network traffic could be intercepted.
+
+---
+
+# Encryption at Rest
+
+Stored data should also be encrypted.
+
+```text
+Documents
+
+↓
+
+Encrypted Storage
+
+↓
+
+Disk
+```
+
+AWS commonly uses AWS KMS for encryption key management.
+
+Benefits
+
+- Data protection
+- Compliance
+- Secure storage
+
+---
+
+# AWS KMS Integration
+
+Architecture
+
+```text
+OpenSearch
+
+↓
+
+AWS KMS
+
+↓
+
+Encryption Keys
+
+↓
+
+Encrypted Indices
+```
+
+Keys remain centrally managed.
+
+---
+
+# Node-to-Node Encryption
+
+In a cluster,
+
+nodes constantly communicate.
+
+Without encryption
+
+```text
+Node A
+
+↓
+
+Plain Text
+
+↓
+
+Node B
+```
+
+Production recommendation
+
+```text
+Node A
+
+↓
+
+TLS
+
+↓
+
+Node B
+```
+
+All internal communication remains encrypted.
+
+---
+
+# Audit Logging
+
+Every important activity should be logged.
+
+Examples
+
+- Login Attempts
+- Failed Authentication
+- Permission Changes
+- Deleted Indices
+- Configuration Changes
+
+Workflow
+
+```text
+User
+
+↓
+
+Action
+
+↓
+
+Audit Log
+
+↓
+
+Security Team
+```
+
+Audit logs are essential for compliance.
+
+---
+
+# Amazon Cognito Integration
+
+For OpenSearch Dashboards,
+
+Amazon Cognito can provide user authentication.
+
+Architecture
+
+```text
+User
+
+↓
+
+Amazon Cognito
+
+↓
+
+OpenSearch Dashboards
+
+↓
+
+OpenSearch
+```
+
+Users sign in using managed identities.
+
+---
+
+# SAML Authentication
+
+Large enterprises often integrate with
+
+- Active Directory
+- Azure AD
+- Okta
+- Ping Identity
+
+Architecture
+
+```text
+Employee
+
+↓
+
+Corporate Identity Provider
+
+↓
+
+SAML
+
+↓
+
+OpenSearch Dashboards
+```
+
+Users authenticate using corporate credentials.
+
+---
+
+# Cross-Account Access
+
+Enterprise environments frequently access OpenSearch across AWS accounts.
+
+Architecture
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+STS AssumeRole
+
+↓
+
+OpenSearch
+
+↓
+
+Shared Services Account
+```
+
+Cross-account access avoids credential sharing.
+
+---
+
+# Security Monitoring
+
+Monitor
+
+- Authentication Failures
+- Authorization Failures
+- High Error Rates
+- Unauthorized Requests
+- API Usage
+- Cluster Configuration Changes
+
+CloudWatch and audit logs provide visibility into these events.
+
+---
+
+# Enterprise Production Architecture
+
+```text
+Applications
+
+↓
+
+IAM Roles
+
+↓
+
+Private VPC
+
+↓
+
+Security Groups
+
+↓
+
+Amazon OpenSearch
+
+↓
+
+KMS Encryption
+
+↓
+
+Audit Logs
+
+↓
+
+CloudWatch
+
+↓
+
+Security Operations Center
+```
+
+Characteristics
+
+- Private networking
+- IAM authentication
+- TLS encryption
+- KMS encryption
+- Fine-Grained Access Control
+- Audit logging
+- Continuous monitoring
+
+---
+
+# Best Practices
+
+- Deploy OpenSearch inside a VPC.
+- Enable HTTPS/TLS.
+- Enable node-to-node encryption.
+- Enable encryption at rest with AWS KMS.
+- Use IAM Roles instead of long-lived credentials.
+- Enable Fine-Grained Access Control.
+- Follow least privilege.
+- Enable audit logging.
+- Rotate encryption keys according to organizational policies.
+
+---
+
+# Common Mistakes
+
+- Exposing OpenSearch publicly.
+- Using Administrator permissions for every user.
+- Disabling TLS.
+- Sharing one admin account across teams.
+- Ignoring audit logs.
+- Not enabling encryption at rest.
+- Allowing unrestricted Security Group access.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How do you secure an OpenSearch cluster?
+- What is Fine-Grained Access Control?
+- What is encryption at rest?
+
+## Intermediate
+
+- IAM Authentication vs SAML Authentication.
+- Resource Policy vs IAM Policy.
+- Document-Level Security vs Field-Level Security.
+- Why deploy OpenSearch inside a VPC?
+
+## Advanced
+
+- Design a secure enterprise OpenSearch platform for a banking application.
+- Explain how IAM, Security Groups, KMS, TLS, and Fine-Grained Access Control work together to secure an OpenSearch cluster.
+- Design a multi-team OpenSearch deployment where Development, Security, Compliance, and Operations teams each have different levels of access while sharing the same cluster.
+
+---
+
