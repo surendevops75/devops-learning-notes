@@ -7830,3 +7830,724 @@ The operations team receives alerts before customers notice issues.
 
 ---
 
+# Chapter 11 - High Availability, Scaling, Snapshots & Disaster Recovery
+
+Enterprise OpenSearch clusters must continue operating even when
+
+- A node fails
+- An Availability Zone becomes unavailable
+- Hardware fails
+- Storage becomes corrupted
+- Human errors occur
+
+To achieve this, OpenSearch provides multiple High Availability (HA) and Disaster Recovery (DR) features.
+
+---
+
+# High Availability Goals
+
+A production OpenSearch cluster should provide
+
+- No Single Point of Failure
+- Automatic Failover
+- Continuous Search Availability
+- Continuous Indexing
+- Fast Recovery
+- Minimal Downtime
+
+---
+
+# High Availability Architecture
+
+```text
+                Applications
+
+                       │
+
+                Load Balancer
+
+                       │
+
+────────────────────────────────────
+
+Availability Zone A
+
+Manager-1
+
+Data-1
+
+────────────────────────────────────
+
+Availability Zone B
+
+Manager-2
+
+Data-2
+
+────────────────────────────────────
+
+Availability Zone C
+
+Manager-3
+
+Data-3
+```
+
+If one Availability Zone fails,
+
+the cluster continues operating.
+
+---
+
+# Multi-AZ Deployment
+
+AWS recommends deploying production domains across multiple Availability Zones.
+
+Benefits
+
+- Higher Availability
+- Better Fault Tolerance
+- Automatic Failover
+- Replica Protection
+
+Example
+
+```text
+AZ-A
+
+↓
+
+Primary Shard
+
+AZ-B
+
+↓
+
+Replica
+
+AZ-C
+
+↓
+
+Replica
+```
+
+Loss of one Availability Zone does not result in data loss.
+
+---
+
+# Replica-Based High Availability
+
+Primary shard
+
+```text
+Node-1
+```
+
+Replica
+
+```text
+Node-2
+```
+
+If
+
+```text
+Node-1
+
+↓
+
+Fails
+```
+
+OpenSearch promotes
+
+```text
+Replica
+
+↓
+
+Primary
+```
+
+Applications continue searching without manual intervention.
+
+---
+
+# Node Failure Workflow
+
+```text
+Node Failure
+
+↓
+
+Cluster Detects Failure
+
+↓
+
+Replica Promotion
+
+↓
+
+Shard Reallocation
+
+↓
+
+Cluster Healthy
+```
+
+Recovery begins automatically.
+
+---
+
+# Cluster Manager Failure
+
+Suppose
+
+```text
+Manager-1
+
+↓
+
+Failure
+```
+
+Remaining manager nodes
+
+↓
+
+Election
+
+↓
+
+New Cluster Manager
+
+↓
+
+Cluster Continues
+
+Applications usually remain unaffected.
+
+---
+
+# Availability Zone Failure
+
+Suppose
+
+```text
+AZ-A
+
+↓
+
+Unavailable
+```
+
+Remaining Availability Zones continue serving
+
+- Search Requests
+- Index Requests
+
+OpenSearch reallocates replicas after recovery.
+
+---
+
+# Horizontal Scaling
+
+When more storage or performance is required,
+
+add more Data Nodes.
+
+```text
+3 Data Nodes
+
+↓
+
+6 Data Nodes
+
+↓
+
+12 Data Nodes
+```
+
+Benefits
+
+- Higher Capacity
+- Faster Searches
+- Better Parallelism
+
+---
+
+# Vertical Scaling
+
+Instead of adding nodes,
+
+increase instance size.
+
+Example
+
+```text
+8 GB RAM
+
+↓
+
+32 GB RAM
+```
+
+Benefits
+
+- More JVM Heap
+- Higher CPU
+- Better Cache
+
+Limitations
+
+Eventually vertical scaling reaches hardware limits.
+
+---
+
+# Horizontal vs Vertical Scaling
+
+| Horizontal | Vertical |
+|------------|----------|
+| Add Nodes | Increase Node Size |
+| Better Availability | Simpler |
+| Better Scalability | Hardware Limited |
+| Preferred for Large Clusters | Suitable for Small Clusters |
+
+Enterprise deployments usually prefer horizontal scaling.
+
+---
+
+# Automatic Shard Rebalancing
+
+Suppose
+
+New Data Node added.
+
+```text
+Node-1
+
+↓
+
+Heavy Load
+
+↓
+
+Node-4 Added
+
+↓
+
+Move Shards
+
+↓
+
+Balanced Cluster
+```
+
+OpenSearch redistributes shards automatically.
+
+---
+
+# Snapshot
+
+A Snapshot is a backup of an OpenSearch cluster.
+
+Snapshots include
+
+- Indices
+- Mappings
+- Settings
+- Aliases
+
+Snapshots do **not** include running processes.
+
+---
+
+# Snapshot Architecture
+
+```text
+OpenSearch
+
+↓
+
+Snapshot Repository
+
+↓
+
+Amazon S3
+```
+
+Amazon S3 is the most common snapshot repository on AWS.
+
+---
+
+# Snapshot Workflow
+
+```text
+Cluster
+
+↓
+
+Create Snapshot
+
+↓
+
+Amazon S3
+
+↓
+
+Backup Complete
+```
+
+Snapshots should be scheduled regularly.
+
+---
+
+# Snapshot Restore
+
+Suppose
+
+An index is accidentally deleted.
+
+Recovery
+
+```text
+Amazon S3
+
+↓
+
+Restore Snapshot
+
+↓
+
+OpenSearch
+
+↓
+
+Index Available
+```
+
+This is much faster than rebuilding data manually.
+
+---
+
+# Automated Snapshots
+
+Amazon OpenSearch Service automatically creates periodic snapshots for managed domains.
+
+Benefits
+
+- Disaster Recovery
+- Operational Safety
+- Easy Restoration
+
+For long-term retention and cross-region protection, organizations often create additional manual snapshots.
+
+---
+
+# Cross-Region Disaster Recovery
+
+Production
+
+```text
+Mumbai Region
+
+↓
+
+Snapshot
+
+↓
+
+Amazon S3
+
+↓
+
+Replication
+
+↓
+
+Singapore Region
+```
+
+If an entire AWS Region becomes unavailable,
+
+the backup remains available elsewhere.
+
+---
+
+# Disaster Recovery Strategy
+
+Typical enterprise strategy
+
+```text
+Production Cluster
+
+↓
+
+Scheduled Snapshot
+
+↓
+
+Amazon S3
+
+↓
+
+Cross Region Copy
+
+↓
+
+Standby Cluster
+```
+
+Recovery becomes much faster.
+
+---
+
+# RPO and RTO
+
+Two important Disaster Recovery metrics.
+
+## Recovery Point Objective (RPO)
+
+Maximum acceptable data loss.
+
+Example
+
+```text
+Snapshots Every Hour
+
+↓
+
+Maximum Data Loss
+
+1 Hour
+```
+
+---
+
+## Recovery Time Objective (RTO)
+
+Maximum acceptable recovery time.
+
+Example
+
+```text
+Cluster Failure
+
+↓
+
+Restore
+
+↓
+
+30 Minutes
+```
+
+Business requirements determine acceptable RPO and RTO values.
+
+---
+
+# Backup Strategy
+
+Typical enterprise backup policy
+
+```text
+Hourly Snapshot
+
+↓
+
+Daily Snapshot
+
+↓
+
+Weekly Snapshot
+
+↓
+
+Monthly Snapshot
+```
+
+Older backups are removed according to retention policies.
+
+---
+
+# Rolling Upgrade
+
+Managed OpenSearch supports rolling upgrades.
+
+Workflow
+
+```text
+Upgrade Node
+
+↓
+
+Restart
+
+↓
+
+Rejoin Cluster
+
+↓
+
+Upgrade Next Node
+```
+
+Applications continue operating during the upgrade.
+
+---
+
+# Blue-Green Deployment
+
+Amazon OpenSearch Service often performs major maintenance using a Blue-Green deployment model.
+
+```text
+Blue Cluster
+
+↓
+
+Create Green Cluster
+
+↓
+
+Copy Data
+
+↓
+
+Health Validation
+
+↓
+
+Switch Traffic
+
+↓
+
+Remove Blue
+```
+
+Benefits
+
+- Minimal downtime
+- Easier rollback
+- Safer upgrades
+
+---
+
+# Capacity Planning
+
+Growth should be planned before the cluster becomes overloaded.
+
+Monitor
+
+- Daily Log Volume
+- Storage Growth
+- Search Rate
+- Indexing Rate
+- JVM Usage
+- CPU Usage
+
+Example
+
+```text
+Current Storage
+
+20 TB
+
+↓
+
+Growth
+
+1 TB/Week
+
+↓
+
+Expand Cluster Before Limits
+```
+
+---
+
+# Enterprise Example
+
+A global e-commerce platform
+
+- 15 TB logs/day
+- 60 Data Nodes
+- 3 Manager Nodes
+- 3 Availability Zones
+
+Disaster Recovery
+
+```text
+Production
+
+↓
+
+Automatic Snapshots
+
+↓
+
+Amazon S3
+
+↓
+
+Cross-Region Backup
+
+↓
+
+Standby OpenSearch Cluster
+```
+
+During an Availability Zone outage,
+
+users continue searching logs without interruption.
+
+---
+
+# Best Practices
+
+- Deploy across three Availability Zones.
+- Use dedicated Manager Nodes.
+- Configure at least one replica.
+- Schedule regular snapshots.
+- Store snapshots in Amazon S3.
+- Test snapshot restoration regularly.
+- Monitor cluster growth.
+- Scale before reaching resource limits.
+- Document Disaster Recovery procedures.
+
+---
+
+# Common Mistakes
+
+- Running production without replicas.
+- Keeping snapshots only in one region.
+- Never testing backup restoration.
+- Using a single Availability Zone.
+- Delaying cluster scaling until storage is full.
+- Assuming snapshots replace High Availability.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an OpenSearch Snapshot?
+- Why are replicas important?
+- What is Multi-AZ deployment?
+
+## Intermediate
+
+- Horizontal vs Vertical Scaling.
+- Explain automatic shard rebalancing.
+- How does OpenSearch recover from node failure?
+- Why store snapshots in Amazon S3?
+
+## Advanced
+
+- Design a highly available OpenSearch cluster processing 30 TB of logs per day.
+- Explain a disaster recovery strategy for Amazon OpenSearch with an RPO of 15 minutes and an RTO of 1 hour.
+- Design a multi-region OpenSearch architecture that continues operating during an Availability Zone failure while supporting automated backups, rolling upgrades, and fast disaster recovery.
+
+---
+
