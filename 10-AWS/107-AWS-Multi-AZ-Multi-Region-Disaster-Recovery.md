@@ -4750,3 +4750,771 @@ This architecture provides
 
 ---
 
+# Chapter 8 - AWS Disaster Recovery Services & Data Replication
+
+Disaster Recovery is not achieved by a single AWS service.
+
+Instead, AWS provides multiple services that work together to ensure
+
+- Data Protection
+- Continuous Replication
+- Automated Recovery
+- Business Continuity
+- Low Recovery Time
+- Low Data Loss
+
+A well-designed Disaster Recovery architecture combines compute, storage, networking, databases, DNS, and monitoring.
+
+---
+
+# Disaster Recovery Architecture
+
+```text
+Users
+
+↓
+
+Amazon Route53
+
+↓
+
+Primary Region
+
+↓
+
+Applications
+
+↓
+
+Databases
+
+↓
+
+Replication
+
+↓
+
+Secondary Region
+
+↓
+
+Standby Applications
+
+↓
+
+Standby Databases
+```
+
+Every layer participates in Disaster Recovery.
+
+---
+
+# AWS Services Used in Disaster Recovery
+
+The most commonly used AWS services are
+
+- Amazon Route53
+- Amazon S3
+- Amazon EBS
+- Amazon RDS
+- Amazon Aurora
+- DynamoDB
+- AWS Backup
+- AWS Elastic Disaster Recovery (AWS DRS)
+- Amazon EFS
+- AWS DataSync
+- CloudWatch
+- Amazon SNS
+
+Each service solves a different part of Disaster Recovery.
+
+---
+
+# Amazon Route53
+
+Route53 is responsible for
+
+- DNS
+- Health Checks
+- Traffic Routing
+- Regional Failover
+
+Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Healthy Region
+```
+
+If the primary Region fails,
+
+Route53 redirects traffic automatically.
+
+---
+
+# Route53 Health Checks
+
+```text
+Application
+
+↓
+
+Health Check
+
+↓
+
+Healthy
+
+↓
+
+Route Traffic
+
+────────────
+
+Unhealthy
+
+↓
+
+Secondary Region
+```
+
+Health checks automate failover decisions.
+
+---
+
+# Amazon S3
+
+S3 is commonly used for
+
+- Backups
+- Snapshots
+- Log Storage
+- Disaster Recovery Files
+
+Architecture
+
+```text
+Application
+
+↓
+
+Amazon S3
+
+↓
+
+Cross Region Replication
+
+↓
+
+Backup Region
+```
+
+---
+
+# S3 Cross-Region Replication (CRR)
+
+Objects uploaded in one Region automatically replicate.
+
+```text
+Mumbai Bucket
+
+↓
+
+Replication
+
+↓
+
+Singapore Bucket
+```
+
+Benefits
+
+- Disaster Recovery
+- Compliance
+- Backup
+- Global Availability
+
+---
+
+# Amazon EBS Snapshots
+
+EC2 storage can be backed up using EBS Snapshots.
+
+Architecture
+
+```text
+EC2
+
+↓
+
+EBS Volume
+
+↓
+
+Snapshot
+
+↓
+
+Amazon S3
+```
+
+Snapshots can later restore new EBS volumes.
+
+---
+
+# Snapshot Recovery
+
+```text
+Snapshot
+
+↓
+
+New EBS Volume
+
+↓
+
+Attach EC2
+
+↓
+
+Application Restored
+```
+
+Recovery is much faster than rebuilding manually.
+
+---
+
+# Amazon RDS Multi-AZ
+
+RDS Multi-AZ protects against
+
+Availability Zone failures.
+
+Architecture
+
+```text
+Primary Database
+
+↓
+
+Synchronous Replication
+
+↓
+
+Standby Database
+```
+
+AWS automatically performs failover.
+
+---
+
+# Amazon RDS Cross-Region Read Replica
+
+For Regional Disaster Recovery,
+
+RDS supports cross-region replication.
+
+```text
+Mumbai
+
+↓
+
+Primary RDS
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+Read Replica
+```
+
+During disaster,
+
+the replica can be promoted.
+
+---
+
+# Amazon Aurora Global Database
+
+Aurora Global Database provides
+
+low-latency cross-region replication.
+
+Architecture
+
+```text
+Mumbai
+
+↓
+
+Primary Cluster
+
+↓
+
+Global Replication
+
+↓
+
+Singapore
+
+↓
+
+Secondary Cluster
+```
+
+Benefits
+
+- Very Low Replication Lag
+- Fast Recovery
+- Global Reads
+
+---
+
+# Amazon DynamoDB Global Tables
+
+DynamoDB supports active-active replication.
+
+```text
+Mumbai
+
+↓
+
+Read + Write
+
+──────────────
+
+Singapore
+
+↓
+
+Read + Write
+```
+
+Applications can write in multiple Regions simultaneously.
+
+---
+
+# Amazon EFS
+
+Amazon EFS provides shared storage.
+
+Combined with AWS Backup,
+
+it supports Disaster Recovery for shared file systems.
+
+Architecture
+
+```text
+Applications
+
+↓
+
+Amazon EFS
+
+↓
+
+AWS Backup
+```
+
+---
+
+# AWS Backup
+
+AWS Backup centralizes backup management.
+
+Supports
+
+- EBS
+- EFS
+- RDS
+- DynamoDB
+- FSx
+- Storage Gateway
+
+Architecture
+
+```text
+AWS Resources
+
+↓
+
+AWS Backup
+
+↓
+
+Backup Vault
+```
+
+One service manages backup policies across AWS.
+
+---
+
+# Backup Vault
+
+Backups are stored securely.
+
+```text
+AWS Backup
+
+↓
+
+Backup Vault
+
+↓
+
+Recovery
+```
+
+Retention policies control how long backups are stored.
+
+---
+
+# AWS Elastic Disaster Recovery (AWS DRS)
+
+AWS Elastic Disaster Recovery continuously replicates servers into AWS.
+
+Architecture
+
+```text
+On-Premises
+
+↓
+
+Continuous Replication
+
+↓
+
+AWS
+
+↓
+
+Recovery Instance
+```
+
+Suitable for
+
+- Physical Servers
+- VMware
+- Hyper-V
+- EC2
+
+---
+
+# AWS DRS Workflow
+
+```text
+Production Server
+
+↓
+
+Continuous Replication
+
+↓
+
+Low-Cost Staging Area
+
+↓
+
+Disaster
+
+↓
+
+Launch Recovery Server
+```
+
+Recovery is automated.
+
+---
+
+# AWS DataSync
+
+AWS DataSync transfers large datasets.
+
+Architecture
+
+```text
+On-Premises
+
+↓
+
+AWS DataSync
+
+↓
+
+Amazon S3
+
+↓
+
+Amazon EFS
+
+↓
+
+Amazon FSx
+```
+
+Useful for
+
+- Disaster Recovery
+- Migration
+- Backup
+
+---
+
+# Amazon FSx
+
+FSx provides managed file systems.
+
+Examples
+
+- Windows File Server
+- Lustre
+- NetApp ONTAP
+- OpenZFS
+
+FSx backups support Disaster Recovery.
+
+---
+
+# CloudWatch
+
+CloudWatch continuously monitors
+
+- Application Health
+- CPU
+- Memory
+- Database Status
+- Replication
+- Networking
+
+Problems are detected before complete failures occur.
+
+---
+
+# Amazon SNS
+
+CloudWatch alarms trigger SNS.
+
+```text
+CloudWatch
+
+↓
+
+Alarm
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+Operations Team
+```
+
+Engineers are immediately notified.
+
+---
+
+# Disaster Recovery Workflow
+
+```text
+Application Failure
+
+↓
+
+CloudWatch Alarm
+
+↓
+
+SNS Notification
+
+↓
+
+Route53
+
+↓
+
+Secondary Region
+
+↓
+
+Recovery
+```
+
+Automation minimizes downtime.
+
+---
+
+# Complete Enterprise DR Architecture
+
+```text
+Users
+
+↓
+
+CloudFront
+
+↓
+
+Route53
+
+↓
+
+Mumbai Region
+
+↓
+
+ALB
+
+↓
+
+Auto Scaling
+
+↓
+
+Amazon Aurora
+
+↓
+
+Cross Region Replication
+
+↓
+
+Singapore Region
+
+↓
+
+Standby ALB
+
+↓
+
+Auto Scaling
+
+↓
+
+Aurora Secondary
+
+↓
+
+CloudWatch
+
+↓
+
+SNS
+```
+
+This architecture provides
+
+- High Availability
+- Regional Disaster Recovery
+- Automated Failover
+- Continuous Monitoring
+
+---
+
+# Enterprise Banking Example
+
+```text
+Customers
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Internet Banking
+
+↓
+
+Aurora
+
+↓
+
+Global Database
+
+↓
+
+Singapore
+
+↓
+
+Standby Banking Platform
+```
+
+If Mumbai fails,
+
+Route53 redirects users,
+
+Aurora promotes the secondary database,
+
+and business continues.
+
+---
+
+# Best Practices
+
+- Use Route53 health checks for automated failover.
+- Enable Cross-Region Replication for critical data.
+- Store backups in multiple Regions.
+- Use AWS Backup for centralized backup management.
+- Continuously monitor replication health.
+- Test recovery procedures regularly.
+- Encrypt backups using AWS KMS.
+- Automate recovery with Infrastructure as Code.
+
+---
+
+# Common Mistakes
+
+- Keeping backups in the same Region.
+- Never testing backup restoration.
+- Ignoring replication lag.
+- Assuming snapshots alone provide Disaster Recovery.
+- No monitoring for backup failures.
+- Manual recovery procedures for critical systems.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What AWS services are commonly used for Disaster Recovery?
+- What is AWS Elastic Disaster Recovery (AWS DRS)?
+- What is S3 Cross-Region Replication?
+
+## Intermediate
+
+- RDS Multi-AZ vs Cross-Region Read Replica.
+- Aurora Global Database vs DynamoDB Global Tables.
+- AWS Backup vs EBS Snapshots.
+
+## Advanced
+
+- Design a complete Disaster Recovery solution for a global financial application using Route53, Aurora Global Database, AWS Backup, S3 Cross-Region Replication, CloudWatch, and AWS Elastic Disaster Recovery.
+- Explain how AWS DRS performs continuous replication and rapid recovery for on-premises workloads.
+- A multinational enterprise requires automated Disaster Recovery with an RTO of 10 minutes and an RPO of less than 1 minute. Explain which AWS services you would combine and why.
+
+---
+
