@@ -4619,3 +4619,748 @@ Each team works independently while governance remains centralized.
 
 ---
 
+# Chapter 8 - AWS Network Security (VPC, Security Groups, NACLs & Network Firewall)
+
+Securing identities alone is not enough.
+
+Even if users are properly authenticated,
+
+applications can still be compromised through
+
+- Open Ports
+- Misconfigured Firewalls
+- Public Subnets
+- Internet Exposure
+- Unauthorized Network Access
+
+AWS provides multiple layers of network security to protect workloads.
+
+Enterprise network security is built using
+
+- Amazon VPC
+- Security Groups
+- Network ACLs
+- AWS Network Firewall
+- AWS WAF
+- AWS Shield
+- Private Subnets
+- VPC Endpoints
+
+Each layer protects a different part of the network.
+
+---
+
+# Enterprise Network Security Architecture
+
+```text
+Internet
+
+↓
+
+AWS Shield
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Security Group
+
+↓
+
+Private Subnet
+
+↓
+
+Application
+
+↓
+
+Security Group
+
+↓
+
+Database
+
+↓
+
+Network ACL
+
+↓
+
+VPC
+```
+
+Multiple security layers protect every request.
+
+---
+
+# Amazon VPC
+
+Amazon VPC provides
+
+logical network isolation.
+
+Architecture
+
+```text
+AWS Region
+
+↓
+
+Amazon VPC
+
+↓
+
+Private Network
+
+↓
+
+AWS Resources
+```
+
+Resources inside one VPC are isolated from others unless explicitly connected.
+
+---
+
+# Public vs Private Subnets
+
+Public Subnet
+
+```text
+Internet
+
+↓
+
+Public Subnet
+
+↓
+
+ALB
+
+↓
+
+Bastion Host
+```
+
+Private Subnet
+
+```text
+Private Subnet
+
+↓
+
+Application
+
+↓
+
+Database
+```
+
+Production workloads should generally run in private subnets.
+
+---
+
+# VPC Security Layers
+
+```text
+Internet
+
+↓
+
+Route Table
+
+↓
+
+Network ACL
+
+↓
+
+Subnet
+
+↓
+
+Security Group
+
+↓
+
+EC2
+```
+
+Traffic passes through multiple security controls.
+
+---
+
+# What is a Security Group?
+
+A Security Group is a
+
+**stateful virtual firewall**
+
+attached to AWS resources.
+
+It controls
+
+- Inbound Traffic
+- Outbound Traffic
+
+Example
+
+```text
+Internet
+
+↓
+
+443
+
+↓
+
+Application Load Balancer
+```
+
+Only HTTPS traffic is allowed.
+
+---
+
+# Security Group Architecture
+
+```text
+Client
+
+↓
+
+Security Group
+
+↓
+
+EC2
+```
+
+If traffic matches the rules,
+
+it is allowed.
+
+Otherwise,
+
+it is denied.
+
+---
+
+# Stateful Firewall
+
+Security Groups are
+
+stateful.
+
+Example
+
+```text
+Inbound
+
+↓
+
+Allow
+
+↓
+
+Response
+
+↓
+
+Automatically Allowed
+```
+
+No outbound rule is required for return traffic.
+
+---
+
+# Example Security Group
+
+Application Server
+
+Inbound
+
+```text
+443
+
+HTTPS
+
+From ALB
+```
+
+Outbound
+
+```text
+3306
+
+MySQL
+
+To Database
+```
+
+Everything else is denied.
+
+---
+
+# Database Security Group
+
+```text
+Application
+
+↓
+
+3306
+
+↓
+
+Database
+```
+
+Database access is allowed only from the application layer.
+
+No Internet access exists.
+
+---
+
+# Security Group Referencing
+
+Instead of using IP addresses,
+
+Security Groups can reference other Security Groups.
+
+Example
+
+```text
+ALB SG
+
+↓
+
+Application SG
+
+↓
+
+Database SG
+```
+
+This improves scalability.
+
+---
+
+# What is a Network ACL?
+
+A Network ACL (NACL) is a
+
+**stateless subnet-level firewall.**
+
+Architecture
+
+```text
+Internet
+
+↓
+
+Network ACL
+
+↓
+
+Subnet
+
+↓
+
+EC2
+```
+
+It controls traffic entering and leaving the subnet.
+
+---
+
+# Stateless Firewall
+
+Unlike Security Groups,
+
+Network ACLs are stateless.
+
+Example
+
+```text
+Inbound
+
+↓
+
+Allow
+
+↓
+
+Outbound
+
+↓
+
+Must Also Allow
+```
+
+Both directions require explicit rules.
+
+---
+
+# Security Group vs Network ACL
+
+| Security Group | Network ACL |
+|---------------|-------------|
+| Stateful | Stateless |
+| Instance Level | Subnet Level |
+| Supports Allow Rules Only | Supports Allow & Deny Rules |
+| Automatically Allows Return Traffic | Return Traffic Must Be Explicitly Allowed |
+
+---
+
+# Rule Evaluation
+
+Security Groups
+
+```text
+Default
+
+↓
+
+Deny
+
+↓
+
+Allow Matching Rules
+```
+
+Network ACLs
+
+```text
+Rule Number
+
+↓
+
+Lowest Number First
+
+↓
+
+First Match Wins
+```
+
+Order matters for Network ACLs.
+
+---
+
+# Multi-Tier Application Security
+
+```text
+Internet
+
+↓
+
+ALB SG
+
+↓
+
+Web Tier SG
+
+↓
+
+Application Tier SG
+
+↓
+
+Database SG
+```
+
+Each tier communicates only with the required layer.
+
+---
+
+# Bastion Host
+
+Administrators should not SSH directly into application servers.
+
+Instead
+
+```text
+Administrator
+
+↓
+
+Bastion Host
+
+↓
+
+Private EC2
+```
+
+Modern architectures increasingly replace bastion hosts with AWS Systems Manager Session Manager.
+
+---
+
+# NAT Gateway
+
+Private instances often require Internet access.
+
+Architecture
+
+```text
+Private EC2
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+The Internet cannot initiate connections back to the private instances.
+
+---
+
+# VPC Endpoints
+
+Instead of accessing AWS services over the Internet,
+
+use VPC Endpoints.
+
+Example
+
+```text
+EC2
+
+↓
+
+VPC Endpoint
+
+↓
+
+Amazon S3
+```
+
+Traffic never leaves the AWS network.
+
+---
+
+# AWS Network Firewall
+
+AWS Network Firewall provides
+
+advanced packet inspection.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+AWS Network Firewall
+
+↓
+
+VPC
+
+↓
+
+Applications
+```
+
+Capabilities
+
+- Stateful Inspection
+- Intrusion Detection
+- Domain Filtering
+- Deep Packet Inspection
+
+---
+
+# AWS WAF
+
+AWS WAF protects
+
+Layer 7 (HTTP/HTTPS) applications.
+
+Architecture
+
+```text
+Users
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Application
+```
+
+Protects against
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- HTTP Floods
+- Malicious Bots
+
+---
+
+# AWS Shield
+
+AWS Shield protects against
+
+Distributed Denial of Service (DDoS) attacks.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+DDoS Attack
+
+↓
+
+AWS Shield
+
+↓
+
+Application
+```
+
+AWS Shield Standard is enabled automatically for supported AWS services.
+
+---
+
+# Enterprise Network Architecture
+
+```text
+Internet
+
+↓
+
+AWS Shield
+
+↓
+
+AWS WAF
+
+↓
+
+CloudFront
+
+↓
+
+Application Load Balancer
+
+↓
+
+Security Group
+
+↓
+
+Private EC2
+
+↓
+
+Database Security Group
+
+↓
+
+Amazon RDS
+```
+
+Every layer contributes to security.
+
+---
+
+# Banking Example
+
+```text
+Customers
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Private EKS
+
+↓
+
+Aurora
+
+↓
+
+Private Subnets
+```
+
+No production workloads are directly exposed to the Internet.
+
+---
+
+# Best Practices
+
+- Use private subnets for production workloads.
+- Follow least-privilege Security Group rules.
+- Use Security Group references instead of IP addresses where possible.
+- Deploy one NAT Gateway per Availability Zone.
+- Use VPC Endpoints for AWS service access.
+- Enable AWS WAF for Internet-facing applications.
+- Use AWS Shield for DDoS protection.
+- Implement AWS Network Firewall for advanced traffic inspection.
+
+---
+
+# Common Mistakes
+
+- Allowing SSH (22) from 0.0.0.0/0.
+- Opening database ports to the Internet.
+- Using public subnets for databases.
+- Overusing 0.0.0.0/0 in Security Groups.
+- Forgetting outbound Network ACL rules.
+- Not enabling AWS WAF on public applications.
+- Accessing S3 through the Internet instead of VPC Endpoints.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Security Group?
+- What is a Network ACL?
+- Security Group vs Network ACL.
+
+## Intermediate
+
+- What is a VPC Endpoint?
+- Why are Security Groups stateful?
+- Why are Network ACLs stateless?
+- Explain AWS WAF and AWS Shield.
+
+## Advanced
+
+- Design a secure three-tier banking application using VPC, private subnets, Security Groups, Network ACLs, AWS WAF, AWS Shield, VPC Endpoints, and AWS Network Firewall.
+- Explain how network traffic flows from the Internet to an Amazon RDS database, describing how each AWS network security service protects the application.
+- Your security team discovers that production databases are accessible from the Internet. Explain how you would redesign the VPC architecture, subnet layout, Security Groups, Network ACLs, and routing to eliminate unnecessary exposure while maintaining application functionality.
+
+---
+
