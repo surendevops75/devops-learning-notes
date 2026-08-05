@@ -1174,3 +1174,605 @@ Both applications communicate until migration is complete.
 - At what point would you migrate from VPC Peering to Transit Gateway?
 - Design networking for 80 VPCs.
 - Compare VPC Peering, Transit Gateway, and PrivateLink.
+
+---
+
+# Chapter 3 - AWS PrivateLink
+
+## What is AWS PrivateLink?
+
+AWS PrivateLink enables private connectivity between VPCs, AWS services, and third-party services without exposing traffic to the public internet.
+
+Unlike VPC Peering, PrivateLink provides **service-level connectivity** rather than full network connectivity.
+
+Instead of connecting two entire VPCs, you expose only a specific application or service.
+
+Example
+
+```text
+Consumer VPC
+
+↓
+
+Interface Endpoint
+
+↓
+
+AWS PrivateLink
+
+↓
+
+Provider VPC
+
+↓
+
+Application
+```
+
+Only the application is accessible—not the entire VPC.
+
+---
+
+## Why AWS PrivateLink?
+
+Imagine a company providing an internal Authentication API.
+
+Without PrivateLink
+
+```text
+Application
+
+↓
+
+Internet
+
+↓
+
+Authentication API
+```
+
+Problems
+
+- Public IP required
+- Internet exposure
+- Additional security controls
+- Compliance concerns
+
+Using PrivateLink
+
+```text
+Application
+
+↓
+
+Private ENI
+
+↓
+
+AWS Backbone
+
+↓
+
+Authentication API
+```
+
+Benefits
+
+- No Internet Gateway
+- No NAT Gateway
+- No Public IP
+- Traffic remains private
+
+---
+
+# PrivateLink Architecture
+
+```text
+                    Provider Account
+
+               ┌──────────────────────┐
+               │ Authentication API   │
+               │      Internal ALB    │
+               └──────────┬───────────┘
+                          │
+                 Endpoint Service
+                          │
+================ AWS PrivateLink ================
+                          │
+                 Interface Endpoint
+                          │
+               ┌──────────┴───────────┐
+               │    Consumer VPC      │
+               │      Application     │
+               └──────────────────────┘
+```
+
+---
+
+# Components
+
+## Service Provider
+
+Owns the application.
+
+Creates
+
+- Network Load Balancer (NLB)
+- Endpoint Service
+
+Shares access with consumers.
+
+---
+
+## Service Consumer
+
+Creates
+
+- Interface Endpoint
+
+Connects privately to the provider.
+
+---
+
+## Endpoint Service
+
+Represents the application being shared.
+
+Can be shared with
+
+- Same account
+- Cross account
+- AWS Organization
+- External customers
+
+---
+
+## Interface Endpoint
+
+A private Elastic Network Interface (ENI) created inside the consumer VPC.
+
+This ENI receives a private IP.
+
+Applications communicate with this private IP.
+
+---
+
+# PrivateLink Communication Flow
+
+```text
+Application
+
+↓
+
+Private DNS
+
+↓
+
+Interface Endpoint
+
+↓
+
+AWS Backbone
+
+↓
+
+Endpoint Service
+
+↓
+
+Network Load Balancer
+
+↓
+
+Application Server
+```
+
+---
+
+# PrivateLink vs VPC Peering
+
+| Feature | PrivateLink | VPC Peering |
+|----------|-------------|-------------|
+| Connects Entire VPC | ❌ | ✅ |
+| Connects Single Service | ✅ | ❌ |
+| Cross Account | ✅ | ✅ |
+| Overlapping CIDRs | ✅ Supported | ❌ Not Supported |
+| Transitive Routing | ❌ | ❌ |
+| Internet Required | ❌ | ❌ |
+| Granular Access | Excellent | Limited |
+
+---
+
+# Why Overlapping CIDRs Work
+
+Consumer
+
+```
+10.0.0.0/16
+```
+
+Provider
+
+```
+10.0.0.0/16
+```
+
+VPC Peering
+
+❌ Cannot connect.
+
+PrivateLink
+
+✅ Works because traffic targets the Interface Endpoint instead of routing entire VPC networks.
+
+---
+
+# Common AWS Services Using PrivateLink
+
+Many AWS services support Interface Endpoints built on PrivateLink.
+
+Examples
+
+- Secrets Manager
+- Systems Manager (SSM)
+- CloudWatch
+- CloudWatch Logs
+- EC2 API
+- ECR API
+- ECR Docker
+- KMS
+- STS
+
+This allows workloads in private subnets to access AWS services without internet connectivity.
+
+---
+
+# Production Use Cases
+
+## Shared Authentication Platform
+
+```text
+50 Application VPCs
+
+↓
+
+PrivateLink
+
+↓
+
+Authentication Service
+```
+
+---
+
+## Shared Payment API
+
+```text
+Microservices
+
+↓
+
+PrivateLink
+
+↓
+
+Payment Platform
+```
+
+---
+
+## Shared Logging Platform
+
+```text
+Application VPC
+
+↓
+
+PrivateLink
+
+↓
+
+Logging Platform
+```
+
+---
+
+## SaaS Provider
+
+A SaaS company exposes its application privately to customers.
+
+```text
+Customer AWS Account
+
+↓
+
+PrivateLink
+
+↓
+
+SaaS Provider
+```
+
+Customers never traverse the internet.
+
+---
+
+# Advantages
+
+- Private communication
+- Secure
+- Supports overlapping CIDRs
+- Cross-account connectivity
+- Reduced attack surface
+- No Internet Gateway required
+- No VPN required
+- Fine-grained access
+
+---
+
+# Limitations
+
+- Service-level connectivity only
+- Requires Network Load Balancer
+- Additional endpoint cost
+- Does not replace Transit Gateway
+- Does not provide full VPC connectivity
+
+---
+
+# Best Practices
+
+- Use PrivateLink for shared internal services.
+- Enable Private DNS where appropriate.
+- Restrict Endpoint Service permissions.
+- Monitor endpoint usage using CloudWatch.
+- Use IAM policies to control endpoint creation.
+- Combine with Security Groups for layered security.
+
+---
+
+# Common Troubleshooting
+
+| Problem | Cause | Resolution |
+|---------|-------|------------|
+| Endpoint unavailable | Endpoint Service not accepted | Verify acceptance |
+| Connection timeout | Security Group | Allow required ports |
+| DNS failure | Private DNS disabled | Enable Private DNS |
+| Endpoint not reachable | NLB unhealthy | Verify target health |
+| Access denied | Endpoint policy | Review permissions |
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is AWS PrivateLink?
+- Why is PrivateLink more secure than public APIs?
+- What is an Interface Endpoint?
+
+## Intermediate
+
+- Explain Provider and Consumer architecture.
+- Why does PrivateLink support overlapping CIDRs?
+- Why is an NLB required?
+
+## Advanced
+
+- Design a private SaaS platform using PrivateLink.
+- Explain PrivateLink vs Transit Gateway.
+- When would you choose PrivateLink over VPC Peering?
+
+---
+
+# Chapter 4 - VPC Endpoints
+
+## What is a VPC Endpoint?
+
+A VPC Endpoint allows resources inside a VPC to access supported AWS services privately without using:
+
+- Internet Gateway
+- NAT Gateway
+- VPN
+- Direct Connect
+
+Traffic stays entirely on the AWS private network.
+
+Example
+
+```text
+Private EC2
+
+↓
+
+VPC Endpoint
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Why VPC Endpoints?
+
+Without VPC Endpoint
+
+```text
+Private EC2
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+
+↓
+
+Amazon S3
+```
+
+Problems
+
+- NAT Gateway cost
+- Internet dependency
+- Additional latency
+- Larger attack surface
+
+With VPC Endpoint
+
+```text
+Private EC2
+
+↓
+
+Gateway Endpoint
+
+↓
+
+Amazon S3
+```
+
+Traffic remains inside AWS.
+
+---
+
+# Types of VPC Endpoints
+
+AWS provides two primary endpoint types.
+
+| Endpoint | Supports |
+|-----------|----------|
+| Gateway Endpoint | Amazon S3, DynamoDB |
+| Interface Endpoint | Most AWS services (EC2 API, ECR, SSM, KMS, CloudWatch, Secrets Manager, etc.) |
+
+---
+
+# Gateway Endpoint
+
+Supports
+
+- Amazon S3
+- Amazon DynamoDB
+
+Architecture
+
+```text
+Private EC2
+
+↓
+
+Route Table
+
+↓
+
+Gateway Endpoint
+
+↓
+
+Amazon S3
+```
+
+Characteristics
+
+- No ENI created
+- Uses Route Tables
+- No hourly endpoint charge
+- Highly available
+
+---
+
+# Interface Endpoint
+
+Supports most AWS services.
+
+Architecture
+
+```text
+Private EC2
+
+↓
+
+Private ENI
+
+↓
+
+AWS Service
+```
+
+Characteristics
+
+- Creates ENI
+- Uses PrivateLink
+- Private IP
+- Supports Private DNS
+
+---
+
+# Gateway Endpoint vs Interface Endpoint
+
+| Feature | Gateway | Interface |
+|----------|----------|-----------|
+| Services | S3, DynamoDB | Most AWS Services |
+| Uses Route Table | ✅ | ❌ |
+| Creates ENI | ❌ | ✅ |
+| Uses PrivateLink | ❌ | ✅ |
+| Private DNS | ❌ | ✅ |
+| Hourly Cost | No | Yes |
+
+---
+
+# Endpoint Policies
+
+Endpoint Policies restrict what resources can be accessed through the endpoint.
+
+Example
+
+Allow access only to one S3 bucket.
+
+```text
+EC2
+
+↓
+
+Gateway Endpoint
+
+↓
+
+Only
+
+company-backup-bucket
+```
+
+Benefits
+
+- Least privilege
+- Data protection
+- Compliance
+
+---
+
+# Production Example
+
+An Amazon EKS cluster runs entirely in private subnets.
+
+Pods need access to:
+
+- Amazon ECR
+- Secrets Manager
+- CloudWatch Logs
+- STS
+
+Instead of routing traffic through a NAT Gateway, Interface Endpoints are created for each required service.
+
+Benefits:
+
+- Reduced NAT Gateway costs
+- Improved security
+- Private connectivity
+- Better compliance
+
+---
+
