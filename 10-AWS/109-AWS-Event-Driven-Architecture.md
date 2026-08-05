@@ -6036,3 +6036,831 @@ Legacy and cloud-native systems work together.
 
 ---
 
+# Chapter 9 - Event-Driven Design Patterns (Fan-Out, Queue-Based Load Leveling, Event Sourcing & CQRS)
+
+Building an Event-Driven Architecture is not just about choosing services like SNS, SQS, or EventBridge.
+
+The real power comes from using proven **design patterns** that solve common distributed system challenges such as
+
+- Scalability
+- Reliability
+- Fault Tolerance
+- Loose Coupling
+- High Throughput
+- Independent Scaling
+
+AWS messaging services are often combined to implement these patterns.
+
+---
+
+# What is an Event-Driven Design Pattern?
+
+A design pattern is a reusable solution to a recurring architectural problem.
+
+Instead of inventing a new architecture every time,
+
+engineers use well-tested patterns.
+
+Examples include
+
+- Fan-Out
+- Queue-Based Load Leveling
+- Competing Consumers
+- Event Sourcing
+- CQRS
+- Saga Pattern
+
+---
+
+# Pattern Selection
+
+```text
+Need Notifications?
+
+↓
+
+Fan-Out
+
+────────────
+
+Need Independent Processing?
+
+↓
+
+Queue-Based Load Leveling
+
+────────────
+
+Need Massive Scaling?
+
+↓
+
+Competing Consumers
+
+────────────
+
+Need Complete History?
+
+↓
+
+Event Sourcing
+
+────────────
+
+Need Separate Read & Write Models?
+
+↓
+
+CQRS
+```
+
+---
+
+# Fan-Out Pattern
+
+One event triggers multiple independent consumers.
+
+Architecture
+
+```text
+Publisher
+
+↓
+
+Amazon SNS
+
+↓
+
+Queue A
+
+↓
+
+Queue B
+
+↓
+
+Queue C
+```
+
+Every queue receives a copy.
+
+---
+
+# Fan-Out Example
+
+Order Created
+
+```text
+Order Service
+
+↓
+
+SNS
+
+↓
+
+Inventory
+
+↓
+
+Shipping
+
+↓
+
+Notification
+
+↓
+
+Analytics
+```
+
+Each service processes the event independently.
+
+---
+
+# Benefits
+
+- Loose Coupling
+- Independent Scaling
+- Easy Service Addition
+- High Availability
+
+---
+
+# AWS Services
+
+- Amazon SNS
+- Amazon SQS
+- Lambda
+
+---
+
+# Queue-Based Load Leveling
+
+Applications often receive traffic spikes.
+
+Instead of processing requests immediately,
+
+messages are buffered.
+
+Architecture
+
+```text
+Application
+
+↓
+
+Amazon SQS
+
+↓
+
+Workers
+```
+
+---
+
+# Example
+
+Black Friday
+
+```text
+100,000 Orders
+
+↓
+
+Amazon SQS
+
+↓
+
+Worker Fleet
+
+↓
+
+Database
+```
+
+The queue absorbs traffic spikes.
+
+---
+
+# Benefits
+
+- Prevents System Overload
+- Smooth Processing
+- Independent Scaling
+- Increased Reliability
+
+---
+
+# AWS Services
+
+- Amazon SQS
+- Auto Scaling
+- Lambda
+
+---
+
+# Competing Consumers Pattern
+
+Multiple workers process messages from one queue.
+
+Architecture
+
+```text
+Amazon SQS
+
+├── Worker 1
+
+├── Worker 2
+
+├── Worker 3
+
+└── Worker 4
+```
+
+Each message is processed by only one worker.
+
+---
+
+# Benefits
+
+- Horizontal Scaling
+- Higher Throughput
+- Fault Tolerance
+- Better Resource Utilization
+
+---
+
+# AWS Services
+
+- Amazon SQS
+- ECS
+- Lambda
+- EC2 Auto Scaling
+
+---
+
+# Event Notification Pattern
+
+Applications publish events without knowing subscribers.
+
+Architecture
+
+```text
+Application
+
+↓
+
+EventBridge
+
+↓
+
+Lambda
+
+↓
+
+SNS
+
+↓
+
+SQS
+```
+
+Consumers subscribe only to relevant events.
+
+---
+
+# Benefits
+
+- Loose Coupling
+- Dynamic Routing
+- Easy Integration
+
+---
+
+# AWS Services
+
+- Amazon EventBridge
+- Amazon SNS
+
+---
+
+# Event Carried State Transfer
+
+Each event contains all required information.
+
+Example
+
+```text
+Order Created
+
+↓
+
+Order ID
+
+Customer ID
+
+Items
+
+Amount
+
+Status
+```
+
+Consumers do not need additional API calls.
+
+---
+
+# Benefits
+
+- Fewer Network Calls
+- Better Performance
+- Independent Services
+
+---
+
+# Drawbacks
+
+- Larger Event Size
+- Schema Evolution Complexity
+
+---
+
+# Event Sourcing
+
+Instead of storing only the latest state,
+
+store every event.
+
+Architecture
+
+```text
+Account Created
+
+↓
+
+Money Deposited
+
+↓
+
+Money Withdrawn
+
+↓
+
+Money Deposited
+```
+
+Current state is reconstructed from events.
+
+---
+
+# Example
+
+Bank Account
+
+```text
+Create Account
+
+↓
+
+Deposit ₹1000
+
+↓
+
+Withdraw ₹200
+
+↓
+
+Deposit ₹500
+```
+
+Current Balance
+
+```text
+₹1300
+```
+
+is calculated from event history.
+
+---
+
+# Benefits
+
+- Complete Audit Trail
+- Easy Replay
+- Time Travel
+- Debugging
+
+---
+
+# Drawbacks
+
+- Increased Complexity
+- Event Schema Versioning
+- Larger Storage Requirements
+
+---
+
+# AWS Services
+
+- EventBridge
+- DynamoDB
+- Amazon S3
+- Kinesis
+
+---
+
+# CQRS (Command Query Responsibility Segregation)
+
+Separate
+
+Write Operations
+
+from
+
+Read Operations.
+
+Architecture
+
+```text
+Write API
+
+↓
+
+Command Model
+
+↓
+
+Events
+
+↓
+
+Read Model
+
+↓
+
+Read API
+```
+
+---
+
+# Traditional Architecture
+
+```text
+Application
+
+↓
+
+Database
+
+↓
+
+Read
+
+↓
+
+Write
+```
+
+One database handles everything.
+
+---
+
+# CQRS Architecture
+
+```text
+Write Requests
+
+↓
+
+Command Service
+
+↓
+
+Events
+
+↓
+
+Read Database
+
+↓
+
+Read Requests
+```
+
+Read and write workloads scale independently.
+
+---
+
+# CQRS Example
+
+E-Commerce
+
+```text
+Order Service
+
+↓
+
+EventBridge
+
+↓
+
+Read Database
+
+↓
+
+Customer Dashboard
+```
+
+Order creation does not directly affect read performance.
+
+---
+
+# Benefits
+
+- Better Read Performance
+- Better Write Performance
+- Independent Scaling
+- Flexible Data Models
+
+---
+
+# Drawbacks
+
+- More Components
+- Eventual Consistency
+- Higher Operational Complexity
+
+---
+
+# Saga Pattern
+
+Distributed transactions across multiple services.
+
+Instead of one large transaction,
+
+each service performs
+
+its own local transaction.
+
+Example
+
+```text
+Order
+
+↓
+
+Payment
+
+↓
+
+Inventory
+
+↓
+
+Shipping
+```
+
+If one step fails,
+
+compensation actions undo previous steps.
+
+---
+
+# Saga Workflow
+
+```text
+Create Order
+
+↓
+
+Reserve Inventory
+
+↓
+
+Process Payment
+
+↓
+
+Arrange Shipping
+
+↓
+
+Completed
+```
+
+Failure
+
+```text
+Payment Failed
+
+↓
+
+Release Inventory
+
+↓
+
+Cancel Order
+```
+
+---
+
+# AWS Services
+
+- Step Functions
+- EventBridge
+- SQS
+- Lambda
+
+---
+
+# Choreography vs Orchestration
+
+### Choreography
+
+Services react to events.
+
+```text
+Order Created
+
+↓
+
+Inventory
+
+↓
+
+Shipping
+
+↓
+
+Billing
+```
+
+No central controller exists.
+
+---
+
+### Orchestration
+
+One workflow controls execution.
+
+```text
+Step Functions
+
+↓
+
+Inventory
+
+↓
+
+Payment
+
+↓
+
+Shipping
+```
+
+A central workflow coordinates all steps.
+
+---
+
+# Choosing the Right Pattern
+
+| Requirement | Recommended Pattern |
+|-------------|---------------------|
+| Multiple Notifications | Fan-Out |
+| Handle Traffic Spikes | Queue-Based Load Leveling |
+| High Parallelism | Competing Consumers |
+| Complete Audit History | Event Sourcing |
+| Separate Read & Write Workloads | CQRS |
+| Distributed Transactions | Saga Pattern |
+
+---
+
+# Enterprise Banking Example
+
+```text
+ATM Transaction
+
+↓
+
+EventBridge
+
+↓
+
+Fraud Detection
+
+↓
+
+Payment Queue
+
+↓
+
+Audit Logging
+
+↓
+
+Customer Notification
+
+↓
+
+Analytics
+```
+
+Each component scales independently.
+
+---
+
+# Enterprise E-Commerce Example
+
+```text
+Customer
+
+↓
+
+Order Service
+
+↓
+
+EventBridge
+
+↓
+
+SNS
+
+↓
+
+SQS
+
+↓
+
+Inventory
+
+↓
+
+Shipping
+
+↓
+
+Payment
+
+↓
+
+Analytics
+
+↓
+
+Notification
+```
+
+The platform remains loosely coupled and highly scalable.
+
+---
+
+# Best Practices
+
+- Keep services loosely coupled.
+- Design idempotent consumers.
+- Use Dead-Letter Queues for failed processing.
+- Version event schemas carefully.
+- Monitor event processing continuously.
+- Use EventBridge for routing, SNS for fan-out, and SQS for durable processing.
+- Prefer choreography for simple workflows and orchestration for complex business processes.
+
+---
+
+# Common Mistakes
+
+- Using synchronous APIs where asynchronous messaging is more appropriate.
+- Ignoring duplicate event handling.
+- Building tightly coupled microservices.
+- Not designing for eventual consistency.
+- Mixing command and query responsibilities unnecessarily.
+- Forgetting compensation logic in distributed transactions.
+- Not monitoring event failures.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is the Fan-Out pattern?
+- What is Queue-Based Load Leveling?
+- What is CQRS?
+
+## Intermediate
+
+- Event Sourcing vs CQRS.
+- Choreography vs Orchestration.
+- What is the Saga Pattern?
+- Explain the Competing Consumers pattern.
+
+## Advanced
+
+- Design an enterprise e-commerce platform using Fan-Out, Queue-Based Load Leveling, CQRS, and Saga patterns with SNS, SQS, EventBridge, Lambda, and Step Functions.
+- Explain how Event Sourcing provides a complete audit trail and why it is commonly used in banking and financial systems.
+- A global retail company expects massive traffic spikes during seasonal sales. Design an event-driven architecture that uses appropriate AWS messaging services and design patterns to ensure scalability, fault tolerance, reliable order processing, and eventual consistency.
+
+---
+
