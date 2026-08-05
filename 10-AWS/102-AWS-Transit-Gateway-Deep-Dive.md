@@ -1208,3 +1208,601 @@ This architecture is widely used in banking, healthcare, telecom, and government
 
 ---
 
+# Chapter 6 - Multi-Account Transit Gateway Architecture
+
+## Why Multi-Account Networking?
+
+Large organizations rarely deploy all workloads into a single AWS account.
+
+Instead, they separate workloads into multiple accounts for:
+
+- Better security
+- Billing separation
+- Least privilege access
+- Compliance
+- Independent team ownership
+- Reduced blast radius
+
+Example
+
+```text
+AWS Organization
+
+├── Network Account
+├── Security Account
+├── Logging Account
+├── Shared Services Account
+├── Development Account
+├── QA Account
+└── Production Account
+```
+
+Managing networking individually inside every account quickly becomes difficult.
+
+Transit Gateway solves this problem.
+
+---
+
+# Enterprise Architecture
+
+```text
+                  AWS Organization
+
+                         │
+
+                 Network Account
+
+                         │
+
+                 Transit Gateway
+
+        ┌────────┬─────────┬──────────┐
+
+      Dev      QA       Production
+
+        │         │           │
+
+ Shared Services      Security
+
+        │
+
+      Logging
+```
+
+The Transit Gateway exists only inside the Network Account.
+
+Other accounts attach their VPCs using AWS RAM.
+
+---
+
+# Why a Dedicated Network Account?
+
+Instead of creating a Transit Gateway inside Production,
+
+AWS recommends
+
+```text
+Network Account
+
+↓
+
+Transit Gateway
+
+↓
+
+Shared to Organization
+```
+
+Advantages
+
+- Central management
+- Easier auditing
+- Better security
+- Single networking team
+- Simplified troubleshooting
+
+---
+
+# Sharing Transit Gateway Using AWS RAM
+
+Transit Gateway is shared using AWS Resource Access Manager (AWS RAM).
+
+Flow
+
+```text
+Network Account
+
+↓
+
+Transit Gateway
+
+↓
+
+AWS RAM
+
+↓
+
+Development Account
+
+↓
+
+Production Account
+
+↓
+
+QA Account
+```
+
+Every account creates its own attachment.
+
+---
+
+# Attachment Flow
+
+```text
+Application Account
+
+↓
+
+VPC
+
+↓
+
+Transit Gateway Attachment
+
+↓
+
+Transit Gateway
+
+↓
+
+Enterprise Network
+```
+
+The application team owns the VPC.
+
+The networking team owns the Transit Gateway.
+
+---
+
+# Enterprise Routing
+
+Example
+
+Development
+
+```
+10.10.0.0/16
+```
+
+QA
+
+```
+10.20.0.0/16
+```
+
+Production
+
+```
+10.30.0.0/16
+```
+
+Transit Gateway Route Table
+
+| Destination | Attachment |
+|-------------|------------|
+|10.10.0.0/16|Development|
+|10.20.0.0/16|QA|
+|10.30.0.0/16|Production|
+
+---
+
+# Multi-Account Security
+
+Networking should be separated from application ownership.
+
+Example
+
+```text
+Network Team
+
+Creates
+
+- Transit Gateway
+- Route Tables
+- Shared VPC
+- Direct Connect
+
+Application Team
+
+Creates
+
+- EC2
+- EKS
+- Lambda
+- RDS
+```
+
+This separation follows enterprise governance.
+
+---
+
+# Benefits
+
+- Central networking
+- Reduced operational effort
+- Better governance
+- Lower cost
+- Easier auditing
+- Standard architecture
+- Improved scalability
+
+---
+
+# Chapter 7 - Transit Gateway Peering (Multi-Region)
+
+## Why TGW Peering?
+
+Transit Gateway is a Regional service.
+
+One Transit Gateway cannot directly manage VPCs in another Region.
+
+Example
+
+```text
+Mumbai Region
+
+Transit Gateway
+
+Singapore Region
+
+Transit Gateway
+```
+
+To connect Regions,
+
+AWS provides Transit Gateway Peering.
+
+---
+
+# Architecture
+
+```text
+             Mumbai Region
+
+          Transit Gateway
+
+                 │
+
+      Transit Gateway Peering
+
+                 │
+
+         Transit Gateway
+
+          Singapore Region
+```
+
+Traffic stays on the AWS Global Backbone.
+
+No Internet is involved.
+
+---
+
+# Why Use TGW Peering?
+
+Common use cases
+
+- Disaster Recovery
+- Global applications
+- Multi-Region Kubernetes
+- Cross-region databases
+- Global enterprises
+
+---
+
+# Enterprise Example
+
+A multinational company operates
+
+Primary Region
+
+```
+Mumbai
+```
+
+Disaster Recovery Region
+
+```
+Singapore
+```
+
+Architecture
+
+```text
+Mumbai
+
+Development
+
+Production
+
+↓
+
+Transit Gateway
+
+↓
+
+Peering
+
+↓
+
+Transit Gateway
+
+↓
+
+Singapore
+
+DR Environment
+```
+
+Applications replicate between Regions.
+
+---
+
+# Packet Flow
+
+```text
+Application
+
+↓
+
+Mumbai Transit Gateway
+
+↓
+
+TGW Peering
+
+↓
+
+Singapore Transit Gateway
+
+↓
+
+Destination VPC
+```
+
+---
+
+# Benefits
+
+- Private communication
+- AWS Global Network
+- High bandwidth
+- Low latency
+- Multi-Region support
+
+---
+
+# Limitations
+
+- Regional Route Tables
+- Additional cost
+- Manual planning
+- CIDR overlap not supported
+
+---
+
+# Best Practices
+
+- Separate Production and DR Route Tables.
+- Plan CIDR ranges globally.
+- Monitor cross-region traffic.
+- Use Route53 failover for disaster recovery.
+
+---
+
+# Chapter 8 - Transit Gateway + Direct Connect + VPN
+
+Large enterprises usually combine multiple networking services.
+
+Typical architecture
+
+```text
+                  AWS Cloud
+
+              Transit Gateway
+
+          ┌────────┼─────────┐
+
+       Production   Shared Services
+
+             │
+
+     Direct Connect Gateway
+
+             │
+
+       Direct Connect
+
+             │
+
+      On-Premises DC
+
+             │
+
+      Site-to-Site VPN
+
+          (Backup Path)
+```
+
+---
+
+# Why Combine Direct Connect and VPN?
+
+Direct Connect
+
+- High bandwidth
+- Dedicated connection
+- Low latency
+
+VPN
+
+- Internet based
+- IPSec encrypted
+- Backup connectivity
+
+Enterprise Design
+
+```text
+Primary
+
+↓
+
+Direct Connect
+
+Failover
+
+↓
+
+VPN
+```
+
+If Direct Connect fails,
+
+traffic automatically switches to VPN using BGP.
+
+---
+
+# Hybrid Cloud Example
+
+A bank keeps
+
+- Oracle Database
+- Active Directory
+
+inside the data center.
+
+Applications run on Amazon EKS.
+
+Architecture
+
+```text
+Users
+
+↓
+
+AWS Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Transit Gateway
+
+↓
+
+Direct Connect
+
+↓
+
+Oracle Database
+
+↓
+
+Active Directory
+```
+
+Applications access on-premises resources using private connectivity.
+
+---
+
+# Best Practices
+
+- Use Direct Connect as primary.
+- Configure VPN as backup.
+- Use BGP for dynamic routing.
+- Monitor tunnel health.
+- Test failover regularly.
+- Avoid overlapping CIDRs.
+- Deploy redundant Direct Connect links for high availability.
+
+---
+
+# Production Case Study
+
+A financial enterprise has:
+
+- 250 AWS Accounts
+- 400 VPCs
+- 60 Amazon EKS Clusters
+- 2 On-Premises Data Centers
+- 3 AWS Regions
+
+Architecture
+
+```text
+AWS Organizations
+
+↓
+
+Network Account
+
+↓
+
+Transit Gateway
+
+↓
+
+AWS RAM
+
+↓
+
+Application Accounts
+
+↓
+
+Shared Services
+
+↓
+
+Direct Connect
+
+↓
+
+Primary Data Center
+
+↓
+
+VPN
+
+↓
+
+Disaster Recovery
+```
+
+Services used
+
+- Transit Gateway
+- AWS RAM
+- Direct Connect
+- Site-to-Site VPN
+- Route53
+- PrivateLink
+- VPC Endpoints
+
+Benefits
+
+- Centralized networking
+- Hybrid cloud connectivity
+- Multi-account architecture
+- High availability
+- Disaster recovery
+- Simplified operations
+- Reduced management overhead
+
+This architecture is commonly found in banking, insurance, healthcare, retail, and large SaaS organizations.
+
+---
+
