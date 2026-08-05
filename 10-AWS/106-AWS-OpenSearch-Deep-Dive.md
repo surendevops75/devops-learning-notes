@@ -3767,3 +3767,825 @@ Results appear within milliseconds despite billions of indexed documents.
 
 ---
 
+# Chapter 6 - Search Queries (Query DSL), Filters & Aggregations
+
+OpenSearch provides a powerful **Query DSL (Domain Specific Language)** for searching data.
+
+Instead of writing SQL statements,
+
+applications send JSON queries over REST APIs.
+
+Query DSL allows you to
+
+- Search
+- Filter
+- Sort
+- Aggregate
+- Analyze
+- Combine multiple conditions
+
+Most enterprise applications use Query DSL instead of SQL.
+
+---
+
+# Query Architecture
+
+```text
+Application
+
+↓
+
+REST API
+
+↓
+
+JSON Query
+
+↓
+
+OpenSearch
+
+↓
+
+Search Engine
+
+↓
+
+Results
+```
+
+Everything is sent as JSON.
+
+---
+
+# Query Types
+
+OpenSearch supports several query types.
+
+| Query Type | Purpose |
+|------------|----------|
+| Match Query | Full-text search |
+| Term Query | Exact match |
+| Match Phrase | Exact phrase |
+| Range Query | Numeric/date ranges |
+| Bool Query | Combine multiple conditions |
+| Exists Query | Check field existence |
+| Prefix Query | Prefix search |
+| Wildcard Query | Pattern matching |
+| Fuzzy Query | Typo tolerant search |
+| Multi Match | Search multiple fields |
+
+Understanding when to use each query is essential.
+
+---
+
+# Match Query
+
+The most commonly used query.
+
+Suitable for
+
+- Log search
+- Articles
+- Product descriptions
+- Messages
+
+Example
+
+Search
+
+```text
+database timeout
+```
+
+Workflow
+
+```text
+Application
+
+↓
+
+Match Query
+
+↓
+
+Analyzer
+
+↓
+
+Relevant Documents
+```
+
+The query text is analyzed before searching.
+
+---
+
+# Term Query
+
+Unlike Match Query,
+
+Term Query performs an exact match.
+
+Example
+
+```text
+status
+
+↓
+
+SUCCESS
+```
+
+No text analysis occurs.
+
+Suitable for
+
+- Status
+- Country Codes
+- User IDs
+- Keywords
+
+---
+
+# Match Query vs Term Query
+
+| Match Query | Term Query |
+|-------------|------------|
+| Full-text | Exact match |
+| Uses Analyzer | No Analyzer |
+| text fields | keyword fields |
+| Flexible | Strict |
+
+This is one of the most common interview questions.
+
+---
+
+# Match Phrase Query
+
+Suppose
+
+Document
+
+```text
+Payment failed because database timeout
+```
+
+Search
+
+```text
+database timeout
+```
+
+Results
+
+Only documents containing the exact phrase.
+
+Useful for
+
+- Error messages
+- Product names
+- Log messages
+
+---
+
+# Range Query
+
+Range Query searches numerical or date values.
+
+Examples
+
+```text
+Response Time
+
+>
+
+500 ms
+```
+
+or
+
+```text
+Timestamp
+
+Last 24 Hours
+```
+
+Common use cases
+
+- Monitoring
+- Analytics
+- Reports
+
+---
+
+# Exists Query
+
+Find documents containing a field.
+
+Example
+
+```text
+customerId
+
+Exists
+```
+
+Useful for
+
+- Data validation
+- Incomplete records
+- Data quality checks
+
+---
+
+# Prefix Query
+
+Search values beginning with
+
+```text
+pay
+```
+
+Matches
+
+```text
+payment
+
+payments
+
+payment-api
+```
+
+Frequently used in autocomplete features.
+
+---
+
+# Wildcard Query
+
+Supports wildcard characters.
+
+Example
+
+```text
+payment*
+```
+
+Matches
+
+```text
+payment
+
+payments
+
+payment-api
+
+payment-service
+```
+
+Useful but more expensive than exact matching.
+
+---
+
+# Fuzzy Query
+
+Handles spelling mistakes.
+
+Example
+
+User searches
+
+```text
+paymant
+```
+
+OpenSearch still finds
+
+```text
+payment
+```
+
+Useful for
+
+- Product Search
+- User Search
+- Website Search
+
+---
+
+# Multi Match Query
+
+Search multiple fields simultaneously.
+
+Example
+
+Search
+
+```text
+database timeout
+```
+
+Across
+
+```text
+title
+
+message
+
+description
+```
+
+Instead of searching one field,
+
+OpenSearch searches all configured fields.
+
+---
+
+# Boolean Query
+
+The Bool Query combines multiple conditions.
+
+Components
+
+```text
+must
+
+should
+
+filter
+
+must_not
+```
+
+Most production queries use Bool Query.
+
+---
+
+# Must Clause
+
+Documents **must** satisfy the condition.
+
+Example
+
+```text
+service
+
+=
+
+payment-api
+```
+
+AND
+
+```text
+status
+
+=
+
+FAILED
+```
+
+Both conditions must match.
+
+---
+
+# Should Clause
+
+Documents matching these conditions receive higher relevance.
+
+Useful for
+
+- Recommendation engines
+- Product search
+- Search ranking
+
+---
+
+# Must Not
+
+Exclude documents.
+
+Example
+
+```text
+status
+
+!=
+
+SUCCESS
+```
+
+Useful for
+
+- Error reports
+- Security analytics
+
+---
+
+# Filter Clause
+
+Filter works like Must,
+
+but does not calculate relevance scores.
+
+Benefits
+
+- Faster execution
+- Cache friendly
+- Better performance
+
+Production systems often use Filters instead of Match Queries for exact conditions.
+
+---
+
+# Query Context vs Filter Context
+
+| Query Context | Filter Context |
+|---------------|----------------|
+| Calculates relevance score | No scoring |
+| Slower | Faster |
+| Used for search | Used for filtering |
+| Full-text | Exact conditions |
+
+Another frequently asked interview topic.
+
+---
+
+# Sorting
+
+Results can be sorted by
+
+- Timestamp
+- Price
+- Response Time
+- Score
+- Alphabetically
+
+Example
+
+```text
+Newest Logs
+
+↓
+
+Timestamp Descending
+```
+
+---
+
+# Pagination
+
+Suppose
+
+```text
+1 Million Results
+```
+
+Applications retrieve
+
+```text
+Page 1
+
+↓
+
+20 Results
+
+Page 2
+
+↓
+
+20 Results
+```
+
+instead of loading everything.
+
+---
+
+# Aggregations
+
+Aggregations summarize data.
+
+Instead of returning documents,
+
+they calculate statistics.
+
+Examples
+
+- Count
+- Average
+- Sum
+- Minimum
+- Maximum
+- Group By
+
+Aggregations are heavily used in dashboards.
+
+---
+
+# Terms Aggregation
+
+Example
+
+```text
+status
+
+↓
+
+SUCCESS
+
+FAILED
+
+PENDING
+```
+
+Result
+
+```text
+SUCCESS
+
+120,000
+
+FAILED
+
+4,500
+
+PENDING
+
+200
+```
+
+Useful for reports.
+
+---
+
+# Average Aggregation
+
+Example
+
+```text
+Average Response Time
+
+↓
+
+220 ms
+```
+
+---
+
+# Sum Aggregation
+
+Example
+
+```text
+Payment Amount
+
+↓
+
+Total Sales
+```
+
+---
+
+# Date Histogram
+
+Very common in logging.
+
+Example
+
+```text
+Every Hour
+
+↓
+
+Log Count
+```
+
+Result
+
+```text
+09:00
+
+500
+
+10:00
+
+720
+
+11:00
+
+900
+```
+
+Dashboards use this heavily.
+
+---
+
+# Bucket Aggregation
+
+Groups documents.
+
+Example
+
+```text
+Region
+
+↓
+
+India
+
+USA
+
+UK
+```
+
+Each bucket contains matching documents.
+
+---
+
+# Metric Aggregation
+
+Calculates values.
+
+Examples
+
+```text
+Average
+
+Maximum
+
+Minimum
+
+Sum
+
+Count
+```
+
+---
+
+# Aggregation Workflow
+
+```text
+Documents
+
+↓
+
+Aggregation Engine
+
+↓
+
+Statistics
+
+↓
+
+Dashboard
+```
+
+Unlike searches,
+
+documents are summarized.
+
+---
+
+# Enterprise Dashboard Example
+
+A payment company displays
+
+```text
+Total Requests
+
+Average Response Time
+
+Failed Transactions
+
+Top APIs
+
+Top Error Messages
+
+Requests Per Minute
+```
+
+Every widget is powered by OpenSearch aggregations.
+
+---
+
+# Search Performance Tips
+
+Prefer
+
+```text
+Filter
+
+Instead of
+
+Match
+
+When exact values are needed.
+```
+
+Use
+
+- keyword fields
+- cached filters
+- proper mappings
+
+Avoid
+
+- excessive wildcard searches
+- leading wildcards
+- unnecessary fuzzy queries
+
+---
+
+# Enterprise Example
+
+A platform generates
+
+- 15 TB logs/day
+- 800 searches/second
+
+Typical search
+
+```text
+Service
+
+=
+
+payment-api
+
+AND
+
+Status
+
+=
+
+FAILED
+
+AND
+
+Timestamp
+
+Last 15 Minutes
+
+↓
+
+Aggregation
+
+↓
+
+Top Error Messages
+```
+
+Results appear within milliseconds because
+
+- Filters use keyword fields
+- Timestamp uses date mapping
+- Aggregations execute across shards in parallel
+
+---
+
+# Best Practices
+
+- Use Match for full-text search.
+- Use Term for exact values.
+- Use Filters whenever possible.
+- Avoid expensive wildcard searches.
+- Keep aggregations focused.
+- Paginate large result sets.
+- Use keyword fields for sorting and filtering.
+
+---
+
+# Common Mistakes
+
+- Using Match Query on keyword fields.
+- Using Term Query on text fields.
+- Overusing wildcard queries.
+- Returning thousands of documents when only aggregations are needed.
+- Ignoring pagination.
+- Sorting on analyzed text fields.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Query DSL?
+- Match Query vs Term Query.
+- What is a Bool Query?
+- What is an Aggregation?
+
+## Intermediate
+
+- Query Context vs Filter Context.
+- Must vs Filter.
+- Match Phrase vs Match Query.
+- Explain Terms Aggregation.
+
+## Advanced
+
+- Design search queries for a centralized logging platform.
+- Explain why Filters are faster than Query Context.
+- Design an OpenSearch dashboard showing API failures, response times, and top error messages for a production Kubernetes cluster.
+
+---
+
