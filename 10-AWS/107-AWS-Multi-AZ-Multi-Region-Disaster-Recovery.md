@@ -1144,3 +1144,670 @@ This architecture provides both High Availability and Disaster Recovery.
 
 ---
 
+# Chapter 3 - High Availability vs Fault Tolerance vs Disaster Recovery (Deep Dive)
+
+One of the most commonly misunderstood AWS architecture topics is the difference between
+
+- High Availability (HA)
+- Fault Tolerance (FT)
+- Disaster Recovery (DR)
+
+Many engineers use these terms interchangeably, but in enterprise architecture they represent different design goals.
+
+Understanding these concepts is essential for AWS Solutions Architect, DevOps Engineer, Platform Engineer, and Cloud Architect interviews.
+
+---
+
+# Relationship Between HA, FT & DR
+
+```text
+Business Continuity
+
+        │
+
+        ▼
+
+ ┌─────────────────────┐
+ │ High Availability   │
+ └─────────────────────┘
+            │
+            ▼
+ ┌─────────────────────┐
+ │ Fault Tolerance     │
+ └─────────────────────┘
+            │
+            ▼
+ ┌─────────────────────┐
+ │ Disaster Recovery   │
+ └─────────────────────┘
+```
+
+Each solves a different type of failure.
+
+---
+
+# High Availability (HA)
+
+High Availability means
+
+> The application continues running with minimal interruption when individual infrastructure components fail.
+
+Example
+
+```text
+Application Load Balancer
+
+        │
+
+ ┌──────┴──────┐
+
+EC2-A       EC2-B
+
+AZ-A        AZ-B
+```
+
+If
+
+```text
+EC2-A
+
+↓
+
+Fails
+```
+
+Traffic automatically shifts to
+
+```text
+EC2-B
+```
+
+Users continue using the application.
+
+---
+
+# Characteristics of High Availability
+
+- Automatic failover
+- Redundant resources
+- Health checks
+- Multiple Availability Zones
+- Load balancing
+- Small recovery time
+
+---
+
+# Typical AWS Services for HA
+
+- Elastic Load Balancer
+- Auto Scaling Groups
+- Amazon RDS Multi-AZ
+- Amazon EFS
+- Amazon ECS
+- Amazon EKS
+- Route 53 Health Checks
+
+---
+
+# Example
+
+An e-commerce application
+
+```text
+Users
+
+↓
+
+ALB
+
+↓
+
+EC2
+
+AZ-A
+
+────────────
+
+EC2
+
+AZ-B
+```
+
+If one EC2 instance fails,
+
+ALB automatically routes traffic to healthy instances.
+
+---
+
+# Fault Tolerance (FT)
+
+Fault Tolerance means
+
+> The system continues operating with **zero interruption** despite failures.
+
+Unlike High Availability,
+
+there is no noticeable downtime.
+
+---
+
+# Fault Tolerant Architecture
+
+```text
+Application
+
+↓
+
+Server-A
+
+↓
+
+Failure
+
+↓
+
+Server-B
+
+↓
+
+Immediately Continues
+```
+
+Everything is duplicated.
+
+---
+
+# Characteristics
+
+- No downtime
+- No data loss
+- Continuous processing
+- Complete redundancy
+- Immediate failover
+
+---
+
+# Where Fault Tolerance is Used
+
+- Air Traffic Control
+- Banking Core Systems
+- Stock Exchanges
+- Healthcare Systems
+- Space Missions
+- Nuclear Systems
+
+These workloads cannot tolerate downtime.
+
+---
+
+# AWS Example
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+ALB
+
+↓
+
+Multiple AZs
+
+↓
+
+Synchronous Database Replication
+
+↓
+
+Multiple Storage Copies
+```
+
+Every component has redundancy.
+
+---
+
+# Why Fault Tolerance is Expensive
+
+Everything exists twice.
+
+Example
+
+```text
+Primary Server
+
+↓
+
+Running
+
+Backup Server
+
+↓
+
+Also Running
+```
+
+Both consume infrastructure continuously.
+
+---
+
+# Disaster Recovery (DR)
+
+Disaster Recovery focuses on recovering from
+
+major failures.
+
+Examples
+
+- Entire Region Failure
+- Earthquake
+- Flood
+- Cyber Attack
+- Large-scale Power Failure
+- Human Error
+
+---
+
+# Disaster Recovery Architecture
+
+```text
+Primary Region
+
+↓
+
+Mumbai
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+Standby
+```
+
+If Mumbai fails,
+
+applications recover in Singapore.
+
+---
+
+# Disaster Recovery Characteristics
+
+- Backup
+- Replication
+- Recovery Plans
+- Automated Recovery
+- Regional Failover
+- Business Continuity
+
+---
+
+# High Availability vs Disaster Recovery
+
+High Availability protects against
+
+```text
+EC2 Failure
+
+AZ Failure
+
+Storage Failure
+```
+
+Disaster Recovery protects against
+
+```text
+Entire Region Failure
+
+Large Disaster
+
+Data Corruption
+```
+
+---
+
+# Fault Tolerance vs High Availability
+
+High Availability
+
+```text
+Failure
+
+↓
+
+Small Recovery Time
+```
+
+Fault Tolerance
+
+```text
+Failure
+
+↓
+
+No Recovery Time
+
+↓
+
+Application Continues
+```
+
+---
+
+# Recovery Time
+
+Example
+
+High Availability
+
+```text
+Failure
+
+↓
+
+20 Seconds
+
+↓
+
+Application Back
+```
+
+Fault Tolerance
+
+```text
+Failure
+
+↓
+
+0 Seconds
+
+↓
+
+Application Running
+```
+
+---
+
+# Business Example
+
+Online Shopping
+
+Acceptable
+
+```text
+30 Seconds
+
+Downtime
+```
+
+Suitable
+
+```text
+High Availability
+```
+
+---
+
+Stock Exchange
+
+Not Acceptable
+
+```text
+1 Second
+
+Downtime
+```
+
+Suitable
+
+```text
+Fault Tolerance
+```
+
+---
+
+Bank
+
+Acceptable
+
+```text
+Region Failure
+
+↓
+
+Recover
+
+↓
+
+15 Minutes
+```
+
+Suitable
+
+```text
+Disaster Recovery
+```
+
+---
+
+# Failure Types
+
+```text
+Application Crash
+
+↓
+
+HA
+
+──────────────────
+
+Server Failure
+
+↓
+
+HA
+
+──────────────────
+
+Availability Zone Failure
+
+↓
+
+HA
+
+──────────────────
+
+Region Failure
+
+↓
+
+DR
+
+──────────────────
+
+Natural Disaster
+
+↓
+
+DR
+
+──────────────────
+
+Disk Failure
+
+↓
+
+FT / HA
+
+──────────────────
+
+Power Failure
+
+↓
+
+HA / FT
+```
+
+---
+
+# Enterprise Example
+
+Payment Platform
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+ALB
+
+↓
+
+Mumbai
+
+AZ-A
+
+AZ-B
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+Standby
+```
+
+Failure
+
+```text
+EC2
+
+↓
+
+ALB Handles
+
+──────────────
+
+AZ
+
+↓
+
+Multi-AZ
+
+──────────────
+
+Region
+
+↓
+
+Disaster Recovery
+```
+
+Every failure has a predefined recovery mechanism.
+
+---
+
+# Decision Matrix
+
+| Requirement | Solution |
+|-------------|----------|
+| Server Failure | High Availability |
+| AZ Failure | Multi-AZ |
+| Region Failure | Disaster Recovery |
+| Zero Downtime | Fault Tolerance |
+| Low Cost | High Availability |
+| Mission Critical | Fault Tolerance |
+| Regional Backup | Disaster Recovery |
+
+---
+
+# Enterprise Design Strategy
+
+Large organizations combine all three.
+
+```text
+Application
+
+↓
+
+High Availability
+
+↓
+
+Fault Tolerant Components
+
+↓
+
+Disaster Recovery
+
+↓
+
+Business Continuity
+```
+
+No single strategy is sufficient for enterprise systems.
+
+---
+
+# Best Practices
+
+- Design for failure.
+- Deploy across multiple Availability Zones.
+- Implement automated failover.
+- Use Multi-Region Disaster Recovery for critical workloads.
+- Define RTO and RPO before architecture design.
+- Test recovery procedures regularly.
+- Automate infrastructure provisioning.
+
+---
+
+# Common Mistakes
+
+- Assuming High Availability protects against Region failure.
+- Calling every redundant system Fault Tolerant.
+- Never testing Disaster Recovery.
+- Designing only for server failures.
+- Ignoring business recovery objectives.
+- Depending on manual recovery.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is High Availability?
+- What is Fault Tolerance?
+- What is Disaster Recovery?
+
+## Intermediate
+
+- High Availability vs Fault Tolerance.
+- High Availability vs Disaster Recovery.
+- Why is Fault Tolerance more expensive?
+
+## Advanced
+
+- Design a banking application requiring zero downtime and multi-region disaster recovery.
+- Explain how AWS services provide High Availability across Availability Zones.
+- A company requires an RTO of 15 minutes and an RPO of 5 minutes. Which AWS architecture would you recommend and why?
+
+---
+
