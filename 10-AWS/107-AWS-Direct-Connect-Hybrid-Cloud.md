@@ -2453,3 +2453,644 @@ Every route is learned dynamically.
 
 ---
 
+# Chapter 5 - High Availability, Redundancy & Resiliency (Deep Dive)
+
+Enterprise connectivity cannot depend on a single network cable.
+
+If the Direct Connect link fails, business-critical applications such as
+
+- Banking
+- ERP
+- SAP
+- Payment Systems
+- Manufacturing
+
+must continue operating.
+
+AWS Direct Connect provides multiple options for designing highly available and fault-tolerant hybrid network architectures.
+
+---
+
+# Why High Availability?
+
+Imagine a company has
+
+```text
+On-Premises
+
+↓
+
+Single Direct Connect
+
+↓
+
+AWS
+```
+
+If the circuit fails
+
+```text
+Direct Connect
+
+↓
+
+Failure
+
+↓
+
+No Connectivity
+```
+
+Business operations stop.
+
+This creates a **Single Point of Failure (SPOF).**
+
+---
+
+# High Availability Goals
+
+A production Direct Connect architecture should provide
+
+- No Single Point of Failure
+- Automatic Failover
+- Low Recovery Time
+- Multiple Physical Paths
+- Redundant Routers
+- Continuous Connectivity
+
+---
+
+# Layers of Redundancy
+
+Enterprise redundancy should exist at multiple layers.
+
+```text
+Customer Router
+
+↓
+
+Fiber Connection
+
+↓
+
+Direct Connect Location
+
+↓
+
+AWS Router
+
+↓
+
+AWS Region
+```
+
+Failure of one component should not interrupt connectivity.
+
+---
+
+# Single Direct Connect Connection
+
+Architecture
+
+```text
+Customer Router
+
+↓
+
+Direct Connect
+
+↓
+
+AWS
+```
+
+Advantages
+
+- Simple
+- Lower Cost
+
+Disadvantages
+
+- Single Point of Failure
+- No Redundancy
+- Not suitable for production
+
+---
+
+# Dual Direct Connect Connections
+
+Architecture
+
+```text
+Customer Router
+
+├── Direct Connect 1
+
+└── Direct Connect 2
+
+↓
+
+AWS
+```
+
+Benefits
+
+- Higher Availability
+- Automatic Failover
+- Better Reliability
+
+This is the minimum recommendation for production.
+
+---
+
+# Redundant Customer Routers
+
+The customer network should also be redundant.
+
+```text
+Router-1
+
+↓
+
+Direct Connect
+
+──────────────
+
+Router-2
+
+↓
+
+Direct Connect
+```
+
+If Router-1 fails,
+
+Router-2 continues forwarding traffic.
+
+---
+
+# Redundant Direct Connect Locations
+
+Connecting both circuits to the same Direct Connect location still introduces risk.
+
+Better architecture
+
+```text
+Customer DC
+
+↓
+
+DX Location A
+
+↓
+
+AWS
+
+──────────────
+
+Customer DC
+
+↓
+
+DX Location B
+
+↓
+
+AWS
+```
+
+If one facility becomes unavailable,
+
+the second location remains operational.
+
+---
+
+# Maximum Resiliency Architecture
+
+```text
+Customer Router A
+
+↓
+
+DX Location A
+
+↓
+
+AWS
+
+────────────────
+
+Customer Router B
+
+↓
+
+DX Location B
+
+↓
+
+AWS
+```
+
+No single device or facility failure interrupts connectivity.
+
+---
+
+# Active-Standby Design
+
+Normal operation
+
+```text
+Direct Connect
+
+↓
+
+Primary Traffic
+
+VPN
+
+↓
+
+Standby
+```
+
+If Direct Connect fails
+
+```text
+VPN
+
+↓
+
+Automatically Becomes Active
+```
+
+Suitable for
+
+- Cost Optimization
+- Moderate Traffic
+- Disaster Recovery
+
+---
+
+# Active-Active Design
+
+Both Direct Connect links carry traffic.
+
+```text
+DX-1
+
+↓
+
+Traffic
+
+────────────
+
+DX-2
+
+↓
+
+Traffic
+```
+
+Benefits
+
+- Higher Bandwidth
+- Better Load Distribution
+- Faster Recovery
+
+---
+
+# Direct Connect + VPN Architecture
+
+AWS recommends combining Direct Connect with Site-to-Site VPN.
+
+```text
+On-Premises
+
+├── Direct Connect
+
+└── Site-to-Site VPN
+
+↓
+
+AWS
+```
+
+VPN provides automatic backup if Direct Connect becomes unavailable.
+
+---
+
+# Failure Scenario
+
+Normal
+
+```text
+Traffic
+
+↓
+
+Direct Connect
+```
+
+Failure
+
+```text
+Fiber Cut
+
+↓
+
+BGP Session Lost
+
+↓
+
+VPN Route Preferred
+
+↓
+
+Traffic Restored
+```
+
+Applications continue communicating.
+
+---
+
+# AWS Resiliency Recommendations
+
+AWS recommends
+
+- Two Customer Routers
+- Two Direct Connect Connections
+- Two Direct Connect Locations
+- Dynamic Routing (BGP)
+- VPN Backup
+
+This minimizes downtime.
+
+---
+
+# Link Aggregation Group (LAG)
+
+If higher bandwidth is required,
+
+multiple physical Direct Connect connections can be combined into a
+
+**Link Aggregation Group (LAG).**
+
+Architecture
+
+```text
+Connection-1
+
+Connection-2
+
+Connection-3
+
+↓
+
+LAG
+
+↓
+
+AWS
+```
+
+The links behave as one logical connection.
+
+---
+
+# Benefits of LAG
+
+- Higher Bandwidth
+- Simplified Management
+- Redundancy
+- Load Distribution
+
+Example
+
+```text
+4 × 10 Gbps
+
+↓
+
+40 Gbps Logical Link
+```
+
+---
+
+# What Happens if One LAG Link Fails?
+
+Suppose
+
+```text
+40 Gbps
+
+↓
+
+One Link Fails
+```
+
+Remaining links continue carrying traffic.
+
+```text
+30 Gbps
+
+↓
+
+Traffic Continues
+```
+
+Connectivity is maintained with reduced capacity.
+
+---
+
+# Failure Detection
+
+BGP continuously monitors connectivity.
+
+Workflow
+
+```text
+Physical Link Failure
+
+↓
+
+BGP Session Lost
+
+↓
+
+Route Withdrawn
+
+↓
+
+Alternative Path Selected
+```
+
+Failover is automatic.
+
+---
+
+# Availability Zone Failure
+
+Suppose workloads exist in multiple Availability Zones.
+
+```text
+On-Premises
+
+↓
+
+Direct Connect
+
+↓
+
+Transit Gateway
+
+├── AZ-A
+
+├── AZ-B
+
+├── AZ-C
+```
+
+Failure of one Availability Zone does not interrupt application access.
+
+---
+
+# Regional Disaster Recovery
+
+Primary Region
+
+```text
+Mumbai
+```
+
+Disaster Recovery Region
+
+```text
+Singapore
+```
+
+Architecture
+
+```text
+On-Premises
+
+↓
+
+Direct Connect
+
+↓
+
+Mumbai
+
+↓
+
+Data Replication
+
+↓
+
+Singapore
+```
+
+Applications can fail over to the secondary region if required.
+
+---
+
+# Enterprise Banking Example
+
+```text
+Corporate Data Center
+
+├── Router-1
+
+├── Router-2
+
+│
+
+├── DX Location A
+
+└── DX Location B
+
+↓
+
+AWS Transit Gateway
+
+├── Production
+
+├── Security
+
+├── Shared Services
+
+└── Disaster Recovery
+```
+
+Even if
+
+- One router fails
+- One Direct Connect circuit fails
+- One Direct Connect location fails
+
+the bank remains connected to AWS.
+
+---
+
+# Monitoring High Availability
+
+Monitor
+
+- BGP Session Status
+- Link Utilization
+- Packet Loss
+- Latency
+- Connection State
+- Route Changes
+- VPN Backup Status
+
+CloudWatch and network monitoring tools should generate alerts for failures.
+
+---
+
+# Best Practices
+
+- Use at least two Direct Connect connections.
+- Deploy connections in separate Direct Connect locations.
+- Use redundant customer routers.
+- Configure VPN as backup.
+- Use BGP for automatic failover.
+- Test failover regularly.
+- Monitor connection health continuously.
+- Use LAG when higher bandwidth is required.
+
+---
+
+# Common Mistakes
+
+- Single Direct Connect connection for production.
+- Both circuits connected to the same facility.
+- No VPN backup.
+- No redundant customer router.
+- Never testing failover.
+- Ignoring BGP monitoring.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is redundancy important in Direct Connect?
+- What is Link Aggregation Group (LAG)?
+- Why combine Direct Connect with VPN?
+
+## Intermediate
+
+- Active-Active vs Active-Standby Direct Connect.
+- Explain Direct Connect redundancy.
+- What happens when a Direct Connect circuit fails?
+
+## Advanced
+
+- Design a highly available Direct Connect architecture for a multinational bank requiring 99.99% network availability.
+- Explain how BGP enables automatic failover between Direct Connect and Site-to-Site VPN.
+- Design a resilient hybrid network using dual customer routers, dual Direct Connect locations, Transit Gateway, and cross-region disaster recovery.
+
+---
+
