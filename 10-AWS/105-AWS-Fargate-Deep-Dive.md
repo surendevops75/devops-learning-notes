@@ -1372,3 +1372,744 @@ This architecture provides high availability, strong isolation, and minimal oper
 
 ---
 
+# Chapter 3 - Amazon ECS Task Definitions
+
+## What is a Task Definition?
+
+A Task Definition is the blueprint of an application running on Amazon ECS.
+
+It describes **how a container should run**, including:
+
+- Container Image
+- CPU
+- Memory
+- Network
+- Ports
+- Environment Variables
+- Secrets
+- Storage
+- Logging
+- IAM Roles
+
+Think of it as a Kubernetes Pod Manifest or a Docker Compose file, but specifically designed for Amazon ECS.
+
+A Task Definition itself does **not** run containers.
+
+It is simply a template.
+
+---
+
+# Why Do We Need Task Definitions?
+
+Suppose you have a container image.
+
+```
+mycompany/payment:v1.0
+```
+
+AWS still doesn't know:
+
+- How much CPU should be allocated?
+- How much memory?
+- Which port should be exposed?
+- Which subnet should it run in?
+- Which IAM permissions should it have?
+- Which logs should be collected?
+
+A Task Definition answers all of these questions.
+
+---
+
+# ECS Deployment Flow
+
+```text
+Developer
+
+↓
+
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Task Definition
+
+↓
+
+ECS Service
+
+↓
+
+AWS Fargate
+
+↓
+
+Running Task
+```
+
+Without a Task Definition,
+
+ECS cannot launch the container.
+
+---
+
+# Components of a Task Definition
+
+A typical Task Definition contains
+
+```text
+Task Definition
+
+├── Family
+
+├── Task Role
+
+├── Execution Role
+
+├── CPU
+
+├── Memory
+
+├── Network Mode
+
+├── Container Definitions
+
+├── Environment Variables
+
+├── Secrets
+
+├── Storage
+
+└── Logging
+```
+
+Each component plays an important role.
+
+---
+
+# Task Definition Revisions
+
+Every update creates a new revision.
+
+Example
+
+```text
+payment-api
+
+Revision 1
+
+↓
+
+Revision 2
+
+↓
+
+Revision 3
+
+↓
+
+Revision 4
+```
+
+Older revisions remain available.
+
+This enables easy rollbacks.
+
+---
+
+# Task Definition Family
+
+The Family groups all revisions.
+
+Example
+
+```text
+Family
+
+payment-api
+
+↓
+
+Revision 1
+
+Revision 2
+
+Revision 3
+```
+
+Production normally uses the latest stable revision.
+
+---
+
+# Container Definition
+
+Inside every Task Definition is one or more Container Definitions.
+
+Example
+
+```text
+Task Definition
+
+├── Application
+
+├── Nginx
+
+└── Fluent Bit
+```
+
+A single task may run multiple containers.
+
+---
+
+# Single Container Task
+
+```text
+Task
+
+↓
+
+Application Container
+```
+
+Most microservices use this architecture.
+
+---
+
+# Multi-Container Task
+
+```text
+Task
+
+├── Application
+
+├── Nginx Reverse Proxy
+
+└── Log Collector
+```
+
+Containers share the task lifecycle.
+
+If the task stops,
+
+every container stops.
+
+---
+
+# Task CPU
+
+Task CPU defines the compute allocated to the task.
+
+Example
+
+```text
+1 vCPU
+```
+
+AWS reserves
+
+```
+1 Virtual CPU
+```
+
+for that task.
+
+---
+
+# Task Memory
+
+Memory defines RAM allocated to the task.
+
+Example
+
+```text
+2 GB
+```
+
+AWS reserves
+
+```
+2 GB RAM
+```
+
+The application cannot exceed this allocation.
+
+---
+
+# CPU and Memory Relationship
+
+Not every combination is valid.
+
+Example
+
+Valid
+
+```text
+1 vCPU
+
+↓
+
+2 GB
+```
+
+Valid
+
+```text
+2 vCPU
+
+↓
+
+4 GB
+```
+
+Invalid
+
+```text
+1 vCPU
+
+↓
+
+64 GB
+```
+
+AWS validates supported combinations.
+
+---
+
+# Essential Container
+
+Every container can be marked
+
+```text
+Essential
+
+True
+```
+
+or
+
+```text
+Essential
+
+False
+```
+
+If an Essential container fails,
+
+the entire task stops.
+
+Example
+
+```text
+Application
+
+Essential=True
+
+↓
+
+Crash
+
+↓
+
+Task Stops
+```
+
+---
+
+# Non-Essential Container
+
+Example
+
+```text
+Application
+
+Essential=True
+
+↓
+
+Log Collector
+
+Essential=False
+```
+
+If the log collector fails,
+
+the application may continue running.
+
+Useful for
+
+- Sidecars
+- Monitoring agents
+- Metrics exporters
+
+---
+
+# Entry Point
+
+Specifies the executable started inside the container.
+
+Example
+
+```text
+python app.py
+```
+
+or
+
+```text
+java -jar application.jar
+```
+
+---
+
+# Command
+
+Overrides the container's default command.
+
+Docker Image
+
+```text
+CMD
+
+python app.py
+```
+
+Task Definition
+
+```text
+Command
+
+python test.py
+```
+
+AWS uses
+
+```
+python test.py
+```
+
+---
+
+# Working Directory
+
+Defines the startup directory.
+
+Example
+
+```text
+/app
+```
+
+Application starts from
+
+```
+/app
+```
+
+instead of the image default.
+
+---
+
+# Environment Variables
+
+Applications often require configuration.
+
+Example
+
+```text
+DB_HOST
+
+DB_PORT
+
+ENVIRONMENT
+
+LOG_LEVEL
+```
+
+Instead of hardcoding,
+
+they are passed during runtime.
+
+---
+
+# Environment Variable Example
+
+```text
+Application
+
+↓
+
+DB_HOST
+
+↓
+
+database.company.internal
+
+↓
+
+Application connects
+```
+
+---
+
+# Why Avoid Hardcoding?
+
+Bad
+
+```text
+Database Password
+
+Inside Source Code
+```
+
+Good
+
+```text
+Secrets Manager
+
+↓
+
+Environment Variable
+
+↓
+
+Application
+```
+
+---
+
+# Secrets
+
+Sensitive values include
+
+- Passwords
+- API Keys
+- Database Credentials
+- Tokens
+- Certificates
+
+These should never be stored inside images.
+
+Supported integrations
+
+- AWS Secrets Manager
+- Systems Manager Parameter Store
+
+---
+
+# Logging Configuration
+
+Every task should define a logging driver.
+
+Common configuration
+
+```text
+Application
+
+↓
+
+stdout
+
+↓
+
+awslogs
+
+↓
+
+CloudWatch Logs
+```
+
+Benefits
+
+- Central logging
+- Easy troubleshooting
+- Retention policies
+- CloudWatch Insights
+
+---
+
+# Container Dependencies
+
+Multiple containers may depend on each other.
+
+Example
+
+```text
+Log Agent
+
+↓
+
+Starts First
+
+↓
+
+Application Starts
+```
+
+Useful for
+
+- Sidecars
+- Monitoring
+- Service Mesh
+
+---
+
+# Health Checks
+
+Task Definitions support container health checks.
+
+Example
+
+```text
+HTTP
+
+↓
+
+/health
+
+↓
+
+200 OK
+```
+
+If health checks fail repeatedly,
+
+ECS replaces the unhealthy task.
+
+---
+
+# Restart Behavior
+
+Suppose
+
+```text
+Application
+
+↓
+
+Crash
+```
+
+ECS Service
+
+↓
+
+Launches
+
+↓
+
+New Task
+
+Self-healing is automatic.
+
+---
+
+# Example Production Task
+
+```text
+Task
+
+├── Payment API
+
+├── Fluent Bit
+
+├── CloudWatch Agent
+
+└── Envoy Proxy
+```
+
+Each container has a specific responsibility.
+
+---
+
+# Enterprise Example
+
+A banking payment service uses
+
+```text
+Task Definition
+
+↓
+
+Java Application
+
+↓
+
+Fluent Bit
+
+↓
+
+Secrets Manager
+
+↓
+
+CloudWatch Logs
+
+↓
+
+IAM Task Role
+
+↓
+
+Amazon EFS
+```
+
+When a deployment occurs,
+
+only the Task Definition revision changes.
+
+The ECS Service gradually replaces old tasks with new ones using a rolling deployment strategy.
+
+No infrastructure changes are required.
+
+---
+
+# Best Practices
+
+- Keep one application per container.
+- Version Task Definitions.
+- Store images in Amazon ECR.
+- Store secrets in Secrets Manager.
+- Enable health checks.
+- Configure centralized logging.
+- Keep containers stateless.
+- Use immutable deployments.
+
+---
+
+# Common Mistakes
+
+- Hardcoding credentials.
+- Oversizing CPU and memory.
+- Running multiple unrelated applications in one task.
+- Ignoring health checks.
+- Using latest image tags in production.
+- Not versioning Task Definitions.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an ECS Task Definition?
+- Why is a Task Definition required?
+- What is a Task Definition revision?
+
+## Intermediate
+
+- Task Definition vs Running Task.
+- Essential vs Non-Essential container.
+- Task CPU vs Container CPU.
+- Explain Environment Variables and Secrets.
+
+## Advanced
+
+- Design a production Task Definition for a microservice.
+- Explain how ECS replaces failed tasks.
+- How would you securely manage database credentials in ECS Fargate?
+
+---
+
