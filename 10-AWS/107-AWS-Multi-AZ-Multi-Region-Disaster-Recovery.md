@@ -563,3 +563,584 @@ Applications commonly designed for HA and DR
 
 ---
 
+# Chapter 2 - AWS Availability Zones (AZ), Regions & Global Infrastructure (Deep Dive)
+
+To design highly available AWS architectures, you must first understand AWS Global Infrastructure.
+
+Many interview questions begin with
+
+> "How does AWS achieve High Availability?"
+
+The answer starts with
+
+- Regions
+- Availability Zones
+- Edge Locations
+- AWS Global Backbone
+
+These components work together to provide resilient cloud infrastructure.
+
+---
+
+# AWS Global Infrastructure
+
+AWS has one of the world's largest cloud infrastructures.
+
+It consists of
+
+```text
+AWS Global Infrastructure
+
+├── Regions
+
+├── Availability Zones
+
+├── Local Zones
+
+├── Wavelength Zones
+
+├── Edge Locations
+
+└── Regional Edge Caches
+```
+
+Each component serves a different purpose.
+
+---
+
+# What is an AWS Region?
+
+A Region is a physical geographic area where AWS operates cloud infrastructure.
+
+Examples
+
+- Mumbai
+- Singapore
+- Frankfurt
+- London
+- Virginia
+- Oregon
+- Sydney
+
+Each Region is completely isolated from every other Region.
+
+---
+
+# Region Architecture
+
+```text
+AWS Region
+
+├── Availability Zone A
+
+├── Availability Zone B
+
+├── Availability Zone C
+```
+
+Every Region contains multiple Availability Zones.
+
+---
+
+# Characteristics of an AWS Region
+
+- Physically isolated
+- Independent networking
+- Independent power
+- Independent control plane
+- Independent services
+- Multiple Availability Zones
+
+A Region is considered an independent deployment boundary.
+
+---
+
+# Region Isolation
+
+Suppose
+
+```text
+Mumbai Region
+```
+
+experiences a major outage.
+
+It does **not** affect
+
+```text
+Singapore Region
+
+London Region
+
+Virginia Region
+```
+
+This isolation is why Multi-Region Disaster Recovery is possible.
+
+---
+
+# What is an Availability Zone?
+
+An Availability Zone (AZ) is one or more physically separate data centers within a Region.
+
+Each Availability Zone has
+
+- Independent Power
+- Independent Cooling
+- Independent Networking
+- Independent Physical Security
+
+---
+
+# Availability Zone Architecture
+
+```text
+Mumbai Region
+
+├── AZ-A
+
+│   ├── Data Center
+
+│   └── Data Center
+
+├── AZ-B
+
+│   ├── Data Center
+
+│   └── Data Center
+
+└── AZ-C
+
+    ├── Data Center
+
+    └── Data Center
+```
+
+Each AZ can contain multiple data centers.
+
+---
+
+# Why Multiple Availability Zones?
+
+Suppose an application runs only in
+
+```text
+AZ-A
+```
+
+If AZ-A fails,
+
+```text
+Application
+
+↓
+
+Unavailable
+```
+
+Instead,
+
+deploy across multiple AZs.
+
+```text
+ALB
+
+↓
+
+AZ-A
+
+↓
+
+EC2
+
+────────────
+
+AZ-B
+
+↓
+
+EC2
+```
+
+If AZ-A fails,
+
+AZ-B continues serving users.
+
+---
+
+# Availability Zone Connectivity
+
+Availability Zones inside a Region are connected using
+
+```text
+High-Speed
+
+Low-Latency
+
+Private Fiber
+```
+
+Benefits
+
+- Fast Replication
+- Database Synchronization
+- Application Communication
+
+Applications can communicate between AZs with minimal latency.
+
+---
+
+# Region vs Availability Zone
+
+| Region | Availability Zone |
+|---------|-------------------|
+| Geographic Area | Data Center Group |
+| Multiple AZs | One or More Data Centers |
+| Independent | Part of a Region |
+| Disaster Recovery | High Availability |
+
+---
+
+# AWS Global Backbone
+
+AWS operates its own private global network.
+
+```text
+Mumbai
+
+↓
+
+AWS Backbone
+
+↓
+
+Singapore
+
+↓
+
+Frankfurt
+
+↓
+
+Virginia
+```
+
+Traffic between Regions travels over AWS infrastructure,
+
+not the public Internet.
+
+---
+
+# Benefits of AWS Backbone
+
+- Lower Latency
+- Higher Reliability
+- Improved Security
+- Better Performance
+- Faster Replication
+
+---
+
+# Edge Locations
+
+Edge Locations are different from Regions.
+
+They are used primarily for
+
+- Amazon CloudFront
+- Route 53
+- AWS Shield
+- AWS WAF
+
+Architecture
+
+```text
+Users
+
+↓
+
+Edge Location
+
+↓
+
+AWS Region
+```
+
+Content is served closer to users.
+
+---
+
+# Regional Edge Cache
+
+Regional Edge Caches sit between
+
+```text
+Edge Location
+
+↓
+
+AWS Region
+```
+
+They improve cache efficiency for CloudFront.
+
+---
+
+# Local Zones
+
+Local Zones bring AWS services closer to users.
+
+Architecture
+
+```text
+Users
+
+↓
+
+Local Zone
+
+↓
+
+Parent Region
+```
+
+Use cases
+
+- Gaming
+- Video Editing
+- Real-Time Analytics
+- Media Production
+
+---
+
+# Wavelength Zones
+
+Wavelength Zones integrate AWS with 5G networks.
+
+Architecture
+
+```text
+Mobile Device
+
+↓
+
+5G Network
+
+↓
+
+Wavelength Zone
+
+↓
+
+AWS Region
+```
+
+Designed for ultra-low latency applications.
+
+---
+
+# Availability Zone Failure
+
+Suppose
+
+```text
+AZ-A
+
+↓
+
+Power Failure
+```
+
+Application architecture
+
+```text
+ALB
+
+↓
+
+AZ-A
+
+EC2
+
+────────────
+
+AZ-B
+
+EC2
+```
+
+ALB health checks fail.
+
+Traffic automatically moves to AZ-B.
+
+Users experience little or no downtime.
+
+---
+
+# Region Failure
+
+Suppose
+
+```text
+Mumbai
+
+↓
+
+Unavailable
+```
+
+Multi-Region architecture
+
+```text
+Route 53
+
+↓
+
+Singapore
+
+↓
+
+Application Available
+```
+
+Traffic is redirected to the healthy Region.
+
+---
+
+# Data Replication
+
+Within a Region
+
+```text
+AZ-A
+
+↓
+
+AZ-B
+
+↓
+
+AZ-C
+```
+
+Data replication is fast due to low latency.
+
+Across Regions
+
+```text
+Mumbai
+
+↓
+
+Singapore
+```
+
+Replication is asynchronous in most AWS services unless specifically configured otherwise.
+
+---
+
+# Choosing a Region
+
+Factors
+
+- Customer Location
+- Compliance
+- Latency
+- AWS Service Availability
+- Cost
+- Disaster Recovery Requirements
+
+Example
+
+Indian customers often choose
+
+```text
+Mumbai
+```
+
+for lower latency.
+
+---
+
+# Enterprise Architecture
+
+```text
+Users
+
+↓
+
+Amazon Route 53
+
+↓
+
+Mumbai Region
+
+├── AZ-A
+
+├── AZ-B
+
+└── AZ-C
+
+↓
+
+Replication
+
+↓
+
+Singapore Region
+
+├── AZ-A
+
+├── AZ-B
+
+└── AZ-C
+```
+
+This architecture provides both High Availability and Disaster Recovery.
+
+---
+
+# Best Practices
+
+- Deploy production workloads across multiple Availability Zones.
+- Use Multi-Region for Disaster Recovery.
+- Choose Regions close to users.
+- Understand data residency requirements.
+- Test Region failover regularly.
+- Monitor Availability Zone health.
+
+---
+
+# Common Mistakes
+
+- Deploying everything in one Availability Zone.
+- Assuming Availability Zones are separate Regions.
+- Confusing Edge Locations with Regions.
+- Ignoring Region-specific service availability.
+- No Multi-Region Disaster Recovery strategy.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an AWS Region?
+- What is an Availability Zone?
+- Region vs Availability Zone.
+
+## Intermediate
+
+- Why are Availability Zones connected with low latency?
+- What is the AWS Global Backbone?
+- What are Edge Locations?
+- Local Zones vs Wavelength Zones.
+
+## Advanced
+
+- Design a highly available architecture using three Availability Zones.
+- Explain how AWS achieves high availability using Regions and Availability Zones.
+- Design a global application serving users from multiple continents while minimizing latency and ensuring disaster recovery.
+
+---
+
