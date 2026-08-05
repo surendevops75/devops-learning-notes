@@ -505,3 +505,628 @@ Migration is incremental rather than a single large project.
 
 ---
 
+# Chapter 2 - AWS Migration Strategies (The 7 Rs) Deep Dive
+
+One of the most important decisions during cloud migration is
+
+**How should each application be migrated?**
+
+Not every application should be migrated the same way.
+
+Some applications can simply be moved to AWS,
+
+while others should be modernized completely.
+
+AWS recommends using the **7 Rs Migration Strategies** to determine the best migration approach for every workload.
+
+Choosing the correct strategy reduces
+
+- Migration Risk
+- Downtime
+- Cost
+- Complexity
+- Time to Cloud
+
+---
+
+# What are the 7 Rs?
+
+AWS defines seven migration strategies.
+
+```text
+1. Rehost
+
+2. Replatform
+
+3. Repurchase
+
+4. Refactor
+
+5. Relocate
+
+6. Retain
+
+7. Retire
+```
+
+Each strategy addresses different business and technical requirements.
+
+---
+
+# Selecting the Right Strategy
+
+Before migration, evaluate
+
+- Business Value
+- Technical Complexity
+- Downtime Tolerance
+- Modernization Goals
+- Cost
+- Compliance Requirements
+
+Different applications may use different strategies within the same migration project.
+
+---
+
+# Migration Decision Flow
+
+```text
+Application
+
+↓
+
+Business Assessment
+
+↓
+
+Technical Assessment
+
+↓
+
+Choose Migration Strategy
+
+↓
+
+Migrate
+
+↓
+
+Optimize
+```
+
+---
+
+# Rehost (Lift and Shift)
+
+Rehost means
+
+moving an application to AWS
+
+without changing its architecture.
+
+Architecture
+
+```text
+On-Prem VM
+
+↓
+
+AWS EC2
+```
+
+Minimal application changes are required.
+
+---
+
+# Rehost Characteristics
+
+- Fastest migration
+- Minimal risk
+- Minimal application changes
+- Ideal for large-scale migrations
+- Good first step before modernization
+
+---
+
+# Rehost Example
+
+Before
+
+```text
+VM
+
+↓
+
+Application
+
+↓
+
+Database
+```
+
+After
+
+```text
+Amazon EC2
+
+↓
+
+Application
+
+↓
+
+Amazon RDS
+```
+
+The application itself remains unchanged.
+
+---
+
+# When to Choose Rehost
+
+Choose Rehost when
+
+- Time is limited.
+- Applications are stable.
+- Business wants a quick cloud migration.
+- Immediate modernization is not required.
+
+---
+
+# Advantages
+
+- Fast Migration
+- Low Risk
+- Minimal Downtime
+- Easy Rollback
+
+---
+
+# Limitations
+
+- Limited cloud optimization
+- Existing technical debt remains
+- Infrastructure management continues
+
+---
+
+# Replatform (Lift, Tinker and Shift)
+
+Replatform means
+
+making small optimizations
+
+without changing the application's core architecture.
+
+Example
+
+```text
+Application
+
+↓
+
+Amazon EC2
+
+↓
+
+Amazon RDS
+```
+
+instead of self-managed databases.
+
+---
+
+# Replatform Example
+
+Before
+
+```text
+Application
+
+↓
+
+VM Database
+```
+
+After
+
+```text
+Application
+
+↓
+
+Amazon RDS
+```
+
+The application remains the same,
+
+but supporting infrastructure improves.
+
+---
+
+# Replatform Characteristics
+
+- Small architecture improvements
+- Reduced operational overhead
+- Better scalability
+- Managed AWS services
+
+---
+
+# When to Choose Replatform
+
+Suitable when
+
+- Small improvements provide business value.
+- Database management should be simplified.
+- Applications require minimal code changes.
+
+---
+
+# Repurchase
+
+Repurchase means
+
+replacing the existing application
+
+with a Software-as-a-Service (SaaS) solution.
+
+Example
+
+```text
+On-Prem CRM
+
+↓
+
+Salesforce
+```
+
+or
+
+```text
+Self-Hosted Email
+
+↓
+
+Microsoft 365
+```
+
+The original application is replaced.
+
+---
+
+# Repurchase Characteristics
+
+- Replace existing software
+- SaaS adoption
+- Reduced infrastructure management
+- Vendor-managed updates
+
+---
+
+# When to Choose Repurchase
+
+Suitable when
+
+- SaaS alternatives already exist.
+- Maintaining custom software is expensive.
+- Business requirements match SaaS capabilities.
+
+---
+
+# Refactor (Re-Architect)
+
+Refactor means
+
+redesigning the application
+
+to become cloud-native.
+
+Architecture
+
+Before
+
+```text
+Monolith
+
+↓
+
+Virtual Machine
+```
+
+After
+
+```text
+Microservices
+
+↓
+
+Amazon EKS
+
+↓
+
+Lambda
+
+↓
+
+EventBridge
+```
+
+This requires significant application changes.
+
+---
+
+# Refactor Characteristics
+
+- Major architecture redesign
+- Cloud-native applications
+- Containers
+- Microservices
+- Serverless
+- Event-Driven Architecture
+
+---
+
+# Benefits
+
+- Better Scalability
+- Lower Operational Costs
+- Faster Deployments
+- Improved Resilience
+
+---
+
+# Limitations
+
+- Highest cost
+- Long implementation time
+- Requires experienced engineering teams
+
+---
+
+# When to Choose Refactor
+
+Suitable when
+
+- Long-term business value is high.
+- Existing architecture limits growth.
+- Cloud-native capabilities are required.
+
+---
+
+# Relocate
+
+Relocate means
+
+moving infrastructure
+
+without redesigning applications.
+
+Common example
+
+```text
+VMware
+
+↓
+
+VMware Cloud on AWS
+```
+
+Applications continue running with minimal changes.
+
+---
+
+# Relocate Characteristics
+
+- Minimal application changes
+- Rapid migration
+- VMware compatibility
+- Useful for large VMware environments
+
+---
+
+# Retain
+
+Not every application should move immediately.
+
+Some workloads remain on-premises.
+
+Example
+
+```text
+Legacy ERP
+
+↓
+
+Remain On-Premises
+```
+
+Reasons include
+
+- Compliance
+- Technical Constraints
+- Business Dependencies
+
+---
+
+# When to Choose Retain
+
+Choose Retain when
+
+- Migration is not yet justified.
+- Applications are nearing retirement.
+- Regulatory requirements prevent migration.
+
+---
+
+# Retire
+
+Some applications no longer provide business value.
+
+Instead of migrating,
+
+decommission them.
+
+Architecture
+
+```text
+Legacy Application
+
+↓
+
+Retire
+
+↓
+
+Delete Infrastructure
+```
+
+Migration effort is eliminated.
+
+---
+
+# Benefits
+
+- Reduced Costs
+- Simplified Operations
+- Smaller Migration Scope
+
+---
+
+# Choosing Between the 7 Rs
+
+| Strategy | Application Changes | Migration Speed |
+|----------|----------------------|-----------------|
+| Rehost | None | Very Fast |
+| Replatform | Small | Fast |
+| Repurchase | Replace Application | Medium |
+| Refactor | Major Redesign | Slow |
+| Relocate | Infrastructure Move | Fast |
+| Retain | No Migration | N/A |
+| Retire | Decommission | Immediate |
+
+---
+
+# Enterprise Example
+
+Suppose an enterprise has
+
+```text
+CRM
+
+↓
+
+Repurchase
+
+────────────
+
+Java Application
+
+↓
+
+Replatform
+
+────────────
+
+Billing Platform
+
+↓
+
+Refactor
+
+────────────
+
+VMware Cluster
+
+↓
+
+Relocate
+
+────────────
+
+Legacy Reporting Tool
+
+↓
+
+Retire
+```
+
+Each application follows the most appropriate migration strategy.
+
+---
+
+# Migration Prioritization
+
+Organizations often prioritize
+
+```text
+Low Risk
+
+↓
+
+Rehost
+
+↓
+
+Replatform
+
+↓
+
+Modernize
+
+↓
+
+Refactor
+```
+
+This reduces business disruption.
+
+---
+
+# Best Practices
+
+- Assess every application individually.
+- Do not use the same migration strategy for every workload.
+- Prioritize quick wins with Rehost or Replatform.
+- Refactor only applications with strong long-term value.
+- Retire unused applications before migration.
+- Retain workloads that cannot yet move.
+- Review migration strategies periodically.
+
+---
+
+# Common Mistakes
+
+- Refactoring every application unnecessarily.
+- Rehosting applications that should be retired.
+- Ignoring SaaS alternatives.
+- Choosing one strategy for the entire organization.
+- Underestimating modernization effort.
+- Migrating obsolete applications.
+- Skipping business assessment before technical planning.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are the AWS 7 Rs of migration?
+- What is Rehost?
+- What is Refactor?
+
+## Intermediate
+
+- Rehost vs Replatform.
+- Repurchase vs Refactor.
+- When should an application be retained instead of migrated?
+- Explain the Relocate strategy.
+
+## Advanced
+
+- Design a migration strategy for an enterprise with 300 applications, choosing the most appropriate 7R strategy for different workloads.
+- Explain how business value, technical complexity, compliance, and modernization goals influence the choice of migration strategy.
+- A company is migrating from an on-premises data center to AWS. Some applications are legacy, some are VMware-based, some are SaaS candidates, and others require cloud-native scalability. Design a complete migration plan using the AWS 7 Rs, explaining why each application category follows a different migration approach.
+
+---
+
