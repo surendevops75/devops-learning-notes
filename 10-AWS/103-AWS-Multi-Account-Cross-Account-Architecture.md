@@ -611,3 +611,634 @@ Every production account automatically inherits the restriction.
 
 ---
 
+# Chapter 4 - Cross-Account IAM
+
+## What is Cross-Account IAM?
+
+Cross-Account IAM allows users, applications, or AWS services in one AWS account to securely access resources in another AWS account without creating duplicate IAM users.
+
+Instead of sharing passwords or long-term access keys, AWS uses **IAM Roles** and **AWS Security Token Service (STS)** to provide temporary credentials.
+
+Example
+
+```text
+Development Account
+
+↓
+
+IAM Role
+
+↓
+
+Production Account
+
+↓
+
+Amazon EKS
+```
+
+The user never logs in directly to the Production account.
+
+---
+
+# Why Cross-Account Access?
+
+Large organizations separate workloads into multiple AWS accounts.
+
+Example
+
+```text
+Development Account
+
+QA Account
+
+Production Account
+
+Security Account
+
+Logging Account
+```
+
+However, teams still need controlled access.
+
+Examples
+
+- Jenkins deploys to Production.
+- Security team audits every account.
+- Backup account accesses Production S3.
+- Developers read CloudWatch logs from another account.
+
+Cross-Account IAM enables this securely.
+
+---
+
+# Cross-Account Architecture
+
+```text
+Account A
+
+Developer
+
+↓
+
+Assume Role
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Account B
+
+↓
+
+AWS Resources
+```
+
+---
+
+# Components
+
+| Component | Purpose |
+|-----------|---------|
+| IAM User | Identity requesting access |
+| IAM Role | Identity being assumed |
+| Trust Policy | Defines who can assume the role |
+| IAM Policy | Defines allowed actions |
+| STS | Generates temporary credentials |
+
+---
+
+# How Cross-Account IAM Works
+
+Step 1
+
+Developer authenticates in Account A.
+
+↓
+
+Step 2
+
+Developer requests AssumeRole.
+
+↓
+
+Step 3
+
+STS validates permissions.
+
+↓
+
+Step 4
+
+Temporary credentials are generated.
+
+↓
+
+Step 5
+
+Developer accesses resources in Account B.
+
+---
+
+# Example
+
+```text
+Account A
+
+↓
+
+Developer
+
+↓
+
+AssumeRole
+
+↓
+
+Account B
+
+↓
+
+EC2
+
+↓
+
+S3
+
+↓
+
+RDS
+```
+
+Developer never becomes a permanent user in Account B.
+
+---
+
+# Benefits
+
+- No password sharing
+- Temporary credentials
+- Better security
+- Least privilege
+- Centralized identity
+- Easy auditing
+
+---
+
+# Trust Policy
+
+A Trust Policy defines **who can assume the role**.
+
+Example
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::111111111111:root"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+This allows Account A to assume the role in Account B.
+
+---
+
+# IAM Permission Policy
+
+The role also needs permissions.
+
+Example
+
+```text
+Allow
+
+EC2
+
+S3
+
+CloudWatch
+```
+
+Remember
+
+Trust Policy answers
+
+**Who can assume the role?**
+
+IAM Policy answers
+
+**What can the role do?**
+
+---
+
+# Cross-Account Deployment Example
+
+A Jenkins server exists inside the Shared Services Account.
+
+Architecture
+
+```text
+Shared Services
+
+↓
+
+Jenkins
+
+↓
+
+AssumeRole
+
+↓
+
+Production Account
+
+↓
+
+Amazon EKS
+```
+
+Jenkins receives temporary credentials and deploys applications.
+
+---
+
+# Best Practices
+
+- Use IAM Roles instead of IAM Users.
+- Grant least privilege.
+- Use temporary credentials.
+- Enable CloudTrail.
+- Rotate roles regularly.
+- Restrict AssumeRole permissions.
+
+---
+
+# Interview Questions
+
+### Basic
+
+- What is Cross-Account IAM?
+- Why use IAM Roles?
+
+### Intermediate
+
+- Explain Trust Policy.
+- Explain IAM Permission Policy.
+- Why use temporary credentials?
+
+### Advanced
+
+- Design secure Jenkins deployment across AWS accounts.
+- Explain how STS works.
+- Design access for a Security Team across 200 AWS accounts.
+
+---
+
+# Chapter 5 - AWS Security Token Service (STS)
+
+## What is AWS STS?
+
+AWS Security Token Service (STS) provides temporary security credentials for AWS resources.
+
+Unlike IAM Users,
+
+STS credentials expire automatically.
+
+This significantly improves security.
+
+---
+
+# Why STS?
+
+Without STS
+
+```text
+IAM User
+
+↓
+
+Permanent Access Keys
+```
+
+Problems
+
+- Long-term credentials
+- Difficult rotation
+- Security risk
+
+---
+
+With STS
+
+```text
+IAM User
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+```
+
+Credentials automatically expire.
+
+---
+
+# Temporary Credentials
+
+STS generates
+
+- Access Key ID
+- Secret Access Key
+- Session Token
+
+Example
+
+```text
+Developer
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+1 Hour Credentials
+```
+
+After expiration,
+
+new credentials must be requested.
+
+---
+
+# Benefits
+
+- Temporary access
+- Better security
+- No permanent credentials
+- MFA integration
+- Cross-account access
+- Federation support
+
+---
+
+# Common STS APIs
+
+| API | Purpose |
+|------|---------|
+| AssumeRole | Cross-account access |
+| AssumeRoleWithSAML | Enterprise SSO |
+| AssumeRoleWithWebIdentity | OIDC providers |
+| GetCallerIdentity | Identify current identity |
+| GetSessionToken | Temporary credentials |
+
+---
+
+# STS Authentication Flow
+
+```text
+IAM User
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Service
+```
+
+---
+
+# GetCallerIdentity
+
+One of the most useful APIs.
+
+Returns
+
+- AWS Account ID
+- IAM User
+- IAM Role
+- ARN
+
+Useful for
+
+- Debugging
+- Automation
+- CI/CD
+- Terraform
+
+---
+
+# Production Example
+
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS
+
+No AWS Access Keys stored in GitHub.
+
+---
+
+# STS vs IAM User
+
+| IAM User | STS |
+|-----------|-----|
+| Permanent Credentials | Temporary Credentials |
+| Manual Rotation | Automatic Expiry |
+| Higher Risk | Lower Risk |
+| Static Access | Session Based |
+
+---
+
+# Best Practices
+
+- Prefer STS over IAM Users.
+- Enable MFA.
+- Keep session duration short.
+- Avoid long-term access keys.
+- Monitor AssumeRole events using CloudTrail.
+
+---
+
+# Chapter 6 - AssumeRole
+
+## What is AssumeRole?
+
+AssumeRole is an AWS STS operation that allows one identity to temporarily become another IAM Role.
+
+Example
+
+```text
+Developer
+
+↓
+
+AssumeRole
+
+↓
+
+Production Role
+
+↓
+
+Deploy Application
+```
+
+---
+
+# AssumeRole Flow
+
+```text
+IAM User
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+IAM Role
+
+↓
+
+AWS Resources
+```
+
+---
+
+# Production Example
+
+CI/CD Pipeline
+
+```text
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+AssumeRole
+
+↓
+
+Production Role
+
+↓
+
+Amazon EKS
+```
+
+No static AWS credentials are required.
+
+---
+
+# Advantages
+
+- Temporary access
+- Secure deployments
+- Cross-account support
+- Easy auditing
+- Least privilege
+
+---
+
+# Common Use Cases
+
+- Cross-account deployments
+- Terraform automation
+- GitHub Actions
+- Jenkins
+- Lambda
+- Security auditing
+- Centralized administration
+
+---
+
+# Best Practices
+
+- Grant only required permissions.
+- Enable MFA for human users.
+- Use OIDC where possible.
+- Monitor AssumeRole activity.
+- Avoid IAM Users for automation.
+
+---
+
+# Interview Questions
+
+### Basic
+
+- What is STS?
+- What is AssumeRole?
+- Why are temporary credentials better?
+
+### Intermediate
+
+- STS vs IAM User
+- AssumeRole vs IAM User
+- Explain Cross-Account authentication flow.
+
+### Advanced
+
+- Design GitHub Actions authentication using OIDC.
+- Explain Cross-Account deployments.
+- How would you secure CI/CD pipelines without AWS access keys?
+
+---
+
