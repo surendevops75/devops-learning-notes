@@ -2113,3 +2113,678 @@ No infrastructure changes are required.
 
 ---
 
+# Chapter 4 - IAM Roles, Execution Role & Task Role
+
+One of the most frequently asked AWS Fargate interview topics is the difference between **Task Role** and **Execution Role**.
+
+Many engineers know both exist but cannot clearly explain when each one is used.
+
+Understanding these roles is essential for designing secure ECS/Fargate workloads.
+
+---
+
+# Why Does Fargate Need IAM Roles?
+
+A container frequently needs to access AWS services.
+
+Examples
+
+- Read objects from Amazon S3
+- Read secrets from AWS Secrets Manager
+- Publish messages to Amazon SNS
+- Read from Amazon SQS
+- Access DynamoDB
+- Write logs to CloudWatch
+
+AWS recommends **never** storing AWS Access Keys inside containers.
+
+Instead, IAM Roles provide temporary credentials.
+
+---
+
+# Authentication Flow
+
+```text
+Application
+
+↓
+
+IAM Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS Service
+```
+
+No Access Keys
+
+No Secret Keys
+
+No Credential Rotation
+
+Everything is automatic.
+
+---
+
+# Two IAM Roles in Fargate
+
+AWS Fargate uses two different IAM roles.
+
+| IAM Role | Used By |
+|-----------|----------|
+| Task Execution Role | ECS Agent / Fargate Platform |
+| Task Role | Your Application |
+
+Many interview questions are based on this distinction.
+
+---
+
+# What is an Execution Role?
+
+The **Execution Role** is used by AWS itself while launching your task.
+
+Your application does **not** use this role.
+
+It gives AWS permission to perform startup operations.
+
+---
+
+# Execution Role Responsibilities
+
+The Execution Role is commonly used for
+
+- Pulling images from Amazon ECR
+- Sending logs to CloudWatch
+- Retrieving secrets during task startup
+- Downloading environment files
+- Authenticating with AWS services required before the application starts
+
+Architecture
+
+```text
+Fargate
+
+↓
+
+Execution Role
+
+↓
+
+Amazon ECR
+
+↓
+
+Download Image
+```
+
+---
+
+# Startup Flow
+
+```text
+Run Task
+
+↓
+
+Fargate
+
+↓
+
+Execution Role
+
+↓
+
+Amazon ECR
+
+↓
+
+Pull Image
+
+↓
+
+CloudWatch
+
+↓
+
+Create Log Stream
+
+↓
+
+Start Application
+```
+
+Notice
+
+The application has not started yet.
+
+---
+
+# Example
+
+Suppose your image is stored in
+
+```text
+Amazon ECR
+```
+
+Who downloads the image?
+
+❌ Application
+
+✅ Execution Role
+
+---
+
+# What Happens if Execution Role is Missing?
+
+Task starts
+
+↓
+
+Attempts to pull image
+
+↓
+
+Permission denied
+
+↓
+
+Task fails
+
+Common error
+
+```text
+CannotPullContainerError
+```
+
+This is one of the most common production issues.
+
+---
+
+# What is a Task Role?
+
+The Task Role is completely different.
+
+It is used **after the application starts**.
+
+The application assumes this role automatically.
+
+---
+
+# Task Role Responsibilities
+
+Your application may need to
+
+- Read S3
+- Access DynamoDB
+- Read Secrets
+- Publish SNS
+- Consume SQS
+- Invoke Lambda
+- Access Parameter Store
+
+The Task Role grants these permissions.
+
+---
+
+# Task Role Flow
+
+```text
+Application
+
+↓
+
+Task Role
+
+↓
+
+AWS STS
+
+↓
+
+Temporary Credentials
+
+↓
+
+Amazon S3
+```
+
+---
+
+# Example
+
+Java Application
+
+↓
+
+Task Role
+
+↓
+
+Secrets Manager
+
+↓
+
+Retrieve Database Password
+
+↓
+
+Connect to Database
+
+The application never stores credentials.
+
+---
+
+# Task Role vs Execution Role
+
+| Task Role | Execution Role |
+|------------|----------------|
+| Used by Application | Used by ECS/Fargate |
+| Runtime Permissions | Startup Permissions |
+| Reads S3 | Pulls ECR Images |
+| Accesses DynamoDB | Creates CloudWatch Logs |
+| Reads Secrets | Downloads Secrets before startup |
+| Business Logic | Infrastructure Operations |
+
+This comparison is asked in many interviews.
+
+---
+
+# Visual Comparison
+
+```text
+               Run Task
+
+                  │
+
+        Execution Role
+
+                  │
+
+     Pull Image from ECR
+
+                  │
+
+      Create CloudWatch Logs
+
+                  │
+
+         Start Container
+
+                  │
+
+          Application Runs
+
+                  │
+
+            Task Role
+
+                  │
+
+        Access AWS Services
+```
+
+---
+
+# IAM Credential Delivery
+
+How does the application receive credentials?
+
+AWS automatically injects temporary credentials into the task.
+
+```text
+Application
+
+↓
+
+Metadata Endpoint
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS API
+```
+
+No credentials are stored inside
+
+- Docker Image
+- Source Code
+- Environment Variables
+
+---
+
+# Temporary Credential Lifecycle
+
+```text
+Task Starts
+
+↓
+
+STS Issues Credentials
+
+↓
+
+Application Uses Credentials
+
+↓
+
+Credentials Rotate Automatically
+
+↓
+
+Task Stops
+
+↓
+
+Credentials Destroyed
+```
+
+This significantly improves security.
+
+---
+
+# Least Privilege Example
+
+Bad
+
+```text
+Task Role
+
+↓
+
+AdministratorAccess
+```
+
+Every AWS service becomes accessible.
+
+---
+
+Good
+
+```text
+Allow
+
+s3:GetObject
+
+Only
+
+arn:aws:s3:::payment-reports/*
+```
+
+Grant only the permissions required by the application.
+
+---
+
+# Cross-Account Access
+
+Suppose
+
+Application runs in
+
+```text
+Development Account
+```
+
+but reads S3 from
+
+```text
+Shared Services Account
+```
+
+Architecture
+
+```text
+Application
+
+↓
+
+Task Role
+
+↓
+
+AssumeRole
+
+↓
+
+STS
+
+↓
+
+Shared Account
+
+↓
+
+Amazon S3
+```
+
+This is common in enterprise environments.
+
+---
+
+# IAM Roles for Service Accounts (IRSA)
+
+For Amazon EKS on Fargate,
+
+IAM authentication is commonly implemented using **IAM Roles for Service Accounts (IRSA).**
+
+Architecture
+
+```text
+Kubernetes Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+STS
+
+↓
+
+AWS Services
+```
+
+Every Pod can receive its own IAM permissions.
+
+This avoids sharing node-level credentials.
+
+---
+
+# Security Best Practices
+
+- Never use IAM Users inside containers.
+- Use IAM Roles.
+- Follow least privilege.
+- Use temporary credentials.
+- Store secrets in AWS Secrets Manager.
+- Enable CloudTrail.
+- Rotate permissions through IAM policy updates.
+- Avoid wildcard (*) permissions.
+
+---
+
+# Common Production Issues
+
+## Image Pull Failure
+
+Cause
+
+Execution Role missing ECR permissions.
+
+Resolution
+
+Grant
+
+- ecr:GetAuthorizationToken
+- ecr:BatchGetImage
+- ecr:GetDownloadUrlForLayer
+
+---
+
+## CloudWatch Logs Not Created
+
+Cause
+
+Execution Role missing CloudWatch permissions.
+
+Resolution
+
+Grant
+
+- logs:CreateLogStream
+- logs:PutLogEvents
+
+---
+
+## Application Cannot Read S3
+
+Cause
+
+Task Role missing permissions.
+
+Resolution
+
+Grant
+
+```text
+s3:GetObject
+```
+
+to the Task Role.
+
+---
+
+## Access Denied
+
+Cause
+
+Wrong role assigned.
+
+Resolution
+
+Verify
+
+- Execution Role
+- Task Role
+- IAM Policies
+- Resource Policies
+
+---
+
+# Enterprise Example
+
+A payment microservice uses
+
+- Amazon ECR
+- Secrets Manager
+- Amazon S3
+- Amazon SNS
+- CloudWatch
+
+Startup
+
+```text
+Execution Role
+
+↓
+
+Pull Image
+
+↓
+
+Create Logs
+
+↓
+
+Start Container
+```
+
+Runtime
+
+```text
+Application
+
+↓
+
+Task Role
+
+↓
+
+Read Secrets
+
+↓
+
+Generate Invoice
+
+↓
+
+Upload PDF to S3
+
+↓
+
+Publish SNS Notification
+```
+
+Infrastructure permissions and application permissions remain completely separated.
+
+---
+
+# Best Practices
+
+- Separate Task Role and Execution Role.
+- One Task Role per microservice whenever possible.
+- Restrict permissions using least privilege.
+- Use managed IAM policies where appropriate.
+- Monitor AssumeRole events with CloudTrail.
+- Audit IAM policies regularly.
+
+---
+
+# Common Mistakes
+
+- Using AdministratorAccess for Task Roles.
+- Using the Execution Role for application permissions.
+- Hardcoding AWS credentials.
+- Sharing one Task Role across unrelated services.
+- Forgetting to update IAM policies after adding new AWS integrations.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an ECS Task Role?
+- What is an Execution Role?
+- Why are IAM Roles preferred over IAM Users?
+
+## Intermediate
+
+- Task Role vs Execution Role.
+- How does a Fargate task obtain AWS credentials?
+- Explain the startup sequence involving the Execution Role.
+
+## Advanced
+
+- Design IAM permissions for a payment microservice using S3, SNS, and Secrets Manager.
+- Explain how temporary credentials improve container security.
+- Design cross-account access for a Fargate application using STS and AssumeRole.
+
+---
+
