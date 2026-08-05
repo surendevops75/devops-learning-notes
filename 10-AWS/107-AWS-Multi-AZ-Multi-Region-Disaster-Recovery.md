@@ -3929,3 +3929,824 @@ Failure of an entire Availability Zone does not interrupt payment processing.
 
 ---
 
+# Chapter 7 - Multi-Region Architecture (Deep Dive)
+
+While **Multi-AZ** protects applications against **Availability Zone failures**, it does **not** protect against an entire AWS Region becoming unavailable.
+
+For mission-critical applications such as
+
+- Banking
+- Healthcare
+- E-Commerce
+- Government
+- Airline Reservation Systems
+- Global SaaS Platforms
+
+organizations deploy applications across multiple AWS Regions.
+
+This architecture is called **Multi-Region Architecture**.
+
+---
+
+# What is Multi-Region?
+
+A Multi-Region architecture deploys applications in two or more AWS Regions.
+
+Example
+
+```text
+Primary Region
+
+Mumbai
+
+↓
+
+Secondary Region
+
+Singapore
+```
+
+Both Regions contain complete application infrastructure.
+
+---
+
+# Why Multi-Region?
+
+Although AWS Regions are extremely reliable,
+
+an entire Region can become unavailable because of
+
+- Large Network Failures
+- Natural Disasters
+- Major Infrastructure Issues
+- Human Errors
+- Regional Service Disruptions
+
+A Multi-Region architecture protects against these failures.
+
+---
+
+# Single-Region Architecture
+
+Example
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Application
+```
+
+If Mumbai becomes unavailable,
+
+```text
+Application
+
+↓
+
+Unavailable
+```
+
+Entire business stops.
+
+---
+
+# Multi-Region Architecture
+
+Instead
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Application
+
+──────────────
+
+Singapore
+
+↓
+
+Application
+```
+
+If Mumbai fails,
+
+traffic moves to Singapore.
+
+---
+
+# Components of Multi-Region Architecture
+
+Typical architecture includes
+
+- Route53
+- Application Load Balancer
+- Auto Scaling
+- EC2 / ECS / EKS
+- Database Replication
+- Amazon S3 Replication
+- CloudFront
+- Monitoring
+
+Each Region operates independently.
+
+---
+
+# Route53
+
+Amazon Route53 acts as the global traffic manager.
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Singapore
+```
+
+Route53 determines which Region should receive traffic.
+
+---
+
+# Route53 Health Checks
+
+Route53 continuously checks application health.
+
+```text
+Route53
+
+↓
+
+Health Check
+
+↓
+
+Healthy
+
+↓
+
+Route Traffic
+
+──────────────
+
+Unhealthy
+
+↓
+
+Stop Routing
+```
+
+Traffic is automatically redirected.
+
+---
+
+# Failover Routing
+
+Primary Region
+
+```text
+Mumbai
+
+↓
+
+Healthy
+```
+
+Traffic
+
+↓
+
+Mumbai
+
+If
+
+```text
+Mumbai
+
+↓
+
+Unhealthy
+```
+
+Route53
+
+↓
+
+Singapore
+
+Users experience minimal disruption.
+
+---
+
+# Active-Passive Multi-Region
+
+One Region serves traffic.
+
+The other waits for disaster.
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+Active
+
+────────────
+
+Singapore
+
+Standby
+```
+
+Lower cost.
+
+Higher recovery time.
+
+---
+
+# Active-Active Multi-Region
+
+Both Regions serve traffic.
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Users
+
+──────────────
+
+Singapore
+
+↓
+
+Users
+```
+
+Benefits
+
+- Better Performance
+- Load Sharing
+- Higher Availability
+
+---
+
+# Active-Passive vs Active-Active
+
+| Active-Passive | Active-Active |
+|----------------|---------------|
+| One Region Active | Both Regions Active |
+| Lower Cost | Higher Cost |
+| Disaster Recovery | Continuous Availability |
+| Simpler | More Complex |
+
+---
+
+# Global Traffic Flow
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+Route53
+
+↓
+
+Nearest Healthy Region
+
+↓
+
+Application
+```
+
+Users automatically reach an available Region.
+
+---
+
+# Database Replication
+
+Applications require data replication between Regions.
+
+Example
+
+```text
+Primary Database
+
+Mumbai
+
+↓
+
+Replication
+
+↓
+
+Singapore
+```
+
+Without replication,
+
+applications cannot recover properly.
+
+---
+
+# Amazon Aurora Global Database
+
+Aurora Global Database replicates data across Regions.
+
+Architecture
+
+```text
+Mumbai
+
+↓
+
+Primary Cluster
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+Read Replica
+```
+
+Benefits
+
+- Low Replication Lag
+- Fast Failover
+- Global Reads
+
+---
+
+# Amazon RDS Cross-Region Read Replica
+
+Example
+
+```text
+Primary RDS
+
+↓
+
+Mumbai
+
+↓
+
+Replication
+
+↓
+
+Singapore
+
+↓
+
+Read Replica
+```
+
+The replica can be promoted during disaster recovery.
+
+---
+
+# Amazon DynamoDB Global Tables
+
+DynamoDB supports
+
+multi-active databases.
+
+```text
+Mumbai
+
+↓
+
+Read + Write
+
+──────────────
+
+Singapore
+
+↓
+
+Read + Write
+```
+
+Both Regions remain active.
+
+---
+
+# Amazon S3 Cross-Region Replication
+
+Objects uploaded in one Region automatically replicate.
+
+```text
+Mumbai Bucket
+
+↓
+
+Cross Region Replication
+
+↓
+
+Singapore Bucket
+```
+
+Useful for
+
+- Backups
+- Compliance
+- Disaster Recovery
+
+---
+
+# Multi-Region Kubernetes
+
+Amazon EKS clusters can exist in multiple Regions.
+
+```text
+Mumbai
+
+↓
+
+Amazon EKS
+
+──────────────
+
+Singapore
+
+↓
+
+Amazon EKS
+```
+
+Applications deploy independently in each Region.
+
+---
+
+# Multi-Region ECS
+
+Amazon ECS services can also span Regions.
+
+```text
+Route53
+
+↓
+
+Mumbai ECS
+
+──────────────
+
+Singapore ECS
+```
+
+Traffic automatically switches during failures.
+
+---
+
+# Multi-Region Microservices
+
+Example
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Payment API
+
+↓
+
+Order API
+
+↓
+
+Notification API
+
+──────────────
+
+Singapore
+
+↓
+
+Payment API
+
+↓
+
+Order API
+
+↓
+
+Notification API
+```
+
+Each Region contains the complete application stack.
+
+---
+
+# Cross-Region Networking
+
+Regions communicate over
+
+```text
+AWS Global Backbone
+```
+
+Benefits
+
+- Private Network
+- High Reliability
+- Secure Replication
+- Lower Latency
+
+---
+
+# Regional Failover
+
+Failure
+
+```text
+Mumbai
+
+↓
+
+Unavailable
+```
+
+Recovery
+
+```text
+Route53
+
+↓
+
+Singapore
+
+↓
+
+Application Available
+```
+
+No infrastructure creation is required.
+
+---
+
+# Enterprise Banking Example
+
+```text
+Customers
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+Internet Banking
+
+↓
+
+Aurora
+
+↓
+
+Cross-Region Replication
+
+↓
+
+Singapore
+
+↓
+
+Standby Banking Platform
+```
+
+Banking continues after regional failures.
+
+---
+
+# Global SaaS Example
+
+```text
+Users
+
+↓
+
+North America
+
+↓
+
+Virginia
+
+────────────
+
+Europe
+
+↓
+
+Frankfurt
+
+────────────
+
+Asia
+
+↓
+
+Mumbai
+```
+
+Users connect to the nearest healthy Region.
+
+---
+
+# Multi-Region Monitoring
+
+Monitor
+
+- Region Health
+- Database Replication Lag
+- Route53 Health Checks
+- Application Health
+- API Latency
+- Regional Traffic
+
+CloudWatch provides visibility into each Region independently.
+
+---
+
+# Enterprise Architecture
+
+```text
+Users
+
+↓
+
+CloudFront
+
+↓
+
+Route53
+
+↓
+
+Mumbai
+
+↓
+
+ALB
+
+↓
+
+Auto Scaling
+
+↓
+
+Aurora
+
+↓
+
+Cross Region Replication
+
+↓
+
+Singapore
+
+↓
+
+ALB
+
+↓
+
+Auto Scaling
+
+↓
+
+Aurora Replica
+```
+
+This architecture provides
+
+- High Availability
+- Disaster Recovery
+- Global Performance
+- Business Continuity
+
+---
+
+# Benefits
+
+- Regional Disaster Recovery
+- Lower Global Latency
+- Better Customer Experience
+- Higher Availability
+- Global Scaling
+- Business Continuity
+
+---
+
+# Best Practices
+
+- Deploy critical workloads across multiple Regions.
+- Use Route53 health checks.
+- Replicate databases continuously.
+- Enable Cross-Region Replication for Amazon S3.
+- Automate failover.
+- Test Regional Disaster Recovery regularly.
+- Monitor replication lag.
+- Keep infrastructure identical across Regions.
+
+---
+
+# Common Mistakes
+
+- Assuming Multi-AZ protects against Region failure.
+- Not replicating databases.
+- Forgetting DNS failover.
+- Deploying different application versions in different Regions.
+- Never testing regional failover.
+- Ignoring replication latency.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Multi-Region architecture?
+- Why use Multi-Region instead of Multi-AZ?
+- What is Route53 Failover Routing?
+
+## Intermediate
+
+- Active-Passive vs Active-Active Multi-Region.
+- Explain Cross-Region Replication.
+- How does Aurora Global Database support Disaster Recovery?
+
+## Advanced
+
+- Design a Multi-Region architecture for a global banking application requiring continuous availability.
+- Explain how Route53, Aurora Global Database, CloudFront, Auto Scaling, and Cross-Region Replication work together during an AWS Region outage.
+- Your company operates in Asia, Europe, and North America with strict Disaster Recovery requirements. Design a complete Multi-Region AWS architecture that minimizes latency, ensures business continuity, and provides automatic failover during regional failures.
+
+---
+
