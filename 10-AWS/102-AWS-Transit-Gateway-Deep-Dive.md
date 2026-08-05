@@ -1806,3 +1806,600 @@ This architecture is commonly found in banking, insurance, healthcare, retail, a
 
 ---
 
+# Chapter 9 - Inspection VPC & Centralized Egress
+
+As enterprise AWS environments grow, organizations require centralized security controls instead of managing firewalls and internet access in every VPC.
+
+Two common enterprise networking patterns are:
+
+- Inspection VPC
+- Centralized Egress VPC
+
+These patterns improve security, simplify operations, and reduce costs.
+
+---
+
+# What is an Inspection VPC?
+
+An Inspection VPC is a dedicated VPC that contains network security appliances.
+
+Instead of allowing VPCs to communicate directly,
+
+all traffic passes through security devices for inspection.
+
+Architecture
+
+```text
+Application VPC
+
+↓
+
+Transit Gateway
+
+↓
+
+Inspection VPC
+
+↓
+
+Firewall
+
+↓
+
+Destination VPC
+```
+
+The firewall inspects every packet before forwarding it.
+
+---
+
+# Why Use an Inspection VPC?
+
+Without Inspection VPC
+
+```text
+VPC-A
+
+↓
+
+VPC-B
+```
+
+Traffic flows directly.
+
+No centralized inspection.
+
+---
+
+With Inspection VPC
+
+```text
+VPC-A
+
+↓
+
+Transit Gateway
+
+↓
+
+Firewall
+
+↓
+
+Transit Gateway
+
+↓
+
+VPC-B
+```
+
+Every packet is inspected.
+
+---
+
+# Common Inspection Appliances
+
+AWS Native
+
+- AWS Network Firewall
+
+Third Party
+
+- Palo Alto
+- Fortinet
+- Check Point
+- Cisco Firepower
+- Sophos
+
+---
+
+# Traffic Flow
+
+```text
+Application
+
+↓
+
+Transit Gateway
+
+↓
+
+Inspection Attachment
+
+↓
+
+Firewall
+
+↓
+
+Transit Gateway
+
+↓
+
+Destination VPC
+```
+
+Notice
+
+Traffic enters and exits through the same firewall.
+
+This is why Appliance Mode is important.
+
+---
+
+# Benefits
+
+- Centralized Security
+- IDS / IPS
+- URL Filtering
+- Malware Detection
+- Packet Inspection
+- Compliance
+- Logging
+
+---
+
+# What is Centralized Egress?
+
+Instead of every VPC having its own NAT Gateway,
+
+internet traffic is routed through one dedicated Egress VPC.
+
+Architecture
+
+```text
+Application VPC
+
+↓
+
+Transit Gateway
+
+↓
+
+Egress VPC
+
+↓
+
+Firewall
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet Gateway
+
+↓
+
+Internet
+```
+
+---
+
+# Why Centralized Egress?
+
+Without it
+
+```text
+Dev VPC
+
+↓
+
+NAT Gateway
+
+QA VPC
+
+↓
+
+NAT Gateway
+
+Prod VPC
+
+↓
+
+NAT Gateway
+```
+
+Problems
+
+- Multiple NAT Gateways
+- Multiple firewall policies
+- Distributed logging
+- Difficult auditing
+
+---
+
+With Centralized Egress
+
+```text
+Application VPCs
+
+↓
+
+Transit Gateway
+
+↓
+
+Egress VPC
+
+↓
+
+Firewall
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+Advantages
+
+- Single security policy
+- Central monitoring
+- Easier auditing
+- Lower operational effort
+
+---
+
+# Inspection VPC vs Egress VPC
+
+| Inspection VPC | Egress VPC |
+|----------------|------------|
+| Inspects East-West traffic | Controls North-South traffic |
+| Firewall | NAT + Firewall |
+| Security | Internet Access |
+| Enterprise Segmentation | Controlled Internet Access |
+
+---
+
+# Enterprise Example
+
+```text
+               Transit Gateway
+
+      ┌─────────┼─────────┬─────────┐
+
+     Dev       QA      Production
+
+           │
+
+      Inspection VPC
+
+           │
+
+       Egress VPC
+
+           │
+
+        Internet
+```
+
+All outbound traffic follows one secure path.
+
+---
+
+# Best Practices
+
+- Separate Inspection and Egress workloads.
+- Enable Appliance Mode.
+- Deploy firewalls in multiple AZs.
+- Monitor firewall throughput.
+- Enable VPC Flow Logs.
+- Test failover periodically.
+
+---
+
+# Cost Optimization
+
+Transit Gateway simplifies networking, but poor design can increase costs.
+
+---
+
+## Reduce Attachment Count
+
+Instead of
+
+```text
+Separate TGW
+
+For Every Environment
+```
+
+Use
+
+```text
+One Enterprise TGW
+
+↓
+
+Multiple Attachments
+```
+
+---
+
+## Use Route Segmentation
+
+Avoid creating unnecessary Route Tables.
+
+Create only those required by the architecture.
+
+---
+
+## Remove Unused Attachments
+
+Unused
+
+- VPC Attachments
+- VPN Attachments
+- Peering Attachments
+
+still contribute to operational overhead.
+
+Review them regularly.
+
+---
+
+## Use AWS RAM
+
+Instead of creating multiple Transit Gateways,
+
+share one TGW.
+
+Benefits
+
+- Lower cost
+- Easier management
+
+---
+
+## Monitor Cross-Region Traffic
+
+TGW Peering transfers incur inter-region data transfer charges.
+
+Only replicate required workloads.
+
+---
+
+# Monitoring Transit Gateway
+
+Enterprise monitoring should include
+
+- Transit Gateway metrics
+- Attachment health
+- VPN tunnel status
+- Direct Connect status
+- Route changes
+- Flow Logs
+- CloudWatch Alarms
+
+---
+
+## CloudWatch Metrics
+
+Monitor
+
+- Bytes In
+- Bytes Out
+- Packet Drops
+- Attachment Status
+- VPN Tunnel Status
+- BGP Status
+
+---
+
+## VPC Flow Logs
+
+Flow Logs help answer
+
+- Why is traffic blocked?
+- Which IP communicated?
+- Was traffic accepted?
+- Was traffic rejected?
+
+Example
+
+```text
+Application
+
+↓
+
+Transit Gateway
+
+↓
+
+Destination
+
+↓
+
+Flow Logs
+```
+
+---
+
+## CloudTrail
+
+CloudTrail records
+
+- Attachment creation
+- Attachment deletion
+- Route updates
+- Route propagation changes
+- TGW configuration changes
+
+Useful for auditing and compliance.
+
+---
+
+# Troubleshooting Guide
+
+## Problem 1
+
+VPCs cannot communicate.
+
+Check
+
+- Attachment Status
+- VPC Route Table
+- TGW Route Table
+- Security Groups
+- Network ACLs
+
+---
+
+## Problem 2
+
+Attachment shows "Pending"
+
+Possible causes
+
+- Cross-account acceptance pending
+- AWS RAM issue
+- Incorrect permissions
+
+---
+
+## Problem 3
+
+Traffic reaches TGW but not destination.
+
+Check
+
+- Route Association
+- Route Propagation
+- Static Routes
+- Blackhole Routes
+
+---
+
+## Problem 4
+
+VPN not working.
+
+Verify
+
+- Tunnel Status
+- BGP
+- Customer Gateway
+- Virtual Private Gateway
+- Transit Gateway VPN Attachment
+
+---
+
+## Problem 5
+
+High Latency
+
+Check
+
+- Cross-Region routing
+- Direct Connect health
+- VPN failover
+- Firewall CPU
+- Packet inspection delays
+
+---
+
+## Problem 6
+
+Cannot access Internet
+
+Verify
+
+- Egress Route
+- NAT Gateway
+- Internet Gateway
+- Firewall Rules
+- Route Tables
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Transit Gateway?
+- What are Transit Gateway Attachments?
+- What is Route Propagation?
+- What is Route Association?
+- What is Appliance Mode?
+
+---
+
+## Intermediate
+
+- Transit Gateway vs VPC Peering
+- Static Route vs Propagated Route
+- Inspection VPC vs Egress VPC
+- Why use AWS RAM with Transit Gateway?
+- Explain TGW Peering.
+
+---
+
+## Advanced
+
+- Design networking for 500 VPCs.
+- Design a multi-account landing zone using Transit Gateway.
+- Explain centralized internet egress architecture.
+- Explain hybrid cloud using Direct Connect and Transit Gateway.
+- How would you secure East-West traffic?
+- How would you design a multi-region banking network?
+
+---
+
+## FAANG / Architect-Level Questions
+
+1. Design AWS networking for a global company with 300 AWS accounts across three regions.
+
+2. How would you migrate from VPC Peering to Transit Gateway without downtime?
+
+3. Explain how to isolate Development, QA, and Production using Transit Gateway Route Tables.
+
+4. Design centralized security using Inspection VPC, AWS Network Firewall, and Transit Gateway.
+
+5. How would you integrate SD-WAN with AWS Transit Gateway?
+
+6. Explain the complete packet flow from an on-premises server to an Amazon EKS Pod using Direct Connect and Transit Gateway.
+
+---
+
+# Quick Revision Cheat Sheet
+
+| Requirement | AWS Service |
+|-------------|-------------|
+| Connect hundreds of VPCs | Transit Gateway |
+| Connect two VPCs | VPC Peering |
+| Connect on-premises | VPN / Direct Connect |
+| Cross-Region connectivity | TGW Peering |
+| Central routing | TGW Route Tables |
+| Automatic route learning | Route Propagation |
+| Assign attachment to routing policy | Route Association |
+| Stateful firewall routing | Appliance Mode |
+| Share TGW across accounts | AWS RAM |
+| East-West inspection | Inspection VPC |
+| Internet access | Centralized Egress VPC |
+| Hybrid cloud | Direct Connect + TGW |
+| Enterprise networking | Transit Gateway |
