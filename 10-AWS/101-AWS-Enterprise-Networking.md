@@ -559,3 +559,618 @@ VPC Peering creates a private network connection between two VPCs, allowing reso
 Traffic never traverses the public internet. Communication stays on the AWS backbone network, providing secure and low-latency connectivity.
 
 VPC Peering is ideal for connecting a small number of VPCs, such as development and testing environments or two related applications.
+
+## Types of VPC Peering
+
+AWS supports multiple types of VPC Peering depending on the location of the VPCs and AWS accounts.
+
+### 1. Same Account - Same Region
+
+Both VPCs belong to the same AWS account and are located in the same AWS Region.
+
+```text
+AWS Account
+
+├── VPC-A
+│
+└────── VPC Peering ──────┐
+                           │
+                      VPC-B
+```
+
+Example
+
+- Application VPC
+- Database VPC
+
+Advantages
+
+- Simple configuration
+- Lowest latency
+- Easy management
+
+Typical Use Cases
+
+- Development & Testing
+- Application Separation
+- Shared Database
+
+---
+
+### 2. Cross-Account Peering
+
+VPCs belong to different AWS accounts.
+
+```text
+Account-A
+
+VPC-A
+
+↓
+
+Peering Request
+
+↓
+
+Account-B
+
+VPC-B
+```
+
+Requirements
+
+- Both accounts must approve the request.
+- Non-overlapping CIDRs.
+- Route table updates.
+- Security Group updates.
+
+Typical Use Cases
+
+- Shared Services
+- Partner Integrations
+- Multi-Account AWS Organizations
+
+---
+
+### 3. Cross-Region Peering
+
+VPCs exist in different AWS Regions.
+
+```text
+Mumbai Region
+
+VPC-A
+
+↓
+
+Cross Region Peering
+
+↓
+
+Singapore Region
+
+VPC-B
+```
+
+Typical Use Cases
+
+- Disaster Recovery
+- Global Applications
+- Regional Data Sharing
+
+Advantages
+
+- AWS Backbone Network
+- Private Communication
+- Lower latency than Internet
+
+---
+
+# How VPC Peering Works
+
+Consider two VPCs.
+
+```text
+VPC-A
+
+CIDR
+
+10.10.0.0/16
+
+↓
+
+Peering Connection
+
+↓
+
+VPC-B
+
+CIDR
+
+10.20.0.0/16
+```
+
+When an EC2 instance inside VPC-A sends traffic to 10.20.0.10
+
+Flow
+
+```text
+EC2
+
+↓
+
+Route Table
+
+↓
+
+VPC Peering
+
+↓
+
+Destination VPC
+
+↓
+
+EC2
+```
+
+Traffic never leaves the AWS backbone.
+
+---
+
+# VPC Peering Lifecycle
+
+```text
+Create Request
+
+↓
+
+Pending Acceptance
+
+↓
+
+Accepted
+
+↓
+
+Active
+
+↓
+
+Configure Routes
+
+↓
+
+Configure Security Groups
+
+↓
+
+Communication Established
+```
+
+---
+
+# Step-by-Step Configuration
+
+## Step 1
+
+Create VPC Peering Request
+
+AWS Console
+
+↓
+
+VPC
+
+↓
+
+Peering Connections
+
+↓
+
+Create Peering Connection
+
+Specify
+
+- Requester VPC
+- Accepter VPC
+
+---
+
+## Step 2
+
+Accept Request
+
+The accepter VPC owner accepts the request.
+
+Status changes
+
+```text
+Pending
+
+↓
+
+Active
+```
+
+---
+
+## Step 3
+
+Update Route Tables
+
+Example
+
+VPC-A Route Table
+
+| Destination | Target |
+|-------------|--------|
+|10.20.0.0/16|Peering Connection|
+
+VPC-B Route Table
+
+| Destination | Target |
+|-------------|--------|
+|10.10.0.0/16|Peering Connection|
+
+Without these routes, traffic cannot flow.
+
+---
+
+## Step 4
+
+Update Security Groups
+
+Allow required traffic.
+
+Example
+
+Application Server
+
+```text
+Inbound
+
+TCP 8080
+
+Source
+
+10.20.0.0/16
+```
+
+Remember
+
+Even if routing is correct, Security Groups can still block communication.
+
+---
+
+# DNS Resolution Across Peering
+
+By default
+
+```text
+Private DNS
+
+↓
+
+Does NOT resolve
+```
+
+Enable
+
+```text
+DNS Resolution
+
+DNS Hostnames
+```
+
+This allows instances to resolve private hostnames across peered VPCs.
+
+Example
+
+Instead of
+
+```
+10.20.5.10
+```
+
+Application can use
+
+```
+db.internal.company.local
+```
+
+---
+
+# Security in VPC Peering
+
+Traffic remains
+
+- Private
+- Encrypted on AWS Backbone (AWS-managed infrastructure)
+
+Control communication using
+
+- Security Groups
+- Network ACLs
+- IAM
+- Route Tables
+
+Best Practice
+
+Allow only required ports.
+
+Bad
+
+```text
+0.0.0.0/0
+```
+
+Good
+
+```text
+10.20.0.0/16
+```
+
+---
+
+# Advantages of VPC Peering
+
+- Low latency
+- High bandwidth
+- No internet required
+- Private communication
+- Simple setup
+- Cost effective for small environments
+
+---
+
+# Limitations of VPC Peering
+
+This is where many interviewers focus.
+
+## 1. No Transitive Routing
+
+Suppose
+
+```text
+VPC-A
+
+↓
+
+Peering
+
+↓
+
+VPC-B
+
+↓
+
+Peering
+
+↓
+
+VPC-C
+```
+
+Can A communicate with C?
+
+❌ No
+
+Traffic cannot pass through another VPC.
+
+AWS intentionally blocks transitive routing.
+
+If A needs to communicate with C
+
+Create another peering
+
+```text
+A
+
+↓
+
+Peering
+
+↓
+
+C
+```
+
+Or use Transit Gateway.
+
+---
+
+## 2. Full Mesh Problem
+
+Imagine
+
+10 VPCs
+
+Each VPC must connect with every other VPC.
+
+Number of peerings
+
+```
+45
+```
+
+100 VPCs
+
+```
+4950
+```
+
+Managing this becomes almost impossible.
+
+This is one of the biggest reasons Transit Gateway exists.
+
+---
+
+## 3. CIDR Overlap Not Supported
+
+Example
+
+VPC-A
+
+```
+10.0.0.0/16
+```
+
+VPC-B
+
+```
+10.0.0.0/16
+```
+
+Peering cannot be created.
+
+Always plan CIDR ranges before deployment.
+
+---
+
+## 4. Separate Route Tables
+
+Every VPC must maintain its own routes.
+
+Large environments become operationally expensive.
+
+---
+
+## 5. No Centralized Management
+
+Each peering is managed independently.
+
+There is no central routing hub.
+
+---
+
+# Production Use Cases
+
+## Shared Database
+
+```text
+Application VPC
+
+↓
+
+Peering
+
+↓
+
+Database VPC
+```
+
+---
+
+## Shared Authentication
+
+```text
+Application VPC
+
+↓
+
+Peering
+
+↓
+
+Authentication VPC
+```
+
+---
+
+## Development Access
+
+```text
+Developer Tools
+
+↓
+
+Peering
+
+↓
+
+Testing Environment
+```
+
+---
+
+## Temporary Migration
+
+During cloud migration
+
+```text
+Old Application
+
+↓
+
+Peering
+
+↓
+
+New Application
+```
+
+Both applications communicate until migration is complete.
+
+---
+
+# VPC Peering vs Transit Gateway
+
+| Feature | VPC Peering | Transit Gateway |
+|----------|-------------|-----------------|
+| Best For | Few VPCs | Hundreds of VPCs |
+| Transitive Routing | ❌ | ✅ |
+| Central Management | ❌ | ✅ |
+| Multi-Account | ✅ | ✅ |
+| Hybrid Cloud | Limited | Excellent |
+| Operational Complexity | High at Scale | Low |
+| Cost | Lower for few VPCs | Better at enterprise scale |
+
+---
+
+# Best Practices
+
+- Plan CIDR blocks before creating VPCs.
+- Avoid overlapping address ranges.
+- Use descriptive names for peering connections.
+- Enable DNS resolution if applications use private hostnames.
+- Keep Security Groups restrictive.
+- Remove unused peering connections.
+- Use Transit Gateway when the number of VPCs grows.
+
+---
+
+# Common Troubleshooting
+
+| Problem | Possible Cause | Resolution |
+|----------|---------------|------------|
+| Cannot ping another VPC | Missing Route | Update Route Table |
+| Connection timeout | Security Group | Allow required port |
+| DNS not resolving | DNS disabled | Enable DNS resolution |
+| Peering creation failed | Overlapping CIDRs | Redesign CIDRs |
+| Traffic still blocked | NACL | Verify Network ACL rules |
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is VPC Peering?
+- Can VPC Peering use the internet?
+- How many VPCs can be connected?
+
+## Intermediate
+
+- Explain Cross-Account Peering.
+- Explain Cross-Region Peering.
+- Why can't overlapping CIDRs be peered?
+- Why are route tables required?
+
+## Advanced
+
+- Why is VPC Peering not suitable for enterprise environments?
+- Explain transitive routing with an example.
+- At what point would you migrate from VPC Peering to Transit Gateway?
+- Design networking for 80 VPCs.
+- Compare VPC Peering, Transit Gateway, and PrivateLink.
