@@ -4345,3 +4345,681 @@ Benefits
 
 ---
 
+# Chapter 7 - Storage, Persistent Data & Networking
+
+Containers are designed to be **ephemeral**.
+
+This means a container can be started, stopped, replaced, or deleted at any time.
+
+Therefore, understanding storage is critical when designing production workloads on AWS Fargate.
+
+---
+
+# Ephemeral Storage
+
+By default, every Fargate task receives ephemeral storage.
+
+```text
+Fargate Task
+
+↓
+
+Ephemeral Storage
+
+↓
+
+Container
+```
+
+Characteristics
+
+- Temporary
+- Automatically created
+- Automatically deleted
+- Local to the task
+
+If the task stops,
+
+all data stored in ephemeral storage is lost.
+
+---
+
+# What Can Ephemeral Storage Be Used For?
+
+Typical use cases
+
+- Temporary files
+- Log buffering
+- Cache files
+- Downloaded files
+- Image processing
+- Intermediate data
+
+Do NOT store
+
+- Customer uploads
+- Database files
+- Business documents
+- Long-term application data
+
+---
+
+# Lifecycle
+
+```text
+Task Starts
+
+↓
+
+Storage Created
+
+↓
+
+Application Uses Storage
+
+↓
+
+Task Stops
+
+↓
+
+Storage Deleted
+```
+
+This is why containers should remain stateless.
+
+---
+
+# Stateless Applications
+
+A stateless application does not depend on local storage.
+
+Example
+
+```text
+User Request
+
+↓
+
+Container
+
+↓
+
+Database
+
+↓
+
+Response
+```
+
+If the container is replaced,
+
+nothing is lost.
+
+---
+
+# Stateful Applications
+
+Stateful applications store important information locally.
+
+Example
+
+```text
+Database
+
+↓
+
+Container Disk
+```
+
+If the task is replaced,
+
+data is lost.
+
+Running stateful databases directly on Fargate is generally not recommended.
+
+---
+
+# Externalizing State
+
+Instead of storing data inside containers,
+
+AWS recommends
+
+```text
+Container
+
+↓
+
+Amazon RDS
+
+Amazon DynamoDB
+
+Amazon S3
+
+Amazon EFS
+
+Amazon ElastiCache
+```
+
+The container becomes disposable.
+
+---
+
+# Amazon EFS Integration
+
+AWS Fargate supports mounting Amazon Elastic File System (EFS).
+
+Architecture
+
+```text
+Fargate Task
+
+↓
+
+Amazon EFS
+
+↓
+
+Shared Files
+```
+
+Multiple tasks can access the same file system simultaneously.
+
+---
+
+# Why Use Amazon EFS?
+
+Common use cases
+
+- Shared uploads
+- Shared configuration
+- ML models
+- Static assets
+- Reports
+- Documents
+
+Unlike ephemeral storage,
+
+EFS persists even after tasks stop.
+
+---
+
+# Multi-Task Example
+
+```text
+Task-A
+
+↓
+
+Amazon EFS
+
+↑
+
+Task-B
+
+↑
+
+Task-C
+```
+
+All tasks read and write the same files.
+
+---
+
+# EFS Architecture
+
+```text
+Application
+
+↓
+
+Fargate Task
+
+↓
+
+Mount Target
+
+↓
+
+Amazon EFS
+
+↓
+
+Persistent Storage
+```
+
+EFS automatically scales storage as data grows.
+
+---
+
+# EFS Security
+
+Access is controlled using
+
+- Security Groups
+- IAM Policies
+- EFS Access Points
+- POSIX Permissions
+
+Production workloads should use **EFS Access Points** to isolate applications.
+
+---
+
+# Amazon S3 vs Amazon EFS
+
+| Amazon S3 | Amazon EFS |
+|------------|------------|
+| Object Storage | File Storage |
+| REST API Access | File System Mount |
+| Unlimited Objects | Shared File System |
+| Ideal for Files | Ideal for Shared Directories |
+
+Use S3 for object storage.
+
+Use EFS when applications require a mounted file system.
+
+---
+
+# Temporary Storage vs EFS
+
+| Ephemeral Storage | Amazon EFS |
+|-------------------|------------|
+| Temporary | Persistent |
+| Deleted after task stops | Data retained |
+| Fast local storage | Shared network storage |
+| Single Task | Multiple Tasks |
+
+---
+
+# Networking Overview
+
+Every Fargate task receives
+
+- Private IP
+- Elastic Network Interface
+- Security Group
+- Route Table
+- DNS Resolution
+
+Unlike Docker bridge networking,
+
+tasks behave like independent EC2 instances.
+
+---
+
+# Network Architecture
+
+```text
+VPC
+
+↓
+
+Private Subnet
+
+↓
+
+Elastic Network Interface
+
+↓
+
+Fargate Task
+
+↓
+
+Application
+```
+
+Every task has its own network identity.
+
+---
+
+# awsvpc Network Mode
+
+Fargate supports
+
+```text
+awsvpc
+```
+
+mode only.
+
+Example
+
+```text
+Task-1
+
+↓
+
+10.0.1.20
+
+Task-2
+
+↓
+
+10.0.1.21
+
+Task-3
+
+↓
+
+10.0.1.22
+```
+
+Each task has its own IP address.
+
+---
+
+# Why awsvpc?
+
+Advantages
+
+- Better isolation
+- Native VPC networking
+- Security Groups per task
+- Direct ALB integration
+- Simplified routing
+
+---
+
+# Security Groups
+
+Instead of assigning Security Groups to EC2,
+
+Fargate assigns them directly to tasks.
+
+Example
+
+```text
+Frontend Task
+
+↓
+
+Allow
+
+443
+
+↓
+
+Backend Task
+
+↓
+
+Allow
+
+8080
+
+↓
+
+Database
+
+↓
+
+3306
+```
+
+Each layer can have its own security policy.
+
+---
+
+# Public vs Private Subnets
+
+Production recommendation
+
+```text
+Internet
+
+↓
+
+ALB
+
+↓
+
+Private Subnet
+
+↓
+
+Fargate Tasks
+```
+
+Tasks should normally not receive public IPs.
+
+Instead,
+
+the Application Load Balancer receives internet traffic.
+
+---
+
+# Internet Access
+
+Private subnet tasks requiring outbound internet
+
+```text
+Task
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+Common examples
+
+- Download packages
+- Call third-party APIs
+- Send notifications
+
+---
+
+# VPC Endpoints
+
+Instead of using a NAT Gateway,
+
+Fargate tasks can privately access AWS services.
+
+Example
+
+```text
+Task
+
+↓
+
+VPC Endpoint
+
+↓
+
+Amazon S3
+```
+
+No internet access required.
+
+Supported services include
+
+- Amazon S3
+- Amazon ECR
+- CloudWatch Logs
+- Secrets Manager
+- Systems Manager
+
+Benefits
+
+- Improved security
+- Reduced NAT Gateway costs
+- Private AWS backbone connectivity
+
+---
+
+# Service Discovery
+
+Instead of using IP addresses,
+
+services communicate using DNS.
+
+```text
+Payment Service
+
+↓
+
+payment.internal
+
+↓
+
+Inventory Service
+
+↓
+
+inventory.internal
+```
+
+IP changes do not affect applications.
+
+---
+
+# Internal Communication
+
+Example
+
+```text
+Order Service
+
+↓
+
+payment.internal
+
+↓
+
+Payment Service
+
+↓
+
+Amazon RDS
+```
+
+This is typical in microservice architectures.
+
+---
+
+# Network Packet Flow
+
+```text
+User
+
+↓
+
+Application Load Balancer
+
+↓
+
+Security Group
+
+↓
+
+Fargate Task
+
+↓
+
+Application
+
+↓
+
+Amazon RDS
+```
+
+Every request passes through VPC networking controls.
+
+---
+
+# Enterprise Architecture
+
+```text
+Internet
+
+↓
+
+Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+Private Subnets
+
+↓
+
+Fargate Tasks
+
+↓
+
+Amazon EFS
+
+↓
+
+Amazon RDS
+
+↓
+
+Secrets Manager
+```
+
+Characteristics
+
+- Multi-AZ
+- Private networking
+- Persistent storage
+- Stateless containers
+- Centralized secrets
+- Secure architecture
+
+---
+
+# Best Practices
+
+- Keep containers stateless.
+- Use EFS only when shared storage is required.
+- Store uploads in Amazon S3.
+- Run tasks in private subnets.
+- Use Security Groups per application tier.
+- Use VPC Endpoints for AWS services.
+- Avoid assigning public IPs to production tasks.
+
+---
+
+# Common Mistakes
+
+- Storing business data in ephemeral storage.
+- Running databases inside Fargate containers.
+- Using public subnets unnecessarily.
+- Hardcoding IP addresses.
+- Sharing one Security Group across every application.
+- Ignoring VPC Endpoint opportunities.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is ephemeral storage?
+- What is Amazon EFS?
+- Why are containers considered stateless?
+
+## Intermediate
+
+- Amazon EFS vs Amazon S3.
+- Public vs Private Subnets for Fargate.
+- Why does Fargate use awsvpc mode?
+- How do Fargate tasks access the internet?
+
+## Advanced
+
+- Design persistent storage for a document management application running on Fargate.
+- Explain how to securely connect Fargate tasks to Amazon RDS without exposing them to the internet.
+- Design a highly available storage and networking architecture for an enterprise microservices platform using AWS Fargate.
+
+---
+
