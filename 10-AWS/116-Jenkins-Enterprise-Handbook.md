@@ -4938,3 +4938,738 @@ sensitive credentials.
 
 ---
 
+# Chapter 7 - Jenkins Shared Libraries & Reusable Pipelines (Enterprise Guide)
+
+As organizations grow,
+
+they often manage
+
+- Hundreds of Jenkins Pipelines
+- Thousands of Jenkinsfiles
+- Multiple Development Teams
+
+Copying the same pipeline logic into every Jenkinsfile leads to
+
+- Duplicate Code
+- Maintenance Challenges
+- Configuration Drift
+- Inconsistent CI/CD Standards
+
+Enterprise Jenkins platforms solve this using
+
+- Shared Libraries
+- Reusable Functions
+- Global Variables
+- Pipeline Templates
+
+These features help standardize automation across the organization.
+
+---
+
+# Why Shared Libraries?
+
+Without Shared Libraries
+
+```text
+Repository A
+
+↓
+
+Build Pipeline
+
+────────────
+
+Repository B
+
+↓
+
+Copy Pipeline
+
+────────────
+
+Repository C
+
+↓
+
+Copy Pipeline
+```
+
+Problems
+
+- Duplicate Code
+- Difficult Updates
+- Multiple Versions
+- Inconsistent Pipelines
+
+---
+
+With Shared Libraries
+
+```text
+Shared Library
+
+↓
+
+Repository A
+
+↓
+
+Repository B
+
+↓
+
+Repository C
+```
+
+One update
+
+benefits
+
+every project.
+
+---
+
+# Shared Library Architecture
+
+```text
+GitHub
+
+↓
+
+Shared Library
+
+↓
+
+Jenkins
+
+↓
+
+Pipeline
+
+↓
+
+Application
+```
+
+Pipelines
+
+reuse
+
+common functionality.
+
+---
+
+# What is a Jenkins Shared Library?
+
+A Shared Library
+
+is a Git repository
+
+containing
+
+reusable pipeline code.
+
+Examples
+
+- Build Functions
+- Deployment Logic
+- Security Checks
+- Notifications
+- Utility Methods
+
+---
+
+# Enterprise Repository Structure
+
+```text
+jenkins-shared-library/
+
+├── vars/
+
+├── src/
+
+├── resources/
+
+└── README.md
+```
+
+The library
+
+is version controlled
+
+just like application code.
+
+---
+
+# Shared Library Components
+
+A Shared Library
+
+contains
+
+```text
+vars/
+
+↓
+
+Global Variables
+
+────────────
+
+src/
+
+↓
+
+Groovy Classes
+
+────────────
+
+resources/
+
+↓
+
+Configuration Files
+```
+
+Each directory
+
+has
+
+a specific purpose.
+
+---
+
+# vars Directory
+
+The `vars/` directory
+
+contains
+
+global pipeline functions.
+
+Examples
+
+```text
+buildApp
+
+deployApp
+
+dockerBuild
+
+terraformDeploy
+
+notifyTeam
+```
+
+These functions
+
+are directly available
+
+inside Jenkinsfiles.
+
+---
+
+# src Directory
+
+The `src/` directory
+
+contains
+
+Groovy classes
+
+for
+
+complex logic.
+
+Examples
+
+```text
+AWS Utility
+
+Docker Utility
+
+Terraform Helper
+
+Notification Helper
+```
+
+Reusable business logic
+
+is stored here.
+
+---
+
+# resources Directory
+
+Stores
+
+supporting files.
+
+Examples
+
+```text
+YAML
+
+JSON
+
+Templates
+
+Shell Scripts
+```
+
+Resources
+
+can be loaded
+
+during pipeline execution.
+
+---
+
+# Shared Library Workflow
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkinsfile
+
+↓
+
+Shared Library
+
+↓
+
+Pipeline
+
+↓
+
+Deployment
+```
+
+Application pipelines
+
+remain small
+
+and readable.
+
+---
+
+# Global Variables
+
+Global variables
+
+provide
+
+reusable pipeline steps.
+
+Workflow
+
+```text
+Pipeline
+
+↓
+
+Shared Function
+
+↓
+
+Execution
+```
+
+Common tasks
+
+are written once.
+
+---
+
+# Reusable Build Function
+
+Instead of
+
+duplicating
+
+build logic
+
+```text
+Application A
+
+↓
+
+Shared Build
+
+────────────
+
+Application B
+
+↓
+
+Shared Build
+```
+
+Every project
+
+uses
+
+the same build process.
+
+---
+
+# Reusable Deployment
+
+Deployment logic
+
+can also be shared.
+
+Architecture
+
+```text
+Application
+
+↓
+
+Shared Deploy Function
+
+↓
+
+Amazon EKS
+```
+
+Deployment standards
+
+remain consistent.
+
+---
+
+# Reusable Security Scan
+
+Security
+
+should be standardized.
+
+Workflow
+
+```text
+Pipeline
+
+↓
+
+Shared SonarQube
+
+↓
+
+Shared Trivy
+
+↓
+
+Deployment
+```
+
+Every application
+
+passes
+
+the same security checks.
+
+---
+
+# Versioning Shared Libraries
+
+Shared Libraries
+
+should be versioned.
+
+Example
+
+```text
+v1
+
+↓
+
+v2
+
+↓
+
+v3
+```
+
+Applications
+
+upgrade
+
+when ready.
+
+---
+
+# Library Loading
+
+Pipelines
+
+load
+
+the Shared Library
+
+before execution.
+
+Workflow
+
+```text
+Jenkinsfile
+
+↓
+
+Shared Library
+
+↓
+
+Pipeline Starts
+```
+
+---
+
+# Enterprise Pipeline
+
+Without Shared Library
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+Repeated
+
+across
+
+every repository.
+
+---
+
+With Shared Library
+
+```text
+Checkout
+
+↓
+
+Shared Build
+
+↓
+
+Shared Test
+
+↓
+
+Shared Deploy
+```
+
+One implementation
+
+serves
+
+all repositories.
+
+---
+
+# Multi-Repository Architecture
+
+```text
+Shared Library
+
+├── Build
+
+├── Docker
+
+├── Terraform
+
+├── Kubernetes
+
+├── Notifications
+
+└── Security
+
+↓
+
+Application A
+
+↓
+
+Application B
+
+↓
+
+Application C
+```
+
+Centralized automation
+
+improves maintainability.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Shared Library
+
+↓
+
+Build
+
+↓
+
+Docker
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+The pipeline
+
+remains standardized.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Shared Build
+
+↓
+
+Shared Security
+
+↓
+
+Shared Deployment
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Every banking application
+
+uses
+
+the same deployment process.
+
+---
+
+# Governance
+
+Platform teams
+
+maintain
+
+Shared Libraries.
+
+Development teams
+
+consume
+
+approved pipeline functions.
+
+Benefits
+
+- Standardization
+- Security
+- Compliance
+- Easier Maintenance
+
+---
+
+# Enterprise Best Practices
+
+- Store Shared Libraries in Git.
+- Version every library release.
+- Keep reusable functions small and focused.
+- Separate utility classes from global variables.
+- Document every shared function.
+- Standardize build and deployment logic.
+- Reuse security scanning stages.
+- Test Shared Libraries before publishing.
+
+---
+
+# Common Mistakes
+
+- Copying Jenkinsfiles across repositories.
+- Creating very large shared functions.
+- Hardcoding application-specific values.
+- Not versioning Shared Libraries.
+- Mixing reusable and project-specific logic.
+- Allowing every team to modify the library.
+- Skipping documentation.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Jenkins Shared Library?
+- Why do we use Shared Libraries?
+- What is the `vars` directory?
+- What is the `src` directory?
+- What is the `resources` directory?
+
+## Intermediate
+
+- How are Shared Libraries loaded?
+- Global Variables vs Groovy Classes.
+- Why should Shared Libraries be versioned?
+- How do Shared Libraries reduce duplication?
+- Explain enterprise pipeline standardization.
+
+## Advanced
+
+- Design a centralized Jenkins Shared Library architecture for hundreds of applications using reusable build, security, Docker, Terraform, and Kubernetes deployment functions.
+- Explain how Shared Libraries improve maintainability, governance, and CI/CD standardization across multiple development teams.
+- A large enterprise has more than 600 Jenkins pipelines across different business units. Explain how you would design, version, secure, test, and govern Jenkins Shared Libraries to ensure reusable automation, reduce maintenance overhead, and support enterprise-scale CI/CD.
+
+---
+
