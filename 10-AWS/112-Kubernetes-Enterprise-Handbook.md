@@ -6082,3 +6082,994 @@ Resolution
 
 ---
 
+# Chapter 8 - Kubernetes Troubleshooting (50+ Production Scenarios)
+
+Kubernetes is designed to be self-healing,
+
+but production issues still occur.
+
+A senior DevOps Engineer is expected to troubleshoot
+
+- Pods
+- Nodes
+- Networking
+- Storage
+- Deployments
+- DNS
+- Ingress
+- Autoscaling
+- Security
+- Performance
+
+Interviewers rarely ask
+
+"What is Kubernetes?"
+
+Instead, they ask
+
+> "Production is down. How will you troubleshoot?"
+
+This chapter provides a structured approach to real-world production incidents.
+
+---
+
+# Enterprise Troubleshooting Framework
+
+Always follow a structured approach.
+
+```text
+Alert
+
+↓
+
+Understand Impact
+
+↓
+
+Collect Evidence
+
+↓
+
+Check Cluster Health
+
+↓
+
+Check Node Health
+
+↓
+
+Check Pod Health
+
+↓
+
+Logs
+
+↓
+
+Events
+
+↓
+
+Metrics
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validation
+
+↓
+
+Postmortem
+```
+
+Never jump directly to conclusions.
+
+---
+
+# Scenario 1 - Pod Stuck in Pending State
+
+## Symptoms
+
+```text
+Pod
+
+↓
+
+Pending
+```
+
+---
+
+## Investigation
+
+Check
+
+```bash
+kubectl describe pod <pod-name>
+```
+
+Look for
+
+- FailedScheduling
+- Insufficient CPU
+- Insufficient Memory
+- Node Selector Issues
+- Taints
+- PVC Pending
+
+---
+
+## Possible Causes
+
+- Cluster Out of Resources
+- Node Affinity Mismatch
+- Missing Storage
+- Tainted Nodes
+- Unschedulable Nodes
+
+---
+
+## Resolution
+
+- Scale worker nodes.
+- Reduce resource requests.
+- Verify node selectors.
+- Check PVC binding.
+- Review taints and tolerations.
+
+---
+
+# Scenario 2 - CrashLoopBackOff
+
+## Symptoms
+
+```text
+Pod
+
+↓
+
+Crash
+
+↓
+
+Restart
+
+↓
+
+Crash
+
+↓
+
+CrashLoopBackOff
+```
+
+---
+
+## Investigation
+
+```bash
+kubectl logs <pod>
+
+kubectl logs <pod> --previous
+
+kubectl describe pod
+```
+
+---
+
+## Common Causes
+
+- Application Crash
+- Invalid ConfigMap
+- Missing Secret
+- Database Connection Failure
+- Startup Script Failure
+
+---
+
+## Resolution
+
+- Fix application issue.
+- Verify environment variables.
+- Check ConfigMaps.
+- Validate Secrets.
+- Test database connectivity.
+
+---
+
+# Scenario 3 - ImagePullBackOff
+
+## Investigation
+
+Check
+
+```bash
+kubectl describe pod
+```
+
+---
+
+## Common Causes
+
+- Wrong Image Name
+- Wrong Tag
+- Private Registry Authentication
+- Image Deleted
+
+---
+
+## Resolution
+
+- Verify image.
+- Check registry credentials.
+- Validate imagePullSecrets.
+- Test registry access.
+
+---
+
+# Scenario 4 - OOMKilled
+
+Symptoms
+
+```text
+Container
+
+↓
+
+Killed
+
+↓
+
+OOMKilled
+```
+
+---
+
+## Investigation
+
+Check
+
+```bash
+kubectl describe pod
+```
+
+Review
+
+- Memory Usage
+- Requests
+- Limits
+
+---
+
+## Resolution
+
+- Increase memory limit.
+- Fix memory leak.
+- Optimize application.
+- Configure VPA if appropriate.
+
+---
+
+# Scenario 5 - Node Not Ready
+
+## Investigation
+
+```bash
+kubectl get nodes
+
+kubectl describe node
+```
+
+---
+
+Check
+
+- kubelet
+- Disk Pressure
+- Memory Pressure
+- Network
+- Container Runtime
+
+---
+
+## Resolution
+
+- Restart kubelet.
+- Free disk space.
+- Verify networking.
+- Recover node health.
+
+---
+
+# Scenario 6 - Pod Cannot Reach Another Pod
+
+Check
+
+- Service
+- DNS
+- Network Policy
+- Labels
+- Selectors
+
+Commands
+
+```bash
+kubectl get svc
+
+kubectl get endpoints
+```
+
+---
+
+# Scenario 7 - Service Has No Endpoints
+
+Symptoms
+
+```text
+Service
+
+↓
+
+No Endpoints
+```
+
+---
+
+Possible Causes
+
+- Wrong Labels
+- Selector Mismatch
+- Pods Not Ready
+
+---
+
+# Scenario 8 - DNS Resolution Failure
+
+Symptoms
+
+```text
+nslookup payment-service
+
+↓
+
+Failed
+```
+
+---
+
+Investigation
+
+Check
+
+```bash
+kubectl get pods -n kube-system
+```
+
+Verify
+
+- CoreDNS
+- Service
+- Network
+
+---
+
+# Scenario 9 - Ingress Returns 404
+
+Check
+
+- Ingress Rules
+- Host
+- Path
+- Backend Service
+- ALB Controller
+
+---
+
+# Scenario 10 - 503 Errors After Deployment
+
+Verify
+
+- Readiness Probe
+- Service Endpoints
+- Deployment Status
+- ALB Target Health
+
+---
+
+# Scenario 11 - Readiness Probe Failing
+
+Possible Causes
+
+- Wrong Port
+- Slow Startup
+- Wrong Path
+- Application Failure
+
+---
+
+# Scenario 12 - Liveness Probe Failing
+
+Symptoms
+
+```text
+Pod
+
+↓
+
+Restart
+
+↓
+
+Restart
+
+↓
+
+Restart
+```
+
+---
+
+Resolution
+
+- Increase initialDelaySeconds.
+- Fix health endpoint.
+- Verify application startup.
+
+---
+
+# Scenario 13 - Deployment Stuck
+
+Check
+
+```bash
+kubectl rollout status deployment
+```
+
+Review
+
+- ReplicaSet
+- Events
+- Pods
+
+---
+
+# Scenario 14 - Rollout Failed
+
+Resolution
+
+```bash
+kubectl rollout undo deployment
+```
+
+Restore previous revision.
+
+---
+
+# Scenario 15 - PVC Pending
+
+Check
+
+- StorageClass
+- PV
+- CSI Driver
+
+---
+
+# Scenario 16 - EBS Volume Not Attached
+
+Verify
+
+- EBS CSI Driver
+- IAM Permissions
+- Availability Zone
+
+---
+
+# Scenario 17 - HPA Not Scaling
+
+Check
+
+- Metrics Server
+- CPU Requests
+- HPA Events
+
+---
+
+# Scenario 18 - Cluster Autoscaler Not Working
+
+Review
+
+- Pending Pods
+- IAM Permissions
+- Auto Scaling Group
+- Cluster Autoscaler Logs
+
+---
+
+# Scenario 19 - High CPU Usage
+
+Investigate
+
+- Prometheus
+- Grafana
+- Top Pods
+- Application Metrics
+
+---
+
+# Scenario 20 - High Memory Usage
+
+Review
+
+- Heap
+- Cache
+- Memory Leak
+- Resource Limits
+
+---
+
+# Scenario 21 - High API Latency
+
+Check
+
+- Database
+- Redis
+- Network
+- External APIs
+
+---
+
+# Scenario 22 - API Server Slow
+
+Review
+
+- etcd
+- API Requests
+- Cluster Size
+- Controller Logs
+
+---
+
+# Scenario 23 - etcd Full
+
+Symptoms
+
+```text
+API Server
+
+↓
+
+Slow
+
+↓
+
+Timeouts
+```
+
+Resolution
+
+- Compact etcd.
+- Defragment database.
+- Monitor disk usage.
+
+---
+
+# Scenario 24 - CoreDNS Crash
+
+Check
+
+- Memory
+- ConfigMap
+- Upstream DNS
+- Network
+
+---
+
+# Scenario 25 - Worker Node Disk Full
+
+Investigate
+
+- Images
+- Logs
+- EmptyDir Volumes
+
+Cleanup
+
+Unused images
+
+Container logs
+
+Old files
+
+---
+
+# Scenario 26 - Certificate Expired
+
+Review
+
+- API Server
+- kubelet
+- Client Certificates
+
+Rotate certificates.
+
+---
+
+# Scenario 27 - RBAC Permission Denied
+
+Symptoms
+
+```text
+Forbidden
+```
+
+Check
+
+- Role
+- RoleBinding
+- Service Account
+
+---
+
+# Scenario 28 - IRSA Not Working (Amazon EKS)
+
+Review
+
+- OIDC Provider
+- IAM Role
+- Trust Policy
+- Service Account Annotation
+
+---
+
+# Scenario 29 - Pods Cannot Access Amazon S3
+
+Verify
+
+- IAM Role
+- IRSA
+- Bucket Policy
+- VPC Endpoint
+
+---
+
+# Scenario 30 - Node Under Memory Pressure
+
+Scheduler begins evicting
+
+BestEffort Pods first.
+
+Investigate
+
+- Running Workloads
+- Requests
+- Limits
+
+---
+
+# Scenario 31 - Deployment Rollback Failed
+
+Check
+
+- Revision History
+- ReplicaSets
+- Image Availability
+
+---
+
+# Scenario 32 - StatefulSet Pod Not Starting
+
+Review
+
+- PVC
+- Headless Service
+- Storage
+
+---
+
+# Scenario 33 - DaemonSet Missing on Node
+
+Verify
+
+- Node Selector
+- Taints
+- Node Labels
+
+---
+
+# Scenario 34 - Job Never Completes
+
+Review
+
+- Logs
+- Exit Codes
+- Restart Policy
+
+---
+
+# Scenario 35 - CronJob Not Running
+
+Verify
+
+- Schedule
+- Time Zone
+- Controller
+
+---
+
+# Scenario 36 - Secret Not Found
+
+Check
+
+- Namespace
+- Secret Name
+- Mount Path
+
+---
+
+# Scenario 37 - ConfigMap Changes Not Applied
+
+Many applications require
+
+Pod restart
+
+after ConfigMap updates.
+
+---
+
+# Scenario 38 - Network Policy Blocking Traffic
+
+Review
+
+- Ingress Rules
+- Egress Rules
+- Namespace Labels
+
+---
+
+# Scenario 39 - Pods Scheduled on Wrong Nodes
+
+Investigate
+
+- Affinity
+- Node Selector
+- Taints
+
+---
+
+# Scenario 40 - Container Starts Then Immediately Exits
+
+Review
+
+- Entry Point
+- Command
+- Application Logs
+
+---
+
+# Scenario 41 - ALB Not Created (Amazon EKS)
+
+Check
+
+- AWS Load Balancer Controller
+- IAM Permissions
+- IngressClass
+- Subnet Tags
+
+---
+
+# Scenario 42 - Worker Nodes Cannot Join Cluster
+
+Review
+
+- Bootstrap
+- IAM Role
+- Security Groups
+- Cluster Endpoint
+
+---
+
+# Scenario 43 - Excessive Pod Restarts
+
+Investigate
+
+- Application Stability
+- Resource Limits
+- Health Probes
+
+---
+
+# Scenario 44 - Metrics Missing
+
+Check
+
+- Prometheus Targets
+- ServiceMonitor
+- Exporters
+
+---
+
+# Scenario 45 - Logs Missing
+
+Verify
+
+- Fluent Bit
+- Elasticsearch
+- Log Rotation
+
+---
+
+# Scenario 46 - High Network Latency
+
+Investigate
+
+- CNI Plugin
+- Node Placement
+- Cross-AZ Traffic
+
+---
+
+# Scenario 47 - Pods Stuck in Terminating
+
+Check
+
+- Finalizers
+- Volume Detach
+- Grace Period
+
+---
+
+# Scenario 48 - Namespace Stuck in Terminating
+
+Investigate
+
+- Finalizers
+- Remaining Resources
+- CRDs
+
+---
+
+# Scenario 49 - Production Deployment Caused Outage
+
+Response
+
+```text
+Rollback
+
+↓
+
+Validate
+
+↓
+
+Monitor
+
+↓
+
+RCA
+
+↓
+
+Prevent Recurrence
+```
+
+---
+
+# Scenario 50 - Complete Cluster Failure
+
+Recovery Plan
+
+```text
+Restore Control Plane
+
+↓
+
+Recover Worker Nodes
+
+↓
+
+Restore etcd
+
+↓
+
+Validate Storage
+
+↓
+
+Deploy Applications
+
+↓
+
+Verify Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Enterprise Troubleshooting Checklist
+
+Always verify
+
+✓ Nodes
+
+✓ Pods
+
+✓ Services
+
+✓ Ingress
+
+✓ DNS
+
+✓ Storage
+
+✓ RBAC
+
+✓ Metrics
+
+✓ Logs
+
+✓ Events
+
+✓ Networking
+
+✓ Cloud Resources
+
+---
+
+# Best Practices
+
+- Start with business impact before technical details.
+- Collect logs, metrics, and events before making changes.
+- Validate fixes in a controlled manner.
+- Keep rollback plans ready for deployments.
+- Use Prometheus and Grafana for performance analysis.
+- Centralize logs with ELK.
+- Document root cause and preventive actions.
+- Automate repetitive recovery tasks where possible.
+
+---
+
+# Common Mistakes
+
+- Restarting Pods without understanding the root cause.
+- Ignoring Kubernetes Events.
+- Troubleshooting only the application and not the infrastructure.
+- Skipping rollback when production is impacted.
+- Making multiple changes simultaneously.
+- Ignoring cloud-specific integrations (ALB, EBS, IAM).
+- Closing incidents without validation.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How do you troubleshoot a Pod stuck in Pending?
+- What causes CrashLoopBackOff?
+- How do you investigate ImagePullBackOff?
+
+## Intermediate
+
+- Explain your troubleshooting process for DNS failures.
+- How do you diagnose HPA not scaling?
+- What would you check if an Ingress returns 503?
+
+## Advanced
+
+- Design a troubleshooting runbook for a production Amazon EKS cluster covering Pods, Nodes, Services, Storage, Networking, Security, and AWS integrations.
+- Explain your end-to-end approach to diagnosing a complete Kubernetes outage affecting multiple microservices, including metrics, logs, events, networking, and recovery planning.
+- A production Amazon EKS platform experiences Pending Pods, CrashLoopBackOff containers, DNS failures, HPA not scaling, ALB health check failures, and increasing API latency after a deployment. Walk through your complete investigation, recovery strategy, rollback decision, and long-term preventive improvements.
+
+---
+
