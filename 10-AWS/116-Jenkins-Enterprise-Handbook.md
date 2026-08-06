@@ -3115,3 +3115,1826 @@ for enterprise CI/CD.
 
 ---
 
+# Chapter 5 - Jenkins Pipeline Syntax (Complete Jenkinsfile Directives)
+
+A Jenkinsfile is built using
+
+multiple directives.
+
+These directives define
+
+- Where the pipeline runs
+- How it executes
+- What stages run
+- What happens after execution
+- How failures are handled
+
+Understanding these directives is essential for building enterprise-grade Jenkins pipelines.
+
+---
+
+# Complete Jenkinsfile Flow
+
+```text
+Pipeline
+
+↓
+
+Agent
+
+↓
+
+Tools
+
+↓
+
+Environment
+
+↓
+
+Options
+
+↓
+
+Parameters
+
+↓
+
+Triggers
+
+↓
+
+Stages
+
+↓
+
+Post
+```
+
+Every enterprise Jenkinsfile
+
+follows this structure.
+
+---
+
+# Agent Directive
+
+The agent directive
+
+defines
+
+where
+
+the pipeline executes.
+
+Options
+
+```text
+Any
+
+Specific Label
+
+Docker
+
+Dockerfile
+
+Kubernetes
+
+None
+```
+
+Different workloads
+
+can use
+
+different execution environments.
+
+---
+
+# Agent Any
+
+The pipeline
+
+runs
+
+on
+
+any available agent.
+
+Workflow
+
+```text
+Pipeline
+
+↓
+
+Available Agent
+
+↓
+
+Execution
+```
+
+Useful
+
+for general-purpose pipelines.
+
+---
+
+# Agent Label
+
+Pipelines
+
+can target
+
+specific agents.
+
+Example
+
+```text
+linux
+
+docker
+
+terraform
+
+kubernetes
+
+windows
+```
+
+Ensures
+
+the correct environment
+
+is selected.
+
+---
+
+# Docker Agent
+
+A stage
+
+or pipeline
+
+can run
+
+inside
+
+a Docker container.
+
+Architecture
+
+```text
+Pipeline
+
+↓
+
+Docker Container
+
+↓
+
+Execution
+
+↓
+
+Container Removed
+```
+
+Provides
+
+consistent build environments.
+
+---
+
+# Dockerfile Agent
+
+Instead of using
+
+an existing image,
+
+Jenkins
+
+can build
+
+a Docker image
+
+from a Dockerfile
+
+and execute
+
+inside it.
+
+Workflow
+
+```text
+Dockerfile
+
+↓
+
+Docker Image
+
+↓
+
+Pipeline
+```
+
+---
+
+# Kubernetes Agent
+
+Using
+
+the Kubernetes Plugin,
+
+Jenkins
+
+creates
+
+temporary Pods
+
+for execution.
+
+Architecture
+
+```text
+Pipeline
+
+↓
+
+Kubernetes Pod
+
+↓
+
+Execution
+
+↓
+
+Pod Deleted
+```
+
+Ideal
+
+for cloud-native environments.
+
+---
+
+# None Agent
+
+When
+
+multiple stages
+
+require different agents,
+
+define
+
+```text
+agent none
+```
+
+Each stage
+
+selects
+
+its own agent.
+
+---
+
+# Tools Directive
+
+Automatically installs
+
+or configures
+
+required tools.
+
+Examples
+
+```text
+JDK
+
+Maven
+
+Gradle
+
+Node.js
+```
+
+Ensures
+
+consistent versions.
+
+---
+
+# Environment Directive
+
+Stores
+
+pipeline-wide
+
+variables.
+
+Examples
+
+```text
+APP_NAME
+
+AWS_REGION
+
+DOCKER_IMAGE
+
+EKS_CLUSTER
+
+DEPLOY_ENV
+```
+
+Avoid
+
+hardcoding values.
+
+---
+
+# Options Directive
+
+Options
+
+control
+
+pipeline execution.
+
+Common options
+
+- Timeout
+- Retry
+- Disable Concurrent Builds
+- Build Retention
+- Skip Default Checkout
+- Timestamp Logs
+
+These improve
+
+pipeline reliability.
+
+---
+
+# Timeout
+
+Limits
+
+pipeline execution time.
+
+Benefits
+
+- Prevents Hanging Builds
+- Frees Build Agents
+
+---
+
+# Retry
+
+Automatically retries
+
+failed stages
+
+or pipelines.
+
+Useful
+
+for temporary issues
+
+such as
+
+network failures.
+
+---
+
+# Disable Concurrent Builds
+
+Only one pipeline
+
+runs
+
+at a time.
+
+```text
+Pipeline
+
+↓
+
+Running
+
+↓
+
+Second Build Waits
+```
+
+Prevents
+
+deployment conflicts.
+
+---
+
+# Build Discarder
+
+Automatically removes
+
+old builds.
+
+Benefits
+
+- Saves Storage
+- Improves Performance
+
+---
+
+# Skip Default Checkout
+
+Disables
+
+automatic repository checkout.
+
+Useful
+
+when
+
+multiple repositories
+
+are used.
+
+---
+
+# Parameters Directive
+
+Pipelines
+
+accept
+
+runtime values.
+
+Examples
+
+```text
+Environment
+
+Application Version
+
+Region
+
+Deployment Type
+```
+
+One pipeline
+
+supports
+
+multiple deployments.
+
+---
+
+# Parameter Types
+
+Common parameter types
+
+```text
+String
+
+Boolean
+
+Choice
+
+Password
+
+File
+```
+
+Choose
+
+the appropriate type
+
+for user input.
+
+---
+
+# Triggers Directive
+
+Starts pipelines
+
+automatically.
+
+Examples
+
+```text
+GitHub Webhook
+
+Poll SCM
+
+Cron Schedule
+
+Manual Build
+```
+
+Automation
+
+eliminates
+
+manual execution.
+
+---
+
+# Cron Trigger
+
+Pipelines
+
+can execute
+
+on schedules.
+
+Examples
+
+```text
+Nightly Build
+
+Weekly Scan
+
+Monthly Cleanup
+```
+
+---
+
+# Poll SCM
+
+Jenkins
+
+periodically checks
+
+the Git repository
+
+for changes.
+
+Architecture
+
+```text
+Repository
+
+↓
+
+Polling
+
+↓
+
+Pipeline
+```
+
+Webhooks
+
+are generally preferred.
+
+---
+
+# Webhook Trigger
+
+GitHub
+
+immediately notifies
+
+Jenkins
+
+after
+
+a code push.
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Webhook
+
+↓
+
+Pipeline
+```
+
+Provides
+
+real-time CI.
+
+---
+
+# Stages Directive
+
+Stages divide
+
+the pipeline
+
+into logical sections.
+
+Example
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+---
+
+# Parallel Directive
+
+Independent stages
+
+execute simultaneously.
+
+Architecture
+
+```text
+Build
+
+↓
+
+Unit Test
+
+↓
+
+Security Scan
+
+↓
+
+Lint
+```
+
+Reduces
+
+pipeline duration.
+
+---
+
+# Matrix Builds
+
+A pipeline
+
+can execute
+
+across
+
+multiple environments.
+
+Example
+
+```text
+Ubuntu
+
+↓
+
+Windows
+
+↓
+
+Java 17
+
+↓
+
+Java 21
+```
+
+Useful
+
+for compatibility testing.
+
+---
+
+# When Directive
+
+Executes stages
+
+only
+
+when
+
+conditions are met.
+
+Example
+
+```text
+Main Branch
+
+↓
+
+Deploy
+
+────────────
+
+Feature Branch
+
+↓
+
+Skip
+```
+
+---
+
+# Input Directive
+
+Requests
+
+manual approval
+
+before continuing.
+
+Workflow
+
+```text
+Build
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+Common
+
+for production environments.
+
+---
+
+# Script Block
+
+Used
+
+when
+
+Declarative syntax
+
+requires
+
+Groovy logic.
+
+Architecture
+
+```text
+Pipeline
+
+↓
+
+Script
+
+↓
+
+Custom Logic
+```
+
+Use
+
+only
+
+when necessary.
+
+---
+
+# Post Directive
+
+Defines actions
+
+after
+
+pipeline execution.
+
+Common sections
+
+```text
+Always
+
+Success
+
+Failure
+
+Unstable
+
+Cleanup
+```
+
+---
+
+# Success Block
+
+Executed only
+
+when
+
+the pipeline succeeds.
+
+Typical tasks
+
+- Notify Team
+- Publish Reports
+- Tag Release
+
+---
+
+# Failure Block
+
+Executed only
+
+when
+
+the pipeline fails.
+
+Typical tasks
+
+- Archive Logs
+- Send Alert
+- Create Incident
+
+---
+
+# Cleanup Block
+
+Always performs
+
+cleanup.
+
+Examples
+
+```text
+Delete Workspace
+
+Remove Temporary Files
+
+Delete Containers
+```
+
+Maintains
+
+clean build agents.
+
+---
+
+# Enterprise Pipeline
+
+```text
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Checkout
+
+↓
+
+Compile
+
+↓
+
+Unit Test
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+Every production deployment
+
+requires
+
+human approval.
+
+---
+
+# Enterprise Jenkinsfile Architecture
+
+```text
+Pipeline
+
+├── Agent
+
+├── Tools
+
+├── Environment
+
+├── Options
+
+├── Parameters
+
+├── Triggers
+
+├── Stages
+
+│   ├── Checkout
+
+│   ├── Build
+
+│   ├── Test
+
+│   ├── Docker
+
+│   ├── Terraform
+
+│   └── Deploy
+
+└── Post
+```
+
+This is
+
+the recommended structure
+
+for enterprise CI/CD.
+
+---
+
+# Enterprise Best Practices
+
+- Prefer Declarative Pipelines.
+- Use labels for specialized agents.
+- Store configuration in environment variables.
+- Parameterize deployments.
+- Use webhooks instead of polling.
+- Keep stages modular.
+- Add timeout and retry options.
+- Always clean workspaces after builds.
+
+---
+
+# Common Mistakes
+
+- Running everything on one agent.
+- Hardcoding environment values.
+- Ignoring timeout settings.
+- Using Poll SCM when webhooks are available.
+- Skipping cleanup tasks.
+- Not using parameters.
+- Writing large Groovy scripts when Declarative syntax is sufficient.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is the Agent directive?
+- What is the Tools directive?
+- What are Jenkins Parameters?
+- What is the Post block?
+- What is the When directive?
+
+## Intermediate
+
+- Agent Any vs Agent Label.
+- Docker Agent vs Kubernetes Agent.
+- Poll SCM vs Webhook.
+- Why use timeout and retry?
+- What is the Script block?
+
+## Advanced
+
+- Design an enterprise Jenkinsfile using Docker agents, Kubernetes agents, parameters, environment variables, approval gates, and post-build cleanup for deploying applications to Amazon EKS.
+- Explain how Jenkinsfile directives such as agent, tools, options, parameters, triggers, stages, when, and post work together to build scalable and maintainable CI/CD pipelines.
+- A large enterprise manages hundreds of Jenkins pipelines across multiple teams. Explain how you would standardize Jenkinsfile structure, execution environments, parameterization, approval workflows, cleanup strategies, and error handling while ensuring scalability, governance, and maintainability.
+
+---
+
+# Chapter 6 - Jenkins Credentials Management, Environment Variables & Parameters (Enterprise Guide)
+
+Modern Jenkins pipelines require access to
+
+- Git Repositories
+- Docker Registries
+- AWS Resources
+- Kubernetes Clusters
+- Databases
+- APIs
+
+Hardcoding credentials inside Jenkinsfiles creates serious security risks.
+
+Enterprise Jenkins platforms use
+
+- Jenkins Credentials
+- Environment Variables
+- Build Parameters
+- Secret Injection
+
+to build secure and reusable CI/CD pipelines.
+
+---
+
+# Configuration Flow
+
+```text
+Jenkins
+
+↓
+
+Credentials
+
+↓
+
+Environment Variables
+
+↓
+
+Pipeline
+
+↓
+
+Deployment
+```
+
+Sensitive data
+
+flows securely
+
+through the pipeline.
+
+---
+
+# Why Credentials Management?
+
+Without Credentials
+
+```text
+Jenkinsfile
+
+↓
+
+AWS Keys
+
+↓
+
+GitHub
+
+↓
+
+Security Risk
+```
+
+Problems
+
+- Secret Leakage
+- Compliance Issues
+- Difficult Rotation
+- Unauthorized Access
+
+---
+
+With Credentials
+
+```text
+Jenkins Credentials
+
+↓
+
+Pipeline
+
+↓
+
+Temporary Usage
+
+↓
+
+Deployment
+```
+
+Secrets remain protected.
+
+---
+
+# Jenkins Credentials
+
+Jenkins stores
+
+sensitive information
+
+inside
+
+its Credentials Store.
+
+Examples
+
+- GitHub Token
+- AWS Credentials
+- Docker Registry Password
+- SSH Keys
+- Kubernetes Config
+- API Tokens
+
+---
+
+# Credentials Architecture
+
+```text
+Jenkins
+
+↓
+
+Credentials Store
+
+↓
+
+Pipeline
+
+↓
+
+External Service
+```
+
+The pipeline
+
+retrieves credentials
+
+only when required.
+
+---
+
+# Types of Jenkins Credentials
+
+Common credential types
+
+```text
+Username & Password
+
+Secret Text
+
+Secret File
+
+SSH Private Key
+
+Certificate
+```
+
+Choose
+
+the appropriate type
+
+for each use case.
+
+---
+
+# Username & Password
+
+Used for
+
+- Docker Registry
+- Nexus
+- Artifactory
+- Legacy Applications
+
+Stores
+
+username
+
+and
+
+password together.
+
+---
+
+# Secret Text
+
+Stores
+
+a single secret.
+
+Examples
+
+```text
+API Token
+
+JWT Token
+
+Access Token
+
+Webhook Secret
+```
+
+---
+
+# Secret File
+
+Stores files
+
+securely.
+
+Examples
+
+```text
+Kubeconfig
+
+GCP Service Account JSON
+
+License File
+
+Configuration File
+```
+
+---
+
+# SSH Private Key
+
+Used for
+
+secure authentication
+
+to
+
+- Linux Servers
+- Git Repositories
+- Bastion Hosts
+
+No password
+
+is exposed
+
+inside the pipeline.
+
+---
+
+# Certificate Credentials
+
+Stores
+
+TLS/SSL certificates
+
+for secure communication
+
+with enterprise systems.
+
+---
+
+# Credentials Scope
+
+Credentials
+
+can exist at
+
+```text
+Global
+
+↓
+
+Folder
+
+↓
+
+System
+```
+
+Use
+
+the smallest scope
+
+required.
+
+---
+
+# Folder Credentials
+
+Large organizations
+
+often separate
+
+applications
+
+into folders.
+
+Architecture
+
+```text
+Payments Folder
+
+↓
+
+Payment Credentials
+
+────────────
+
+Retail Folder
+
+↓
+
+Retail Credentials
+```
+
+Improves
+
+security isolation.
+
+---
+
+# Environment Variables
+
+Environment variables
+
+store
+
+configuration values.
+
+Examples
+
+```text
+Application Name
+
+AWS Region
+
+Cluster Name
+
+Docker Repository
+
+Deployment Environment
+```
+
+---
+
+# Variable Scope
+
+Environment variables
+
+can exist at
+
+```text
+Global
+
+↓
+
+Pipeline
+
+↓
+
+Stage
+```
+
+Avoid
+
+duplicating configuration.
+
+---
+
+# Parameters
+
+Parameters
+
+allow
+
+runtime input.
+
+Examples
+
+```text
+Environment
+
+Application Version
+
+AWS Region
+
+Deployment Strategy
+```
+
+One pipeline
+
+supports
+
+multiple deployments.
+
+---
+
+# Parameter Types
+
+Common parameter types
+
+```text
+String
+
+Choice
+
+Boolean
+
+Password
+
+File
+```
+
+---
+
+# Environment Strategy
+
+One pipeline
+
+supports
+
+multiple environments.
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Configuration
+
+changes automatically.
+
+---
+
+# Credentials Injection
+
+Workflow
+
+```text
+Jenkins Credentials
+
+↓
+
+Pipeline
+
+↓
+
+Environment Variable
+
+↓
+
+Application
+```
+
+Secrets are injected
+
+only during execution.
+
+---
+
+# AWS Authentication
+
+Traditional approach
+
+```text
+Jenkins
+
+↓
+
+AWS Access Key
+
+↓
+
+AWS
+```
+
+Enterprise recommendation
+
+Use
+
+temporary credentials
+
+or IAM Roles
+
+where possible,
+
+especially on AWS-hosted agents.
+
+---
+
+# Docker Authentication
+
+Workflow
+
+```text
+Jenkins
+
+↓
+
+Docker Credentials
+
+↓
+
+Amazon ECR
+
+↓
+
+Docker Push
+```
+
+Credentials
+
+should never appear
+
+inside logs.
+
+---
+
+# GitHub Authentication
+
+```text
+Jenkins
+
+↓
+
+GitHub Token
+
+↓
+
+Repository
+```
+
+Used for
+
+- Checkout
+- Pull Requests
+- Webhooks
+- Releases
+
+---
+
+# Kubernetes Authentication
+
+Jenkins
+
+can authenticate
+
+to Kubernetes
+
+using
+
+```text
+Kubeconfig
+
+↓
+
+Credentials
+
+↓
+
+Cluster
+```
+
+Only authorized pipelines
+
+should deploy.
+
+---
+
+# Secret Rotation
+
+Enterprise organizations
+
+rotate credentials regularly.
+
+Workflow
+
+```text
+Old Credential
+
+↓
+
+New Credential
+
+↓
+
+Update Jenkins
+
+↓
+
+Pipeline Continues
+```
+
+Pipelines
+
+should not require
+
+code changes
+
+during rotation.
+
+---
+
+# Enterprise Pipeline
+
+```text
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Credentials
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+Authentication
+
+is centralized.
+
+---
+
+# Banking Example
+
+```text
+Payment Pipeline
+
+↓
+
+Jenkins Credentials
+
+↓
+
+AWS Authentication
+
+↓
+
+Docker Push
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+No passwords
+
+exist
+
+inside the Jenkinsfile.
+
+---
+
+# Enterprise Security Strategy
+
+```text
+Jenkins
+
+↓
+
+Credentials Store
+
+↓
+
+Role-Based Access
+
+↓
+
+Pipeline
+
+↓
+
+Deployment
+```
+
+Only authorized jobs
+
+can access
+
+sensitive credentials.
+
+---
+
+# Enterprise Best Practices
+
+- Store all secrets in Jenkins Credentials.
+- Never hardcode passwords.
+- Use folder-level credentials when possible.
+- Use least-privilege AWS permissions.
+- Rotate credentials regularly.
+- Separate credentials by environment.
+- Restrict credential access using RBAC.
+- Audit credential usage.
+
+---
+
+# Common Mistakes
+
+- Hardcoding AWS keys.
+- Reusing production credentials in development.
+- Giving every pipeline access to all credentials.
+- Printing secrets in logs.
+- Using global credentials unnecessarily.
+- Sharing SSH keys across teams.
+- Never rotating credentials.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are Jenkins Credentials?
+- Why should credentials not be hardcoded?
+- What is a Secret Text credential?
+- What are environment variables?
+- What are Jenkins build parameters?
+
+## Intermediate
+
+- Global vs Folder credentials.
+- Username/Password vs Secret Text.
+- How are credentials injected into pipelines?
+- Explain parameterized builds.
+- How do environment variables improve pipeline reusability?
+
+## Advanced
+
+- Design a secure Jenkins authentication strategy integrating GitHub, Docker, Amazon ECR, Terraform, and Amazon EKS using Jenkins Credentials, RBAC, and environment-specific configurations.
+- Explain how Jenkins Credentials, environment variables, and build parameters work together to build secure, reusable, and maintainable enterprise CI/CD pipelines.
+- A financial organization has separate Development, Testing, and Production AWS accounts. Explain how you would design credential management, access isolation, environment configuration, secret rotation, RBAC, and pipeline parameterization to support secure enterprise deployments.
+
+---
+
