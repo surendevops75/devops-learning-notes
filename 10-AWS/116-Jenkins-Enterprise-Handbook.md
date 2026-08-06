@@ -1456,3 +1456,787 @@ required for their tasks.
 
 ---
 
+# Chapter 3 - Jenkins Pipeline Fundamentals (Declarative & Scripted Pipelines)
+
+Jenkins originally used
+
+Freestyle Jobs
+
+for automation.
+
+As applications became larger,
+
+Freestyle Jobs became difficult to
+
+- Maintain
+- Version
+- Scale
+- Review
+
+Jenkins introduced **Pipeline as Code**, allowing CI/CD pipelines to be written as code using a **Jenkinsfile**.
+
+This is now the enterprise standard.
+
+---
+
+# What is a Jenkins Pipeline?
+
+A Jenkins Pipeline is
+
+a series of automated stages
+
+that define the complete CI/CD workflow.
+
+Typical stages include
+
+- Checkout
+- Build
+- Test
+- Security Scan
+- Package
+- Deploy
+
+Everything is defined in code.
+
+---
+
+# Pipeline Workflow
+
+```text
+GitHub Push
+
+↓
+
+Jenkinsfile
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Docker Build
+
+↓
+
+Deploy
+
+↓
+
+Production
+```
+
+---
+
+# Pipeline as Code
+
+Instead of manually configuring jobs,
+
+store pipeline logic inside
+
+```text
+Jenkinsfile
+```
+
+Benefits
+
+- Version Control
+- Code Review
+- Easy Rollback
+- Reusable Pipelines
+- Consistent Builds
+
+---
+
+# Jenkinsfile
+
+A Jenkinsfile
+
+is a text file
+
+stored inside
+
+the Git repository.
+
+Repository
+
+```text
+project/
+
+├── src/
+
+├── Dockerfile
+
+├── pom.xml
+
+└── Jenkinsfile
+```
+
+Every code change
+
+includes
+
+pipeline changes.
+
+---
+
+# Jenkins Pipeline Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkinsfile
+
+↓
+
+Jenkins Controller
+
+↓
+
+Agent
+
+↓
+
+Pipeline Execution
+```
+
+---
+
+# Types of Pipelines
+
+Jenkins supports
+
+- Declarative Pipeline
+- Scripted Pipeline
+
+Declarative Pipelines
+
+are recommended
+
+for most enterprise projects.
+
+---
+
+# Declarative Pipeline
+
+Declarative Pipelines
+
+follow
+
+a predefined structure.
+
+Architecture
+
+```text
+Pipeline
+
+↓
+
+Stages
+
+↓
+
+Steps
+```
+
+Advantages
+
+- Easy to Read
+- Easy to Maintain
+- Built-in Validation
+- Standardized
+
+---
+
+# Scripted Pipeline
+
+Scripted Pipelines
+
+are written
+
+using
+
+Groovy programming.
+
+Advantages
+
+- Flexible
+- Powerful
+- Complex Logic
+
+Disadvantages
+
+- Harder to Read
+- More Difficult to Maintain
+
+---
+
+# Declarative vs Scripted
+
+| Declarative | Scripted |
+|--------------|-----------|
+| Structured | Flexible |
+| Easier to Learn | Advanced |
+| Enterprise Standard | Complex Automation |
+| Less Code | More Code |
+
+---
+
+# Pipeline Structure
+
+A Declarative Pipeline
+
+typically contains
+
+```text
+Pipeline
+
+↓
+
+Agent
+
+↓
+
+Environment
+
+↓
+
+Stages
+
+↓
+
+Post Actions
+```
+
+---
+
+# Stage
+
+A Stage
+
+groups
+
+related activities.
+
+Example
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+Stages improve
+
+pipeline readability.
+
+---
+
+# Step
+
+Each Stage
+
+contains
+
+one or more
+
+Steps.
+
+Example
+
+```text
+Run Maven
+
+↓
+
+Run Tests
+
+↓
+
+Build Docker Image
+```
+
+---
+
+# Agent Directive
+
+Every Pipeline
+
+requires
+
+an Agent.
+
+Architecture
+
+```text
+Pipeline
+
+↓
+
+Agent
+
+↓
+
+Execution
+```
+
+The Agent
+
+determines
+
+where the pipeline runs.
+
+---
+
+# Environment Directive
+
+Environment variables
+
+can be defined
+
+for the entire pipeline.
+
+Examples
+
+```text
+AWS Region
+
+Application Name
+
+Docker Repository
+
+Cluster Name
+```
+
+Avoid hardcoding values.
+
+---
+
+# Options Directive
+
+Pipeline options
+
+control execution behavior.
+
+Examples
+
+- Timeout
+- Retry
+- Build Discarder
+- Disable Concurrent Builds
+
+These improve pipeline reliability.
+
+---
+
+# Parameters
+
+Pipelines
+
+can accept
+
+runtime parameters.
+
+Examples
+
+```text
+Environment
+
+Application Version
+
+Region
+
+Deployment Type
+```
+
+One pipeline
+
+supports multiple deployments.
+
+---
+
+# Triggers
+
+Pipelines
+
+can start automatically.
+
+Examples
+
+```text
+Git Push
+
+Pull Request
+
+Webhook
+
+Schedule
+
+Manual Trigger
+```
+
+---
+
+# Sequential Execution
+
+Stages execute
+
+in order.
+
+```text
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+If one stage fails,
+
+the pipeline stops.
+
+---
+
+# Parallel Execution
+
+Independent stages
+
+can run simultaneously.
+
+```text
+Build
+
+↓
+
+Unit Test
+
+↓
+
+Security Scan
+```
+
+Parallel execution
+
+reduces pipeline duration.
+
+---
+
+# Conditional Stages
+
+Some stages
+
+execute only
+
+when conditions
+
+are met.
+
+Example
+
+```text
+Main Branch
+
+↓
+
+Deploy
+
+────────────
+
+Feature Branch
+
+↓
+
+Skip Deployment
+```
+
+---
+
+# Post Actions
+
+Post actions
+
+execute
+
+after the pipeline finishes.
+
+Examples
+
+- Cleanup
+- Notifications
+- Archive Logs
+- Publish Reports
+
+These run
+
+whether the pipeline
+
+succeeds or fails.
+
+---
+
+# Pipeline Flow
+
+```text
+Checkout
+
+↓
+
+Compile
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Multi-Stage Pipeline
+
+```text
+Stage 1
+
+↓
+
+Checkout
+
+────────────
+
+Stage 2
+
+↓
+
+Build
+
+────────────
+
+Stage 3
+
+↓
+
+Testing
+
+────────────
+
+Stage 4
+
+↓
+
+Deployment
+```
+
+---
+
+# Enterprise Pipeline
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Checkout
+
+↓
+
+Compile
+
+↓
+
+Testing
+
+↓
+
+Security Scan
+
+↓
+
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Production
+```
+
+Every stage
+
+must complete successfully
+
+before deployment.
+
+---
+
+# Pipeline Benefits
+
+- Pipeline as Code
+- Version Controlled
+- Repeatable
+- Automated
+- Easier Review
+- Easier Maintenance
+- Faster Delivery
+- Enterprise Standard
+
+---
+
+# Enterprise Best Practices
+
+- Store Jenkinsfiles in Git.
+- Prefer Declarative Pipelines.
+- Keep stages focused.
+- Use environment variables.
+- Parameterize deployments.
+- Execute independent stages in parallel.
+- Add post-build cleanup.
+- Version pipeline changes.
+
+---
+
+# Common Mistakes
+
+- Using Freestyle Jobs instead of Pipelines.
+- Creating very large pipeline files.
+- Hardcoding environment values.
+- Running everything sequentially.
+- Mixing deployment logic with build logic.
+- Ignoring cleanup steps.
+- Not version-controlling Jenkinsfiles.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Jenkins Pipeline?
+- What is Pipeline as Code?
+- What is a Jenkinsfile?
+- Declarative vs Scripted Pipeline.
+- What is a Stage?
+
+## Intermediate
+
+- Stage vs Step.
+- What is the Agent directive?
+- What are environment variables in Jenkins?
+- Why use parallel stages?
+- What are post actions?
+
+## Advanced
+
+- Design an enterprise Jenkins pipeline for building, testing, scanning, containerizing, and deploying applications to Amazon EKS using Docker, SonarQube, Trivy, Terraform, and Amazon ECR.
+- Explain why Declarative Pipelines are preferred over Freestyle Jobs and how Pipeline as Code improves maintainability, scalability, and governance.
+- A company is migrating hundreds of Freestyle Jobs to Jenkins Pipelines. Explain how you would redesign the CI/CD architecture using Jenkinsfiles, reusable stages, environment variables, parallel execution, conditional deployments, and enterprise best practices.
+
+---
+
