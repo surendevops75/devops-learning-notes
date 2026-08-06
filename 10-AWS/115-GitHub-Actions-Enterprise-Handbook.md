@@ -5598,3 +5598,825 @@ Before deployment verify
 
 ---
 
+# Chapter 8 - GitHub Actions Security, OIDC Authentication & Enterprise Best Practices
+
+CI/CD pipelines have access to
+
+- Source Code
+- Docker Images
+- Cloud Infrastructure
+- Secrets
+- Production Environments
+
+If a pipeline is compromised,
+
+an attacker may gain access to the entire software delivery process.
+
+Enterprise GitHub Actions pipelines are designed using
+
+- Least Privilege
+- Short-lived Credentials
+- Identity Federation
+- Security Scanning
+- Environment Protection
+- Deployment Approvals
+
+Security must be enforced throughout the CI/CD lifecycle.
+
+---
+
+# CI/CD Security Lifecycle
+
+```text
+Developer
+
+↓
+
+GitHub Repository
+
+↓
+
+Workflow
+
+↓
+
+Authentication
+
+↓
+
+Security Scan
+
+↓
+
+Deployment Approval
+
+↓
+
+Production
+```
+
+Security controls
+
+exist at every stage.
+
+---
+
+# Why GitHub Actions Security?
+
+Without security
+
+```text
+Workflow
+
+↓
+
+Long-lived Credentials
+
+↓
+
+Repository
+
+↓
+
+Production
+```
+
+Risks include
+
+- Credential Theft
+- Unauthorized Deployments
+- Infrastructure Compromise
+
+---
+
+With security
+
+```text
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+IAM Role
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS
+```
+
+No permanent credentials
+
+are stored.
+
+---
+
+# Principle of Least Privilege
+
+Every workflow
+
+should receive
+
+only the permissions
+
+required to complete its task.
+
+Avoid
+
+```text
+Administrator Access
+
+Full Repository Access
+
+Production Write Access
+```
+
+Grant
+
+only
+
+minimum required permissions.
+
+---
+
+# GitHub Token Permissions
+
+Every workflow
+
+receives
+
+a GitHub token.
+
+Restrict its permissions.
+
+Example
+
+```text
+Read Repository
+
+↓
+
+Build
+
+↓
+
+No Admin Access
+```
+
+Avoid giving
+
+unnecessary write permissions.
+
+---
+
+# Repository Security
+
+Protect repositories using
+
+- Branch Protection
+- Pull Request Reviews
+- Required Status Checks
+- Signed Commits (if applicable)
+- Protected Branches
+
+Unauthorized code
+
+must never
+
+reach production.
+
+---
+
+# Branch Protection Workflow
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+Pipeline
+
+↓
+
+Merge
+
+↓
+
+Deployment
+```
+
+Every change
+
+is validated.
+
+---
+
+# GitHub Secrets
+
+Store sensitive values
+
+using GitHub Secrets.
+
+Examples
+
+```text
+API Keys
+
+Database Passwords
+
+Tokens
+
+Certificates
+```
+
+Never hardcode
+
+credentials
+
+inside workflows.
+
+---
+
+# Why OIDC?
+
+Traditionally
+
+AWS authentication
+
+required
+
+long-lived access keys.
+
+Architecture
+
+```text
+GitHub Actions
+
+↓
+
+AWS Access Key
+
+↓
+
+AWS
+```
+
+Problems
+
+- Credential Rotation
+- Secret Leakage
+- Long-lived Credentials
+
+---
+
+# OIDC Authentication
+
+OpenID Connect (OIDC)
+
+allows GitHub Actions
+
+to authenticate
+
+without storing AWS keys.
+
+Architecture
+
+```text
+GitHub Actions
+
+↓
+
+OIDC Token
+
+↓
+
+AWS IAM
+
+↓
+
+Temporary Credentials
+
+↓
+
+Deployment
+```
+
+This is the recommended approach.
+
+---
+
+# OIDC Workflow
+
+```text
+Workflow Starts
+
+↓
+
+GitHub Issues OIDC Token
+
+↓
+
+AWS Verifies Identity
+
+↓
+
+IAM Role Assumed
+
+↓
+
+Temporary Credentials
+
+↓
+
+Deployment
+```
+
+---
+
+# Benefits of OIDC
+
+- No Long-lived Credentials
+- Automatic Credential Rotation
+- Improved Security
+- Better Auditability
+- IAM Integration
+
+---
+
+# IAM Role for GitHub Actions
+
+Instead of
+
+creating IAM users,
+
+create
+
+IAM Roles.
+
+Architecture
+
+```text
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+IAM Role
+
+↓
+
+AWS Resources
+```
+
+The workflow
+
+assumes
+
+the required role.
+
+---
+
+# Trust Relationship
+
+AWS verifies
+
+that
+
+only approved repositories
+
+can assume
+
+the IAM role.
+
+Architecture
+
+```text
+GitHub Repository
+
+↓
+
+OIDC
+
+↓
+
+IAM Trust Policy
+
+↓
+
+IAM Role
+```
+
+This prevents
+
+unauthorized access.
+
+---
+
+# Environment Protection
+
+GitHub Environments
+
+can enforce
+
+- Manual Approval
+- Deployment Restrictions
+- Environment Secrets
+
+Example
+
+```text
+Development
+
+↓
+
+Automatic
+
+────────────
+
+Production
+
+↓
+
+Manual Approval
+```
+
+---
+
+# Deployment Approval
+
+Production deployments
+
+should require
+
+manual approval.
+
+Workflow
+
+```text
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+This reduces
+
+deployment risk.
+
+---
+
+# Security Scanning
+
+CI/CD pipelines
+
+should automatically run
+
+- SonarQube
+- Trivy
+- Dependency Scanning
+- Secret Scanning
+
+Only secure builds
+
+should proceed.
+
+---
+
+# Secret Scanning
+
+Prevent accidental commits of
+
+- AWS Keys
+- API Tokens
+- Passwords
+- Private Certificates
+
+Repositories
+
+should reject
+
+committed secrets.
+
+---
+
+# Dependency Scanning
+
+Libraries
+
+may contain
+
+known vulnerabilities.
+
+Automatically scan
+
+dependencies
+
+before deployment.
+
+---
+
+# Container Security
+
+Pipeline should verify
+
+- Dockerfile
+- Base Image
+- Image Vulnerabilities
+- Image Size
+
+before pushing images
+
+to Amazon ECR.
+
+---
+
+# Workflow Permissions
+
+Each workflow
+
+should define
+
+explicit permissions.
+
+Avoid
+
+granting
+
+repository-wide write access
+
+unless required.
+
+---
+
+# Runner Security
+
+Protect runners using
+
+- Dedicated Runners for Production
+- Network Isolation
+- Least Privilege
+- Automatic Cleanup
+
+Self-hosted runners
+
+should never
+
+be shared
+
+between production
+
+and development.
+
+---
+
+# Audit Logging
+
+Track
+
+- Workflow Executions
+- Deployments
+- Approvals
+- Failed Logins
+- Secret Usage
+
+Audit logs
+
+support
+
+security investigations.
+
+---
+
+# Enterprise Security Pipeline
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Code Review
+
+↓
+
+GitHub Actions
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+OIDC Authentication
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Monitoring
+```
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Protected Branch
+
+↓
+
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+IAM Role
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+No AWS access keys
+
+are stored
+
+inside GitHub.
+
+---
+
+# Enterprise Architecture
+
+```text
+GitHub
+
+↓
+
+Workflow
+
+↓
+
+OIDC
+
+↓
+
+IAM Role
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+```
+
+Every deployment
+
+uses
+
+temporary credentials.
+
+---
+
+# Security Checklist
+
+Before production deployment verify
+
+✓ Protected Branches Enabled
+
+✓ Pull Request Reviews Required
+
+✓ Workflow Permissions Restricted
+
+✓ GitHub Secrets Configured
+
+✓ OIDC Authentication Enabled
+
+✓ IAM Roles Configured
+
+✓ Security Scan Passed
+
+✓ Environment Approval Enabled
+
+✓ Runner Security Reviewed
+
+✓ Audit Logging Enabled
+
+---
+
+# Enterprise Best Practices
+
+- Prefer OIDC over AWS access keys.
+- Use IAM roles instead of IAM users.
+- Restrict GitHub token permissions.
+- Protect production branches.
+- Require pull request approvals.
+- Use environment protection rules.
+- Scan code and containers automatically.
+- Separate production and development runners.
+- Rotate secrets regularly if OIDC cannot be used.
+- Continuously audit workflow activity.
+
+---
+
+# Common Mistakes
+
+- Storing AWS credentials in GitHub Secrets when OIDC is available.
+- Giving workflows administrator permissions.
+- Allowing direct commits to the main branch.
+- Skipping security scans.
+- Using the same secrets across all environments.
+- Running production deployments without approval.
+- Sharing self-hosted runners between development and production.
+- Ignoring audit logs.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is GitHub Actions security important?
+- What are GitHub Secrets?
+- What is OIDC?
+- Why should AWS access keys be avoided?
+
+## Intermediate
+
+- Explain OIDC authentication.
+- IAM User vs IAM Role.
+- What are environment protection rules?
+- Why should workflows use least privilege?
+- How do protected branches improve CI/CD security?
+
+## Advanced
+
+- Design a secure GitHub Actions platform using OIDC, IAM roles, protected branches, environment approvals, SonarQube, Trivy, Amazon ECR, and Amazon EKS.
+- Explain how OIDC authentication replaces long-lived AWS credentials and improves the security of enterprise CI/CD pipelines.
+- A financial organization requires a highly secure CI/CD platform with strict compliance requirements. Explain how you would design authentication, authorization, workflow permissions, environment protection, runner isolation, security scanning, deployment approvals, and audit logging to ensure secure and compliant software delivery.
+
+---
+
