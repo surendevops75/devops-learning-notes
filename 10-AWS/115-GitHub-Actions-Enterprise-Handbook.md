@@ -7256,3 +7256,843 @@ Postmortem
 
 ---
 
+# Chapter 10 - GitHub Actions Enterprise Best Practices
+
+GitHub Actions makes CI/CD automation simple.
+
+However,
+
+building an **enterprise-grade CI/CD platform** requires much more than writing workflow YAML files.
+
+Enterprise pipelines must be
+
+- Secure
+- Reliable
+- Scalable
+- Auditable
+- Maintainable
+
+Large organizations establish standards so that every repository follows the same deployment process.
+
+---
+
+# Enterprise CI/CD Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Security Scan
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Monitoring
+```
+
+Every deployment
+
+passes through
+
+quality gates.
+
+---
+
+# Treat Pipelines as Code
+
+GitHub Actions workflows
+
+should be treated exactly like
+
+application code.
+
+Store workflows in Git.
+
+Use
+
+- Pull Requests
+- Code Reviews
+- Branch Protection
+- Version Control
+
+Never edit workflows directly
+
+in production.
+
+---
+
+# Modular Workflow Design
+
+Avoid one large workflow
+
+containing everything.
+
+Recommended
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Security
+
+↓
+
+Docker
+
+↓
+
+Terraform
+
+↓
+
+Deploy
+```
+
+Each workflow
+
+should have
+
+one responsibility.
+
+---
+
+# Reusable Workflows
+
+Shared logic
+
+should exist
+
+only once.
+
+Architecture
+
+```text
+Reusable Workflow
+
+↓
+
+Application A
+
+↓
+
+Application B
+
+↓
+
+Application C
+```
+
+Platform teams
+
+maintain
+
+shared workflows.
+
+---
+
+# Composite Actions
+
+Repeated tasks
+
+should become
+
+composite actions.
+
+Examples
+
+```text
+AWS Login
+
+↓
+
+Docker Login
+
+↓
+
+Common Validation
+```
+
+Avoid copying
+
+the same steps
+
+across repositories.
+
+---
+
+# Repository Structure
+
+```text
+project/
+
+├── src/
+
+├── Dockerfile
+
+├── terraform/
+
+├── k8s/
+
+└── .github/
+
+    └── workflows/
+
+        ├── build.yml
+
+        ├── test.yml
+
+        ├── deploy.yml
+
+        └── reusable.yml
+```
+
+Keep workflows
+
+organized
+
+and easy to maintain.
+
+---
+
+# Build Once, Deploy Everywhere
+
+Build
+
+one immutable artifact.
+
+```text
+Build
+
+↓
+
+Artifact
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Never rebuild
+
+between environments.
+
+---
+
+# Secure Authentication
+
+Preferred authentication
+
+```text
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+IAM Role
+
+↓
+
+Temporary Credentials
+
+↓
+
+AWS
+```
+
+Avoid
+
+long-lived
+
+AWS access keys.
+
+---
+
+# Least Privilege
+
+Grant workflows
+
+only
+
+the permissions
+
+they require.
+
+Avoid
+
+```text
+Administrator
+
+Repository Write
+
+Production Access
+```
+
+unless absolutely necessary.
+
+---
+
+# Protected Branches
+
+Protect
+
+production branches
+
+using
+
+- Pull Requests
+- Code Reviews
+- Required Checks
+- Merge Restrictions
+
+No direct commits
+
+to production branches.
+
+---
+
+# Environment Protection
+
+GitHub Environments
+
+should enforce
+
+- Manual Approval
+- Required Reviewers
+- Environment Secrets
+- Deployment Restrictions
+
+Production
+
+must never deploy
+
+without approval.
+
+---
+
+# Secrets Management
+
+Store sensitive values
+
+using
+
+- GitHub Secrets
+- GitHub Environment Secrets
+- Organization Secrets
+
+Never store
+
+credentials
+
+inside
+
+workflow YAML.
+
+---
+
+# Dependency Caching
+
+Cache
+
+- Maven
+- Gradle
+- npm
+- pip
+- Terraform Providers
+
+Benefits
+
+- Faster Builds
+- Lower Network Usage
+- Reduced Pipeline Time
+
+---
+
+# Artifact Management
+
+Artifacts should contain
+
+- Build Output
+- Test Reports
+- Terraform Plans
+- Deployment Packages
+
+Configure
+
+retention policies
+
+to avoid unnecessary storage.
+
+---
+
+# Version Everything
+
+Version
+
+- Workflows
+- Composite Actions
+- Docker Images
+- Terraform Modules
+
+Versioning simplifies
+
+rollback
+
+and maintenance.
+
+---
+
+# Security Scanning
+
+Every Pull Request
+
+should include
+
+- SonarQube
+- Trivy
+- Dependency Scanning
+- Secret Scanning
+
+Deployments
+
+should stop
+
+if critical issues
+
+are detected.
+
+---
+
+# Separate CI and CD
+
+Continuous Integration
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Security Scan
+```
+
+Continuous Delivery
+
+```text
+Approval
+
+↓
+
+Deploy
+
+↓
+
+Validation
+```
+
+Independent workflows
+
+are easier to maintain.
+
+---
+
+# Runner Strategy
+
+Use
+
+GitHub Hosted Runners
+
+for
+
+- Builds
+- Testing
+- Static Analysis
+
+Use
+
+Self-hosted Runners
+
+for
+
+- Private Infrastructure
+- Production Deployment
+- Internal Resources
+
+---
+
+# Deployment Strategy
+
+Production deployments
+
+should use
+
+- Rolling Updates
+- Blue-Green Deployments
+- Canary Releases
+
+Always prepare
+
+a rollback strategy.
+
+---
+
+# Monitoring
+
+Monitor
+
+- Workflow Success Rate
+- Pipeline Duration
+- Deployment Frequency
+- Failure Rate
+- Runner Health
+
+Track
+
+CI/CD performance
+
+continuously.
+
+---
+
+# Logging
+
+Store
+
+- Workflow Logs
+- Deployment Logs
+- Audit Logs
+- Security Events
+
+Logs support
+
+incident investigation
+
+and compliance.
+
+---
+
+# Governance
+
+Enterprise pipelines
+
+should enforce
+
+- Naming Standards
+- Workflow Templates
+- Security Policies
+- Deployment Approvals
+- Audit Requirements
+
+Automation
+
+must remain consistent
+
+across repositories.
+
+---
+
+# Enterprise Platform Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Reusable Workflows
+
+↓
+
+GitHub Actions
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+```
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Reusable Workflow
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Every deployment
+
+is reviewed,
+
+validated,
+
+and approved.
+
+---
+
+# GitHub Actions Maturity Model
+
+```text
+Level 1
+
+↓
+
+Manual Deployments
+
+────────────
+
+Level 2
+
+↓
+
+Basic CI
+
+────────────
+
+Level 3
+
+↓
+
+CI/CD Automation
+
+────────────
+
+Level 4
+
+↓
+
+Enterprise CI/CD
+
+────────────
+
+Level 5
+
+↓
+
+Platform Engineering
+
+↓
+
+Reusable Workflows
+
+↓
+
+Security
+
+↓
+
+Governance
+
+↓
+
+Observability
+```
+
+Organizations
+
+should aim
+
+for Level 5 maturity.
+
+---
+
+# Enterprise Checklist
+
+Before every production deployment verify
+
+✓ Pull Request Approved
+
+✓ Branch Protection Enabled
+
+✓ Workflow Passed
+
+✓ Unit Tests Passed
+
+✓ SonarQube Passed
+
+✓ Trivy Scan Passed
+
+✓ OIDC Authentication Used
+
+✓ Artifact Generated
+
+✓ Docker Image Versioned
+
+✓ Amazon ECR Updated
+
+✓ Terraform Validated
+
+✓ Amazon EKS Deployment Verified
+
+✓ Monitoring Enabled
+
+✓ Rollback Plan Available
+
+---
+
+# Benefits
+
+- Standardized CI/CD
+- Faster Releases
+- Better Security
+- Easier Rollbacks
+- Centralized Governance
+- Improved Maintainability
+- Reduced Operational Risk
+- Enterprise Compliance
+
+---
+
+# Common Mistakes
+
+- Creating one massive workflow.
+- Hardcoding secrets.
+- Using AWS access keys instead of OIDC.
+- Deploying directly from feature branches.
+- Ignoring workflow versioning.
+- Skipping security scans.
+- Running production deployments without approvals.
+- Not separating CI and CD workflows.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are GitHub Actions best practices?
+- Why should CI and CD be separated?
+- Why use reusable workflows?
+- Why is OIDC preferred over AWS access keys?
+
+## Intermediate
+
+- Explain enterprise runner strategies.
+- How do you secure GitHub Actions workflows?
+- Why should workflows be modular?
+- Explain Build Once, Deploy Everywhere.
+- Why use environment protection rules?
+
+## Advanced
+
+- Design an enterprise GitHub Actions platform using reusable workflows, OIDC authentication, SonarQube, Trivy, Docker, Amazon ECR, Terraform, Amazon EKS, Prometheus, and Grafana.
+- Explain how GitHub Actions best practices improve security, scalability, maintainability, and governance across hundreds of repositories.
+- Your organization has over 500 repositories and multiple development teams. Explain how you would standardize CI/CD pipelines, manage reusable workflows, secure deployments, optimize runner usage, enforce governance, and ensure compliance while supporting rapid software delivery.
+
+---
+
