@@ -3871,3 +3871,731 @@ identify problems.
 
 ---
 
+# Chapter 6 - ArgoCD Helm Integration, Kustomize & Configuration Management
+
+Modern Kubernetes applications require
+
+- Environment-specific configuration
+- Version-controlled deployments
+- Reusable templates
+- Easy customization
+
+Instead of maintaining
+
+hundreds of YAML files,
+
+ArgoCD integrates with
+
+- Helm
+- Kustomize
+- Jsonnet
+- Plain Kubernetes Manifests
+
+This enables scalable
+
+GitOps-based configuration management.
+
+---
+
+# Configuration Management Architecture
+
+```text
+Git Repository
+
+↓
+
+Helm / Kustomize
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Applications
+```
+
+ArgoCD
+
+generates manifests
+
+before deployment.
+
+---
+
+# Why Configuration Management?
+
+Without templating
+
+```text
+Development
+
+↓
+
+100 YAML Files
+
+────────────
+
+Testing
+
+↓
+
+100 YAML Files
+
+────────────
+
+Production
+
+↓
+
+100 YAML Files
+```
+
+Problems
+
+- Duplicate YAML
+- Difficult Maintenance
+- Configuration Drift
+
+---
+
+With Helm
+
+```text
+One Template
+
+↓
+
+Environment Values
+
+↓
+
+Generated Manifests
+```
+
+Much easier
+
+to maintain.
+
+---
+
+# Helm Integration
+
+Helm
+
+is the package manager
+
+for Kubernetes.
+
+It packages
+
+Kubernetes resources
+
+into
+
+Charts.
+
+ArgoCD
+
+can deploy
+
+Helm Charts
+
+directly from Git.
+
+---
+
+# Helm Architecture
+
+```text
+Git Repository
+
+↓
+
+Helm Chart
+
+↓
+
+Values File
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Helm Components
+
+A Helm Chart
+
+typically contains
+
+```text
+Chart.yaml
+
+↓
+
+Templates
+
+↓
+
+Values.yaml
+
+↓
+
+Generated Manifests
+```
+
+---
+
+# Chart.yaml
+
+Defines
+
+chart metadata.
+
+Examples
+
+```text
+Application Name
+
+Version
+
+Description
+
+Dependencies
+```
+
+---
+
+# Templates Directory
+
+Contains
+
+Kubernetes templates.
+
+Examples
+
+```text
+Deployment
+
+Service
+
+Ingress
+
+ConfigMap
+
+Secret
+```
+
+Templates
+
+use
+
+Helm variables.
+
+---
+
+# Values File
+
+The values file
+
+contains
+
+environment-specific configuration.
+
+Examples
+
+```text
+Replica Count
+
+Image Tag
+
+CPU Limits
+
+Memory Limits
+
+Environment Variables
+```
+
+The same chart
+
+supports
+
+multiple environments.
+
+---
+
+# Helm Deployment Flow
+
+```text
+Git Commit
+
+↓
+
+Helm Chart
+
+↓
+
+Values
+
+↓
+
+Manifest Generation
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Environment-Specific Values
+
+Example
+
+```text
+Development
+
+↓
+
+values-dev
+
+────────────
+
+Testing
+
+↓
+
+values-test
+
+────────────
+
+Production
+
+↓
+
+values-prod
+```
+
+Each environment
+
+uses
+
+different configuration.
+
+---
+
+# Helm Versioning
+
+Every chart
+
+should be versioned.
+
+```text
+Chart v1
+
+↓
+
+Chart v2
+
+↓
+
+Chart v3
+```
+
+This simplifies
+
+rollback
+
+and upgrades.
+
+---
+
+# What is Kustomize?
+
+Kustomize
+
+customizes
+
+plain Kubernetes YAML
+
+without templates.
+
+It applies
+
+overlays
+
+to
+
+base manifests.
+
+---
+
+# Kustomize Architecture
+
+```text
+Base Manifests
+
+↓
+
+Overlay
+
+↓
+
+Generated Manifests
+
+↓
+
+ArgoCD
+```
+
+---
+
+# Base Directory
+
+Contains
+
+shared Kubernetes resources.
+
+Example
+
+```text
+Deployment
+
+Service
+
+Ingress
+```
+
+These resources
+
+are reused.
+
+---
+
+# Overlay Directory
+
+Each environment
+
+adds
+
+its own changes.
+
+Example
+
+```text
+Development Overlay
+
+↓
+
+Replica = 1
+
+────────────
+
+Production Overlay
+
+↓
+
+Replica = 5
+```
+
+---
+
+# Kustomize Workflow
+
+```text
+Base
+
+↓
+
+Overlay
+
+↓
+
+Manifest Generation
+
+↓
+
+Amazon EKS
+```
+
+No templates
+
+are required.
+
+---
+
+# Helm vs Kustomize
+
+| Helm | Kustomize |
+|-------|-----------|
+| Template Engine | Overlay System |
+| Values Files | Patches |
+| Package Manager | Native Kubernetes Tool |
+| Supports Charts | Supports Base + Overlay |
+
+---
+
+# Plain YAML
+
+ArgoCD
+
+can also deploy
+
+plain Kubernetes manifests.
+
+Workflow
+
+```text
+Git Repository
+
+↓
+
+YAML
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Suitable
+
+for
+
+small applications.
+
+---
+
+# Jsonnet Support
+
+ArgoCD
+
+supports
+
+Jsonnet
+
+for
+
+advanced manifest generation.
+
+Used
+
+for
+
+highly customized deployments.
+
+---
+
+# Configuration Promotion
+
+Environment promotion
+
+occurs
+
+through Git.
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Each environment
+
+uses
+
+its own configuration.
+
+---
+
+# Enterprise Git Repository
+
+```text
+gitops/
+
+├── helm/
+
+├── kustomize/
+
+├── development/
+
+├── testing/
+
+└── production/
+```
+
+Configuration
+
+is organized
+
+by environment.
+
+---
+
+# Enterprise Deployment
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Helm Chart
+
+↓
+
+Values
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Helm Chart
+
+↓
+
+Production Values
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+One chart
+
+supports
+
+every environment.
+
+---
+
+# Enterprise Configuration Strategy
+
+```text
+Application
+
+↓
+
+Helm Chart
+
+↓
+
+Environment Values
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Configuration
+
+remains
+
+version controlled.
+
+---
+
+# Enterprise Best Practices
+
+- Store Helm Charts in Git.
+- Use separate values files for each environment.
+- Keep Helm Charts generic.
+- Version every chart release.
+- Use Kustomize overlays for Kubernetes-native customization.
+- Avoid duplicating YAML.
+- Promote configuration through pull requests.
+- Keep Git as the single source of truth.
+
+---
+
+# Common Mistakes
+
+- Creating separate charts for every environment.
+- Hardcoding production values.
+- Duplicating Kubernetes manifests.
+- Mixing Helm and manual edits.
+- Ignoring chart versioning.
+- Keeping environment configuration outside Git.
+- Editing generated manifests directly.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Helm?
+- What is Kustomize?
+- Why does ArgoCD support Helm?
+- What is a Helm Chart?
+- What is a values file?
+
+## Intermediate
+
+- Helm vs Kustomize.
+- What is an Overlay?
+- How does ArgoCD generate manifests?
+- Why separate values files by environment?
+- How does GitOps simplify configuration management?
+
+## Advanced
+
+- Design an enterprise GitOps configuration management strategy using Helm Charts, Kustomize overlays, environment-specific values, Git repositories, and Amazon EKS.
+- Explain how ArgoCD integrates with Helm and Kustomize to provide scalable, reusable, and version-controlled Kubernetes deployments.
+- A financial organization deploys over 400 microservices across Development, Testing, Staging, and Production environments. Explain how you would organize Helm Charts, values files, Kustomize overlays, Git repositories, versioning, promotion workflows, and ArgoCD applications to ensure maintainable, secure, and auditable configuration management.
+
+---
+
