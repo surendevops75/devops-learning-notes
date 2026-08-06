@@ -1028,3 +1028,646 @@ These topics strengthen architecture answers.
 
 ---
 
+# Chapter 3 - Enterprise AWS Scenario-Based Interview Questions (Part 2)
+
+As engineers gain more experience,
+
+interview questions become less about AWS services and more about
+
+- Architecture Decisions
+- Production Failures
+- Scalability
+- Security
+- Disaster Recovery
+- Cost Optimization
+- Operational Excellence
+
+Interviewers expect candidates to think like an AWS Solutions Architect or Senior DevOps Engineer.
+
+---
+
+# Scenario 11 - CI/CD Pipeline Suddenly Takes 45 Minutes
+
+## Situation
+
+Your deployment pipeline normally completes in
+
+```text
+8 Minutes
+```
+
+Today it takes
+
+```text
+45 Minutes
+```
+
+Developers are blocked.
+
+---
+
+## Investigation
+
+Check
+
+- GitHub Actions/Jenkins Queue
+- Build Logs
+- Docker Build Time
+- Dependency Downloads
+- SonarQube Scan
+- Trivy Scan
+- Network Latency
+- Artifact Upload
+
+---
+
+## Possible Root Causes
+
+- Large Docker image
+- Cache not working
+- Slow dependency download
+- Build agent resource exhaustion
+- Security scan delays
+- Parallel stages disabled
+
+---
+
+## Improvements
+
+- Enable Docker layer caching.
+- Cache Maven/npm packages.
+- Run independent jobs in parallel.
+- Optimize Dockerfile.
+- Use self-hosted runners where appropriate.
+- Store artifacts in Amazon ECR/Artifact Repository.
+
+---
+
+# Scenario 12 - Kubernetes Cluster Upgrade Failed
+
+## Situation
+
+The EKS control plane upgraded successfully,
+
+but workloads became unavailable.
+
+---
+
+## Investigation
+
+Verify
+
+- Node Groups
+- Pod Status
+- CNI Plugin
+- CoreDNS
+- Ingress Controller
+- Storage Drivers
+
+---
+
+## Recovery
+
+```text
+Upgrade Node Group
+
+↓
+
+Drain Old Nodes
+
+↓
+
+Validate Pods
+
+↓
+
+Delete Old Nodes
+```
+
+Never upgrade worker nodes without validation.
+
+---
+
+# Scenario 13 - Terraform Apply Failed Halfway
+
+## Situation
+
+Infrastructure provisioning stops after creating
+
+- VPC
+- Security Groups
+
+but fails while creating EKS.
+
+---
+
+## Investigation
+
+Review
+
+- Terraform State
+- CloudTrail
+- AWS Console
+- Error Logs
+
+---
+
+## Recovery
+
+- Fix root cause.
+- Do **not** manually recreate resources tracked by Terraform.
+- Run `terraform plan`.
+- Verify state consistency.
+- Execute `terraform apply`.
+
+---
+
+# Scenario 14 - Amazon EKS Nodes Not Joining Cluster
+
+## Symptoms
+
+```text
+NodeGroup
+
+↓
+
+Launching
+
+↓
+
+Not Ready
+```
+
+---
+
+## Investigation
+
+Verify
+
+- IAM Role
+- Security Groups
+- Cluster Endpoint
+- Subnet Configuration
+- Bootstrap Script
+- VPC Routing
+
+---
+
+## Common Causes
+
+- Missing IAM policies.
+- Incorrect bootstrap configuration.
+- Worker nodes cannot reach the control plane.
+- Private subnets lack NAT or VPC endpoints.
+
+---
+
+# Scenario 15 - API Latency Suddenly Increased
+
+## Investigation
+
+Check
+
+- CloudWatch Metrics
+- ALB Target Response Time
+- Pod CPU
+- Database Queries
+- Redis Cache
+- External APIs
+
+---
+
+## Possible Causes
+
+- Database bottleneck
+- Cache miss
+- Slow downstream API
+- CPU throttling
+- Resource contention
+
+---
+
+## Improvements
+
+- Tune queries.
+- Increase cache usage.
+- Scale application.
+- Optimize API calls.
+
+---
+
+# Scenario 16 - Secrets Exposed in Git Repository
+
+## Situation
+
+A developer accidentally commits AWS credentials.
+
+---
+
+## Immediate Response
+
+- Disable compromised keys.
+- Rotate credentials.
+- Review CloudTrail.
+- Search for unauthorized activity.
+- Update Secrets Manager.
+- Remove secrets from Git history if required.
+
+---
+
+## Long-Term Prevention
+
+- Git pre-commit hooks
+- Secret scanning
+- IAM Roles
+- AWS Secrets Manager
+- Least Privilege
+
+---
+
+# Scenario 17 - Multi-Region Disaster
+
+## Situation
+
+Primary AWS Region becomes unavailable.
+
+---
+
+## Expected Architecture
+
+```text
+Region A
+
+↓
+
+Unavailable
+
+────────────
+
+Route 53 Failover
+
+↓
+
+Region B
+
+↓
+
+Production
+```
+
+---
+
+## Discussion
+
+Explain
+
+- RTO
+- RPO
+- Database Replication
+- DNS Failover
+- Backup Validation
+
+---
+
+# Scenario 18 - Kubernetes Memory Leak
+
+Symptoms
+
+```text
+Pods
+
+↓
+
+Restarting
+
+↓
+
+OOMKilled
+```
+
+---
+
+## Investigation
+
+Check
+
+- Memory Usage
+- Heap Dumps
+- Resource Limits
+- Application Logs
+- Prometheus Metrics
+
+---
+
+## Solution
+
+- Fix memory leak.
+- Increase limits temporarily.
+- Enable HPA/VPA where appropriate.
+- Improve monitoring.
+
+---
+
+# Scenario 19 - S3 Bucket Accidentally Deleted
+
+## Recovery
+
+Check
+
+- Versioning
+- Cross-Region Replication
+- Backup
+- CloudTrail
+- AWS Backup
+
+---
+
+## Prevention
+
+- Enable Versioning.
+- Use MFA Delete (where applicable).
+- Restrict IAM permissions.
+- Protect buckets with SCPs.
+
+---
+
+# Scenario 20 - Production Deployment Strategy
+
+## Interview Question
+
+How would you deploy a new application version without downtime?
+
+---
+
+## Expected Answer
+
+```text
+GitHub
+
+↓
+
+CI/CD
+
+↓
+
+Docker
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Rolling Update
+
+↓
+
+Validation
+
+↓
+
+Production
+```
+
+Alternative strategies
+
+- Blue-Green Deployment
+- Canary Deployment
+
+---
+
+# Scenario 21 - Microservices Communication Failure
+
+## Symptoms
+
+Order Service cannot communicate with Payment Service.
+
+---
+
+## Investigation
+
+Check
+
+- Service Discovery
+- DNS Resolution
+- Kubernetes Service
+- Network Policies
+- Security Groups
+- API Health
+
+---
+
+## Solution
+
+Restore service connectivity,
+
+then investigate root cause using logs and metrics.
+
+---
+
+# Scenario 22 - CloudWatch Alarm Triggered at Midnight
+
+CPU utilization suddenly reaches
+
+```text
+95%
+```
+
+---
+
+## Investigation
+
+Review
+
+- Auto Scaling Events
+- Deployment History
+- Batch Jobs
+- Cron Jobs
+- CloudTrail Events
+
+---
+
+## Long-Term Improvements
+
+- Predictive Scaling
+- Better Scheduling
+- Capacity Planning
+
+---
+
+# Scenario 23 - High Database Connections
+
+Symptoms
+
+```text
+Application
+
+↓
+
+Connection Pool Exhausted
+
+↓
+
+Timeouts
+```
+
+---
+
+## Investigation
+
+Check
+
+- Connection Pool
+- Idle Connections
+- Query Execution Time
+- Read Replica Usage
+
+---
+
+## Solution
+
+- Tune connection pool.
+- Add read replicas.
+- Optimize long-running queries.
+- Cache frequently accessed data.
+
+---
+
+# Scenario 24 - AWS Cost Increased 40% Overnight
+
+## Investigation
+
+Review
+
+- Cost Explorer
+- CUR Reports
+- Trusted Advisor
+- Compute Optimizer
+- Billing Dashboard
+
+---
+
+## Common Causes
+
+- Large EC2 Instances
+- Increased Data Transfer
+- Excessive Logs
+- Unused EBS Volumes
+- Auto Scaling Events
+
+---
+
+# Enterprise Troubleshooting Flow
+
+```text
+Problem Reported
+
+↓
+
+Collect Evidence
+
+↓
+
+CloudWatch
+
+↓
+
+CloudTrail
+
+↓
+
+Application Logs
+
+↓
+
+Metrics
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validation
+
+↓
+
+Postmortem
+```
+
+A systematic approach reduces recovery time.
+
+---
+
+# What Interviewers Want to Hear
+
+During scenario questions,
+
+always mention
+
+- Monitoring
+- Logging
+- Metrics
+- Security
+- High Availability
+- Rollback
+- Root Cause Analysis
+- Long-Term Prevention
+
+These topics demonstrate production experience.
+
+---
+
+# Best Practices
+
+- Validate assumptions with metrics before making changes.
+- Keep rollback plans ready for every deployment.
+- Automate recovery wherever possible.
+- Monitor infrastructure and applications together.
+- Document incident timelines.
+- Conduct blameless postmortems.
+- Continuously improve based on incident learnings.
+
+---
+
+# Common Interview Mistakes
+
+- Guessing without evidence.
+- Ignoring CloudWatch and CloudTrail.
+- Focusing only on infrastructure instead of applications.
+- Forgetting rollback strategies.
+- Providing fixes without explaining root cause.
+- Ignoring long-term preventive actions.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How do you troubleshoot a failed deployment?
+- What would you check if Kubernetes nodes are not joining the cluster?
+- How would you investigate a sudden increase in AWS costs?
+
+## Intermediate
+
+- Explain your approach to debugging EKS networking issues.
+- How do you recover from a failed Terraform deployment?
+- What would you do if AWS credentials were exposed publicly?
+
+## Advanced
+
+- Design a zero-downtime deployment strategy for a production Kubernetes platform running across multiple Availability Zones.
+- Explain how you would recover from a complete Regional outage while meeting strict RTO and RPO requirements.
+- A production environment experiences simultaneous CI/CD failures, Kubernetes pod crashes, database latency, and increased AWS costs after a release. Walk through your complete troubleshooting process, recovery plan, communication strategy, and long-term architectural improvements.
+
+---
+
