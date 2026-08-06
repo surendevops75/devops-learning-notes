@@ -3459,3 +3459,875 @@ AWS Infrastructure
 
 ---
 
+# Chapter 5 - Scheduling, Resource Management & Autoscaling (Deep Dive)
+
+Deploying applications to Kubernetes is only the beginning.
+
+The next challenge is deciding
+
+- Which node should run a Pod?
+- How much CPU should a Pod receive?
+- What happens when a node is full?
+- How does Kubernetes scale automatically?
+- How are workloads isolated?
+
+Kubernetes answers these questions through
+
+- Scheduling
+- Resource Management
+- Node Placement
+- Autoscaling
+
+These features ensure efficient cluster utilization and application reliability.
+
+---
+
+# Scheduling Overview
+
+Whenever a new Pod is created,
+
+Kubernetes must select
+
+the most suitable Worker Node.
+
+Workflow
+
+```text
+Pod Created
+
+↓
+
+API Server
+
+↓
+
+Scheduler
+
+↓
+
+Best Node Selected
+
+↓
+
+kubelet
+
+↓
+
+Pod Running
+```
+
+The Scheduler only assigns the Pod.
+
+The kubelet starts the containers.
+
+---
+
+# Scheduler Responsibilities
+
+The Scheduler evaluates
+
+- CPU Availability
+- Memory Availability
+- Node Labels
+- Node Affinity
+- Taints & Tolerations
+- Resource Requests
+- Existing Workloads
+
+The goal is balanced and efficient resource utilization.
+
+---
+
+# Scheduling Process
+
+```text
+Unscheduled Pod
+
+↓
+
+Filter Nodes
+
+↓
+
+Score Nodes
+
+↓
+
+Select Best Node
+
+↓
+
+Bind Pod
+```
+
+This process happens automatically.
+
+---
+
+# Resource Requests
+
+Requests define
+
+the minimum resources a Pod requires.
+
+Example
+
+```text
+CPU
+
+↓
+
+500m
+
+────────────
+
+Memory
+
+↓
+
+512Mi
+```
+
+The Scheduler uses requests
+
+when selecting nodes.
+
+---
+
+# Resource Limits
+
+Limits define
+
+the maximum resources a Pod can consume.
+
+Example
+
+```text
+CPU
+
+↓
+
+1 Core
+
+────────────
+
+Memory
+
+↓
+
+1Gi
+```
+
+Limits prevent one application
+
+from consuming all cluster resources.
+
+---
+
+# Requests vs Limits
+
+| Requests | Limits |
+|-----------|---------|
+| Minimum Guaranteed | Maximum Allowed |
+| Used for Scheduling | Used During Runtime |
+| Reserved Resources | Resource Cap |
+
+---
+
+# CPU Scheduling
+
+Example
+
+Node Capacity
+
+```text
+4 CPU
+```
+
+Current Usage
+
+```text
+2 CPU
+```
+
+New Pod Request
+
+```text
+1 CPU
+```
+
+Scheduler places the Pod
+
+because sufficient CPU exists.
+
+---
+
+# Memory Scheduling
+
+Unlike CPU,
+
+memory cannot be overcommitted safely.
+
+If memory is exhausted,
+
+Pods may be terminated with
+
+```text
+OOMKilled
+```
+
+Always define memory requests and limits.
+
+---
+
+# Quality of Service (QoS)
+
+Kubernetes classifies Pods into
+
+```text
+Guaranteed
+
+↓
+
+Burstable
+
+↓
+
+BestEffort
+```
+
+QoS affects eviction priority during resource pressure.
+
+---
+
+# Guaranteed
+
+Requests equal limits.
+
+Example
+
+```text
+CPU Request
+
+=
+
+CPU Limit
+```
+
+Highest priority.
+
+Least likely to be evicted.
+
+---
+
+# Burstable
+
+Requests are lower than limits.
+
+Most production workloads use
+
+Burstable QoS.
+
+---
+
+# BestEffort
+
+No requests.
+
+No limits.
+
+Lowest scheduling priority.
+
+First to be evicted.
+
+Never use for production workloads.
+
+---
+
+# Node Labels
+
+Labels classify nodes.
+
+Example
+
+```text
+disk=ssd
+
+zone=ap-south-1a
+
+environment=production
+```
+
+Scheduler uses labels
+
+to place workloads.
+
+---
+
+# Node Selector
+
+Simplest scheduling mechanism.
+
+Example
+
+```text
+Node Selector
+
+↓
+
+environment=production
+
+↓
+
+Matching Nodes
+```
+
+Pods run only on matching nodes.
+
+---
+
+# Node Affinity
+
+More flexible than Node Selector.
+
+Supports
+
+- Required Rules
+- Preferred Rules
+
+Architecture
+
+```text
+Pod
+
+↓
+
+Affinity Rules
+
+↓
+
+Matching Nodes
+```
+
+---
+
+# Required Affinity
+
+Pod **must** run
+
+on matching nodes.
+
+If no node matches,
+
+the Pod remains Pending.
+
+---
+
+# Preferred Affinity
+
+Scheduler attempts
+
+to place Pods
+
+on preferred nodes,
+
+but may choose another node if necessary.
+
+---
+
+# Pod Affinity
+
+Pods can be scheduled
+
+near other Pods.
+
+Example
+
+```text
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Same Node
+```
+
+Useful when reducing latency.
+
+---
+
+# Pod Anti-Affinity
+
+Pods can also be separated.
+
+Example
+
+```text
+Replica 1
+
+↓
+
+Node A
+
+────────────
+
+Replica 2
+
+↓
+
+Node B
+```
+
+Improves availability.
+
+---
+
+# Taints
+
+Taints repel Pods.
+
+Example
+
+```text
+Node
+
+↓
+
+NoSchedule
+```
+
+Pods cannot be scheduled
+
+unless they tolerate the taint.
+
+---
+
+# Tolerations
+
+Tolerations allow Pods
+
+to run on tainted nodes.
+
+Workflow
+
+```text
+Tainted Node
+
+↓
+
+Matching Toleration
+
+↓
+
+Pod Scheduled
+```
+
+---
+
+# Common Taint Effects
+
+- NoSchedule
+- PreferNoSchedule
+- NoExecute
+
+Each defines
+
+how strictly scheduling is enforced.
+
+---
+
+# Dedicated Nodes
+
+Example
+
+```text
+GPU Node
+
+↓
+
+Taint
+
+↓
+
+ML Pods Only
+```
+
+Other workloads cannot run there.
+
+---
+
+# Resource Quotas
+
+Namespaces can enforce
+
+resource consumption.
+
+Example
+
+```text
+Development Namespace
+
+↓
+
+Maximum CPU
+
+↓
+
+Maximum Memory
+
+↓
+
+Maximum Pods
+```
+
+Prevents resource exhaustion.
+
+---
+
+# LimitRanges
+
+LimitRanges enforce
+
+default resource requests and limits.
+
+Applications automatically receive defaults
+
+if not explicitly specified.
+
+---
+
+# Horizontal Pod Autoscaler (HPA)
+
+HPA scales
+
+Pods
+
+based on metrics.
+
+Example
+
+```text
+CPU 80%
+
+↓
+
+Scale Out
+
+↓
+
+10 Pods
+```
+
+When demand decreases,
+
+Pods scale back in.
+
+---
+
+# HPA Workflow
+
+```text
+Metrics Server
+
+↓
+
+HPA
+
+↓
+
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+```
+
+Metrics drive scaling decisions.
+
+---
+
+# HPA Metrics
+
+Common metrics
+
+- CPU Utilization
+- Memory Utilization
+- Custom Metrics
+- External Metrics
+
+---
+
+# Vertical Pod Autoscaler (VPA)
+
+Instead of scaling Pods,
+
+VPA adjusts
+
+Pod resource requests.
+
+Example
+
+```text
+512Mi
+
+↓
+
+1Gi Memory
+```
+
+Useful for workloads
+
+with changing resource requirements.
+
+---
+
+# Cluster Autoscaler
+
+Cluster Autoscaler scales
+
+Worker Nodes.
+
+Workflow
+
+```text
+Pending Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+Add Worker Node
+
+↓
+
+Scheduler
+
+↓
+
+Pod Running
+```
+
+Works alongside HPA.
+
+---
+
+# HPA vs VPA vs Cluster Autoscaler
+
+| Feature | HPA | VPA | Cluster Autoscaler |
+|----------|-----|-----|--------------------|
+| Scales Pods | ✅ | ❌ | ❌ |
+| Adjusts Resources | ❌ | ✅ | ❌ |
+| Adds Nodes | ❌ | ❌ | ✅ |
+
+---
+
+# Enterprise Autoscaling
+
+```text
+Traffic Increase
+
+↓
+
+HPA
+
+↓
+
+More Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+More Nodes
+```
+
+Applications remain responsive
+
+during traffic spikes.
+
+---
+
+# Amazon EKS Example
+
+```text
+Users
+
+↓
+
+ALB
+
+↓
+
+Deployment
+
+↓
+
+HPA
+
+↓
+
+Pods
+
+↓
+
+Managed Node Group
+
+↓
+
+Cluster Autoscaler
+```
+
+AWS infrastructure scales automatically.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+CPU 85%
+
+↓
+
+HPA
+
+↓
+
+20 Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+Additional Worker Node
+```
+
+Customer transactions continue
+
+without interruption.
+
+---
+
+# Scheduling Priorities
+
+PriorityClasses determine
+
+which Pods should run first.
+
+Critical workloads
+
+can preempt
+
+lower-priority Pods.
+
+---
+
+# Enterprise Scheduling Strategy
+
+```text
+Critical Banking Pods
+
+↓
+
+High Priority
+
+────────────
+
+Reporting Jobs
+
+↓
+
+Medium Priority
+
+────────────
+
+Batch Jobs
+
+↓
+
+Low Priority
+```
+
+Business-critical applications
+
+receive resources first.
+
+---
+
+# Benefits
+
+- Efficient Resource Utilization
+- Automatic Scaling
+- High Availability
+- Better Scheduling Decisions
+- Workload Isolation
+- Cost Optimization
+- Improved Performance
+
+---
+
+# Best Practices
+
+- Always define CPU and memory requests.
+- Set resource limits for every production Pod.
+- Use Node Affinity instead of Node Selector where flexibility is needed.
+- Separate critical workloads using taints and tolerations.
+- Configure HPA for stateless applications.
+- Use Cluster Autoscaler in cloud environments.
+- Apply ResourceQuotas to namespaces.
+- Monitor resource utilization continuously.
+
+---
+
+# Common Mistakes
+
+- Running Pods without resource requests.
+- Using BestEffort QoS in production.
+- Ignoring node affinity rules.
+- Mixing production and development workloads on the same nodes.
+- Overcommitting memory.
+- Using HPA without Metrics Server.
+- Forgetting to configure Cluster Autoscaler.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is the Kubernetes Scheduler?
+- What are resource requests and limits?
+- What is HPA?
+
+## Intermediate
+
+- Requests vs Limits.
+- Node Selector vs Node Affinity.
+- Taints vs Tolerations.
+- HPA vs VPA.
+- Explain QoS classes.
+
+## Advanced
+
+- Design an autoscaling strategy for a high-traffic e-commerce platform running on Amazon EKS using HPA, Cluster Autoscaler, node affinity, and resource quotas.
+- Explain how the Kubernetes Scheduler selects a worker node for a Pod, including filtering, scoring, affinity rules, taints, tolerations, and resource availability.
+- A production Kubernetes cluster experiences a sudden traffic spike causing CPU utilization to exceed 90%, multiple Pods remain Pending, and one Availability Zone becomes resource constrained. Explain how HPA, Cluster Autoscaler, resource requests, scheduling policies, and workload priorities work together to restore application availability while maintaining efficient resource utilization.
+
+---
+
