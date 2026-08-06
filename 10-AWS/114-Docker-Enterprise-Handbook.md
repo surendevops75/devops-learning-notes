@@ -4663,3 +4663,890 @@ that will later run in Kubernetes.
 
 ---
 
+# Chapter 7 - Docker Registry (Docker Hub, Amazon ECR & Enterprise Image Management)
+
+Building Docker images is only the first step.
+
+To deploy applications across
+
+- Developers' Machines
+- CI/CD Pipelines
+- Kubernetes Clusters
+- Multiple AWS Accounts
+
+images must be stored in a centralized location.
+
+Docker provides **Registries** for storing and distributing images.
+
+---
+
+# What is a Docker Registry?
+
+A Docker Registry is
+
+a centralized repository
+
+used to store,
+
+manage,
+
+and distribute Docker images.
+
+Architecture
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Docker Registry
+
+↓
+
+Docker Pull
+
+↓
+
+Container
+```
+
+Every production deployment
+
+retrieves images
+
+from a registry.
+
+---
+
+# Why Docker Registry?
+
+Without a registry
+
+```text
+Developer Laptop
+
+↓
+
+Docker Image
+
+↓
+
+Another Developer
+
+↓
+
+Image Missing
+```
+
+Problems
+
+- Difficult Sharing
+- No Version Control
+- No Central Repository
+- Manual Image Distribution
+
+---
+
+With a registry
+
+```text
+Docker Image
+
+↓
+
+Registry
+
+↓
+
+Any Environment
+
+↓
+
+Container
+```
+
+Images become reusable
+
+across the organization.
+
+---
+
+# Docker Registry Workflow
+
+```text
+Source Code
+
+↓
+
+Docker Build
+
+↓
+
+Docker Image
+
+↓
+
+Push
+
+↓
+
+Registry
+
+↓
+
+Pull
+
+↓
+
+Container
+```
+
+---
+
+# Public vs Private Registry
+
+| Public Registry | Private Registry |
+|-----------------|------------------|
+| Accessible by Everyone | Restricted Access |
+| Open Source Images | Enterprise Images |
+| Docker Hub Public | Amazon ECR |
+| Community Packages | Company Applications |
+
+Production workloads
+
+should use
+
+private registries.
+
+---
+
+# Docker Hub
+
+Docker Hub
+
+is the default
+
+public Docker registry.
+
+It provides
+
+- Official Images
+- Community Images
+- Public Repositories
+- Private Repositories
+
+---
+
+# Docker Hub Architecture
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Docker Hub
+
+↓
+
+Developers
+
+↓
+
+Containers
+```
+
+---
+
+# Official Images
+
+Docker Hub provides
+
+official images
+
+for
+
+- Ubuntu
+- Alpine
+- Nginx
+- Redis
+- PostgreSQL
+- MySQL
+- Python
+- Node.js
+- Java
+
+These images
+
+are maintained
+
+by trusted publishers.
+
+---
+
+# Private Registries
+
+Large organizations
+
+rarely use
+
+public repositories
+
+for production applications.
+
+Instead,
+
+they use
+
+- Amazon ECR
+- Azure Container Registry
+- Google Artifact Registry
+- Harbor
+- JFrog Artifactory
+
+---
+
+# Amazon Elastic Container Registry (ECR)
+
+Amazon ECR
+
+is AWS's managed
+
+private container registry.
+
+Benefits
+
+- IAM Integration
+- High Availability
+- Image Encryption
+- Vulnerability Scanning
+- Lifecycle Policies
+
+---
+
+# Amazon ECR Architecture
+
+```text
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+```
+
+This is the most common
+
+AWS deployment architecture.
+
+---
+
+# Image Push Workflow
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Docker Tag
+
+↓
+
+Docker Push
+
+↓
+
+Amazon ECR
+```
+
+The image
+
+becomes available
+
+to all deployment pipelines.
+
+---
+
+# Image Pull Workflow
+
+```text
+Amazon EKS
+
+↓
+
+Amazon ECR
+
+↓
+
+Docker Pull
+
+↓
+
+Pod Created
+```
+
+Worker nodes
+
+download
+
+the required image
+
+before starting containers.
+
+---
+
+# Image Tagging Strategy
+
+Every image
+
+should use
+
+meaningful version tags.
+
+Example
+
+```text
+payment-service
+
+↓
+
+v1.0.0
+
+↓
+
+v1.1.0
+
+↓
+
+v2.0.0
+```
+
+Avoid
+
+using
+
+`latest`
+
+for production.
+
+---
+
+# Semantic Versioning
+
+Common strategy
+
+```text
+Major.Minor.Patch
+
+↓
+
+2.4.1
+```
+
+Example
+
+```text
+2
+
+↓
+
+Major Release
+
+────────────
+
+4
+
+↓
+
+Feature Update
+
+────────────
+
+1
+
+↓
+
+Bug Fix
+```
+
+---
+
+# Image Digest
+
+Besides tags,
+
+every image
+
+also has
+
+a unique digest.
+
+```text
+Docker Image
+
+↓
+
+SHA256 Digest
+```
+
+Digests uniquely identify
+
+the exact image version.
+
+Enterprise deployments
+
+often use image digests
+
+for stronger immutability.
+
+---
+
+# Image Repository
+
+A repository stores
+
+multiple image versions.
+
+```text
+payment-service
+
+├── v1.0
+
+├── v1.1
+
+├── v2.0
+
+└── v2.1
+```
+
+Each repository
+
+represents
+
+one application.
+
+---
+
+# Image Lifecycle
+
+```text
+Docker Build
+
+↓
+
+Image Scan
+
+↓
+
+Push Registry
+
+↓
+
+Deployment
+
+↓
+
+Old Images
+
+↓
+
+Lifecycle Cleanup
+```
+
+---
+
+# Lifecycle Policies
+
+Container registries
+
+can automatically remove
+
+unused images.
+
+Example
+
+```text
+Keep
+
+Latest 20 Images
+
+↓
+
+Delete Older Versions
+```
+
+This reduces
+
+storage costs.
+
+---
+
+# Vulnerability Scanning
+
+Production images
+
+should always be scanned.
+
+Common tools
+
+- Amazon ECR Scan
+- Trivy
+- Grype
+- Clair
+
+Scans identify
+
+- CVEs
+- Outdated Packages
+- Security Risks
+
+---
+
+# Image Promotion Strategy
+
+Instead of rebuilding images,
+
+promote the same image
+
+through environments.
+
+```text
+Build Once
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+This ensures
+
+identical deployments.
+
+---
+
+# Immutable Images
+
+Never modify
+
+existing images.
+
+Workflow
+
+```text
+Code Change
+
+↓
+
+New Build
+
+↓
+
+New Image Tag
+
+↓
+
+Deployment
+```
+
+Every deployment
+
+uses
+
+a new image version.
+
+---
+
+# Multi-Account AWS Strategy
+
+Enterprise organizations
+
+often use
+
+multiple AWS accounts.
+
+```text
+Development ECR
+
+↓
+
+Testing ECR
+
+↓
+
+Production ECR
+```
+
+or
+
+a centralized ECR
+
+shared across accounts.
+
+---
+
+# CI/CD Integration
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Enterprise Deployment Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+```
+
+Every deployment
+
+uses
+
+a versioned image.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Docker Build
+
+↓
+
+Security Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Only approved images
+
+reach production.
+
+---
+
+# Registry Security
+
+Protect registries using
+
+- IAM Policies
+- Repository Policies
+- Encryption
+- Vulnerability Scanning
+- Private Repositories
+
+Never expose
+
+private application images
+
+publicly.
+
+---
+
+# Enterprise Image Management
+
+```text
+Source Code
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Monitoring
+```
+
+---
+
+# Docker Hub vs Amazon ECR
+
+| Docker Hub | Amazon ECR |
+|------------|------------|
+| Public & Private | Primarily Private |
+| Vendor Neutral | AWS Native |
+| Community Images | Enterprise Images |
+| Limited AWS Integration | Full IAM Integration |
+| Good for Learning | Best for AWS Production |
+
+---
+
+# Benefits
+
+- Centralized Image Storage
+- Version Control
+- Secure Distribution
+- Faster Deployments
+- Vulnerability Scanning
+- Enterprise Governance
+- High Availability
+- CI/CD Integration
+
+---
+
+# Best Practices
+
+- Use private registries for production.
+- Tag every release with a version.
+- Avoid using `latest`.
+- Scan every image before deployment.
+- Enable lifecycle policies.
+- Use immutable images.
+- Restrict registry access using IAM.
+- Build once, deploy everywhere.
+
+---
+
+# Common Mistakes
+
+- Using public registries for proprietary applications.
+- Deploying `latest` in production.
+- Skipping image scanning.
+- Rebuilding images for every environment.
+- Leaving old images indefinitely.
+- Hardcoding registry credentials.
+- Giving excessive registry permissions.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Docker Registry?
+- What is Docker Hub?
+- What is Amazon ECR?
+- Why do we need image tagging?
+- Why shouldn't we use `latest` in production?
+
+## Intermediate
+
+- Docker Hub vs Amazon ECR.
+- Explain image lifecycle policies.
+- What is image vulnerability scanning?
+- How does Amazon EKS pull images from Amazon ECR?
+- Explain immutable image deployment.
+
+## Advanced
+
+- Design an enterprise image management platform using GitHub Actions, Trivy, Amazon ECR, lifecycle policies, IAM, and Amazon EKS.
+- Explain the complete Docker image lifecycle from source code to production deployment, including building, scanning, storing, promoting, and deploying images.
+- A company manages over 500 microservices deployed across multiple AWS accounts. Explain how you would design the Docker registry strategy, image tagging, security scanning, promotion workflow, IAM access, lifecycle management, and CI/CD integration to ensure secure and reliable container deployments.
+
+---
+
