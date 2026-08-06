@@ -4062,3 +4062,747 @@ Use artifacts for
 
 ---
 
+# Chapter 6 - GitHub Actions Reusable Workflows, Composite Actions & Workflow Reuse (Enterprise Guide)
+
+As organizations grow,
+
+they often manage
+
+- Hundreds of Repositories
+- Thousands of Workflow Files
+- Multiple Development Teams
+
+Copying the same workflow across repositories leads to
+
+- Duplicate Code
+- Maintenance Issues
+- Configuration Drift
+
+GitHub Actions solves this using
+
+- Reusable Workflows
+- Composite Actions
+- Reusable Actions
+
+These features help standardize CI/CD across the enterprise.
+
+---
+
+# Why Workflow Reuse?
+
+Without reuse
+
+```text
+Repository A
+
+↓
+
+Build Workflow
+
+────────────
+
+Repository B
+
+↓
+
+Copy Workflow
+
+────────────
+
+Repository C
+
+↓
+
+Copy Workflow
+```
+
+Problems
+
+- Duplicate YAML
+- Difficult Updates
+- Inconsistent Pipelines
+
+---
+
+With reuse
+
+```text
+Reusable Workflow
+
+↓
+
+Repository A
+
+↓
+
+Repository B
+
+↓
+
+Repository C
+```
+
+One update
+
+benefits
+
+every repository.
+
+---
+
+# Workflow Reuse Architecture
+
+```text
+Reusable Workflow
+
+↓
+
+Repository
+
+↓
+
+Job
+
+↓
+
+Deployment
+```
+
+Reusable workflows
+
+act like
+
+shared CI/CD templates.
+
+---
+
+# What is a Reusable Workflow?
+
+A reusable workflow
+
+is a workflow
+
+that can be called
+
+by another workflow.
+
+Architecture
+
+```text
+Caller Workflow
+
+↓
+
+Reusable Workflow
+
+↓
+
+Jobs Execute
+```
+
+This avoids
+
+duplicating YAML code.
+
+---
+
+# Reusable Workflow Flow
+
+```text
+Developer Push
+
+↓
+
+Main Workflow
+
+↓
+
+Reusable Workflow
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+---
+
+# Enterprise Workflow Structure
+
+```text
+.github/
+
+└── workflows/
+
+    ├── build.yml
+
+    ├── test.yml
+
+    ├── deploy.yml
+
+    └── reusable-build.yml
+```
+
+Repositories
+
+share
+
+common workflows.
+
+---
+
+# Workflow Inputs
+
+Reusable workflows
+
+accept
+
+inputs.
+
+Examples
+
+```text
+Application Name
+
+Docker Repository
+
+AWS Region
+
+Environment
+```
+
+One workflow
+
+supports
+
+multiple projects.
+
+---
+
+# Workflow Outputs
+
+Reusable workflows
+
+can return
+
+outputs.
+
+Example
+
+```text
+Docker Image
+
+↓
+
+Image Tag
+
+↓
+
+Deployment Workflow
+```
+
+Outputs
+
+flow
+
+between workflows.
+
+---
+
+# Secrets in Reusable Workflows
+
+Secrets
+
+can be passed
+
+securely.
+
+Workflow
+
+```text
+Repository Secret
+
+↓
+
+Reusable Workflow
+
+↓
+
+Deployment
+```
+
+Sensitive values
+
+remain protected.
+
+---
+
+# Workflow Call Hierarchy
+
+```text
+Main Workflow
+
+↓
+
+Reusable Build
+
+↓
+
+Reusable Test
+
+↓
+
+Reusable Deploy
+```
+
+Large organizations
+
+split pipelines
+
+into reusable components.
+
+---
+
+# What are Composite Actions?
+
+Composite Actions
+
+combine
+
+multiple workflow steps
+
+into
+
+one reusable action.
+
+Architecture
+
+```text
+Composite Action
+
+↓
+
+Step 1
+
+↓
+
+Step 2
+
+↓
+
+Step 3
+```
+
+---
+
+# Composite Action vs Reusable Workflow
+
+| Composite Action | Reusable Workflow |
+|------------------|-------------------|
+| Reuses Steps | Reuses Entire Workflow |
+| Inside Job | Entire Workflow |
+| Smaller Unit | Larger Unit |
+| Task Automation | Pipeline Automation |
+
+---
+
+# When to Use Composite Actions
+
+Examples
+
+```text
+Login to AWS
+
+↓
+
+Configure CLI
+
+↓
+
+Validate Environment
+```
+
+Instead of repeating
+
+these steps
+
+in every workflow,
+
+create
+
+one composite action.
+
+---
+
+# Action Marketplace
+
+GitHub provides
+
+a Marketplace
+
+containing
+
+thousands of reusable actions.
+
+Examples
+
+- Checkout Repository
+- Setup Java
+- Setup Node.js
+- Upload Artifact
+- AWS Login
+- Docker Build
+
+---
+
+# Internal Enterprise Actions
+
+Large organizations
+
+often maintain
+
+private actions.
+
+Architecture
+
+```text
+Platform Team
+
+↓
+
+Reusable Action
+
+↓
+
+Development Teams
+```
+
+This standardizes
+
+CI/CD.
+
+---
+
+# Workflow Modularity
+
+Instead of
+
+one large workflow
+
+split responsibilities.
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Security
+
+↓
+
+Deploy
+```
+
+Each component
+
+is reusable.
+
+---
+
+# Enterprise Repository Strategy
+
+```text
+Platform Repository
+
+↓
+
+Reusable Workflows
+
+↓
+
+Reusable Actions
+
+────────────
+
+Application Repositories
+
+↓
+
+Consume Shared Workflows
+```
+
+Platform teams
+
+maintain
+
+shared automation.
+
+---
+
+# CI/CD Standardization
+
+```text
+Platform Team
+
+↓
+
+Reusable Workflow
+
+↓
+
+Every Repository
+
+↓
+
+Consistent Pipeline
+```
+
+Every application
+
+uses
+
+the same quality standards.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+Developer
+
+↓
+
+Repository
+
+↓
+
+Reusable Build
+
+↓
+
+Reusable Test
+
+↓
+
+Reusable Security Scan
+
+↓
+
+Reusable Deploy
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Reusable Build
+
+↓
+
+Reusable Security Scan
+
+↓
+
+Reusable Deployment
+
+↓
+
+Production
+```
+
+Every banking service
+
+uses
+
+the same deployment process.
+
+---
+
+# Multi-Repository Architecture
+
+```text
+Platform Repository
+
+├── Build Workflow
+
+├── Docker Workflow
+
+├── Terraform Workflow
+
+├── Kubernetes Workflow
+
+└── Security Workflow
+
+↓
+
+Application Repositories
+
+↓
+
+Reuse Everything
+```
+
+This minimizes
+
+maintenance effort.
+
+---
+
+# Workflow Versioning
+
+Reusable workflows
+
+should be versioned.
+
+Example
+
+```text
+Build Workflow
+
+↓
+
+v1
+
+↓
+
+v2
+
+↓
+
+v3
+```
+
+Repositories
+
+can upgrade
+
+when ready.
+
+---
+
+# Governance
+
+Platform teams
+
+control
+
+approved workflows.
+
+Benefits
+
+- Security
+- Standardization
+- Compliance
+- Easier Maintenance
+
+---
+
+# Enterprise CI/CD Architecture
+
+```text
+Developer
+
+↓
+
+GitHub Repository
+
+↓
+
+Reusable Workflow
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+One standardized pipeline
+
+serves
+
+all applications.
+
+---
+
+# Best Practices
+
+- Create reusable workflows for common pipelines.
+- Use composite actions for repeated tasks.
+- Keep reusable workflows modular.
+- Version reusable workflows.
+- Store shared automation in a central repository.
+- Pass secrets securely.
+- Document workflow inputs and outputs.
+- Avoid workflow duplication.
+
+---
+
+# Common Mistakes
+
+- Copying workflows across repositories.
+- Creating overly large reusable workflows.
+- Hardcoding application-specific values.
+- Ignoring workflow versioning.
+- Mixing reusable and project-specific logic.
+- Duplicating AWS authentication steps.
+- Not documenting reusable workflows.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a reusable workflow?
+- What is a composite action?
+- Why do we reuse workflows?
+- Composite Action vs Reusable Workflow.
+
+## Intermediate
+
+- How do reusable workflows receive inputs?
+- How do workflows return outputs?
+- Why should reusable workflows be versioned?
+- What is GitHub Marketplace?
+- Explain workflow standardization.
+
+## Advanced
+
+- Design an enterprise GitHub Actions platform using reusable workflows, composite actions, centralized CI/CD templates, GitHub Marketplace actions, and Amazon EKS deployments.
+- Explain how reusable workflows and composite actions reduce duplication, improve governance, and standardize CI/CD across hundreds of repositories.
+- A large enterprise has 500 application repositories maintained by different teams. Explain how you would design a centralized GitHub Actions platform with reusable workflows, composite actions, versioning, governance, security controls, and deployment automation to ensure consistency and maintainability across the organization.
