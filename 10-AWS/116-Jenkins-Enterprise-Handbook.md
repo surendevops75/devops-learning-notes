@@ -711,3 +711,748 @@ It acts as the automation engine for the DevOps lifecycle.
 
 ---
 
+# Chapter 2 - Jenkins Installation, Architecture & Master-Agent (Controller-Agent) Setup
+
+A Jenkins server can run simple jobs on a single machine.
+
+However,
+
+enterprise environments require
+
+- Scalability
+- High Availability
+- Workload Isolation
+- Better Resource Utilization
+
+For this reason,
+
+organizations use a **Controller-Agent Architecture**.
+
+---
+
+# Jenkins Architecture Overview
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins Controller
+
+↓
+
+Jenkins Agents
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+The controller manages the pipeline,
+
+while agents execute the workload.
+
+---
+
+# Why Controller-Agent Architecture?
+
+Without Agents
+
+```text
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Docker
+
+↓
+
+Terraform
+
+↓
+
+Deploy
+```
+
+Problems
+
+- High CPU Usage
+- Memory Bottlenecks
+- Slow Pipelines
+- Single Point of Execution
+
+---
+
+With Agents
+
+```text
+Jenkins Controller
+
+↓
+
+Linux Agent
+
+↓
+
+Docker Build
+
+────────────
+
+Windows Agent
+
+↓
+
+.NET Build
+
+────────────
+
+Kubernetes Agent
+
+↓
+
+Container Deployment
+```
+
+Workloads are distributed.
+
+---
+
+# Jenkins Installation Options
+
+Jenkins can be installed using
+
+- Native Package
+- WAR File
+- Docker
+- Kubernetes
+- Cloud Marketplace
+
+Enterprise deployments
+
+commonly use
+
+Docker
+
+or
+
+Kubernetes.
+
+---
+
+# Jenkins Controller Responsibilities
+
+The Controller
+
+manages
+
+- Pipelines
+- Job Scheduling
+- Authentication
+- Authorization
+- Plugin Management
+- Agent Communication
+- Build History
+- Credentials
+
+The Controller
+
+should not perform
+
+heavy builds.
+
+---
+
+# Jenkins Agent Responsibilities
+
+Agents execute
+
+- Application Builds
+- Unit Tests
+- Docker Builds
+- Terraform Commands
+- Kubernetes Deployments
+- Security Scans
+
+Agents perform
+
+the computational work.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins Controller
+
+├── Linux Agent
+
+├── Docker Agent
+
+├── Terraform Agent
+
+├── Kubernetes Agent
+
+└── Windows Agent
+```
+
+Each workload
+
+runs on
+
+the appropriate agent.
+
+---
+
+# Controller-Agent Communication
+
+```text
+Controller
+
+↓
+
+Job Assignment
+
+↓
+
+Agent
+
+↓
+
+Execution
+
+↓
+
+Result
+
+↓
+
+Controller
+```
+
+The controller
+
+collects
+
+logs,
+
+status,
+
+and artifacts.
+
+---
+
+# Agent Connection Methods
+
+Agents can connect using
+
+- SSH
+- JNLP (Inbound Agent)
+- Kubernetes Plugin
+- Cloud Plugins
+
+Modern Kubernetes deployments
+
+commonly use
+
+ephemeral agents.
+
+---
+
+# Static Agents
+
+Static agents
+
+remain online
+
+continuously.
+
+Architecture
+
+```text
+Jenkins Controller
+
+↓
+
+Linux VM
+
+↓
+
+Agent
+```
+
+Suitable for
+
+small environments.
+
+---
+
+# Dynamic Agents
+
+Dynamic agents
+
+are created
+
+only when needed.
+
+```text
+Pipeline
+
+↓
+
+Create Agent
+
+↓
+
+Execute Job
+
+↓
+
+Terminate Agent
+```
+
+This improves
+
+resource efficiency.
+
+---
+
+# Kubernetes Agents
+
+Using the Jenkins Kubernetes Plugin,
+
+agents are launched
+
+as Pods.
+
+Architecture
+
+```text
+Jenkins Controller
+
+↓
+
+Kubernetes Plugin
+
+↓
+
+Pod
+
+↓
+
+Pipeline Execution
+```
+
+Each pipeline
+
+gets
+
+a clean execution environment.
+
+---
+
+# Docker Agents
+
+Agents can also run
+
+inside Docker containers.
+
+Workflow
+
+```text
+Pipeline
+
+↓
+
+Docker Container
+
+↓
+
+Build
+
+↓
+
+Destroy Container
+```
+
+This ensures
+
+consistent build environments.
+
+---
+
+# Multi-Agent Pipeline
+
+```text
+Checkout
+
+↓
+
+Linux Agent
+
+────────────
+
+Docker Build
+
+↓
+
+Docker Agent
+
+────────────
+
+Terraform
+
+↓
+
+Terraform Agent
+
+────────────
+
+Deployment
+
+↓
+
+Kubernetes Agent
+```
+
+Each stage
+
+uses
+
+the most appropriate agent.
+
+---
+
+# Label-Based Scheduling
+
+Agents
+
+are assigned
+
+labels.
+
+Examples
+
+```text
+linux
+
+docker
+
+terraform
+
+kubernetes
+
+windows
+```
+
+Pipelines
+
+select agents
+
+using labels.
+
+---
+
+# Agent Workspace
+
+Every agent
+
+uses
+
+a workspace
+
+to store
+
+- Source Code
+- Build Files
+- Temporary Files
+- Logs
+
+The workspace
+
+is cleaned
+
+between builds
+
+to avoid conflicts.
+
+---
+
+# High Availability
+
+Enterprise Jenkins
+
+often separates
+
+the Controller
+
+from build execution.
+
+```text
+Jenkins Controller
+
+↓
+
+Multiple Agents
+
+↓
+
+Independent Execution
+```
+
+Failure of one agent
+
+does not stop
+
+the platform.
+
+---
+
+# Scaling Jenkins
+
+As workload increases,
+
+add more agents.
+
+```text
+Controller
+
+↓
+
+5 Agents
+
+↓
+
+20 Agents
+
+↓
+
+100 Agents
+```
+
+The controller
+
+distributes jobs automatically.
+
+---
+
+# Enterprise Deployment Architecture
+
+```text
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins Controller
+
+↓
+
+Linux Agent
+
+↓
+
+SonarQube
+
+↓
+
+Docker Agent
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform Agent
+
+↓
+
+Amazon EKS
+```
+
+Different stages
+
+use
+
+specialized agents.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+Payment Repository
+
+↓
+
+Jenkins Controller
+
+↓
+
+Linux Agent
+
+↓
+
+Docker Agent
+
+↓
+
+Security Scan
+
+↓
+
+Terraform Agent
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Every workload
+
+runs
+
+on dedicated infrastructure.
+
+---
+
+# Jenkins Directory Structure
+
+Typical installation
+
+```text
+JENKINS_HOME/
+
+├── jobs/
+
+├── plugins/
+
+├── users/
+
+├── credentials/
+
+├── workspace/
+
+└── logs/
+```
+
+`JENKINS_HOME`
+
+contains
+
+all Jenkins configuration.
+
+---
+
+# Security Considerations
+
+Protect the Controller using
+
+- Authentication
+- Role-Based Access Control (RBAC)
+- HTTPS
+- Backups
+- Least Privilege
+
+Agents should have
+
+only the permissions
+
+required for their tasks.
+
+---
+
+# Enterprise Best Practices
+
+- Keep the controller lightweight.
+- Execute builds on agents.
+- Use dedicated agents for Docker and Terraform.
+- Prefer ephemeral Kubernetes agents for cloud-native pipelines.
+- Label agents clearly.
+- Clean workspaces regularly.
+- Monitor agent utilization.
+- Back up `JENKINS_HOME`.
+
+---
+
+# Common Mistakes
+
+- Running builds on the controller.
+- Using one agent for every workload.
+- Leaving stale workspaces on agents.
+- Giving agents administrator privileges.
+- Not monitoring offline agents.
+- Installing unnecessary tools on every agent.
+- Ignoring controller backups.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is the Jenkins Controller?
+- What is a Jenkins Agent?
+- Why do we use agents?
+- What is a Jenkins workspace?
+- What is `JENKINS_HOME`?
+
+## Intermediate
+
+- Controller vs Agent.
+- Static Agent vs Dynamic Agent.
+- SSH Agent vs Kubernetes Agent.
+- Why use Docker agents?
+- How does Jenkins assign jobs to agents?
+
+## Advanced
+
+- Design an enterprise Jenkins architecture using a controller, Linux agents, Docker agents, Terraform agents, and Kubernetes agents for deploying applications to Amazon EKS.
+- Explain how controller-agent architecture improves scalability, security, and resource utilization in Jenkins.
+- A company runs hundreds of CI/CD pipelines daily for Java, Python, and .NET applications. Explain how you would design the Jenkins controller, agent infrastructure, labeling strategy, Kubernetes-based ephemeral agents, security controls, workspace management, and scaling strategy to support enterprise workloads.
+
+---
+
