@@ -5550,3 +5550,753 @@ Monitoring
 
 ---
 
+# Chapter 8 - Docker Security & Enterprise Best Practices
+
+Containers make deployments faster,
+
+but they also introduce
+
+new security challenges.
+
+A vulnerable container can expose
+
+- Applications
+- Databases
+- Customer Data
+- Cloud Infrastructure
+
+Enterprise Docker platforms follow a **defense-in-depth** approach,
+
+protecting the entire container lifecycle.
+
+---
+
+# Docker Security Layers
+
+```text
+Source Code
+
+↓
+
+Dockerfile
+
+↓
+
+Docker Image
+
+↓
+
+Container Registry
+
+↓
+
+Container Runtime
+
+↓
+
+Kubernetes
+
+↓
+
+Cloud Infrastructure
+```
+
+Security must be applied
+
+at every stage.
+
+---
+
+# Container Security Lifecycle
+
+```text
+Developer
+
+↓
+
+Secure Dockerfile
+
+↓
+
+Build Image
+
+↓
+
+Image Scan
+
+↓
+
+Registry
+
+↓
+
+Deploy
+
+↓
+
+Runtime Monitoring
+```
+
+Security does not end after deployment.
+
+---
+
+# Why Docker Security?
+
+Without security
+
+```text
+Application
+
+↓
+
+Vulnerable Image
+
+↓
+
+Production
+
+↓
+
+Security Breach
+```
+
+---
+
+With security
+
+```text
+Application
+
+↓
+
+Secure Image
+
+↓
+
+Scan
+
+↓
+
+Deploy
+
+↓
+
+Monitor
+```
+
+Risks are reduced significantly.
+
+---
+
+# Principle of Least Privilege
+
+Containers should have
+
+only the permissions
+
+they require.
+
+Avoid
+
+```text
+Administrator
+
+Root
+
+Full Host Access
+```
+
+Grant only
+
+the minimum permissions
+
+needed by the application.
+
+---
+
+# Run as Non-Root User
+
+By default,
+
+containers run as
+
+```text
+root
+```
+
+Production containers
+
+should always run
+
+as a non-root user.
+
+Architecture
+
+```text
+Container
+
+↓
+
+Application User
+
+↓
+
+Application
+```
+
+This minimizes
+
+the impact
+
+of container compromise.
+
+---
+
+# Official Base Images
+
+Always use
+
+trusted images.
+
+Recommended
+
+- Official Docker Images
+- Verified Publisher Images
+- Organization-approved Base Images
+
+Avoid
+
+unknown public images.
+
+---
+
+# Minimal Base Images
+
+Smaller images
+
+contain
+
+fewer packages.
+
+Benefits
+
+- Smaller Attack Surface
+- Faster Builds
+- Faster Downloads
+- Fewer Vulnerabilities
+
+Examples
+
+```text
+Alpine
+
+Distroless
+
+Slim Images
+```
+
+---
+
+# Image Version Pinning
+
+Avoid
+
+```text
+latest
+```
+
+Use
+
+explicit versions.
+
+Example
+
+```text
+python:3.12
+
+nginx:1.28
+
+openjdk:21
+```
+
+Predictable builds
+
+improve reliability.
+
+---
+
+# Image Vulnerability Scanning
+
+Every image
+
+should be scanned
+
+before deployment.
+
+Common tools
+
+- Trivy
+- Amazon ECR Scan
+- Grype
+- Clair
+- Docker Scout
+
+Scan for
+
+- CVEs
+- Outdated Libraries
+- Misconfigurations
+- High-risk Packages
+
+---
+
+# Secure Dockerfile
+
+A secure Dockerfile should
+
+- Use official images
+- Run as non-root
+- Minimize layers
+- Remove unnecessary packages
+- Avoid hardcoded secrets
+
+---
+
+# Secrets Management
+
+Never store
+
+```text
+Passwords
+
+API Keys
+
+AWS Credentials
+
+Tokens
+```
+
+inside
+
+- Dockerfile
+- Image
+- Git Repository
+
+Use
+
+- AWS Secrets Manager
+- AWS Systems Manager Parameter Store
+- Kubernetes Secrets
+- CI/CD Secret Stores
+
+---
+
+# Environment Variables
+
+Environment variables
+
+are useful,
+
+but sensitive values
+
+should not be hardcoded.
+
+Instead
+
+inject them
+
+during deployment.
+
+---
+
+# Read-Only Filesystem
+
+Where possible,
+
+run containers
+
+with a read-only root filesystem.
+
+Architecture
+
+```text
+Container
+
+↓
+
+Read-Only Filesystem
+
+↓
+
+Application
+```
+
+This prevents
+
+unauthorized file modifications.
+
+---
+
+# Resource Limits
+
+Containers should define
+
+- CPU Limits
+- Memory Limits
+
+Benefits
+
+- Prevent Resource Exhaustion
+- Improve Stability
+- Reduce Denial-of-Service Risk
+
+---
+
+# Linux Capabilities
+
+Containers inherit
+
+Linux capabilities.
+
+Production workloads
+
+should drop
+
+unnecessary capabilities.
+
+Grant only
+
+what the application requires.
+
+---
+
+# Privileged Containers
+
+Avoid running
+
+containers
+
+in privileged mode.
+
+```text
+Container
+
+↓
+
+Host Access
+```
+
+Privileged containers
+
+can access
+
+host resources
+
+and increase security risk.
+
+---
+
+# Image Signing
+
+Enterprise organizations
+
+often sign images.
+
+Workflow
+
+```text
+Build Image
+
+↓
+
+Sign Image
+
+↓
+
+Registry
+
+↓
+
+Deploy Verified Image
+```
+
+Only trusted images
+
+are deployed.
+
+---
+
+# Registry Security
+
+Protect registries using
+
+- IAM
+- Repository Policies
+- Encryption
+- Private Repositories
+- Image Scanning
+
+Only authorized users
+
+should push images.
+
+---
+
+# Runtime Security
+
+Security continues
+
+after deployment.
+
+Monitor
+
+- Running Processes
+- Network Connections
+- File Changes
+- Unexpected Activity
+
+Runtime security
+
+detects suspicious behavior.
+
+---
+
+# Logging & Monitoring
+
+Monitor
+
+- Container Logs
+- Security Events
+- Failed Logins
+- Image Pull Events
+- Runtime Alerts
+
+Use
+
+- Prometheus
+- Grafana
+- ELK
+- CloudWatch
+
+for visibility.
+
+---
+
+# CI/CD Security Pipeline
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Trivy Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Only scanned images
+
+reach production.
+
+---
+
+# Enterprise Security Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Runtime Monitoring
+
+↓
+
+Security Alerts
+```
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+SOC Team
+```
+
+Every deployment
+
+passes
+
+security validation.
+
+---
+
+# Container Escape
+
+Container escape
+
+occurs when
+
+a process inside
+
+the container
+
+gains access
+
+to the host.
+
+Mitigation
+
+- Non-root User
+- Least Privilege
+- Updated Host Kernel
+- Minimal Capabilities
+- Runtime Monitoring
+
+---
+
+# Docker Security Checklist
+
+Before production deployment verify
+
+✓ Official Base Image
+
+✓ Version Pinning
+
+✓ Non-root User
+
+✓ Image Scan Passed
+
+✓ No Secrets Inside Image
+
+✓ Read-Only Filesystem (where applicable)
+
+✓ Resource Limits
+
+✓ Minimal Packages
+
+✓ Private Registry
+
+✓ Runtime Monitoring
+
+---
+
+# Enterprise Best Practices
+
+- Build immutable images.
+- Scan every image.
+- Run containers as non-root.
+- Keep images minimal.
+- Use private registries.
+- Store secrets externally.
+- Use least-privilege permissions.
+- Continuously monitor running containers.
+- Keep base images updated.
+- Automate security checks in CI/CD.
+
+---
+
+# Common Mistakes
+
+- Running containers as root.
+- Using `latest` tags.
+- Hardcoding credentials.
+- Deploying unscanned images.
+- Using privileged containers.
+- Ignoring base image updates.
+- Installing unnecessary packages.
+- Exposing Docker socket unnecessarily.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is Docker security important?
+- Why shouldn't containers run as root?
+- What is image vulnerability scanning?
+- Why use official base images?
+
+## Intermediate
+
+- Explain least privilege in Docker.
+- How do you secure a Docker registry?
+- Why should secrets not be stored inside images?
+- What is privileged mode?
+- How do you reduce the attack surface of a container?
+
+## Advanced
+
+- Design a secure Docker platform using GitHub Actions, Trivy, Amazon ECR, Amazon EKS, IAM, runtime monitoring, and centralized logging.
+- Explain how you would secure the complete Docker image lifecycle from Dockerfile creation through production deployment.
+- A financial organization must comply with strict security requirements for containerized workloads. Explain how you would design image security, registry security, secrets management, runtime protection, CI/CD security gates, monitoring, and governance to minimize risk while supporting continuous delivery.
+
+--
+
