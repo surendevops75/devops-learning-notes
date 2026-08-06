@@ -5236,3 +5236,849 @@ least privilege.
 
 ---
 
+# Chapter 7 - Kubernetes Monitoring, Logging & Observability (Deep Dive)
+
+Running applications in Kubernetes is not enough.
+
+Production systems must also answer questions like
+
+- Is the application healthy?
+- Why is a Pod restarting?
+- Which node is overloaded?
+- Why is latency increasing?
+- Which deployment caused the issue?
+
+This is where **Observability** becomes essential.
+
+Observability combines
+
+- Metrics
+- Logs
+- Events
+- Alerts
+
+to provide complete visibility into the cluster.
+
+---
+
+# What is Observability?
+
+Observability is the ability to understand the internal state of a system using external signals.
+
+The three pillars are
+
+```text
+Metrics
+
+↓
+
+Logs
+
+↓
+
+Traces
+```
+
+For your stack, the primary focus is
+
+- Prometheus
+- Grafana
+- ELK Stack
+
+---
+
+# Kubernetes Monitoring Architecture
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alerts
+
+↓
+
+Operations Team
+```
+
+Logs are collected separately.
+
+```text
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+# Why Monitoring?
+
+Without monitoring
+
+```text
+Application Failure
+
+↓
+
+Customer Complaints
+
+↓
+
+Investigation Starts
+```
+
+Problems are discovered too late.
+
+---
+
+With monitoring
+
+```text
+Application Issue
+
+↓
+
+Alert
+
+↓
+
+Engineer
+
+↓
+
+Resolution
+```
+
+Problems are detected before customers notice them.
+
+---
+
+# Monitoring Components
+
+A production Kubernetes cluster monitors
+
+- Nodes
+- Pods
+- Containers
+- Applications
+- Network
+- Storage
+- Cluster Components
+
+---
+
+# Metrics
+
+Metrics are numerical values collected over time.
+
+Examples
+
+- CPU Usage
+- Memory Usage
+- Pod Count
+- Request Rate
+- Error Rate
+- Latency
+
+---
+
+# Logs
+
+Logs record events occurring inside applications.
+
+Examples
+
+- Startup Messages
+- Errors
+- Warnings
+- API Requests
+- Authentication Events
+
+---
+
+# Kubernetes Events
+
+Events describe cluster activities.
+
+Examples
+
+```text
+Pod Scheduled
+
+↓
+
+Container Started
+
+↓
+
+Image Pulled
+
+↓
+
+OOMKilled
+```
+
+Events help during troubleshooting.
+
+---
+
+# Prometheus
+
+Prometheus is the most popular monitoring system for Kubernetes.
+
+Responsibilities
+
+- Metric Collection
+- Time-Series Storage
+- Alert Evaluation
+
+---
+
+# Prometheus Architecture
+
+```text
+Applications
+
+↓
+
+Metrics Endpoint
+
+↓
+
+Prometheus
+
+↓
+
+Time-Series Database
+
+↓
+
+Grafana
+```
+
+---
+
+# Metrics Collection
+
+Applications expose
+
+```text
+/metrics
+```
+
+Prometheus periodically scrapes these endpoints.
+
+---
+
+# Prometheus Pull Model
+
+Unlike many monitoring systems,
+
+Prometheus uses
+
+```text
+Prometheus
+
+↓
+
+Pull Metrics
+
+↓
+
+Applications
+```
+
+instead of agents pushing metrics.
+
+---
+
+# Common Kubernetes Metrics
+
+Cluster Metrics
+
+- Node CPU
+- Node Memory
+- Disk Usage
+- Network Usage
+
+Pod Metrics
+
+- CPU
+- Memory
+- Restarts
+- Running Pods
+
+Application Metrics
+
+- Request Rate
+- Error Rate
+- Response Time
+
+---
+
+# kube-state-metrics
+
+Provides Kubernetes object metrics.
+
+Examples
+
+- Deployments
+- ReplicaSets
+- Pods
+- StatefulSets
+- Nodes
+
+Prometheus collects these metrics.
+
+---
+
+# Metrics Server
+
+Metrics Server provides
+
+resource utilization
+
+to Kubernetes.
+
+Used by
+
+- HPA
+- kubectl top
+
+It is not a replacement for Prometheus.
+
+---
+
+# Grafana
+
+Grafana visualizes metrics.
+
+Architecture
+
+```text
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Dashboards
+```
+
+Engineers monitor applications
+
+through dashboards.
+
+---
+
+# Common Dashboards
+
+- Cluster Health
+- Node Utilization
+- Pod Health
+- Application Performance
+- Resource Usage
+
+---
+
+# Alerts
+
+Monitoring without alerts
+
+has little value.
+
+Alert workflow
+
+```text
+Metric
+
+↓
+
+Threshold
+
+↓
+
+Alert
+
+↓
+
+Engineer
+```
+
+---
+
+# Alertmanager
+
+Prometheus sends alerts to
+
+Alertmanager.
+
+```text
+Prometheus
+
+↓
+
+Alertmanager
+
+↓
+
+Email
+
+↓
+
+Slack
+
+↓
+
+PagerDuty
+```
+
+Alertmanager handles routing and grouping.
+
+---
+
+# Common Alerts
+
+Examples
+
+```text
+CPU > 80%
+
+Memory > 85%
+
+Pod Restart
+
+Node Not Ready
+
+Disk Full
+
+Certificate Expiring
+```
+
+Alerts should be actionable.
+
+---
+
+# Logging Architecture
+
+A common Kubernetes logging pipeline
+
+```text
+Pods
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+Logs are centralized for analysis.
+
+---
+
+# Why Centralized Logging?
+
+Without centralized logging
+
+```text
+Pod Deleted
+
+↓
+
+Logs Lost
+```
+
+---
+
+With centralized logging
+
+```text
+Pod
+
+↓
+
+Fluent Bit
+
+↓
+
+ELK
+
+↓
+
+Searchable Logs
+```
+
+Logs remain available
+
+even after Pods are deleted.
+
+---
+
+# Fluent Bit
+
+Fluent Bit collects
+
+container logs
+
+from worker nodes
+
+and forwards them to Elasticsearch.
+
+It is lightweight
+
+and widely used in Kubernetes.
+
+---
+
+# Elasticsearch
+
+Elasticsearch stores
+
+and indexes logs.
+
+Supports
+
+- Full Text Search
+- Filtering
+- Aggregation
+- Fast Queries
+
+---
+
+# Kibana
+
+Kibana provides
+
+a web interface
+
+to search and analyze logs.
+
+Engineers use Kibana for
+
+- Troubleshooting
+- Log Analysis
+- Security Investigation
+
+---
+
+# Monitoring Cluster Components
+
+Monitor
+
+- API Server
+- Scheduler
+- Controller Manager
+- etcd
+- kubelet
+- CoreDNS
+
+These components determine cluster health.
+
+---
+
+# Node Monitoring
+
+Monitor
+
+- CPU
+- Memory
+- Disk
+- Filesystem
+- Network
+- Pressure Conditions
+
+Node failures impact many Pods.
+
+---
+
+# Pod Monitoring
+
+Monitor
+
+- Restart Count
+- CrashLoopBackOff
+- OOMKilled
+- Pending Pods
+- Readiness
+- Liveness
+
+---
+
+# Deployment Monitoring
+
+Track
+
+- Replica Count
+- Available Pods
+- Rollout Status
+- Failed Rollouts
+
+---
+
+# Application Monitoring
+
+Monitor
+
+- Request Rate
+- Response Time
+- Error Rate
+- Active Users
+- Business Transactions
+
+Infrastructure metrics alone
+
+are not enough.
+
+---
+
+# Enterprise Monitoring Architecture
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alertmanager
+
+↓
+
+Operations Team
+
+────────────
+
+Applications
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+# Amazon EKS Monitoring
+
+Typical production architecture
+
+```text
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+CloudWatch
+
+↓
+
+Alerts
+```
+
+CloudWatch complements
+
+cluster-level monitoring.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Prometheus Metrics
+
+↓
+
+CPU
+
+↓
+
+Latency
+
+↓
+
+Error Rate
+
+↓
+
+Grafana Dashboard
+
+↓
+
+Alertmanager
+```
+
+Operations teams detect issues
+
+before customers are impacted.
+
+---
+
+# Golden Signals
+
+Google's SRE model recommends monitoring
+
+```text
+Latency
+
+↓
+
+Traffic
+
+↓
+
+Errors
+
+↓
+
+Saturation
+```
+
+These four metrics quickly reveal application health.
+
+---
+
+# Enterprise Monitoring Flow
+
+```text
+Application
+
+↓
+
+Metrics
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alertmanager
+
+↓
+
+Engineer
+
+↓
+
+Resolution
+```
+
+---
+
+# Benefits
+
+- Faster Incident Detection
+- Better Troubleshooting
+- Historical Analysis
+- Capacity Planning
+- Performance Optimization
+- Reduced Downtime
+- Improved Reliability
+
+---
+
+# Best Practices
+
+- Monitor infrastructure and applications together.
+- Create dashboards for every critical service.
+- Alert only on actionable conditions.
+- Centralize logs using ELK.
+- Retain logs according to compliance requirements.
+- Monitor Kubernetes control plane components.
+- Review dashboards regularly.
+- Test alerts periodically.
+
+---
+
+# Common Mistakes
+
+- Monitoring only CPU and memory.
+- Ignoring application metrics.
+- Generating too many alerts (alert fatigue).
+- Storing logs only inside containers.
+- Not monitoring Kubernetes control plane components.
+- Missing business-level metrics.
+- Ignoring alert testing.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Prometheus?
+- What is Grafana?
+- Why is centralized logging required?
+- What is the Metrics Server?
+
+## Intermediate
+
+- Prometheus vs Metrics Server.
+- Explain the ELK Stack.
+- How does Prometheus collect metrics?
+- Why is Alertmanager required?
+- What are Kubernetes Events?
+
+## Advanced
+
+- Design a complete monitoring and logging platform for a production Amazon EKS cluster using Prometheus, Grafana, Alertmanager, Fluent Bit, Elasticsearch, and Kibana.
+- Explain the end-to-end monitoring flow from an application exposing metrics to alert generation and engineer notification.
+- A production Kubernetes platform experiences increased latency, Pod restarts, and intermittent API failures during peak traffic. Explain how you would use Prometheus, Grafana, Kubernetes Events, ELK Stack, and CloudWatch to identify the root cause, validate the fix, and implement long-term monitoring improvements.
+
+---
+
