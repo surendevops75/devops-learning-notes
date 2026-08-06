@@ -6444,3 +6444,905 @@ consistently after failures.
 
 ---
 
+# Chapter 9 - Terraform with CI/CD (GitHub Actions, Jenkins & Enterprise Automation)
+
+Modern DevOps teams do not run
+
+```bash
+terraform apply
+```
+
+manually from laptops.
+
+Instead,
+
+every infrastructure change follows an automated CI/CD pipeline with
+
+- Version Control
+- Code Review
+- Automated Validation
+- Security Scanning
+- Manual Approvals
+- Controlled Deployment
+
+Terraform integrates seamlessly with CI/CD tools such as
+
+- GitHub Actions
+- Jenkins
+- GitLab CI/CD
+- Azure DevOps
+
+---
+
+# Why CI/CD for Terraform?
+
+Without CI/CD
+
+```text
+Developer
+
+↓
+
+Local Machine
+
+↓
+
+terraform apply
+
+↓
+
+Production
+```
+
+Problems
+
+- No Code Review
+- No Audit Trail
+- Human Errors
+- Configuration Drift
+- Security Risks
+
+---
+
+With CI/CD
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform Plan
+
+↓
+
+Approval
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS
+```
+
+Infrastructure changes become
+
+predictable,
+
+repeatable,
+
+and auditable.
+
+---
+
+# Enterprise Terraform Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform Init
+
+↓
+
+Terraform Validate
+
+↓
+
+Terraform Format Check
+
+↓
+
+Terraform Plan
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS Infrastructure
+```
+
+This is the recommended production workflow.
+
+---
+
+# CI/CD Objectives
+
+A Terraform pipeline should provide
+
+- Automation
+- Validation
+- Security
+- Consistency
+- Rollback Capability
+- Auditability
+
+---
+
+# Pipeline Stages
+
+```text
+Source
+
+↓
+
+Validation
+
+↓
+
+Planning
+
+↓
+
+Security
+
+↓
+
+Approval
+
+↓
+
+Deployment
+
+↓
+
+Verification
+```
+
+Every infrastructure change passes through these stages.
+
+---
+
+# Stage 1 - Source Control
+
+Terraform code is stored in Git.
+
+```text
+Developer
+
+↓
+
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+Main Branch
+```
+
+Infrastructure changes follow the same lifecycle as application code.
+
+---
+
+# Stage 2 - Terraform Init
+
+The pipeline initializes
+
+- Backend
+- Providers
+- Modules
+
+```text
+GitHub Actions
+
+↓
+
+terraform init
+
+↓
+
+Ready
+```
+
+---
+
+# Stage 3 - Formatting
+
+Run
+
+```bash
+terraform fmt
+```
+
+Purpose
+
+- Consistent Formatting
+- Cleaner Code
+- Easier Reviews
+
+---
+
+# Stage 4 - Validation
+
+Run
+
+```bash
+terraform validate
+```
+
+Checks
+
+- Syntax
+- References
+- Configuration
+
+Deployment stops
+
+if validation fails.
+
+---
+
+# Stage 5 - Terraform Plan
+
+Generate
+
+an execution plan.
+
+```text
+Terraform Configuration
+
+↓
+
+terraform plan
+
+↓
+
+Execution Plan
+```
+
+The plan should always be reviewed before applying.
+
+---
+
+# Why Review the Plan?
+
+The execution plan shows
+
+- Resources to Create
+- Resources to Modify
+- Resources to Destroy
+
+Example
+
+```text
++ Create
+
+~
+
+Modify
+
+-
+
+Destroy
+```
+
+Unexpected changes
+
+should be investigated.
+
+---
+
+# Stage 6 - Security Scanning
+
+Infrastructure code should be scanned
+
+before deployment.
+
+Common tools
+
+- Checkov
+- tfsec
+- Terrascan
+
+Checks include
+
+- Public S3 Buckets
+- Open Security Groups
+- Weak IAM Policies
+- Missing Encryption
+
+---
+
+# Stage 7 - Manual Approval
+
+Production deployments
+
+should require approval.
+
+```text
+Terraform Plan
+
+↓
+
+Platform Team Approval
+
+↓
+
+Terraform Apply
+```
+
+This prevents accidental production changes.
+
+---
+
+# Stage 8 - Terraform Apply
+
+After approval
+
+the pipeline executes
+
+```bash
+terraform apply
+```
+
+Infrastructure is updated
+
+using the approved plan.
+
+---
+
+# Stage 9 - Verification
+
+After deployment
+
+verify
+
+- Resources Created
+- Health Checks
+- Monitoring
+- Connectivity
+
+Deployment isn't complete
+
+until validation succeeds.
+
+---
+
+# GitHub Actions Workflow
+
+```text
+GitHub
+
+↓
+
+Workflow Trigger
+
+↓
+
+Terraform Init
+
+↓
+
+Terraform Validate
+
+↓
+
+Terraform Plan
+
+↓
+
+Approval
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS
+```
+
+---
+
+# Jenkins Pipeline
+
+```text
+Git
+
+↓
+
+Jenkins
+
+↓
+
+Terraform Init
+
+↓
+
+Terraform Plan
+
+↓
+
+Approval
+
+↓
+
+Terraform Apply
+```
+
+Jenkins remains common
+
+in enterprise environments.
+
+---
+
+# Branch Strategy
+
+Typical workflow
+
+```text
+Feature Branch
+
+↓
+
+Pull Request
+
+↓
+
+Review
+
+↓
+
+Merge
+
+↓
+
+Pipeline
+
+↓
+
+Production
+```
+
+---
+
+# Pull Request Reviews
+
+Every infrastructure change
+
+should be reviewed.
+
+Review focuses on
+
+- Security
+- Cost
+- Networking
+- IAM
+- Compliance
+
+---
+
+# Remote State Integration
+
+CI/CD pipelines
+
+use
+
+remote state.
+
+```text
+Pipeline
+
+↓
+
+Amazon S3 Backend
+
+↓
+
+Terraform State
+
+↓
+
+AWS
+```
+
+The pipeline never relies
+
+on local state.
+
+---
+
+# Environment Promotion
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Each stage
+
+uses
+
+the same Terraform code
+
+with different configuration.
+
+---
+
+# Secrets Management
+
+CI/CD pipelines require
+
+secure credentials.
+
+Never store
+
+```text
+AWS Access Keys
+
+Passwords
+
+Tokens
+```
+
+inside the repository.
+
+Use
+
+- GitHub Secrets
+- Jenkins Credentials
+- IAM Roles
+- OIDC
+
+---
+
+# GitHub OIDC
+
+Recommended authentication
+
+```text
+GitHub Actions
+
+↓
+
+OIDC
+
+↓
+
+AWS IAM Role
+
+↓
+
+Temporary Credentials
+```
+
+No long-lived AWS access keys
+
+are required.
+
+---
+
+# Multi-Environment Pipeline
+
+```text
+GitHub
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Each environment
+
+has
+
+its own
+
+- Backend
+- Variables
+- AWS Account
+
+---
+
+# Enterprise Deployment Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform
+
+↓
+
+Amazon S3 Backend
+
+↓
+
+AWS Provider
+
+↓
+
+Infrastructure
+```
+
+---
+
+# Rollback Strategy
+
+Infrastructure rollback
+
+depends on
+
+Terraform state.
+
+Workflow
+
+```text
+Failed Change
+
+↓
+
+Git Revert
+
+↓
+
+Pipeline
+
+↓
+
+Terraform Apply
+
+↓
+
+Infrastructure Restored
+```
+
+---
+
+# Drift Detection Pipeline
+
+A scheduled pipeline
+
+can detect
+
+configuration drift.
+
+```text
+Scheduled Job
+
+↓
+
+terraform plan
+
+↓
+
+Changes Detected
+
+↓
+
+Alert
+```
+
+Infrastructure drift
+
+is identified
+
+before production issues occur.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform Plan
+
+↓
+
+Approval
+
+↓
+
+Terraform Apply
+
+↓
+
+Production AWS
+
+↓
+
+Monitoring
+```
+
+Every infrastructure change
+
+is fully audited.
+
+---
+
+# Enterprise Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+AWS
+
+↓
+
+CloudWatch
+
+↓
+
+Prometheus
+```
+
+---
+
+# Benefits
+
+- Fully Automated Deployments
+- Code Reviews
+- Infrastructure Validation
+- Security Enforcement
+- Audit Trail
+- Environment Consistency
+- Reduced Human Error
+- Faster Recovery
+
+---
+
+# Best Practices
+
+- Never run production changes manually.
+- Store Terraform code in Git.
+- Review every execution plan.
+- Scan Terraform code before deployment.
+- Require approvals for production.
+- Use OIDC instead of long-lived AWS keys.
+- Separate environments and backends.
+- Monitor infrastructure after deployment.
+
+---
+
+# Common Mistakes
+
+- Running `terraform apply` from developer laptops.
+- Skipping `terraform plan`.
+- Ignoring security scan results.
+- Hardcoding AWS credentials.
+- Using the same backend for every environment.
+- Deploying directly to production without review.
+- Not verifying infrastructure after deployment.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why integrate Terraform with CI/CD?
+- What stages are present in a Terraform pipeline?
+- Why run `terraform validate`?
+
+## Intermediate
+
+- Explain Terraform deployment using GitHub Actions.
+- Why should production require manual approval?
+- How do GitHub OIDC and IAM roles improve security?
+- How do you manage Terraform deployments across multiple environments?
+- How do you detect infrastructure drift?
+
+## Advanced
+
+- Design an enterprise Terraform CI/CD pipeline using GitHub Actions, remote state, OIDC authentication, security scanning, approval gates, and automated deployments.
+- Explain the complete infrastructure deployment lifecycle from a Git commit to production AWS resources, including validation, planning, approvals, deployment, and verification.
+- A financial organization requires every infrastructure change to be secure, auditable, and compliant. Design a Terraform automation platform covering Git workflows, CI/CD, remote state, security scanning, secrets management, approvals, rollback strategy, and post-deployment validation.
+
+---
+
