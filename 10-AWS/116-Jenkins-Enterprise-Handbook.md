@@ -6473,3 +6473,693 @@ Before production deployment verify
 
 ---
 
+# Chapter 9 - Jenkins Security, RBAC & Enterprise Best Practices
+
+A Jenkins server has access to
+
+- Source Code
+- Build Artifacts
+- Docker Images
+- AWS Infrastructure
+- Kubernetes Clusters
+- Production Environments
+
+If Jenkins is compromised,
+
+an attacker can potentially control the entire software delivery pipeline.
+
+Enterprise Jenkins platforms implement multiple layers of security including
+
+- Authentication
+- Authorization
+- RBAC
+- Credentials Management
+- Secure Agents
+- Plugin Governance
+- Audit Logging
+
+Security must be enforced across every stage of the CI/CD pipeline.
+
+---
+
+# Jenkins Security Architecture
+
+```text
+Developer
+
+↓
+
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+RBAC
+
+↓
+
+Pipeline
+
+↓
+
+Credentials
+
+↓
+
+Deployment
+```
+
+Every request
+
+is authenticated
+
+and authorized.
+
+---
+
+# Why Jenkins Security?
+
+Without security
+
+```text
+Developer
+
+↓
+
+Jenkins
+
+↓
+
+Administrator Access
+
+↓
+
+Production
+```
+
+Problems
+
+- Unauthorized Changes
+- Credential Theft
+- Infrastructure Compromise
+- Compliance Violations
+
+---
+
+With security
+
+```text
+Developer
+
+↓
+
+Authentication
+
+↓
+
+RBAC
+
+↓
+
+Least Privilege
+
+↓
+
+Pipeline
+
+↓
+
+Production
+```
+
+Only authorized users
+
+can perform
+
+approved actions.
+
+---
+
+# Authentication
+
+Authentication answers
+
+the question
+
+```text
+Who are you?
+```
+
+Jenkins supports
+
+- Local Users
+- LDAP
+- Active Directory
+- SAML
+- OAuth
+- GitHub Login
+
+Enterprise environments
+
+typically integrate
+
+with centralized identity providers.
+
+---
+
+# Authorization
+
+Authorization answers
+
+```text
+What are you allowed to do?
+```
+
+Examples
+
+- View Jobs
+- Trigger Builds
+- Manage Credentials
+- Configure Pipelines
+- Administer Jenkins
+
+---
+
+# Role-Based Access Control (RBAC)
+
+RBAC assigns permissions
+
+based on roles
+
+instead of individual users.
+
+Example
+
+```text
+Developer
+
+↓
+
+Build Jobs
+
+────────────
+
+DevOps Engineer
+
+↓
+
+Deploy Applications
+
+────────────
+
+Administrator
+
+↓
+
+Manage Jenkins
+```
+
+RBAC simplifies
+
+access management.
+
+---
+
+# Least Privilege
+
+Grant users
+
+only the permissions
+
+required for their role.
+
+Avoid
+
+```text
+Administrator Access
+
+↓
+
+Every User
+```
+
+This minimizes
+
+security risks.
+
+---
+
+# Jenkins Credentials Security
+
+Credentials should be stored
+
+only in
+
+Jenkins Credentials Store.
+
+Never store
+
+```text
+AWS Keys
+
+Passwords
+
+Tokens
+
+SSH Keys
+```
+
+inside
+
+- Jenkinsfile
+- Source Code
+- Build Scripts
+
+---
+
+# Folder-Level Security
+
+Large organizations
+
+organize jobs
+
+into folders.
+
+Architecture
+
+```text
+Payments
+
+↓
+
+Payment Team
+
+────────────
+
+Retail
+
+↓
+
+Retail Team
+```
+
+Each team
+
+has access
+
+only to
+
+its own jobs.
+
+---
+
+# Agent Security
+
+Agents should
+
+- Use Dedicated Accounts
+- Have Least Privilege
+- Be Regularly Updated
+- Be Isolated
+
+Never run
+
+untrusted jobs
+
+on production agents.
+
+---
+
+# Controller Security
+
+Protect the Jenkins Controller using
+
+- HTTPS
+- Strong Authentication
+- Regular Backups
+- Firewall Rules
+- Limited Administrator Access
+
+The controller
+
+should remain
+
+lightweight
+
+and secure.
+
+---
+
+# Secure Communication
+
+Communication between
+
+Controller
+
+and Agents
+
+should be encrypted.
+
+Architecture
+
+```text
+Controller
+
+↓
+
+Encrypted Connection
+
+↓
+
+Agent
+```
+
+---
+
+# Plugin Security
+
+Plugins extend Jenkins,
+
+but they also increase
+
+the attack surface.
+
+Best practices
+
+- Install only required plugins.
+- Keep plugins updated.
+- Remove unused plugins.
+- Use trusted plugins.
+
+---
+
+# Pipeline Security
+
+Pipelines should include
+
+- Code Quality Checks
+- Dependency Scanning
+- Container Scanning
+- Secret Detection
+
+Example
+
+```text
+Checkout
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Deploy
+```
+
+Only secure builds
+
+should proceed.
+
+---
+
+# Secret Rotation
+
+Rotate credentials
+
+regularly.
+
+Workflow
+
+```text
+Old Secret
+
+↓
+
+New Secret
+
+↓
+
+Update Jenkins
+
+↓
+
+Pipeline Continues
+```
+
+Pipelines
+
+should continue
+
+without code changes.
+
+---
+
+# Audit Logging
+
+Track
+
+- User Logins
+- Job Executions
+- Credential Changes
+- Plugin Changes
+- Pipeline Modifications
+
+Audit logs
+
+support
+
+incident investigations
+
+and compliance.
+
+---
+
+# Backup Strategy
+
+Back up
+
+```text
+JENKINS_HOME
+
+↓
+
+Jobs
+
+↓
+
+Credentials
+
+↓
+
+Plugins
+
+↓
+
+Configuration
+```
+
+Backups
+
+enable
+
+rapid recovery.
+
+---
+
+# Disaster Recovery
+
+Recovery workflow
+
+```text
+Backup
+
+↓
+
+Restore Controller
+
+↓
+
+Reconnect Agents
+
+↓
+
+Resume Pipelines
+```
+
+---
+
+# Enterprise Security Pipeline
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+Every deployment
+
+passes
+
+multiple security gates.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+RBAC
+
+↓
+
+Credentials
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production
+```
+
+Production access
+
+is tightly controlled.
+
+---
+
+# Enterprise Security Checklist
+
+Before production deployment verify
+
+✓ Authentication Enabled
+
+✓ RBAC Configured
+
+✓ Least Privilege Applied
+
+✓ Credentials Stored Securely
+
+✓ HTTPS Enabled
+
+✓ Controller Protected
+
+✓ Agents Secured
+
+✓ Plugins Updated
+
+✓ Security Scans Passed
+
+✓ Audit Logging Enabled
+
+✓ Backup Completed
+
+---
+
+# Enterprise Best Practices
+
+- Integrate Jenkins with centralized identity providers.
+- Enable RBAC for all users.
+- Apply least-privilege access.
+- Store secrets only in Jenkins Credentials.
+- Use HTTPS for all communications.
+- Keep plugins updated.
+- Regularly back up `JENKINS_HOME`.
+- Monitor audit logs continuously.
+- Separate development and production agents.
+- Rotate credentials periodically.
+
+---
+
+# Common Mistakes
+
+- Giving every user administrator access.
+- Hardcoding credentials.
+- Running production jobs on shared agents.
+- Ignoring plugin updates.
+- Using HTTP instead of HTTPS.
+- Never rotating secrets.
+- Not backing up Jenkins configuration.
+- Allowing unrestricted job configuration changes.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is Jenkins security important?
+- What is authentication?
+- What is authorization?
+- What is RBAC?
+- Why use Jenkins Credentials?
+
+## Intermediate
+
+- Authentication vs Authorization.
+- Why use least privilege?
+- How do you secure Jenkins agents?
+- Why should plugins be updated?
+- Explain folder-level security.
+
+## Advanced
+
+- Design a secure Jenkins platform using RBAC, centralized authentication, secure credentials, encrypted controller-agent communication, SonarQube, Trivy, Amazon ECR, Terraform, and Amazon EKS.
+- Explain how authentication, authorization, RBAC, credentials management, secure agents, plugin governance, and audit logging work together to secure enterprise Jenkins environments.
+- A financial organization requires a highly secure Jenkins platform for deploying applications across multiple AWS accounts. Explain how you would design authentication, authorization, RBAC, credentials management, agent isolation, plugin governance, backup strategy, disaster recovery, and audit logging to meet enterprise security and compliance requirements.
+
+---
+
