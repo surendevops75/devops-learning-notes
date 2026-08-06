@@ -2239,3 +2239,860 @@ to an approved project.
 
 ---
 
+# Chapter 4 - ArgoCD Sync Policies, Sync Options & Reconciliation
+
+The core responsibility of ArgoCD
+
+is to keep
+
+the Kubernetes cluster
+
+synchronized
+
+with
+
+the desired state
+
+stored in Git.
+
+This synchronization process
+
+is called
+
+**Sync**.
+
+ArgoCD continuously compares
+
+Git
+
+with
+
+the Kubernetes cluster
+
+and decides
+
+whether changes are required.
+
+---
+
+# Sync Architecture
+
+```text
+Git Repository
+
+↓
+
+Desired State
+
+↓
+
+ArgoCD
+
+↓
+
+Compare
+
+↓
+
+Kubernetes Cluster
+
+↓
+
+Actual State
+```
+
+If differences exist,
+
+ArgoCD
+
+initiates synchronization.
+
+---
+
+# What is Synchronization?
+
+Synchronization
+
+is the process
+
+of applying
+
+Git changes
+
+to the Kubernetes cluster.
+
+Workflow
+
+```text
+Git Commit
+
+↓
+
+Compare
+
+↓
+
+Sync
+
+↓
+
+Cluster Updated
+```
+
+---
+
+# Reconciliation Loop
+
+ArgoCD
+
+continuously runs
+
+a reconciliation loop.
+
+```text
+Git
+
+↓
+
+Compare
+
+↓
+
+Cluster
+
+↓
+
+Detect Drift
+
+↓
+
+Synchronize
+```
+
+This process
+
+runs continuously.
+
+---
+
+# Why Reconciliation?
+
+Without reconciliation
+
+```text
+Git
+
+↓
+
+Deployment
+
+↓
+
+Manual Cluster Change
+```
+
+Problems
+
+- Configuration Drift
+- Inconsistent Clusters
+- Unknown Changes
+
+---
+
+With reconciliation
+
+```text
+Git
+
+↓
+
+Compare
+
+↓
+
+Drift Detected
+
+↓
+
+Sync
+
+↓
+
+Cluster Corrected
+```
+
+Git
+
+always wins.
+
+---
+
+# Sync Policies
+
+ArgoCD supports
+
+two synchronization modes
+
+```text
+Manual Sync
+
+────────────
+
+Automatic Sync
+```
+
+Choose
+
+based on
+
+environment requirements.
+
+---
+
+# Manual Sync
+
+Manual Sync
+
+requires
+
+an engineer
+
+to approve
+
+every deployment.
+
+Workflow
+
+```text
+Git Commit
+
+↓
+
+OutOfSync
+
+↓
+
+Manual Sync
+
+↓
+
+Deployment
+```
+
+Often used
+
+in production.
+
+---
+
+# Automatic Sync
+
+Automatic Sync
+
+deploys changes
+
+immediately
+
+after Git updates.
+
+Workflow
+
+```text
+Git Commit
+
+↓
+
+Automatic Sync
+
+↓
+
+Deployment
+```
+
+Common
+
+for development
+
+and testing.
+
+---
+
+# Auto Sync Architecture
+
+```text
+Developer
+
+↓
+
+Git Commit
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods Updated
+```
+
+No manual intervention
+
+is required.
+
+---
+
+# Sync Status
+
+Applications
+
+can have
+
+the following sync states
+
+```text
+Synced
+
+OutOfSync
+
+Unknown
+```
+
+---
+
+# Synced
+
+```text
+Git
+
+=
+
+Cluster
+```
+
+Desired state
+
+matches
+
+the cluster.
+
+---
+
+# OutOfSync
+
+```text
+Git
+
+≠
+
+Cluster
+```
+
+The cluster
+
+differs
+
+from Git.
+
+Synchronization
+
+is required.
+
+---
+
+# Unknown
+
+ArgoCD
+
+cannot determine
+
+application state.
+
+Possible causes
+
+- API Failure
+- Repository Issue
+- Cluster Connectivity
+
+---
+
+# Self-Healing
+
+Self-Healing
+
+automatically restores
+
+the desired state
+
+if
+
+manual cluster changes
+
+occur.
+
+Workflow
+
+```text
+Manual kubectl Edit
+
+↓
+
+Drift
+
+↓
+
+ArgoCD
+
+↓
+
+Restore Git State
+```
+
+This is
+
+one of GitOps'
+
+most powerful features.
+
+---
+
+# Pruning
+
+Sometimes
+
+resources are deleted
+
+from Git.
+
+Pruning ensures
+
+they are also removed
+
+from Kubernetes.
+
+Workflow
+
+```text
+Git Resource Deleted
+
+↓
+
+Sync
+
+↓
+
+Cluster Resource Deleted
+```
+
+Without pruning,
+
+orphaned resources remain.
+
+---
+
+# Sync Options
+
+ArgoCD supports
+
+additional sync behaviors.
+
+Examples
+
+- Prune
+- Self Heal
+- Create Namespace
+- Validate Resources
+- Apply Out of Sync Only
+
+These improve
+
+deployment flexibility.
+
+---
+
+# Retry Policy
+
+If synchronization fails,
+
+ArgoCD
+
+can retry automatically.
+
+Workflow
+
+```text
+Sync Failed
+
+↓
+
+Retry
+
+↓
+
+Deployment Successful
+```
+
+Useful
+
+for temporary failures.
+
+---
+
+# Selective Sync
+
+Instead of
+
+deploying everything,
+
+ArgoCD
+
+can synchronize
+
+specific resources.
+
+Example
+
+```text
+Deployment
+
+↓
+
+Update
+
+────────────
+
+Service
+
+↓
+
+No Change
+```
+
+---
+
+# Partial Synchronization
+
+Large applications
+
+may contain
+
+hundreds of resources.
+
+Selective synchronization
+
+reduces
+
+deployment time.
+
+---
+
+# Sync Waves
+
+Some resources
+
+must be deployed
+
+before others.
+
+Example
+
+```text
+Namespace
+
+↓
+
+ConfigMap
+
+↓
+
+Secret
+
+↓
+
+Deployment
+
+↓
+
+Service
+
+↓
+
+Ingress
+```
+
+ArgoCD
+
+supports
+
+ordered synchronization.
+
+---
+
+# Hooks
+
+Hooks execute
+
+tasks
+
+before,
+
+during,
+
+or after
+
+synchronization.
+
+Examples
+
+```text
+Database Migration
+
+↓
+
+Deploy
+
+↓
+
+Smoke Test
+```
+
+Hooks automate
+
+deployment workflows.
+
+---
+
+# Health Check
+
+After synchronization,
+
+ArgoCD verifies
+
+application health.
+
+Possible states
+
+```text
+Healthy
+
+Progressing
+
+Degraded
+
+Missing
+```
+
+Deployment
+
+is not complete
+
+until healthy.
+
+---
+
+# Drift Detection
+
+Drift occurs
+
+when
+
+someone modifies
+
+the cluster
+
+directly.
+
+Workflow
+
+```text
+Git
+
+↓
+
+Desired State
+
+────────────
+
+kubectl Edit
+
+↓
+
+Cluster Changed
+
+↓
+
+OutOfSync
+```
+
+ArgoCD
+
+detects
+
+the difference.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Merge
+
+↓
+
+ArgoCD
+
+↓
+
+Compare
+
+↓
+
+Sync
+
+↓
+
+Amazon EKS
+```
+
+Every deployment
+
+is Git-driven.
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Git Commit
+
+↓
+
+Automatic Sync
+
+↓
+
+Amazon EKS
+
+↓
+
+Health Check
+
+↓
+
+Production
+```
+
+No engineer
+
+logs into
+
+the production cluster
+
+to deploy.
+
+---
+
+# Enterprise Sync Strategy
+
+```text
+Development
+
+↓
+
+Automatic Sync
+
+────────────
+
+Testing
+
+↓
+
+Automatic Sync
+
+────────────
+
+Production
+
+↓
+
+Manual Approval
+
+↓
+
+Manual Sync
+```
+
+Different environments
+
+can use
+
+different sync policies.
+
+---
+
+# Enterprise Best Practices
+
+- Enable Auto Sync for development environments.
+- Use Manual Sync for production if approvals are required.
+- Enable Self-Healing to prevent configuration drift.
+- Enable Pruning to remove obsolete resources.
+- Monitor OutOfSync applications continuously.
+- Use Sync Waves for resource dependencies.
+- Validate application health after every sync.
+- Keep Git as the only deployment source.
+
+---
+
+# Common Mistakes
+
+- Disabling Self-Healing in production.
+- Leaving orphaned resources by disabling Prune.
+- Using Auto Sync without branch protection.
+- Ignoring OutOfSync applications.
+- Deploying manually with kubectl.
+- Mixing manual and Git-driven changes.
+- Not validating application health after synchronization.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is synchronization in ArgoCD?
+- What is Auto Sync?
+- Manual Sync vs Auto Sync.
+- What is Self-Healing?
+- What is Pruning?
+
+## Intermediate
+
+- Explain the reconciliation loop.
+- What is Sync Status?
+- What are Sync Waves?
+- What are Hooks?
+- How does ArgoCD detect configuration drift?
+
+## Advanced
+
+- Design an enterprise GitOps synchronization strategy using Auto Sync, Manual Sync, Self-Healing, Pruning, Sync Waves, Hooks, and health checks for secure deployments to Amazon EKS.
+- Explain how ArgoCD's reconciliation loop continuously compares Git with the Kubernetes cluster and automatically restores the desired state.
+- A financial organization requires automated deployments for Development and Testing environments but controlled deployments for Production. Explain how you would design sync policies, reconciliation, approval workflows, self-healing, pruning, retry strategies, and health validation to ensure secure, reliable, and auditable GitOps operations.
+
+---
+
