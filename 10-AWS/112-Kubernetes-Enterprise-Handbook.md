@@ -2571,3 +2571,891 @@ Aurora
 
 ---
 
+# Chapter 4 - ConfigMaps, Secrets & Storage (Deep Dive)
+
+Applications require more than just containers.
+
+They also need
+
+- Configuration
+- Credentials
+- Certificates
+- Persistent Storage
+- Shared Volumes
+
+Hardcoding these values inside container images is considered a poor practice.
+
+Kubernetes separates
+
+- Application Code
+- Configuration
+- Secrets
+- Storage
+
+making applications portable, secure, and easier to manage.
+
+---
+
+# Configuration Management
+
+Instead of storing configuration inside the application,
+
+Kubernetes stores configuration externally.
+
+```text
+Application
+
+↓
+
+ConfigMap
+
+↓
+
+Runtime Configuration
+```
+
+Applications become environment independent.
+
+---
+
+# What is a ConfigMap?
+
+A ConfigMap stores
+
+non-sensitive configuration data.
+
+Examples
+
+- Application Properties
+- Environment Variables
+- URLs
+- Feature Flags
+- Port Numbers
+
+---
+
+# ConfigMap Architecture
+
+```text
+ConfigMap
+
+↓
+
+Pod
+
+↓
+
+Application
+```
+
+Applications read configuration during startup.
+
+---
+
+# Why ConfigMaps?
+
+Without ConfigMaps
+
+```text
+Application Code
+
+↓
+
+Database URL
+
+↓
+
+API URL
+
+↓
+
+Port Number
+```
+
+Every environment requires rebuilding the image.
+
+---
+
+With ConfigMaps
+
+```text
+Application
+
+↓
+
+ConfigMap
+
+↓
+
+Environment-Specific Configuration
+```
+
+The same container image works across all environments.
+
+---
+
+# ConfigMap Data
+
+Typical configuration includes
+
+```text
+DATABASE_HOST
+
+API_ENDPOINT
+
+LOG_LEVEL
+
+TIMEZONE
+
+PORT
+```
+
+Only non-sensitive values should be stored.
+
+---
+
+# ConfigMap Consumption
+
+Applications can consume ConfigMaps as
+
+- Environment Variables
+- Mounted Files
+- Command-Line Arguments
+
+---
+
+# ConfigMap as Environment Variables
+
+```text
+ConfigMap
+
+↓
+
+Environment Variables
+
+↓
+
+Application
+```
+
+Most applications use this approach.
+
+---
+
+# ConfigMap as Volume
+
+```text
+ConfigMap
+
+↓
+
+Volume
+
+↓
+
+Configuration Files
+```
+
+Useful for applications expecting configuration files.
+
+---
+
+# Updating ConfigMaps
+
+When configuration changes
+
+```text
+ConfigMap
+
+↓
+
+Pod Restart (often required)
+
+↓
+
+Updated Configuration
+```
+
+Some applications reload configuration automatically,
+
+others require a restart.
+
+---
+
+# ConfigMap Best Practices
+
+- Store only non-sensitive data.
+- Separate configuration from application code.
+- Keep ConfigMaps small and focused.
+- Version configuration changes.
+- Use different ConfigMaps for different environments.
+
+---
+
+# What are Secrets?
+
+Secrets store
+
+sensitive information.
+
+Examples
+
+- Database Passwords
+- API Keys
+- OAuth Tokens
+- Certificates
+- SSH Keys
+
+---
+
+# Secret Architecture
+
+```text
+Secret
+
+↓
+
+Pod
+
+↓
+
+Application
+```
+
+Sensitive data is injected securely.
+
+---
+
+# Why Secrets?
+
+Without Secrets
+
+```text
+Application Code
+
+↓
+
+Database Password
+
+↓
+
+Git Repository
+```
+
+Security risk.
+
+---
+
+With Secrets
+
+```text
+Application
+
+↓
+
+Secret
+
+↓
+
+Secure Runtime Access
+```
+
+Credentials remain outside the application.
+
+---
+
+# Secret Types
+
+Common secret types
+
+- Opaque
+- TLS
+- Docker Registry
+- Service Account Token
+
+Opaque is the most frequently used.
+
+---
+
+# Secrets as Environment Variables
+
+```text
+Secret
+
+↓
+
+Environment Variables
+
+↓
+
+Application
+```
+
+Applications access credentials during runtime.
+
+---
+
+# Secrets as Mounted Files
+
+```text
+Secret
+
+↓
+
+Volume
+
+↓
+
+Certificate Files
+
+↓
+
+Application
+```
+
+Useful for
+
+- TLS Certificates
+- SSH Keys
+- Private Keys
+
+---
+
+# Secret Security
+
+Secrets should
+
+- Never be committed to Git.
+- Use RBAC for access control.
+- Be encrypted at rest.
+- Be rotated periodically.
+
+---
+
+# Kubernetes Secret Encryption
+
+Enterprise clusters typically use
+
+```text
+Secret
+
+↓
+
+API Server
+
+↓
+
+Encryption Provider
+
+↓
+
+etcd
+```
+
+Without encryption,
+
+Secrets are stored in etcd as plain data.
+
+---
+
+# ConfigMap vs Secret
+
+| ConfigMap | Secret |
+|------------|---------|
+| Non-Sensitive Data | Sensitive Data |
+| Application Config | Passwords, Tokens |
+| Plain Configuration | Access Controlled |
+| No Credentials | Credentials |
+
+---
+
+# What is a Volume?
+
+Containers are ephemeral.
+
+If a container restarts,
+
+its local filesystem is lost.
+
+Volumes provide persistent storage.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+Volume
+
+↓
+
+Storage
+```
+
+---
+
+# Why Volumes?
+
+Without Volumes
+
+```text
+Application
+
+↓
+
+Container Restart
+
+↓
+
+Data Lost
+```
+
+---
+
+With Volumes
+
+```text
+Application
+
+↓
+
+Persistent Volume
+
+↓
+
+Data Retained
+```
+
+---
+
+# Volume Lifecycle
+
+```text
+Pod
+
+↓
+
+Volume
+
+↓
+
+Storage
+```
+
+The volume lifecycle depends on the volume type.
+
+---
+
+# Volume Types
+
+Common Kubernetes volumes
+
+- emptyDir
+- hostPath
+- Persistent Volume
+- Persistent Volume Claim
+- CSI Volumes
+
+---
+
+# emptyDir
+
+Created when
+
+the Pod starts.
+
+Deleted when
+
+the Pod is removed.
+
+Useful for
+
+- Temporary Files
+- Cache
+- Intermediate Processing
+
+---
+
+# hostPath
+
+Uses storage
+
+from the worker node.
+
+```text
+Node
+
+↓
+
+Filesystem
+
+↓
+
+Pod
+```
+
+Mostly used for
+
+development or testing,
+
+not recommended for production.
+
+---
+
+# Persistent Volume (PV)
+
+A Persistent Volume represents
+
+physical storage inside the cluster.
+
+Examples
+
+- Amazon EBS
+- Amazon EFS
+- NFS
+- SAN
+
+---
+
+# Persistent Volume Architecture
+
+```text
+Persistent Volume
+
+↓
+
+Persistent Volume Claim
+
+↓
+
+Pod
+```
+
+Applications never access PVs directly.
+
+---
+
+# Persistent Volume Claim (PVC)
+
+Applications request storage using
+
+PVCs.
+
+Example
+
+```text
+Application
+
+↓
+
+PVC
+
+↓
+
+Persistent Volume
+```
+
+This decouples applications from storage implementation.
+
+---
+
+# Dynamic Provisioning
+
+Modern Kubernetes clusters create storage automatically.
+
+```text
+PVC
+
+↓
+
+StorageClass
+
+↓
+
+Persistent Volume
+
+↓
+
+Cloud Storage
+```
+
+No manual provisioning required.
+
+---
+
+# StorageClass
+
+A StorageClass defines
+
+how storage should be provisioned.
+
+Example
+
+```text
+StorageClass
+
+↓
+
+Amazon EBS
+
+↓
+
+gp3
+```
+
+Different workloads can use different StorageClasses.
+
+---
+
+# Amazon EBS CSI Driver
+
+For Amazon EKS,
+
+Persistent Volumes are commonly backed by
+
+Amazon EBS.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+PVC
+
+↓
+
+StorageClass
+
+↓
+
+EBS CSI Driver
+
+↓
+
+Amazon EBS
+```
+
+---
+
+# Amazon EFS CSI Driver
+
+Shared storage
+
+across multiple Pods.
+
+```text
+Multiple Pods
+
+↓
+
+PVC
+
+↓
+
+EFS CSI Driver
+
+↓
+
+Amazon EFS
+```
+
+Useful for
+
+- Shared Files
+- CMS
+- Machine Learning
+- Analytics
+
+---
+
+# Stateful Applications
+
+Examples
+
+- PostgreSQL
+- MySQL
+- MongoDB
+- Elasticsearch
+- Kafka
+
+These applications require persistent storage.
+
+---
+
+# Stateless vs Stateful
+
+| Stateless | Stateful |
+|------------|-----------|
+| No Persistent Data | Persistent Data |
+| Easy to Scale | Requires Storage |
+| Web APIs | Databases |
+| Frontend Services | Kafka, Elasticsearch |
+
+---
+
+# Enterprise Architecture
+
+```text
+Application
+
+↓
+
+ConfigMap
+
+↓
+
+Secrets
+
+↓
+
+Deployment
+
+↓
+
+PVC
+
+↓
+
+Amazon EBS
+
+↓
+
+Database
+```
+
+Configuration,
+
+credentials,
+
+and storage
+
+remain independent.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Secret
+
+↓
+
+Database Password
+
+────────────
+
+PVC
+
+↓
+
+Aurora Backup Files
+
+────────────
+
+ConfigMap
+
+↓
+
+Application Configuration
+```
+
+---
+
+# Production Storage Architecture
+
+```text
+Pods
+
+↓
+
+PVC
+
+↓
+
+StorageClass
+
+↓
+
+CSI Driver
+
+↓
+
+Amazon EBS
+
+↓
+
+AWS Infrastructure
+```
+
+---
+
+# Benefits
+
+- Configuration Separation
+- Secure Credential Management
+- Persistent Storage
+- Cloud-Native Storage Provisioning
+- Environment Independence
+- Better Security
+- Simplified Operations
+
+---
+
+# Best Practices
+
+- Store passwords only in Secrets.
+- Store application configuration in ConfigMaps.
+- Enable encryption for Secrets in etcd.
+- Use PVCs instead of hostPath in production.
+- Use dynamic provisioning with StorageClasses.
+- Regularly rotate credentials.
+- Back up persistent volumes.
+- Use Amazon EFS for shared storage and Amazon EBS for block storage.
+
+---
+
+# Common Mistakes
+
+- Storing passwords in ConfigMaps.
+- Committing Secrets to Git repositories.
+- Using hostPath in production.
+- Hardcoding database credentials in container images.
+- Not enabling Secret encryption.
+- Using emptyDir for persistent application data.
+- Deleting PVCs without understanding reclaim policies.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a ConfigMap?
+- What is a Secret?
+- ConfigMap vs Secret.
+- What is a Persistent Volume?
+- What is a Persistent Volume Claim?
+
+## Intermediate
+
+- Explain dynamic provisioning.
+- What is a StorageClass?
+- Amazon EBS vs Amazon EFS.
+- How are Secrets stored in Kubernetes?
+- How do applications consume ConfigMaps?
+
+## Advanced
+
+- Design persistent storage for a highly available PostgreSQL database running on Amazon EKS using Persistent Volumes, Persistent Volume Claims, StorageClasses, and the EBS CSI Driver.
+- Explain how ConfigMaps, Secrets, and Persistent Volumes work together in a production microservices application deployed on Kubernetes.
+- A financial application running on Amazon EKS requires secure credential management, dynamic storage provisioning, encrypted persistent volumes, and shared storage for reporting services. Design the complete architecture, explaining every Kubernetes resource and AWS integration.
+
+---
+
