@@ -5674,3 +5674,773 @@ deployment pipeline.
 
 ---
 
+# Chapter 8 - Terraform with AWS (Enterprise Infrastructure)
+
+Terraform is cloud agnostic,
+
+but AWS is the most widely used cloud platform for Terraform.
+
+Terraform can provision almost every AWS service including
+
+- VPC
+- EC2
+- IAM
+- S3
+- EKS
+- RDS
+- ALB
+- Route53
+- CloudWatch
+- Lambda
+- SNS
+- SQS
+
+Enterprise organizations automate their complete AWS infrastructure using Terraform.
+
+---
+
+# AWS Infrastructure Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform
+
+↓
+
+AWS Provider
+
+↓
+
+VPC
+
+↓
+
+Subnets
+
+↓
+
+EKS
+
+↓
+
+Applications
+```
+
+Infrastructure is provisioned automatically.
+
+---
+
+# AWS Provider
+
+The AWS Provider allows Terraform to communicate with AWS APIs.
+
+Architecture
+
+```text
+Terraform
+
+↓
+
+AWS Provider
+
+↓
+
+AWS APIs
+
+↓
+
+Infrastructure
+```
+
+Every AWS resource requires the AWS Provider.
+
+---
+
+# Enterprise AWS Architecture
+
+```text
+AWS Account
+
+├── VPC
+
+├── IAM
+
+├── Route53
+
+├── ACM
+
+├── ALB
+
+├── Amazon EKS
+
+├── Amazon RDS
+
+├── Amazon ECR
+
+└── CloudWatch
+```
+
+Terraform manages the entire platform.
+
+---
+
+# VPC Provisioning
+
+The VPC is the foundation of every AWS environment.
+
+Architecture
+
+```text
+VPC
+
+├── Public Subnets
+
+├── Private Subnets
+
+├── Internet Gateway
+
+├── NAT Gateway
+
+└── Route Tables
+```
+
+All application resources reside inside the VPC.
+
+---
+
+# Subnet Strategy
+
+Enterprise environments separate workloads.
+
+```text
+Public Subnets
+
+↓
+
+ALB
+
+↓
+
+Bastion
+
+────────────
+
+Private Subnets
+
+↓
+
+EKS Nodes
+
+↓
+
+Databases
+
+↓
+
+Applications
+```
+
+Private subnets host production workloads.
+
+---
+
+# Internet Gateway
+
+Internet Gateway enables
+
+public internet connectivity.
+
+Workflow
+
+```text
+Internet
+
+↓
+
+Internet Gateway
+
+↓
+
+Public Subnet
+```
+
+---
+
+# NAT Gateway
+
+Private resources access the internet
+
+through NAT Gateway.
+
+Architecture
+
+```text
+Private Subnet
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+Applications remain private
+
+while downloading updates.
+
+---
+
+# Security Groups
+
+Security Groups act as
+
+virtual firewalls.
+
+Example
+
+```text
+ALB SG
+
+↓
+
+EKS SG
+
+↓
+
+RDS SG
+```
+
+Traffic flows only through
+
+approved ports.
+
+---
+
+# IAM Management
+
+Terraform provisions
+
+AWS IAM resources.
+
+Examples
+
+- IAM Roles
+- IAM Policies
+- Instance Profiles
+- OIDC Providers
+
+IAM should always follow
+
+least privilege.
+
+---
+
+# Amazon ECR
+
+Terraform creates
+
+container registries.
+
+Workflow
+
+```text
+GitHub Actions
+
+↓
+
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Amazon EKS
+
+Terraform provisions
+
+production Kubernetes clusters.
+
+Architecture
+
+```text
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Managed Node Groups
+
+↓
+
+Applications
+```
+
+---
+
+# Amazon RDS
+
+Terraform provisions
+
+managed relational databases.
+
+Typical deployment
+
+```text
+Aurora PostgreSQL
+
+↓
+
+Private Subnets
+
+↓
+
+Multi-AZ
+```
+
+---
+
+# Application Load Balancer
+
+Terraform creates
+
+Application Load Balancers.
+
+Workflow
+
+```text
+Internet
+
+↓
+
+ALB
+
+↓
+
+Target Groups
+
+↓
+
+Applications
+```
+
+---
+
+# Route53
+
+Terraform provisions
+
+DNS records.
+
+Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+ALB
+
+↓
+
+Application
+```
+
+DNS management becomes automated.
+
+---
+
+# ACM Certificates
+
+Terraform provisions
+
+SSL certificates.
+
+Workflow
+
+```text
+Domain
+
+↓
+
+ACM
+
+↓
+
+HTTPS
+
+↓
+
+ALB
+```
+
+Applications serve secure traffic.
+
+---
+
+# CloudWatch
+
+Terraform provisions
+
+CloudWatch resources.
+
+Examples
+
+- Log Groups
+- Dashboards
+- Alarms
+
+Monitoring infrastructure
+
+becomes repeatable.
+
+---
+
+# S3 Buckets
+
+Terraform creates
+
+Amazon S3 buckets
+
+for
+
+- Backups
+- Logs
+- Static Websites
+- Remote State
+
+---
+
+# SNS
+
+Terraform provisions
+
+notification topics.
+
+Workflow
+
+```text
+CloudWatch Alarm
+
+↓
+
+SNS
+
+↓
+
+Email
+
+↓
+
+DevOps Team
+```
+
+---
+
+# Auto Scaling
+
+Terraform configures
+
+Auto Scaling Groups
+
+for EC2
+
+and
+
+Managed Node Groups
+
+for EKS.
+
+---
+
+# Complete AWS Infrastructure Flow
+
+```text
+Terraform
+
+↓
+
+VPC
+
+↓
+
+Subnets
+
+↓
+
+IAM
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon ECR
+
+↓
+
+ALB
+
+↓
+
+Route53
+
+↓
+
+Applications
+```
+
+---
+
+# Enterprise Module Layout
+
+A common production structure
+
+```text
+modules/
+
+├── 00-vpc
+
+├── 10-security-groups
+
+├── 20-bastion
+
+├── 30-security-group-rules
+
+├── 40-ecr
+
+├── 50-route53
+
+├── 60-rds
+
+├── 70-acm
+
+├── 80-frontend-alb
+
+├── 90-eks
+```
+
+This aligns well with enterprise Terraform repositories.
+
+---
+
+# Infrastructure Dependency Flow
+
+```text
+VPC
+
+↓
+
+Subnets
+
+↓
+
+Security Groups
+
+↓
+
+IAM
+
+↓
+
+Amazon EKS
+
+↓
+
+ALB
+
+↓
+
+Applications
+```
+
+Terraform automatically manages
+
+the dependency graph.
+
+---
+
+# Enterprise Deployment Pipeline
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform Plan
+
+↓
+
+Approval
+
+↓
+
+Terraform Apply
+
+↓
+
+AWS Infrastructure
+```
+
+Infrastructure changes follow
+
+the same review process
+
+as application code.
+
+---
+
+# Banking Platform Example
+
+```text
+Route53
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Payment Pods
+
+↓
+
+Aurora PostgreSQL
+
+↓
+
+CloudWatch
+
+↓
+
+SNS
+```
+
+Every component
+
+is provisioned using Terraform.
+
+---
+
+# Disaster Recovery
+
+Terraform enables
+
+rapid infrastructure recovery.
+
+```text
+Git Repository
+
+↓
+
+Terraform
+
+↓
+
+AWS
+
+↓
+
+Recreated Infrastructure
+```
+
+Infrastructure can be rebuilt
+
+consistently after failures.
+
+---
+
+# AWS Best Practices
+
+- Use reusable modules.
+- Deploy worker nodes in private subnets.
+- Use separate AWS accounts for environments.
+- Enable versioning on S3 buckets.
+- Encrypt EBS and RDS volumes.
+- Follow least-privilege IAM policies.
+- Keep databases private.
+- Use ALB instead of exposing applications directly.
+- Store Terraform state remotely.
+- Automate deployments using CI/CD.
+
+---
+
+# Common Mistakes
+
+- Creating all resources in one Terraform file.
+- Deploying production workloads in public subnets.
+- Hardcoding AWS Account IDs.
+- Granting AdministratorAccess to every IAM role.
+- Storing secrets inside Terraform code.
+- Using local Terraform state in production.
+- Ignoring module versioning.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How does Terraform provision AWS infrastructure?
+- What AWS services have you automated using Terraform?
+- Why use Terraform with AWS?
+
+## Intermediate
+
+- Explain how Terraform provisions Amazon EKS.
+- Describe your Terraform module structure for AWS.
+- How do you manage dependencies between VPC, ALB, and EKS?
+- How do you provision Route53 and ACM certificates?
+- How do you automate infrastructure deployment?
+
+## Advanced
+
+- Design a production-ready AWS platform using Terraform that includes VPC, private subnets, Amazon EKS, Amazon ECR, Aurora PostgreSQL, Application Load Balancer, Route53, IAM, and CloudWatch.
+- Explain how Terraform manages resource dependencies, module reuse, remote state, and CI/CD integration in a large AWS environment.
+- Your organization is deploying the same platform across multiple AWS accounts and Regions. Explain how you would design the Terraform architecture, repository structure, module strategy, backend configuration, deployment pipeline, and governance model to ensure scalability, security, and operational consistency.
+
+---
+
