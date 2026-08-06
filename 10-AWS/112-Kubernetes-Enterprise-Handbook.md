@@ -7073,3 +7073,824 @@ Always verify
 
 ---
 
+# Chapter 9 - Amazon EKS (Elastic Kubernetes Service) Deep Dive
+
+Managing Kubernetes clusters manually is complex.
+
+Platform teams are responsible for
+
+- Control Plane Availability
+- Upgrades
+- Security
+- Scaling
+- Monitoring
+- Disaster Recovery
+
+AWS simplifies Kubernetes management through **Amazon Elastic Kubernetes Service (Amazon EKS)**.
+
+Amazon EKS is a fully managed Kubernetes service that operates the Kubernetes control plane while allowing customers to focus on running applications.
+
+---
+
+# What is Amazon EKS?
+
+Amazon EKS is a managed Kubernetes service provided by AWS.
+
+AWS manages
+
+- Kubernetes Control Plane
+- API Server
+- etcd
+- Scheduler
+- Controller Manager
+- High Availability
+
+Customers manage
+
+- Worker Nodes
+- Applications
+- Networking
+- Security
+- CI/CD
+
+---
+
+# Why Amazon EKS?
+
+Without EKS
+
+```text
+Install Kubernetes
+
+↓
+
+Configure Control Plane
+
+↓
+
+Manage etcd
+
+↓
+
+Upgrade Cluster
+
+↓
+
+Monitor Cluster
+
+↓
+
+Recover Failures
+```
+
+High operational overhead.
+
+---
+
+With EKS
+
+```text
+AWS
+
+↓
+
+Managed Control Plane
+
+↓
+
+Customer
+
+↓
+
+Worker Nodes
+
+↓
+
+Applications
+```
+
+Cluster management becomes significantly simpler.
+
+---
+
+# Amazon EKS Architecture
+
+```text
+Users
+
+↓
+
+Amazon Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Managed Node Groups
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+```
+
+---
+
+# EKS Shared Responsibility Model
+
+AWS manages
+
+- Control Plane
+- API Server
+- etcd
+- Scheduler
+- Controller Manager
+- High Availability
+
+Customer manages
+
+- Worker Nodes
+- Pods
+- IAM
+- Applications
+- Storage
+- Networking Policies
+
+---
+
+# EKS Control Plane
+
+The EKS control plane runs across
+
+multiple Availability Zones.
+
+Architecture
+
+```text
+AWS Managed
+
+↓
+
+API Server
+
+↓
+
+Scheduler
+
+↓
+
+Controller Manager
+
+↓
+
+etcd
+```
+
+Highly available by default.
+
+---
+
+# Worker Nodes
+
+Applications run on Worker Nodes.
+
+Options include
+
+- Managed Node Groups
+- Self-Managed Nodes
+- AWS Fargate
+
+---
+
+# Managed Node Groups
+
+AWS automates
+
+- Node Provisioning
+- Node Updates
+- Health Monitoring
+- Auto Scaling Integration
+
+Recommended for most workloads.
+
+---
+
+# Self-Managed Nodes
+
+Customers manage
+
+- EC2 Instances
+- AMIs
+- Upgrades
+- Scaling
+
+Provides greater flexibility,
+
+but higher operational effort.
+
+---
+
+# AWS Fargate
+
+Run Pods
+
+without managing EC2 instances.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+AWS Fargate
+
+↓
+
+AWS Infrastructure
+```
+
+Ideal for
+
+- Small workloads
+- Event-driven applications
+- Platform simplification
+
+---
+
+# EKS Networking
+
+Amazon EKS uses
+
+Amazon VPC networking.
+
+Architecture
+
+```text
+VPC
+
+├── Public Subnets
+
+│     ALB
+
+│
+
+└── Private Subnets
+
+      Worker Nodes
+
+      Pods
+```
+
+Pods receive VPC IP addresses.
+
+---
+
+# Amazon VPC CNI
+
+Amazon EKS commonly uses
+
+Amazon VPC CNI.
+
+Benefits
+
+- Native VPC Networking
+- Security Groups
+- High Performance
+
+Pods appear as native VPC resources.
+
+---
+
+# Pod Networking
+
+```text
+Pod
+
+↓
+
+VPC IP Address
+
+↓
+
+Security Group
+
+↓
+
+AWS Network
+```
+
+Applications integrate naturally with AWS networking.
+
+---
+
+# IAM Authentication
+
+Amazon EKS integrates Kubernetes
+
+with AWS IAM.
+
+Workflow
+
+```text
+IAM User
+
+↓
+
+kubectl
+
+↓
+
+API Server
+```
+
+AWS IAM authenticates users.
+
+---
+
+# IAM Roles for Service Accounts (IRSA)
+
+Applications access AWS services securely.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+Amazon S3
+
+↓
+
+Secrets Manager
+
+↓
+
+DynamoDB
+```
+
+Static AWS credentials are unnecessary.
+
+---
+
+# EKS Storage
+
+Persistent storage options
+
+- Amazon EBS
+- Amazon EFS
+- Amazon FSx
+
+Provisioned using
+
+CSI Drivers.
+
+---
+
+# EBS Storage Example
+
+```text
+Pod
+
+↓
+
+PVC
+
+↓
+
+StorageClass
+
+↓
+
+EBS CSI Driver
+
+↓
+
+Amazon EBS
+```
+
+Suitable for block storage workloads.
+
+---
+
+# EFS Storage Example
+
+```text
+Multiple Pods
+
+↓
+
+PVC
+
+↓
+
+EFS CSI Driver
+
+↓
+
+Amazon EFS
+```
+
+Ideal for shared storage.
+
+---
+
+# AWS Load Balancer Controller
+
+Ingress resources create
+
+Application Load Balancers automatically.
+
+Architecture
+
+```text
+Ingress
+
+↓
+
+AWS Load Balancer Controller
+
+↓
+
+Application Load Balancer
+
+↓
+
+Pods
+```
+
+---
+
+# Cluster Autoscaler
+
+Cluster Autoscaler
+
+adds or removes Worker Nodes.
+
+Workflow
+
+```text
+Pending Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+New EC2 Nodes
+
+↓
+
+Pods Scheduled
+```
+
+---
+
+# Horizontal Pod Autoscaler
+
+HPA increases
+
+Pod replicas.
+
+```text
+CPU > 80%
+
+↓
+
+HPA
+
+↓
+
+More Pods
+```
+
+Works together with
+
+Cluster Autoscaler.
+
+---
+
+# EKS Upgrade Process
+
+Recommended workflow
+
+```text
+Control Plane
+
+↓
+
+Managed Node Groups
+
+↓
+
+Add-ons
+
+↓
+
+Applications
+```
+
+Always upgrade
+
+the Control Plane first.
+
+---
+
+# EKS Add-ons
+
+Common managed add-ons
+
+- CoreDNS
+- kube-proxy
+- VPC CNI
+- EBS CSI Driver
+
+AWS manages lifecycle updates.
+
+---
+
+# Monitoring Amazon EKS
+
+Typical stack
+
+```text
+Applications
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+CloudWatch
+
+↓
+
+Alertmanager
+```
+
+---
+
+# Logging
+
+Centralized logging
+
+```text
+Pods
+
+↓
+
+Fluent Bit
+
+↓
+
+CloudWatch Logs
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+---
+
+# Security
+
+Production EKS clusters use
+
+- IAM
+- IRSA
+- RBAC
+- Network Policies
+- Security Groups
+- KMS Encryption
+
+---
+
+# High Availability
+
+Amazon EKS provides
+
+```text
+Multi-AZ
+
+↓
+
+Managed Control Plane
+
+↓
+
+Managed Node Groups
+
+↓
+
+Auto Scaling
+```
+
+Applications remain available
+
+during infrastructure failures.
+
+---
+
+# Enterprise CI/CD Pipeline
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Deployment
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+```
+
+---
+
+# Banking Example
+
+```text
+Customers
+
+↓
+
+Route53
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Amazon EKS
+
+↓
+
+Payment Pods
+
+↓
+
+Aurora
+
+↓
+
+CloudWatch
+
+↓
+
+Grafana
+```
+
+Supports
+
+high availability
+
+and enterprise security.
+
+---
+
+# Amazon EKS Best Practices
+
+- Use Managed Node Groups unless custom requirements exist.
+- Deploy Worker Nodes in private subnets.
+- Use IRSA instead of AWS access keys.
+- Enable Cluster Autoscaler.
+- Use HPA for stateless workloads.
+- Deploy across multiple Availability Zones.
+- Use AWS Load Balancer Controller for Ingress.
+- Encrypt Secrets using AWS KMS.
+- Monitor with Prometheus and CloudWatch.
+- Keep clusters updated.
+
+---
+
+# Common Mistakes
+
+- Deploying Worker Nodes in public subnets.
+- Using IAM users inside Pods.
+- Ignoring cluster upgrades.
+- Running production without Cluster Autoscaler.
+- Exposing the Kubernetes API publicly.
+- Not monitoring CoreDNS or VPC CNI.
+- Storing AWS credentials inside containers.
+
+---
+
+# Amazon EKS vs Self-Managed Kubernetes
+
+| Amazon EKS | Self-Managed Kubernetes |
+|-------------|-------------------------|
+| Managed Control Plane | Customer Managed |
+| Multi-AZ by Default | Manual HA Setup |
+| Automatic Upgrades | Manual Upgrades |
+| AWS Integration | Manual Integration |
+| Lower Operational Overhead | Higher Operational Overhead |
+
+---
+
+# Amazon EKS vs ECS
+
+| Amazon EKS | Amazon ECS |
+|-------------|------------|
+| Kubernetes Standard | AWS Native |
+| More Flexible | Simpler |
+| Large Kubernetes Ecosystem | AWS Managed Simplicity |
+| Portable | AWS Focused |
+| Higher Learning Curve | Easier to Operate |
+
+---
+
+# Benefits
+
+- Managed Kubernetes
+- High Availability
+- AWS Integration
+- Automatic Scaling
+- Enterprise Security
+- Simplified Operations
+- Cloud-Native Platform
+- Production Ready
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Amazon EKS?
+- What does AWS manage in EKS?
+- Managed Node Group vs Self-Managed Node Group.
+- What is IRSA?
+
+## Intermediate
+
+- Explain Amazon VPC CNI.
+- EKS vs ECS.
+- How does AWS Load Balancer Controller work?
+- Explain the EKS upgrade process.
+- How do Pods access AWS services securely?
+
+## Advanced
+
+- Design a highly available Amazon EKS platform for a banking application using Managed Node Groups, IRSA, AWS Load Balancer Controller, Prometheus, Grafana, Amazon EBS, and Aurora PostgreSQL.
+- Explain the complete deployment flow from GitHub Actions to Amazon EKS, including image storage in Amazon ECR, rolling deployments, monitoring, autoscaling, and rollback.
+- A production Amazon EKS cluster experiences worker node failures, increasing application traffic, and storage provisioning issues during a peak business event. Explain how Managed Node Groups, Cluster Autoscaler, HPA, CSI Drivers, AWS networking, and monitoring tools work together to maintain application availability and recover from failures.
+
+---
+
