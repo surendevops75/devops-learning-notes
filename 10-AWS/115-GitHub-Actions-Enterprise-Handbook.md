@@ -8096,3 +8096,602 @@ Before every production deployment verify
 
 ---
 
+# Chapter 11 - GitHub Actions Enterprise Interview Handbook
+
+GitHub Actions is one of the most important CI/CD platforms used in modern DevOps.
+
+Enterprise interviews focus on much more than writing YAML files.
+
+Interviewers evaluate your understanding of
+
+- CI/CD Design
+- Workflow Architecture
+- Security
+- OIDC Authentication
+- Docker Integration
+- Kubernetes Deployment
+- Terraform Automation
+- Enterprise Governance
+- Production Troubleshooting
+
+This chapter consolidates all GitHub Actions concepts into a practical interview handbook.
+
+---
+
+# GitHub Actions Learning Roadmap
+
+```text
+GitHub Actions Fundamentals
+
+↓
+
+Workflow Syntax
+
+↓
+
+Runners
+
+↓
+
+Variables & Secrets
+
+↓
+
+Artifacts & Cache
+
+↓
+
+Reusable Workflows
+
+↓
+
+Docker Integration
+
+↓
+
+OIDC Security
+
+↓
+
+Production Troubleshooting
+
+↓
+
+Enterprise Architecture
+```
+
+Master these topics
+
+before attending
+
+senior DevOps interviews.
+
+---
+
+# Enterprise CI/CD Flow
+
+```text
+Developer
+
+↓
+
+GitHub Repository
+
+↓
+
+Pull Request
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Monitoring
+```
+
+This architecture
+
+is commonly used
+
+in enterprise environments.
+
+---
+
+# Interview Answer Framework
+
+When answering
+
+architecture questions,
+
+follow this structure.
+
+```text
+Requirements
+
+↓
+
+Architecture
+
+↓
+
+Workflow
+
+↓
+
+Security
+
+↓
+
+Deployment
+
+↓
+
+Monitoring
+
+↓
+
+Rollback
+
+↓
+
+Best Practices
+```
+
+A structured answer
+
+demonstrates
+
+real-world experience.
+
+---
+
+# Frequently Asked Interview Questions
+
+## GitHub Actions Fundamentals
+
+1. What is GitHub Actions?
+2. What is CI/CD?
+3. Why use GitHub Actions?
+4. What is a Workflow?
+5. What is an Event?
+6. What is a Job?
+7. What is a Step?
+8. What is a Runner?
+9. What is an Action?
+10. What are Artifacts?
+
+---
+
+## Workflow Syntax
+
+11. Explain workflow execution.
+12. Job vs Step.
+13. Workflow vs Action.
+14. What are workflow triggers?
+15. Push vs Pull Request trigger.
+16. What is a Matrix Strategy?
+17. What are workflow permissions?
+18. How do conditional jobs work?
+19. What are GitHub contexts?
+20. How do reusable workflows work?
+
+---
+
+## Runners
+
+21. GitHub Hosted Runner vs Self-hosted Runner.
+22. Why use self-hosted runners?
+23. Explain runner labels.
+24. Explain runner groups.
+25. How do runners execute workflows?
+26. How do you secure runners?
+27. How do self-hosted runners communicate with GitHub?
+28. How do you scale self-hosted runners?
+29. Runner cleanup strategy.
+30. Production runner architecture.
+
+---
+
+## Variables & Secrets
+
+31. Variables vs Secrets.
+32. Repository Secrets vs Environment Secrets.
+33. Repository Variables vs Organization Variables.
+34. Why should secrets never be hardcoded?
+35. What are GitHub contexts?
+36. Explain expressions.
+37. What is environment protection?
+38. Why use GitHub Environments?
+39. How do workflows receive configuration?
+40. Explain dynamic workflows.
+
+---
+
+## Artifacts & Cache
+
+41. Artifact vs Cache.
+42. Why use dependency caching?
+43. Explain artifact promotion.
+44. Docker layer caching.
+45. Terraform provider cache.
+46. Artifact retention.
+47. Build Once, Deploy Everywhere.
+48. How do artifacts move between jobs?
+49. How do caches improve performance?
+50. Pipeline optimization strategies.
+
+---
+
+## Docker & Deployment
+
+51. How does GitHub Actions build Docker images?
+52. Explain Docker image tagging.
+53. Why use Amazon ECR?
+54. Explain deployment to Amazon EKS.
+55. Rolling Deployment vs Blue-Green Deployment.
+56. What is Canary Deployment?
+57. How do you validate deployments?
+58. Explain rollback strategy.
+59. Why Build Once, Deploy Everywhere?
+60. How do you monitor deployments?
+
+---
+
+## Security
+
+61. Why is GitHub Actions security important?
+62. What is OIDC?
+63. IAM User vs IAM Role.
+64. Why use OIDC instead of AWS Access Keys?
+65. Explain GitHub Secrets.
+66. How do protected branches improve security?
+67. What are environment approvals?
+68. Explain least privilege.
+69. How do you secure GitHub runners?
+70. Explain CI/CD security scanning.
+
+---
+
+## Enterprise Best Practices
+
+71. Why should workflows be modular?
+72. Why use reusable workflows?
+73. Why separate CI and CD?
+74. How do you standardize pipelines?
+75. Explain governance.
+76. Why version workflows?
+77. Explain deployment approvals.
+78. Workflow monitoring strategy.
+79. Enterprise runner strategy.
+80. Explain GitHub Actions maturity model.
+
+---
+
+# Scenario-Based Questions
+
+## Scenario 1
+
+A workflow is not triggered after a push.
+
+How would you troubleshoot it?
+
+---
+
+## Scenario 2
+
+A Docker image builds successfully
+
+but cannot be pushed
+
+to Amazon ECR.
+
+Explain your investigation.
+
+---
+
+## Scenario 3
+
+Amazon EKS deployment fails
+
+after a successful build.
+
+How would you troubleshoot it?
+
+---
+
+## Scenario 4
+
+Your GitHub Actions pipeline takes
+
+30 minutes.
+
+How would you reduce it
+
+to under 5 minutes?
+
+---
+
+## Scenario 5
+
+A self-hosted runner
+
+is offline.
+
+Explain your investigation.
+
+---
+
+## Scenario 6
+
+Security scanning reports
+
+critical vulnerabilities.
+
+Would you deploy?
+
+Explain your reasoning.
+
+---
+
+## Scenario 7
+
+A deployment succeeds,
+
+but the application is unhealthy.
+
+How would you investigate?
+
+---
+
+## Scenario 8
+
+Production deployment
+
+was accidentally triggered
+
+from a feature branch.
+
+How would you prevent this?
+
+---
+
+## Scenario 9
+
+A workflow uses
+
+AWS Access Keys
+
+stored as secrets.
+
+How would you migrate
+
+to OIDC authentication?
+
+---
+
+## Scenario 10
+
+Your organization manages
+
+500 repositories.
+
+Explain how you would standardize
+
+CI/CD pipelines
+
+using reusable workflows,
+
+composite actions,
+
+security controls,
+
+and governance.
+
+---
+
+# Enterprise Architecture Questions
+
+## Architecture 1
+
+Design a complete CI/CD platform using
+
+- GitHub
+- GitHub Actions
+- SonarQube
+- Trivy
+- Docker
+- Amazon ECR
+- Terraform
+- Amazon EKS
+- Prometheus
+- Grafana
+
+Explain the end-to-end deployment flow.
+
+---
+
+## Architecture 2
+
+Your organization has
+
+multiple AWS accounts
+
+for
+
+- Development
+- Testing
+- Production
+
+Explain how GitHub Actions,
+
+OIDC,
+
+IAM Roles,
+
+and GitHub Environments
+
+work together
+
+to deploy securely.
+
+---
+
+## Architecture 3
+
+A company wants to migrate
+
+from Jenkins
+
+to GitHub Actions.
+
+Explain
+
+- Migration Strategy
+- Workflow Organization
+- Runner Strategy
+- Security
+- Deployment Pipeline
+- Governance
+
+---
+
+## Architecture 4
+
+A financial organization
+
+requires
+
+- Highly Secure CI/CD
+- Deployment Approvals
+- Immutable Deployments
+- Full Audit Trail
+- Multi-Team Governance
+
+Design
+
+the GitHub Actions platform.
+
+---
+
+# Production Readiness Checklist
+
+Before production deployment verify
+
+✓ Workflow Passed
+
+✓ Pull Request Approved
+
+✓ Branch Protection Enabled
+
+✓ Unit Tests Passed
+
+✓ SonarQube Passed
+
+✓ Trivy Scan Passed
+
+✓ OIDC Authentication Successful
+
+✓ Docker Image Versioned
+
+✓ Amazon ECR Updated
+
+✓ Terraform Validated
+
+✓ Amazon EKS Deployment Successful
+
+✓ Monitoring Enabled
+
+✓ Rollback Plan Ready
+
+✓ Documentation Updated
+
+---
+
+# GitHub Actions Troubleshooting Checklist
+
+Always verify
+
+✓ Workflow Trigger
+
+✓ YAML Syntax
+
+✓ Runner Status
+
+✓ Variables
+
+✓ Secrets
+
+✓ OIDC Authentication
+
+✓ Docker Build
+
+✓ Amazon ECR
+
+✓ Terraform
+
+✓ Amazon EKS
+
+✓ Monitoring
+
+✓ Deployment Validation
+
+---
+
+# GitHub Actions Handbook Summary
+
+This handbook covered
+
+- ✅ GitHub Actions Fundamentals
+- ✅ Workflow Syntax
+- ✅ Runners
+- ✅ Variables, Secrets & Contexts
+- ✅ Artifacts & Cache
+- ✅ Reusable Workflows
+- ✅ Docker, Amazon ECR & Amazon EKS Integration
+- ✅ OIDC Authentication & Security
+- ✅ Production Troubleshooting
+- ✅ Enterprise Best Practices
+- ✅ 80+ Interview Questions
+- ✅ 10 Production Scenarios
+- ✅ 4 Enterprise Architecture Discussions
+- ✅ Production Checklists
+- ✅ Enterprise Troubleshooting Framework
+
+---
+
+# File Completed
+
+**File Name:** `115-GitHub-Actions-Enterprise-Handbook.md`
