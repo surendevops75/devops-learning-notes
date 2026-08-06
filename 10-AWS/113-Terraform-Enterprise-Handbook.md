@@ -3993,3 +3993,806 @@ using reusable modules.
 
 ---
 
+# Chapter 6 - Terraform Provisioners, Data Sources & Built-in Functions (Deep Dive)
+
+Terraform primarily provisions infrastructure.
+
+However, there are situations where infrastructure alone is not enough.
+
+Examples
+
+- Copy a configuration file to an EC2 instance
+- Execute initialization scripts
+- Read existing AWS infrastructure
+- Generate dynamic values
+- Query information from AWS
+
+Terraform provides
+
+- Provisioners
+- Data Sources
+- Built-in Functions
+
+These features make Terraform flexible for enterprise deployments.
+
+---
+
+# Terraform Execution Flow
+
+```text
+Terraform
+
+↓
+
+Variables
+
+↓
+
+Data Sources
+
+↓
+
+Resources
+
+↓
+
+Provisioners
+
+↓
+
+Outputs
+```
+
+Each component plays a specific role.
+
+---
+
+# What are Provisioners?
+
+Provisioners execute commands
+
+after
+
+or during
+
+resource creation.
+
+They are generally considered
+
+a **last resort**.
+
+Whenever possible,
+
+prefer
+
+- cloud-init
+- EC2 User Data
+- Ansible
+- Configuration Management Tools
+
+over Provisioners.
+
+---
+
+# Provisioner Workflow
+
+```text
+Terraform
+
+↓
+
+Create EC2
+
+↓
+
+Provisioner
+
+↓
+
+Install Software
+```
+
+Provisioners execute only
+
+after
+
+resource creation.
+
+---
+
+# Types of Provisioners
+
+Terraform supports
+
+- local-exec
+- remote-exec
+- file
+
+---
+
+# local-exec Provisioner
+
+Runs commands
+
+on the machine
+
+executing Terraform.
+
+Architecture
+
+```text
+Terraform Machine
+
+↓
+
+local-exec
+
+↓
+
+Shell Command
+```
+
+Common Uses
+
+- Send Notifications
+- Generate Reports
+- Execute Scripts
+- Trigger Pipelines
+
+---
+
+# remote-exec Provisioner
+
+Runs commands
+
+inside
+
+the created VM.
+
+Architecture
+
+```text
+Terraform
+
+↓
+
+SSH
+
+↓
+
+EC2 Instance
+
+↓
+
+Commands Execute
+```
+
+Common Uses
+
+- Install Packages
+- Configure Servers
+- Start Services
+
+---
+
+# File Provisioner
+
+Copies files
+
+from the local machine
+
+to remote servers.
+
+Workflow
+
+```text
+Terraform Machine
+
+↓
+
+File Provisioner
+
+↓
+
+EC2 Instance
+```
+
+Useful for
+
+- Configuration Files
+- SSL Certificates
+- Scripts
+
+---
+
+# Provisioner Lifecycle
+
+```text
+Resource Created
+
+↓
+
+Provisioner Executes
+
+↓
+
+Configuration Completed
+```
+
+If the provisioner fails,
+
+resource creation
+
+may also fail.
+
+---
+
+# Provisioner Limitations
+
+Provisioners
+
+are not idempotent.
+
+Problems include
+
+- Difficult Error Handling
+- Limited Retry Support
+- Slow Deployments
+- Hard to Maintain
+
+HashiCorp recommends
+
+using them sparingly.
+
+---
+
+# Preferred Alternative
+
+Instead of
+
+```text
+Terraform
+
+↓
+
+remote-exec
+
+↓
+
+Install Nginx
+```
+
+Prefer
+
+```text
+Terraform
+
+↓
+
+EC2 User Data
+
+↓
+
+Boot Script
+
+↓
+
+Install Nginx
+```
+
+Or
+
+```text
+Terraform
+
+↓
+
+EC2
+
+↓
+
+Ansible
+
+↓
+
+Configuration
+```
+
+---
+
+# What are Data Sources?
+
+Data Sources allow Terraform
+
+to read
+
+existing infrastructure
+
+without creating it.
+
+Architecture
+
+```text
+Existing AWS Resource
+
+↓
+
+Data Source
+
+↓
+
+Terraform
+```
+
+---
+
+# Why Data Sources?
+
+Suppose
+
+a VPC
+
+already exists.
+
+Instead of
+
+creating another VPC,
+
+Terraform can read
+
+the existing one.
+
+---
+
+# Data Source Workflow
+
+```text
+Existing Infrastructure
+
+↓
+
+Data Source
+
+↓
+
+Terraform Configuration
+
+↓
+
+New Resources
+```
+
+---
+
+# Common AWS Data Sources
+
+Frequently used data sources
+
+include
+
+- VPC
+- Subnets
+- AMIs
+- Availability Zones
+- IAM Roles
+- Route53 Zones
+- Security Groups
+
+---
+
+# Enterprise Example
+
+Suppose
+
+Networking Team
+
+already created
+
+the VPC.
+
+Application Team
+
+uses
+
+```text
+Data Source
+
+↓
+
+Existing VPC
+
+↓
+
+Deploy EKS
+```
+
+No duplicate infrastructure
+
+is created.
+
+---
+
+# Data Source vs Resource
+
+| Resource | Data Source |
+|-----------|-------------|
+| Creates Infrastructure | Reads Existing Infrastructure |
+| Managed by Terraform | Read Only |
+| Updates State | Does Not Create Resources |
+| Provisioning | Discovery |
+
+---
+
+# Built-in Functions
+
+Terraform provides
+
+many built-in functions
+
+to simplify infrastructure logic.
+
+Categories include
+
+- String
+- Collection
+- Numeric
+- Date
+- File
+- Encoding
+- Network
+
+---
+
+# String Functions
+
+Used for
+
+- Formatting
+- Uppercase
+- Lowercase
+- Replacing Text
+- Joining Strings
+
+Example Workflow
+
+```text
+Input String
+
+↓
+
+Function
+
+↓
+
+Formatted Output
+```
+
+---
+
+# Collection Functions
+
+Work with
+
+- Lists
+- Maps
+- Sets
+
+Examples
+
+```text
+List
+
+↓
+
+Sort
+
+↓
+
+Unique
+
+↓
+
+Length
+```
+
+Useful
+
+for dynamic infrastructure.
+
+---
+
+# Numeric Functions
+
+Examples
+
+```text
+Maximum
+
+Minimum
+
+Absolute
+
+Ceiling
+
+Floor
+```
+
+Useful
+
+for calculations.
+
+---
+
+# File Functions
+
+Terraform can read
+
+local files.
+
+Workflow
+
+```text
+Configuration File
+
+↓
+
+Terraform
+
+↓
+
+Resource
+```
+
+Common Uses
+
+- User Data
+- Certificates
+- JSON Files
+
+---
+
+# Encoding Functions
+
+Useful for
+
+- Base64 Encoding
+- JSON Encoding
+- YAML Processing
+
+Common in
+
+AWS APIs.
+
+---
+
+# CIDR Functions
+
+Terraform provides
+
+network-related functions.
+
+Useful for
+
+- VPC
+- Subnets
+- CIDR Calculations
+
+Enterprise networking
+
+often relies on these functions.
+
+---
+
+# Conditional Logic
+
+Terraform supports
+
+conditional expressions.
+
+Example
+
+```text
+Production
+
+↓
+
+Large Instance
+
+────────────
+
+Development
+
+↓
+
+Small Instance
+```
+
+One configuration
+
+supports multiple environments.
+
+---
+
+# Dynamic Infrastructure
+
+Functions,
+
+variables,
+
+and conditionals
+
+enable
+
+dynamic infrastructure.
+
+Example
+
+```text
+Environment
+
+↓
+
+Logic
+
+↓
+
+Correct Infrastructure
+```
+
+---
+
+# Enterprise Workflow
+
+```text
+GitHub Actions
+
+↓
+
+Terraform
+
+↓
+
+Read Existing VPC
+
+↓
+
+Provision EKS
+
+↓
+
+Configure Nodes
+
+↓
+
+Outputs
+```
+
+Infrastructure
+
+adapts automatically.
+
+---
+
+# Banking Example
+
+```text
+Existing VPC
+
+↓
+
+Data Source
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Aurora
+
+↓
+
+ALB
+
+↓
+
+Application
+```
+
+Networking
+
+remains centrally managed
+
+while applications
+
+are deployed independently.
+
+---
+
+# Provisioners vs Configuration Management
+
+| Provisioners | Ansible |
+|---------------|----------|
+| Limited Configuration | Full Configuration Management |
+| Terraform Feature | Dedicated Tool |
+| Basic Setup | Complete Server Management |
+| Last Resort | Preferred Approach |
+
+---
+
+# Data Sources vs Variables
+
+| Variables | Data Sources |
+|------------|--------------|
+| User Input | Existing Infrastructure |
+| External Values | AWS Resource Information |
+| Configurable | Read Only |
+| Environment Specific | Cloud Discovery |
+
+---
+
+# Benefits
+
+- Read Existing Infrastructure
+- Dynamic Deployments
+- Reduced Duplication
+- Flexible Configurations
+- Better Automation
+- Easier Integration
+
+---
+
+# Best Practices
+
+- Prefer data sources over duplicate resources.
+- Use Provisioners only when absolutely necessary.
+- Prefer User Data or Ansible for server configuration.
+- Keep infrastructure provisioning separate from application configuration.
+- Use built-in functions instead of hardcoding values.
+- Read existing shared infrastructure using data sources.
+- Keep Terraform focused on Infrastructure as Code.
+
+---
+
+# Common Mistakes
+
+- Overusing remote-exec.
+- Installing entire applications using Provisioners.
+- Creating duplicate infrastructure instead of using data sources.
+- Hardcoding AMI IDs.
+- Ignoring built-in functions.
+- Mixing infrastructure provisioning with configuration management.
+- Using Provisioners for recurring configuration changes.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are Terraform Provisioners?
+- What is a Data Source?
+- Resource vs Data Source.
+- What is local-exec?
+- What is remote-exec?
+
+## Intermediate
+
+- Why does HashiCorp discourage Provisioners?
+- Explain the File Provisioner.
+- What are built-in functions?
+- When should you use a Data Source?
+- Provisioners vs User Data.
+
+## Advanced
+
+- Design a Terraform workflow where the networking team provisions a shared VPC and the platform team deploys Amazon EKS using data sources, reusable modules, and GitHub Actions.
+- Explain why Provisioners should be avoided in enterprise environments and describe preferred alternatives such as cloud-init, EC2 User Data, and Ansible.
+- A large organization has separate networking, security, and application teams. Explain how Terraform Data Sources, Modules, Functions, and CI/CD pipelines enable teams to share existing infrastructure while maintaining automation, consistency, and governance.
+
+---
+
