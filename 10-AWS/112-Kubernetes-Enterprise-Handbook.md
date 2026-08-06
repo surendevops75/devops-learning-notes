@@ -4331,3 +4331,908 @@ receive resources first.
 
 ---
 
+# Chapter 6 - Kubernetes Security (RBAC, Service Accounts, Network Policies & Pod Security)
+
+Security is one of the most critical aspects of a Kubernetes cluster.
+
+A production Kubernetes environment must protect
+
+- Applications
+- Containers
+- Secrets
+- APIs
+- Worker Nodes
+- Network Traffic
+
+Kubernetes provides multiple layers of security.
+
+```text
+Authentication
+
+↓
+
+Authorization
+
+↓
+
+Admission Control
+
+↓
+
+Network Security
+
+↓
+
+Pod Security
+
+↓
+
+Runtime Security
+```
+
+Each layer contributes to the overall security posture.
+
+---
+
+# Kubernetes Security Architecture
+
+```text
+Users
+
+↓
+
+API Server
+
+↓
+
+Authentication
+
+↓
+
+Authorization (RBAC)
+
+↓
+
+Admission Controller
+
+↓
+
+Cluster Resources
+```
+
+Every request passes through these security layers.
+
+---
+
+# Security Principles
+
+Production Kubernetes clusters follow
+
+- Least Privilege
+- Zero Trust
+- Defense in Depth
+- Network Segmentation
+- Encryption
+- Continuous Monitoring
+
+---
+
+# Authentication
+
+Authentication answers
+
+```text
+Who are you?
+```
+
+Examples
+
+- X.509 Certificates
+- Service Accounts
+- OpenID Connect (OIDC)
+- IAM (Amazon EKS)
+
+---
+
+# Authorization
+
+Authorization answers
+
+```text
+What are you allowed to do?
+```
+
+Kubernetes commonly uses
+
+RBAC
+
+(Role-Based Access Control)
+
+---
+
+# Admission Controllers
+
+Admission Controllers validate requests
+
+before they reach etcd.
+
+Examples
+
+- Resource Validation
+- Security Policies
+- Image Verification
+- Default Configuration
+
+---
+
+# RBAC Overview
+
+RBAC controls access
+
+to Kubernetes resources.
+
+Architecture
+
+```text
+User
+
+↓
+
+Role
+
+↓
+
+RoleBinding
+
+↓
+
+Permissions
+```
+
+RBAC follows the principle of least privilege.
+
+---
+
+# RBAC Components
+
+- Role
+- ClusterRole
+- RoleBinding
+- ClusterRoleBinding
+
+---
+
+# Role
+
+A Role grants permissions
+
+inside a namespace.
+
+Example
+
+```text
+Namespace
+
+↓
+
+Developer
+
+↓
+
+Read Pods
+
+↓
+
+Read Services
+```
+
+Access is limited to that namespace.
+
+---
+
+# ClusterRole
+
+ClusterRoles grant permissions
+
+across the entire cluster.
+
+Example
+
+```text
+Cluster
+
+↓
+
+Administrator
+
+↓
+
+Manage Nodes
+
+↓
+
+Manage Namespaces
+```
+
+---
+
+# RoleBinding
+
+RoleBinding connects
+
+```text
+User
+
+↓
+
+Role
+
+↓
+
+Namespace
+```
+
+Permissions become effective.
+
+---
+
+# ClusterRoleBinding
+
+Cluster-wide equivalent
+
+of RoleBinding.
+
+```text
+User
+
+↓
+
+ClusterRole
+
+↓
+
+Entire Cluster
+```
+
+---
+
+# RBAC Workflow
+
+```text
+User
+
+↓
+
+API Server
+
+↓
+
+RBAC
+
+↓
+
+Allow
+
+↓
+
+Request Processed
+```
+
+If permission is missing,
+
+the request is denied.
+
+---
+
+# Principle of Least Privilege
+
+Instead of
+
+```text
+Administrator Access
+```
+
+Grant
+
+```text
+Read Pods
+
+↓
+
+Deployments
+
+↓
+
+Services
+```
+
+Only required permissions.
+
+---
+
+# Service Accounts
+
+Applications inside Pods
+
+should never use human accounts.
+
+Instead,
+
+they use
+
+Service Accounts.
+
+---
+
+# Service Account Architecture
+
+```text
+Pod
+
+↓
+
+Service Account
+
+↓
+
+API Server
+```
+
+Applications authenticate securely.
+
+---
+
+# Why Service Accounts?
+
+Without Service Accounts
+
+```text
+Application
+
+↓
+
+Administrator Credentials
+```
+
+Security risk.
+
+---
+
+With Service Accounts
+
+```text
+Application
+
+↓
+
+Dedicated Identity
+
+↓
+
+Least Privilege
+```
+
+---
+
+# Service Account Example
+
+```text
+Payment Service
+
+↓
+
+Payment Service Account
+
+↓
+
+Read Secrets
+
+↓
+
+Access ConfigMaps
+```
+
+Each application receives
+
+its own identity.
+
+---
+
+# IAM Roles for Service Accounts (IRSA)
+
+Amazon EKS integrates
+
+Service Accounts
+
+with
+
+AWS IAM.
+
+Architecture
+
+```text
+Pod
+
+↓
+
+Service Account
+
+↓
+
+IAM Role
+
+↓
+
+AWS Services
+```
+
+Applications access AWS securely
+
+without static credentials.
+
+---
+
+# IRSA Example
+
+```text
+Reporting Pod
+
+↓
+
+IAM Role
+
+↓
+
+Amazon S3
+```
+
+No access keys stored
+
+inside the Pod.
+
+---
+
+# Network Policies
+
+By default,
+
+Pods can communicate
+
+with every other Pod.
+
+Network Policies restrict traffic.
+
+---
+
+# Network Policy Architecture
+
+```text
+Frontend
+
+↓
+
+Allowed
+
+↓
+
+Backend
+
+────────────
+
+Frontend
+
+↓
+
+Blocked
+
+↓
+
+Database
+```
+
+Only authorized communication is permitted.
+
+---
+
+# Ingress Rules
+
+Ingress rules define
+
+incoming traffic.
+
+Example
+
+```text
+Frontend
+
+↓
+
+Backend
+```
+
+Allowed.
+
+---
+
+# Egress Rules
+
+Egress rules define
+
+outgoing traffic.
+
+Example
+
+```text
+Backend
+
+↓
+
+Database
+```
+
+Allowed.
+
+Everything else
+
+can be denied.
+
+---
+
+# Zero Trust Networking
+
+Every connection
+
+must be explicitly allowed.
+
+```text
+Pod
+
+↓
+
+Network Policy
+
+↓
+
+Allowed Communication
+```
+
+No implicit trust exists.
+
+---
+
+# Pod Security
+
+Pods themselves
+
+should follow
+
+security best practices.
+
+Examples
+
+- Non-root User
+- Read-only Filesystem
+- Drop Linux Capabilities
+- Restricted Privileges
+
+---
+
+# Security Context
+
+SecurityContext controls
+
+container privileges.
+
+Common settings
+
+- runAsNonRoot
+- readOnlyRootFilesystem
+- allowPrivilegeEscalation
+- fsGroup
+
+---
+
+# Example Security Context
+
+```text
+Container
+
+↓
+
+Non-root User
+
+↓
+
+Read-only Filesystem
+
+↓
+
+Restricted Capabilities
+```
+
+---
+
+# Pod Security Standards
+
+Kubernetes defines
+
+three security profiles.
+
+```text
+Privileged
+
+↓
+
+Baseline
+
+↓
+
+Restricted
+```
+
+Production clusters
+
+should aim for
+
+Restricted.
+
+---
+
+# Image Security
+
+Only trusted images
+
+should be deployed.
+
+Enterprise pipelines use
+
+```text
+GitHub Actions
+
+↓
+
+Trivy
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Deployment
+```
+
+Images are scanned
+
+before production.
+
+---
+
+# Secret Security
+
+Best practices
+
+- Encrypt Secrets
+- RBAC Protection
+- Rotate Credentials
+- Use External Secret Managers
+
+---
+
+# API Server Security
+
+Protect the API Server using
+
+- TLS
+- Authentication
+- Authorization
+- Audit Logging
+- Network Restrictions
+
+The API Server should never be publicly exposed without proper controls.
+
+---
+
+# Node Security
+
+Protect Worker Nodes
+
+using
+
+- OS Hardening
+- Regular Patching
+- Minimal Packages
+- Restricted SSH Access
+
+---
+
+# etcd Security
+
+Protect etcd using
+
+- TLS Encryption
+- Encryption at Rest
+- Regular Backups
+- Restricted Access
+
+Compromise of etcd
+
+means compromise
+
+of the cluster.
+
+---
+
+# Runtime Security
+
+Monitor containers
+
+for
+
+- Privilege Escalation
+- Suspicious Processes
+- File System Changes
+- Unexpected Network Activity
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Users
+
+↓
+
+OIDC
+
+↓
+
+API Server
+
+↓
+
+RBAC
+
+↓
+
+Network Policies
+
+↓
+
+Pods
+
+↓
+
+IRSA
+
+↓
+
+AWS Services
+```
+
+Every layer contributes
+
+to cluster security.
+
+---
+
+# Amazon EKS Security
+
+Typical architecture
+
+```text
+IAM
+
+↓
+
+EKS Cluster
+
+↓
+
+Service Accounts
+
+↓
+
+IAM Roles (IRSA)
+
+↓
+
+Amazon S3
+
+↓
+
+Secrets Manager
+```
+
+Applications securely access AWS services.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Restricted Network Policy
+
+↓
+
+Dedicated Service Account
+
+↓
+
+IAM Role
+
+↓
+
+Encrypted Secrets
+
+↓
+
+Aurora Database
+```
+
+Every component follows
+
+least privilege.
+
+---
+
+# Security Best Practices
+
+- Enable RBAC.
+- Follow the principle of least privilege.
+- Use Service Accounts for applications.
+- Use IRSA instead of static AWS credentials.
+- Apply Network Policies.
+- Run containers as non-root.
+- Scan images before deployment.
+- Encrypt Secrets and etcd.
+- Restrict API Server access.
+- Monitor cluster activity continuously.
+
+---
+
+# Common Mistakes
+
+- Giving cluster-admin access to everyone.
+- Running containers as root.
+- Using default Service Accounts.
+- Storing AWS access keys inside Pods.
+- Deploying unscanned images.
+- Ignoring Network Policies.
+- Exposing the Kubernetes API publicly without restrictions.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is RBAC?
+- Role vs ClusterRole.
+- What is a Service Account?
+- Why are Network Policies required?
+
+## Intermediate
+
+- RoleBinding vs ClusterRoleBinding.
+- Explain IRSA in Amazon EKS.
+- What is a SecurityContext?
+- Explain Pod Security Standards.
+- How are Secrets protected in Kubernetes?
+
+## Advanced
+
+- Design a secure Amazon EKS platform using IAM, RBAC, IRSA, Network Policies, encrypted Secrets, Pod Security Standards, and least-privilege access.
+- Explain the complete request flow when a Pod running in Amazon EKS accesses an Amazon S3 bucket using IAM Roles for Service Accounts.
+- A financial institution must deploy sensitive workloads on Kubernetes while meeting PCI-DSS requirements. Design the complete Kubernetes security architecture, including authentication, authorization, network segmentation, workload identity, secret management, image security, runtime security, monitoring, and AWS integrations.
+
+---
+
