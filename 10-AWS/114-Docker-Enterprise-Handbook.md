@@ -6298,5 +6298,921 @@ Before production deployment verify
 - Explain how you would secure the complete Docker image lifecycle from Dockerfile creation through production deployment.
 - A financial organization must comply with strict security requirements for containerized workloads. Explain how you would design image security, registry security, secrets management, runtime protection, CI/CD security gates, monitoring, and governance to minimize risk while supporting continuous delivery.
 
---
+---
+
+# Chapter 9 - Docker Production Troubleshooting (50+ Enterprise Scenarios)
+
+Building Docker containers is only the beginning.
+
+In production,
+
+containers may fail because of
+
+- Image Problems
+- Networking Issues
+- Storage Failures
+- Resource Constraints
+- Security Restrictions
+- Registry Errors
+- Runtime Issues
+
+A Senior DevOps Engineer should follow
+
+a structured troubleshooting approach
+
+instead of making random changes.
+
+---
+
+# Enterprise Troubleshooting Framework
+
+Always investigate systematically.
+
+```text
+Alert
+
+↓
+
+Understand Business Impact
+
+↓
+
+Check Container Status
+
+↓
+
+Review Logs
+
+↓
+
+Verify Image
+
+↓
+
+Check Resources
+
+↓
+
+Check Network
+
+↓
+
+Check Storage
+
+↓
+
+Identify Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validate
+
+↓
+
+Postmortem
+```
+
+Never restart containers
+
+without understanding
+
+why they failed.
+
+---
+
+# Scenario 1 - Container Exits Immediately
+
+## Symptoms
+
+```text
+Container
+
+↓
+
+Exited
+```
+
+---
+
+## Investigation
+
+Check
+
+- Application Process
+- Startup Command
+- Logs
+- Exit Code
+
+---
+
+## Resolution
+
+- Verify application startup.
+- Check CMD/ENTRYPOINT.
+- Review application logs.
+
+---
+
+# Scenario 2 - Container Restart Loop
+
+## Symptoms
+
+```text
+Container
+
+↓
+
+Crash
+
+↓
+
+Restart
+
+↓
+
+Crash
+
+↓
+
+Restart
+```
+
+---
+
+## Investigation
+
+Check
+
+- Logs
+- Health Checks
+- Application Errors
+- Resource Limits
+
+---
+
+## Resolution
+
+Fix
+
+the application
+
+before restarting repeatedly.
+
+---
+
+# Scenario 3 - Image Pull Failed
+
+## Investigation
+
+Verify
+
+- Image Name
+- Image Tag
+- Registry Access
+- Network Connectivity
+
+---
+
+## Resolution
+
+Confirm
+
+image exists
+
+and registry authentication succeeds.
+
+---
+
+# Scenario 4 - Authentication Failed
+
+Possible Causes
+
+- Wrong Credentials
+- Expired Token
+- IAM Permission Issues
+
+---
+
+Resolution
+
+Verify
+
+registry authentication.
+
+---
+
+# Scenario 5 - Wrong Image Version Deployed
+
+Symptoms
+
+Unexpected application behavior.
+
+---
+
+Investigation
+
+Verify
+
+- Image Tag
+- Image Digest
+- Deployment Pipeline
+
+---
+
+Resolution
+
+Deploy
+
+the intended image version.
+
+---
+
+# Scenario 6 - Container Cannot Reach Internet
+
+Check
+
+- Docker Network
+- Host Firewall
+- DNS
+- Proxy Configuration
+
+---
+
+# Scenario 7 - Containers Cannot Communicate
+
+Review
+
+- Network Configuration
+- Service Names
+- DNS Resolution
+- Network Isolation
+
+---
+
+# Scenario 8 - Port Already in Use
+
+Symptoms
+
+```text
+Bind for 0.0.0.0 failed
+```
+
+---
+
+Resolution
+
+Identify
+
+the process
+
+already using
+
+the port.
+
+---
+
+# Scenario 9 - Volume Not Mounted
+
+Verify
+
+- Volume Exists
+- Mount Path
+- Permissions
+
+---
+
+# Scenario 10 - Data Lost After Restart
+
+Cause
+
+Application data
+
+stored inside
+
+the writable container layer.
+
+---
+
+Resolution
+
+Use
+
+Docker Volumes
+
+for persistent storage.
+
+---
+
+# Scenario 11 - Disk Space Full
+
+Check
+
+- Unused Images
+- Stopped Containers
+- Volumes
+- Build Cache
+
+---
+
+Resolution
+
+Clean
+
+unused Docker resources.
+
+---
+
+# Scenario 12 - Image Too Large
+
+Investigate
+
+- Base Image
+- Installed Packages
+- Multi-Stage Build
+- Layer Count
+
+---
+
+Resolution
+
+Optimize
+
+the Dockerfile.
+
+---
+
+# Scenario 13 - Slow Docker Build
+
+Review
+
+- Layer Ordering
+- Cache Usage
+- Build Context
+- .dockerignore
+
+---
+
+# Scenario 14 - Cache Not Used
+
+Possible Causes
+
+- Dockerfile Changes
+- COPY Before Dependencies
+- Build Context Changes
+
+---
+
+# Scenario 15 - Environment Variables Missing
+
+Check
+
+- Environment Configuration
+- Compose File
+- Runtime Parameters
+
+---
+
+# Scenario 16 - Application Cannot Connect to Database
+
+Verify
+
+- Database Container
+- Network
+- DNS
+- Credentials
+
+---
+
+# Scenario 17 - High CPU Usage
+
+Review
+
+- Application
+- Infinite Loops
+- Resource Limits
+
+---
+
+# Scenario 18 - High Memory Usage
+
+Investigate
+
+- Memory Leaks
+- JVM Heap
+- Container Limits
+
+---
+
+# Scenario 19 - Container OOMKilled
+
+Cause
+
+Container
+
+exceeded
+
+memory limit.
+
+---
+
+Resolution
+
+Increase memory
+
+or optimize application.
+
+---
+
+# Scenario 20 - Permission Denied
+
+Review
+
+- File Permissions
+- User
+- Mounted Volumes
+
+---
+
+# Scenario 21 - Container Running as Root
+
+Resolution
+
+Configure
+
+a non-root user
+
+inside the image.
+
+---
+
+# Scenario 22 - Docker Daemon Not Running
+
+Verify
+
+Docker Engine
+
+service status
+
+before troubleshooting containers.
+
+---
+
+# Scenario 23 - Docker Build Failed
+
+Check
+
+- Dockerfile
+- Build Context
+- Network
+- Base Image
+
+---
+
+# Scenario 24 - Registry Unavailable
+
+Review
+
+- Registry Health
+- DNS
+- Network
+- Authentication
+
+---
+
+# Scenario 25 - Image Push Failed
+
+Check
+
+- Permissions
+- Repository
+- Authentication
+- Image Tag
+
+---
+
+# Scenario 26 - Image Pull Timeout
+
+Investigate
+
+- Internet
+- Registry
+- Firewall
+- Proxy
+
+---
+
+# Scenario 27 - Container Health Check Failed
+
+Verify
+
+- Health Endpoint
+- Startup Time
+- Port
+- Application
+
+---
+
+# Scenario 28 - DNS Resolution Failure
+
+Check
+
+- Docker Network
+- Embedded DNS
+- Container Names
+
+---
+
+# Scenario 29 - Build Context Too Large
+
+Review
+
+`.dockerignore`
+
+to exclude
+
+unnecessary files.
+
+---
+
+# Scenario 30 - Secret Exposed Inside Image
+
+Resolution
+
+Remove
+
+secret
+
+from image.
+
+Store it externally.
+
+---
+
+# Scenario 31 - Wrong Base Image
+
+Review
+
+- OS Compatibility
+- Runtime Version
+- Security Updates
+
+---
+
+# Scenario 32 - Application Works Locally but Not in Container
+
+Check
+
+- Missing Dependencies
+- Environment Variables
+- File Paths
+
+---
+
+# Scenario 33 - Container Cannot Write Files
+
+Review
+
+- Volume Mount
+- Permissions
+- Read-only Filesystem
+
+---
+
+# Scenario 34 - Time Zone Incorrect
+
+Verify
+
+- Container Configuration
+- Application Settings
+
+---
+
+# Scenario 35 - SSL Certificate Missing
+
+Review
+
+- Mounted Certificates
+- Image Contents
+- Secrets
+
+---
+
+# Scenario 36 - Multi-Stage Build Failed
+
+Investigate
+
+- Stage References
+- Artifact Copy
+- Build Output
+
+---
+
+# Scenario 37 - Wrong ENTRYPOINT
+
+Symptoms
+
+Container starts
+
+then exits immediately.
+
+---
+
+Resolution
+
+Review
+
+ENTRYPOINT
+
+configuration.
+
+---
+
+# Scenario 38 - Wrong CMD
+
+Verify
+
+default startup command.
+
+---
+
+# Scenario 39 - Container Starts Slowly
+
+Review
+
+- Application Startup
+- Dependency Initialization
+- Image Size
+
+---
+
+# Scenario 40 - Logging Missing
+
+Check
+
+- Application Logs
+- Docker Logging Driver
+- Output Destination
+
+---
+
+# Scenario 41 - Image Scan Failed
+
+Review
+
+- Critical CVEs
+- Base Image
+- Installed Packages
+
+---
+
+# Scenario 42 - Image Digest Mismatch
+
+Verify
+
+- Registry
+- Deployment Manifest
+- Image Version
+
+---
+
+# Scenario 43 - Container Uses Too Much Disk
+
+Investigate
+
+- Temporary Files
+- Logs
+- Cache
+
+---
+
+# Scenario 44 - Volume Permission Issues
+
+Check
+
+- UID
+- GID
+- Mount Permissions
+
+---
+
+# Scenario 45 - Compose Application Not Starting
+
+Verify
+
+- Dependencies
+- Environment Variables
+- Network
+- Volumes
+
+---
+
+# Scenario 46 - Container Not Accessible Externally
+
+Review
+
+- Port Mapping
+- Firewall
+- Host Network
+
+---
+
+# Scenario 47 - Registry Cleanup Deleted Required Image
+
+Implement
+
+image retention
+
+and lifecycle policies.
+
+---
+
+# Scenario 48 - Security Scan Blocks Deployment
+
+Investigate
+
+- Critical Vulnerabilities
+- Compliance Policies
+
+Rebuild
+
+with updated dependencies.
+
+---
+
+# Scenario 49 - Production Deployment Failed
+
+Recovery
+
+```text
+Rollback
+
+↓
+
+Previous Image
+
+↓
+
+Validate
+
+↓
+
+Production Restored
+```
+
+---
+
+# Scenario 50 - Complete Container Platform Failure
+
+Recovery Plan
+
+```text
+Registry
+
+↓
+
+Docker Images
+
+↓
+
+Containers
+
+↓
+
+Volumes
+
+↓
+
+Monitoring
+
+↓
+
+Application Restored
+```
+
+---
+
+# Enterprise Troubleshooting Checklist
+
+Always verify
+
+✓ Docker Engine
+
+✓ Container Status
+
+✓ Logs
+
+✓ Image Version
+
+✓ Registry
+
+✓ Network
+
+✓ DNS
+
+✓ Volumes
+
+✓ Environment Variables
+
+✓ Resource Limits
+
+✓ Security
+
+---
+
+# Docker Incident Workflow
+
+```text
+Alert
+
+↓
+
+Logs
+
+↓
+
+Container
+
+↓
+
+Image
+
+↓
+
+Resources
+
+↓
+
+Network
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validation
+
+↓
+
+Postmortem
+```
+
+---
+
+# Best Practices
+
+- Investigate before restarting containers.
+- Always review container logs first.
+- Use versioned images for rollback.
+- Keep containers stateless.
+- Monitor CPU and memory usage.
+- Scan images before deployment.
+- Use centralized logging.
+- Document production incidents.
+
+---
+
+# Common Mistakes
+
+- Restarting containers without checking logs.
+- Assuming the latest image is correct.
+- Storing application data inside containers.
+- Ignoring image scan failures.
+- Hardcoding secrets.
+- Running containers without resource limits.
+- Making manual changes inside running containers.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How do you troubleshoot a Docker container that exits immediately?
+- Why does a container restart continuously?
+- What causes Image Pull failures?
+
+## Intermediate
+
+- How do you troubleshoot Docker networking issues?
+- Explain volume-related failures.
+- Why do Docker builds become slow?
+- How do you troubleshoot registry authentication issues?
+- Explain OOMKilled in Docker.
+
+## Advanced
+
+- Design a production troubleshooting runbook for Docker covering images, registries, networking, storage, security, resource management, and CI/CD integration.
+- Explain your complete troubleshooting methodology when a production Docker deployment fails after a new image release.
+- A financial application running in Docker experiences image pull failures, restart loops, storage issues, network connectivity problems, and increasing memory consumption after deployment. Explain your end-to-end investigation process, recovery strategy, rollback decision, and long-term preventive improvements.
+
+---
 
