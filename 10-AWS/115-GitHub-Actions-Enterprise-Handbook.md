@@ -6420,3 +6420,839 @@ Before production deployment verify
 
 ---
 
+# Chapter 9 - GitHub Actions Production Troubleshooting (50+ Enterprise Scenarios)
+
+GitHub Actions pipelines automate
+
+- Builds
+- Testing
+- Security Scanning
+- Docker Image Creation
+- Infrastructure Provisioning
+- Kubernetes Deployment
+
+When pipelines fail,
+
+the impact can include
+
+- Failed Releases
+- Production Outages
+- Infrastructure Drift
+- Deployment Delays
+
+A Senior DevOps Engineer should follow
+
+a structured troubleshooting methodology
+
+instead of rerunning pipelines repeatedly.
+
+---
+
+# Enterprise Troubleshooting Framework
+
+Always investigate in this order.
+
+```text
+Alert
+
+↓
+
+Understand Business Impact
+
+↓
+
+Review Workflow Run
+
+↓
+
+Check Trigger
+
+↓
+
+Review Logs
+
+↓
+
+Verify Runner
+
+↓
+
+Verify Authentication
+
+↓
+
+Check Dependencies
+
+↓
+
+Check Deployment
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validate
+
+↓
+
+Postmortem
+```
+
+---
+
+# Scenario 1 - Workflow Not Triggered
+
+## Symptoms
+
+```text
+Git Push
+
+↓
+
+No Workflow
+```
+
+---
+
+## Investigation
+
+Verify
+
+- Workflow Location
+- Trigger Configuration
+- Branch
+- Repository Settings
+
+---
+
+## Resolution
+
+Confirm
+
+workflow exists
+
+under
+
+`.github/workflows`
+
+and trigger conditions match the event.
+
+---
+
+# Scenario 2 - Workflow Syntax Error
+
+## Symptoms
+
+Workflow fails immediately.
+
+---
+
+## Investigation
+
+Check
+
+- YAML Syntax
+- Indentation
+- Missing Keys
+
+---
+
+## Resolution
+
+Validate
+
+workflow YAML
+
+before committing.
+
+---
+
+# Scenario 3 - Runner Not Available
+
+Possible Causes
+
+- Hosted Runner Issue
+- Self-hosted Runner Offline
+- Incorrect Runner Labels
+
+---
+
+## Resolution
+
+Verify
+
+runner availability
+
+and labels.
+
+---
+
+# Scenario 4 - Job Stuck in Queue
+
+Check
+
+- Runner Capacity
+- Organization Limits
+- Concurrency Settings
+
+---
+
+# Scenario 5 - Checkout Failed
+
+Verify
+
+- Repository Permissions
+- GitHub Token Permissions
+- Repository Availability
+
+---
+
+# Scenario 6 - Secret Not Available
+
+Check
+
+- Repository Secret
+- Environment Secret
+- Organization Secret
+
+Verify
+
+workflow access.
+
+---
+
+# Scenario 7 - Variable Missing
+
+Review
+
+- Repository Variables
+- Environment Variables
+- Workflow Scope
+
+---
+
+# Scenario 8 - OIDC Authentication Failed
+
+Check
+
+- IAM Role
+- Trust Policy
+- OIDC Provider
+- Repository Configuration
+
+---
+
+# Scenario 9 - AWS Authentication Failed
+
+Verify
+
+- IAM Role
+- AWS Region
+- Temporary Credentials
+
+---
+
+# Scenario 10 - Docker Build Failed
+
+Review
+
+- Dockerfile
+- Build Context
+- Base Image
+- Dependencies
+
+---
+
+# Scenario 11 - Docker Push Failed
+
+Verify
+
+- Amazon ECR Login
+- Repository Exists
+- IAM Permissions
+
+---
+
+# Scenario 12 - Image Scan Failed
+
+Investigate
+
+- Critical CVEs
+- Base Image
+- Outdated Packages
+
+Rebuild
+
+using updated dependencies.
+
+---
+
+# Scenario 13 - Amazon EKS Deployment Failed
+
+Check
+
+- Cluster Access
+- IAM Permissions
+- Kubernetes Manifest
+- Image Availability
+
+---
+
+# Scenario 14 - Terraform Apply Failed
+
+Review
+
+- Backend
+- State Lock
+- Variables
+- Provider Versions
+
+---
+
+# Scenario 15 - Artifact Upload Failed
+
+Verify
+
+- File Exists
+- Storage Limits
+- Artifact Path
+
+---
+
+# Scenario 16 - Artifact Download Failed
+
+Check
+
+- Artifact Name
+- Previous Job
+- Workflow Dependencies
+
+---
+
+# Scenario 17 - Cache Not Restored
+
+Review
+
+- Cache Key
+- Dependency Changes
+- Cache Scope
+
+---
+
+# Scenario 18 - Pipeline Slow
+
+Investigate
+
+- Cache Usage
+- Parallel Jobs
+- Runner Performance
+
+---
+
+# Scenario 19 - Job Timeout
+
+Check
+
+- Infinite Loops
+- Long-running Scripts
+- Timeout Configuration
+
+---
+
+# Scenario 20 - Workflow Cancelled
+
+Verify
+
+- Manual Cancellation
+- Concurrency Rules
+- Repository Limits
+
+---
+
+# Scenario 21 - Pull Request Checks Failed
+
+Review
+
+- Unit Tests
+- Linting
+- Security Scans
+- Required Status Checks
+
+---
+
+# Scenario 22 - Branch Protection Blocks Merge
+
+Check
+
+- Required Reviews
+- Required Checks
+- Branch Protection Rules
+
+---
+
+# Scenario 23 - Deployment Approval Pending
+
+Verify
+
+- GitHub Environment Rules
+- Required Reviewers
+
+---
+
+# Scenario 24 - Self-hosted Runner Offline
+
+Review
+
+- Runner Service
+- Network
+- GitHub Connectivity
+
+---
+
+# Scenario 25 - Docker Image Uses Wrong Tag
+
+Check
+
+- Workflow Variables
+- Image Tag Strategy
+- Deployment Manifest
+
+---
+
+# Scenario 26 - Kubernetes Pulls Old Image
+
+Verify
+
+- Image Tag
+- Deployment Manifest
+- Image Pull Policy
+
+---
+
+# Scenario 27 - SonarQube Scan Failed
+
+Review
+
+- Connectivity
+- Authentication
+- Project Configuration
+
+---
+
+# Scenario 28 - Trivy Scan Failed
+
+Investigate
+
+- Vulnerability Database
+- Image Availability
+- Scanner Configuration
+
+---
+
+# Scenario 29 - GitHub API Rate Limit
+
+Check
+
+- API Usage
+- Authentication
+- Retry Logic
+
+---
+
+# Scenario 30 - Matrix Job Failed
+
+Review
+
+- Matrix Configuration
+- Platform-specific Errors
+
+---
+
+# Scenario 31 - Environment Variables Incorrect
+
+Verify
+
+- Workflow Scope
+- Job Scope
+- Step Scope
+
+---
+
+# Scenario 32 - Workflow Executes on Wrong Branch
+
+Review
+
+trigger configuration.
+
+---
+
+# Scenario 33 - Production Deployment Triggered Accidentally
+
+Investigate
+
+- Branch Protection
+- Environment Rules
+- Conditional Logic
+
+---
+
+# Scenario 34 - Multiple Deployments Running Simultaneously
+
+Review
+
+- Concurrency Configuration
+- Environment Locks
+
+---
+
+# Scenario 35 - Runner Disk Full
+
+Clean
+
+- Docker Images
+- Build Cache
+- Temporary Files
+- Artifacts
+
+---
+
+# Scenario 36 - Memory Exhausted
+
+Review
+
+- Build Process
+- Runner Size
+- Application Build
+
+---
+
+# Scenario 37 - Workflow Uses Old Action Version
+
+Verify
+
+action versions.
+
+Keep
+
+reusable actions updated.
+
+---
+
+# Scenario 38 - Permission Denied
+
+Check
+
+- Repository Permissions
+- GitHub Token
+- IAM Policies
+
+---
+
+# Scenario 39 - Deployment Rollback Required
+
+Recovery
+
+```text
+Previous Image
+
+↓
+
+Redeploy
+
+↓
+
+Validate
+
+↓
+
+Production Restored
+```
+
+---
+
+# Scenario 40 - Notification Not Sent
+
+Review
+
+- Notification Step
+- Integration Configuration
+- Secrets
+
+---
+
+# Scenario 41 - Scheduled Workflow Did Not Run
+
+Verify
+
+- Schedule
+- Repository Activity
+- Workflow Configuration
+
+---
+
+# Scenario 42 - Manual Workflow Cannot Start
+
+Check
+
+- Repository Permissions
+- Workflow Configuration
+- User Permissions
+
+---
+
+# Scenario 43 - Reusable Workflow Failed
+
+Review
+
+- Workflow Version
+- Inputs
+- Outputs
+- Secrets
+
+---
+
+# Scenario 44 - Composite Action Failed
+
+Verify
+
+- Action Structure
+- Required Inputs
+- Repository Access
+
+---
+
+# Scenario 45 - Deployment Succeeded but Application Failed
+
+Check
+
+- Pod Health
+- Application Logs
+- Readiness Checks
+- Configuration
+
+---
+
+# Scenario 46 - Wrong Environment Deployed
+
+Verify
+
+- Branch Mapping
+- Environment Variables
+- Conditional Logic
+
+---
+
+# Scenario 47 - Security Policy Blocks Deployment
+
+Investigate
+
+- Scan Results
+- Compliance Rules
+- Approval Requirements
+
+---
+
+# Scenario 48 - Pipeline Succeeds but Infrastructure Drift Exists
+
+Run
+
+Terraform Plan
+
+before deployment.
+
+---
+
+# Scenario 49 - Complete Pipeline Failure
+
+Recovery
+
+```text
+Previous Stable Pipeline
+
+↓
+
+Previous Image
+
+↓
+
+Rollback
+
+↓
+
+Production Restored
+```
+
+---
+
+# Scenario 50 - Disaster Recovery
+
+Recovery Plan
+
+```text
+GitHub Repository
+
+↓
+
+Workflow
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Production Restored
+```
+
+Infrastructure
+
+should always
+
+be reproducible.
+
+---
+
+# Enterprise Troubleshooting Checklist
+
+Always verify
+
+✓ Workflow Trigger
+
+✓ YAML Syntax
+
+✓ Runner
+
+✓ Variables
+
+✓ Secrets
+
+✓ OIDC Authentication
+
+✓ Docker Build
+
+✓ Image Scan
+
+✓ Amazon ECR
+
+✓ Amazon EKS
+
+✓ Terraform
+
+✓ Deployment
+
+✓ Monitoring
+
+---
+
+# Incident Response Workflow
+
+```text
+Alert
+
+↓
+
+Workflow Logs
+
+↓
+
+Runner
+
+↓
+
+Authentication
+
+↓
+
+Deployment
+
+↓
+
+Application
+
+↓
+
+Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validation
+
+↓
+
+Postmortem
+```
+
+---
+
+# Best Practices
+
+- Read workflow logs before rerunning pipelines.
+- Use OIDC instead of long-lived credentials.
+- Version reusable workflows.
+- Validate Docker images before deployment.
+- Protect production environments with approvals.
+- Keep runners updated.
+- Use rollback strategies for production failures.
+- Document root cause analyses (RCA).
+
+---
+
+# Common Mistakes
+
+- Rerunning failed workflows without investigating.
+- Ignoring workflow logs.
+- Using production credentials in development.
+- Hardcoding secrets.
+- Deploying directly from feature branches.
+- Running outdated reusable workflows.
+- Skipping deployment validation.
+- Ignoring failed security scans.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How do you troubleshoot a failed GitHub Actions workflow?
+- Why might a workflow not trigger?
+- What causes runner failures?
+
+## Intermediate
+
+- How do you troubleshoot OIDC authentication failures?
+- What causes Docker push failures?
+- How do you investigate a failed Amazon EKS deployment?
+- Explain cache-related pipeline failures.
+- How do you troubleshoot reusable workflows?
+
+## Advanced
+
+- Design a production troubleshooting runbook for GitHub Actions pipelines covering runners, authentication, Docker, Terraform, Amazon ECR, Amazon EKS, and deployment validation.
+- Explain your end-to-end troubleshooting methodology when a production deployment fails after a successful GitHub Actions workflow.
+- A financial organization's GitHub Actions pipeline successfully builds and scans a Docker image but fails during production deployment to Amazon EKS. Explain how you would investigate the workflow, authentication, runner, image, Kubernetes deployment, monitoring, rollback strategy, and preventive improvements.
+
+---
+
