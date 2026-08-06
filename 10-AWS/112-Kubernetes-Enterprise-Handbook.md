@@ -1667,3 +1667,907 @@ another is created automatically.
 
 ---
 
+# Chapter 3 - Kubernetes Services & Networking (Deep Dive)
+
+Pods are temporary.
+
+They can
+
+- Crash
+- Restart
+- Be Rescheduled
+- Receive New IP Addresses
+
+If applications communicated directly with Pod IPs,
+
+production systems would constantly fail.
+
+Kubernetes solves this problem using **Services**.
+
+Services provide
+
+- Stable Networking
+- Service Discovery
+- Load Balancing
+- Internal Communication
+
+---
+
+# Kubernetes Networking Principles
+
+Kubernetes networking is based on four principles.
+
+- Every Pod gets its own IP.
+- Pods communicate without NAT.
+- Nodes communicate with Pods.
+- Applications communicate using Services.
+
+---
+
+# Kubernetes Networking Architecture
+
+```text
+Internet
+
+↓
+
+Ingress
+
+↓
+
+Service
+
+↓
+
+Pods
+
+↓
+
+Worker Nodes
+```
+
+Services provide stable access to Pods.
+
+---
+
+# Why Services?
+
+Without Services
+
+```text
+Client
+
+↓
+
+Pod IP
+
+↓
+
+Pod Restart
+
+↓
+
+New Pod IP
+
+↓
+
+Application Failure
+```
+
+---
+
+With Services
+
+```text
+Client
+
+↓
+
+Service
+
+↓
+
+Healthy Pod
+
+↓
+
+Healthy Pod
+
+↓
+
+Healthy Pod
+```
+
+Applications continue working even if Pods change.
+
+---
+
+# What is a Service?
+
+A Service is a stable network endpoint that provides access to one or more Pods.
+
+A Service
+
+- Has a fixed IP
+- Uses Labels
+- Uses Selectors
+- Load Balances Requests
+
+---
+
+# Service Architecture
+
+```text
+Client
+
+↓
+
+Service
+
+↓
+
+Pod A
+
+↓
+
+Pod B
+
+↓
+
+Pod C
+```
+
+Traffic is distributed automatically.
+
+---
+
+# Labels and Selectors
+
+Services identify Pods using selectors.
+
+Example
+
+```text
+Service
+
+↓
+
+Selector
+
+↓
+
+app=frontend
+
+↓
+
+Matching Pods
+```
+
+If labels do not match,
+
+the Service cannot find Pods.
+
+---
+
+# Service Discovery
+
+Instead of remembering Pod IPs,
+
+applications use DNS.
+
+Example
+
+```text
+payment-service.default.svc.cluster.local
+```
+
+Kubernetes DNS resolves the Service automatically.
+
+---
+
+# Kubernetes DNS
+
+Every cluster runs
+
+CoreDNS.
+
+Workflow
+
+```text
+Application
+
+↓
+
+DNS Query
+
+↓
+
+CoreDNS
+
+↓
+
+Service IP
+
+↓
+
+Pods
+```
+
+Applications communicate using names rather than IP addresses.
+
+---
+
+# Types of Services
+
+Kubernetes provides
+
+- ClusterIP
+- NodePort
+- LoadBalancer
+- ExternalName
+
+Each serves a different purpose.
+
+---
+
+# ClusterIP
+
+Default Service type.
+
+Architecture
+
+```text
+Application
+
+↓
+
+ClusterIP Service
+
+↓
+
+Pods
+```
+
+Only accessible inside the cluster.
+
+---
+
+# ClusterIP Use Cases
+
+Ideal for
+
+- Internal APIs
+- Databases
+- Microservices
+- Backend Services
+
+---
+
+# NodePort
+
+Exposes applications through
+
+every Worker Node.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+Node IP
+
+↓
+
+NodePort
+
+↓
+
+Pods
+```
+
+Useful for testing,
+
+but rarely recommended for production.
+
+---
+
+# NodePort Port Range
+
+Default range
+
+```text
+30000
+
+↓
+
+32767
+```
+
+Clients access
+
+```text
+NodeIP:NodePort
+```
+
+---
+
+# LoadBalancer Service
+
+Cloud providers automatically provision
+
+an external Load Balancer.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+AWS Load Balancer
+
+↓
+
+Service
+
+↓
+
+Pods
+```
+
+Amazon EKS integrates this with AWS.
+
+---
+
+# LoadBalancer Benefits
+
+- External Access
+- Automatic Provisioning
+- Health Checks
+- High Availability
+
+---
+
+# ExternalName
+
+Maps a Kubernetes Service
+
+to an external DNS name.
+
+Example
+
+```text
+Application
+
+↓
+
+ExternalName Service
+
+↓
+
+api.example.com
+```
+
+Useful when external systems should appear as Kubernetes Services.
+
+---
+
+# Service Comparison
+
+| Service | Internal | External | Production |
+|----------|----------|----------|------------|
+| ClusterIP | ✅ | ❌ | ✅ |
+| NodePort | ✅ | ✅ | Limited |
+| LoadBalancer | ✅ | ✅ | ✅ |
+| ExternalName | External DNS | External DNS | Special Cases |
+
+---
+
+# Endpoints
+
+A Service routes traffic using
+
+Endpoints.
+
+Architecture
+
+```text
+Service
+
+↓
+
+Endpoint List
+
+↓
+
+Pod A
+
+↓
+
+Pod B
+
+↓
+
+Pod C
+```
+
+If a Pod fails,
+
+the endpoint list is updated automatically.
+
+---
+
+# EndpointSlice
+
+Large clusters use
+
+EndpointSlices.
+
+Benefits
+
+- Better Scalability
+- Faster Updates
+- Reduced API Load
+
+EndpointSlices replace large endpoint objects.
+
+---
+
+# kube-proxy
+
+kube-proxy manages
+
+Service networking.
+
+Responsibilities
+
+- Packet Forwarding
+- Load Balancing
+- Service Rules
+
+---
+
+# kube-proxy Modes
+
+Common modes
+
+- iptables
+- IPVS
+
+IPVS performs better
+
+for large production clusters.
+
+---
+
+# Service Load Balancing
+
+Requests are distributed across
+
+healthy Pods.
+
+Example
+
+```text
+Request 1
+
+↓
+
+Pod A
+
+────────────
+
+Request 2
+
+↓
+
+Pod B
+
+────────────
+
+Request 3
+
+↓
+
+Pod C
+```
+
+Traffic distribution depends on the proxy mode.
+
+---
+
+# Headless Services
+
+Sometimes applications need
+
+direct Pod access.
+
+Headless Service
+
+```text
+ClusterIP = None
+```
+
+Applications receive
+
+individual Pod IPs.
+
+Common use cases
+
+- StatefulSets
+- Databases
+- Kafka
+- Elasticsearch
+
+---
+
+# Stateful Application Example
+
+```text
+Headless Service
+
+↓
+
+Database Pod 1
+
+↓
+
+Database Pod 2
+
+↓
+
+Database Pod 3
+```
+
+Each Pod has its own DNS record.
+
+---
+
+# What is Ingress?
+
+Services expose applications,
+
+but managing multiple Load Balancers becomes expensive.
+
+Ingress provides
+
+HTTP/HTTPS routing.
+
+Architecture
+
+```text
+Internet
+
+↓
+
+Ingress Controller
+
+↓
+
+Services
+
+↓
+
+Pods
+```
+
+---
+
+# Ingress Controller
+
+The Ingress resource itself
+
+does nothing.
+
+An Ingress Controller implements the routing.
+
+Popular controllers
+
+- AWS Load Balancer Controller
+- NGINX Ingress Controller
+- Traefik
+
+Amazon EKS commonly uses
+
+AWS Load Balancer Controller.
+
+---
+
+# Ingress Routing
+
+Example
+
+```text
+example.com
+
+↓
+
+ALB
+
+↓
+
+Frontend Service
+
+────────────
+
+api.example.com
+
+↓
+
+ALB
+
+↓
+
+Backend Service
+```
+
+Multiple applications share
+
+one Load Balancer.
+
+---
+
+# Path-Based Routing
+
+Example
+
+```text
+example.com/app
+
+↓
+
+Frontend
+
+────────────
+
+example.com/api
+
+↓
+
+Backend
+```
+
+One Load Balancer,
+
+multiple applications.
+
+---
+
+# Host-Based Routing
+
+Example
+
+```text
+shop.example.com
+
+↓
+
+Shopping Service
+
+────────────
+
+admin.example.com
+
+↓
+
+Admin Service
+```
+
+---
+
+# Ingress vs LoadBalancer
+
+| Ingress | LoadBalancer |
+|----------|--------------|
+| One ALB | One LB per Service |
+| HTTP/HTTPS | Any TCP/UDP |
+| Cost Efficient | Higher Cost |
+| Path Routing | No Path Routing |
+| Host Routing | No Host Routing |
+
+---
+
+# Amazon EKS Networking
+
+Typical architecture
+
+```text
+Internet
+
+↓
+
+AWS ALB
+
+↓
+
+Ingress
+
+↓
+
+ClusterIP Service
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+```
+
+This is the recommended enterprise architecture.
+
+---
+
+# Enterprise Microservices
+
+```text
+ALB
+
+↓
+
+Ingress
+
+├── User Service
+
+├── Order Service
+
+├── Payment Service
+
+├── Inventory Service
+
+└── Notification Service
+```
+
+One ALB exposes multiple microservices.
+
+---
+
+# Banking Example
+
+```text
+Customers
+
+↓
+
+AWS ALB
+
+↓
+
+Payment Service
+
+↓
+
+Aurora
+
+↓
+
+SNS
+```
+
+The Payment Service communicates internally using ClusterIP.
+
+---
+
+# Service Mesh (Introduction)
+
+Large organizations often introduce
+
+Service Meshes like
+
+- Istio
+- Linkerd
+
+Features
+
+- Traffic Control
+- mTLS
+- Observability
+- Retry
+- Circuit Breaking
+
+This topic is covered later.
+
+---
+
+# Enterprise Networking Flow
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Ingress
+
+↓
+
+ClusterIP Services
+
+↓
+
+Pods
+
+↓
+
+Aurora
+```
+
+---
+
+# Benefits
+
+- Stable Networking
+- Built-in DNS
+- Automatic Load Balancing
+- Service Discovery
+- High Availability
+- Cloud Integration
+- Simplified Communication
+
+---
+
+# Best Practices
+
+- Use ClusterIP for internal communication.
+- Use Ingress instead of exposing multiple LoadBalancer Services.
+- Use meaningful labels and selectors.
+- Monitor CoreDNS health.
+- Prefer AWS Load Balancer Controller on EKS.
+- Use Headless Services only when applications require direct Pod access.
+- Keep backend Services private.
+- Enable TLS for external traffic.
+
+---
+
+# Common Mistakes
+
+- Accessing Pods directly instead of Services.
+- Incorrect label selectors.
+- Using NodePort in production unnecessarily.
+- Creating one LoadBalancer for every microservice.
+- Ignoring DNS resolution issues.
+- Exposing databases through external Services.
+- Forgetting health checks on Ingress.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Kubernetes Service?
+- Why are Services required?
+- What is ClusterIP?
+- What is NodePort?
+- What is a LoadBalancer Service?
+
+## Intermediate
+
+- ClusterIP vs NodePort vs LoadBalancer.
+- Explain how kube-proxy works.
+- What is CoreDNS?
+- What is a Headless Service?
+- Ingress vs LoadBalancer.
+
+## Advanced
+
+- Design a networking architecture for an enterprise microservices platform running on Amazon EKS using AWS Load Balancer Controller, Ingress, ClusterIP Services, and Amazon Route 53.
+- Explain the complete network flow from an internet user accessing an application hosted on Amazon EKS through an AWS Application Load Balancer to the target Pods.
+- A production Kubernetes cluster hosts 100 microservices. Explain how you would design scalable, secure, and cost-effective networking using Ingress, ClusterIP Services, DNS, health checks, TLS termination, and AWS-native load balancing.
+
+---
+
