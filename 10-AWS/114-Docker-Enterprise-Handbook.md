@@ -1523,3 +1523,925 @@ saving disk space.
 
 ---
 
+# Chapter 3 - Dockerfile Deep Dive (Enterprise Guide)
+
+A Docker Image is not created manually.
+
+Instead,
+
+Docker builds images from a file called a
+
+**Dockerfile**.
+
+A Dockerfile defines
+
+- Base Image
+- Application Files
+- Dependencies
+- Runtime
+- Startup Commands
+
+Every enterprise Docker image begins with a well-designed Dockerfile.
+
+---
+
+# What is a Dockerfile?
+
+A Dockerfile is
+
+a text file
+
+containing instructions
+
+that Docker follows
+
+to build an image.
+
+Workflow
+
+```text
+Dockerfile
+
+↓
+
+docker build
+
+↓
+
+Docker Image
+
+↓
+
+Docker Container
+```
+
+---
+
+# Why Dockerfile?
+
+Without Dockerfile
+
+```text
+Developer
+
+↓
+
+Install Packages
+
+↓
+
+Copy Files
+
+↓
+
+Configure Runtime
+
+↓
+
+Manual Steps
+```
+
+Problems
+
+- Inconsistent Builds
+- Human Errors
+- Difficult Maintenance
+
+---
+
+With Dockerfile
+
+```text
+Dockerfile
+
+↓
+
+Automated Build
+
+↓
+
+Consistent Image
+```
+
+Infrastructure becomes reproducible.
+
+---
+
+# Dockerfile Build Process
+
+```text
+Dockerfile
+
+↓
+
+Instruction 1
+
+↓
+
+Layer 1
+
+↓
+
+Instruction 2
+
+↓
+
+Layer 2
+
+↓
+
+Instruction N
+
+↓
+
+Docker Image
+```
+
+Every instruction
+
+usually creates
+
+a new image layer.
+
+---
+
+# Dockerfile Instructions
+
+Common instructions include
+
+- FROM
+- LABEL
+- WORKDIR
+- COPY
+- ADD
+- RUN
+- ENV
+- ARG
+- EXPOSE
+- USER
+- CMD
+- ENTRYPOINT
+
+---
+
+# FROM
+
+Every Dockerfile
+
+starts with
+
+```text
+FROM
+```
+
+Purpose
+
+Defines
+
+the base image.
+
+Architecture
+
+```text
+Ubuntu
+
+↓
+
+Python
+
+↓
+
+Java
+
+↓
+
+Node.js
+
+↓
+
+Application
+```
+
+Everything builds
+
+on top of
+
+the base image.
+
+---
+
+# Base Images
+
+Examples
+
+- Ubuntu
+- Alpine
+- Amazon Linux
+- Python
+- Node.js
+- OpenJDK
+- Nginx
+
+Choose
+
+minimal,
+
+trusted,
+
+official images.
+
+---
+
+# LABEL
+
+LABEL adds
+
+metadata
+
+to an image.
+
+Examples
+
+```text
+Application
+
+Version
+
+Owner
+
+Maintainer
+
+Environment
+```
+
+Useful
+
+for enterprise governance.
+
+---
+
+# WORKDIR
+
+Sets
+
+the working directory.
+
+Workflow
+
+```text
+Container
+
+↓
+
+Working Directory
+
+↓
+
+Application Files
+```
+
+Subsequent instructions
+
+execute from
+
+this directory.
+
+---
+
+# COPY
+
+COPY copies files
+
+from
+
+the build context
+
+into
+
+the image.
+
+Architecture
+
+```text
+Local Files
+
+↓
+
+COPY
+
+↓
+
+Docker Image
+```
+
+Most commonly used
+
+to copy application code.
+
+---
+
+# ADD
+
+ADD also copies files,
+
+but supports
+
+additional features
+
+such as
+
+- Archive extraction
+- Remote URLs
+
+For most cases,
+
+prefer
+
+COPY
+
+because it is simpler
+
+and more predictable.
+
+---
+
+# COPY vs ADD
+
+| COPY | ADD |
+|------|------|
+| Simple File Copy | Additional Features |
+| Recommended | Use Only When Needed |
+| Predictable | More Complex |
+
+---
+
+# RUN
+
+RUN executes commands
+
+during
+
+image build.
+
+Examples
+
+- Install Packages
+- Create Directories
+- Configure Software
+
+Workflow
+
+```text
+Docker Build
+
+↓
+
+RUN
+
+↓
+
+New Image Layer
+```
+
+---
+
+# ENV
+
+ENV defines
+
+environment variables.
+
+Example Uses
+
+- Application Port
+- Database Host
+- Runtime Configuration
+
+Environment variables
+
+are available
+
+inside the container.
+
+---
+
+# ARG
+
+ARG defines
+
+build-time variables.
+
+Difference
+
+```text
+ARG
+
+↓
+
+Build Time
+
+────────────
+
+ENV
+
+↓
+
+Run Time
+```
+
+---
+
+# ARG vs ENV
+
+| ARG | ENV |
+|------|------|
+| Build Time | Runtime |
+| Not Available After Build | Available Inside Container |
+| Build Configuration | Application Configuration |
+
+---
+
+# EXPOSE
+
+EXPOSE documents
+
+which ports
+
+the application uses.
+
+Workflow
+
+```text
+Application
+
+↓
+
+Port
+
+↓
+
+EXPOSE
+```
+
+It does not
+
+publish ports.
+
+It serves
+
+as documentation
+
+for the image.
+
+---
+
+# USER
+
+By default,
+
+containers run
+
+as
+
+root.
+
+Production images
+
+should specify
+
+a non-root user.
+
+Workflow
+
+```text
+Root
+
+↓
+
+Application User
+
+↓
+
+Container
+```
+
+Improves security.
+
+---
+
+# CMD
+
+CMD specifies
+
+the default command
+
+executed
+
+when the container starts.
+
+Only one CMD
+
+should exist
+
+in a Dockerfile.
+
+---
+
+# ENTRYPOINT
+
+ENTRYPOINT defines
+
+the main executable
+
+for the container.
+
+Containers
+
+always execute
+
+the ENTRYPOINT.
+
+---
+
+# CMD vs ENTRYPOINT
+
+| CMD | ENTRYPOINT |
+|------|-------------|
+| Default Arguments | Main Command |
+| Easily Overridden | Usually Fixed |
+| Optional | Primary Executable |
+
+Often,
+
+they are used together.
+
+---
+
+# Docker Build Context
+
+When running
+
+```text
+docker build
+```
+
+Docker sends
+
+the build context
+
+to the Docker daemon.
+
+Example
+
+```text
+Application
+
+↓
+
+Dockerfile
+
+↓
+
+Source Code
+
+↓
+
+Build Context
+```
+
+Only files
+
+inside the build context
+
+are available.
+
+---
+
+# .dockerignore
+
+Similar to
+
+`.gitignore`
+
+Docker supports
+
+`.dockerignore`
+
+Purpose
+
+Exclude unnecessary files.
+
+Examples
+
+```text
+.git
+
+node_modules
+
+logs
+
+tmp
+
+.idea
+```
+
+Benefits
+
+- Faster Builds
+- Smaller Context
+- Better Security
+
+---
+
+# Layer Optimization
+
+Bad
+
+```text
+RUN
+
+↓
+
+RUN
+
+↓
+
+RUN
+```
+
+Good
+
+```text
+Single RUN
+
+↓
+
+Multiple Commands
+```
+
+Fewer layers
+
+usually produce
+
+smaller images.
+
+---
+
+# Layer Ordering
+
+Place
+
+rarely changing instructions
+
+first.
+
+Example
+
+```text
+Base Image
+
+↓
+
+Dependencies
+
+↓
+
+Application Code
+```
+
+This maximizes
+
+Docker cache usage.
+
+---
+
+# Multi-Stage Builds
+
+Production images
+
+should use
+
+Multi-Stage Builds.
+
+Architecture
+
+```text
+Build Stage
+
+↓
+
+Compile Application
+
+↓
+
+Final Stage
+
+↓
+
+Copy Artifacts
+
+↓
+
+Small Image
+```
+
+The final image
+
+contains
+
+only runtime files.
+
+---
+
+# Multi-Stage Example
+
+```text
+Builder Image
+
+↓
+
+Compile
+
+↓
+
+Application Binary
+
+↓
+
+Runtime Image
+
+↓
+
+Deploy
+```
+
+Build tools
+
+do not exist
+
+inside
+
+the production image.
+
+---
+
+# Enterprise Build Pipeline
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Banking Example
+
+```text
+Source Code
+
+↓
+
+Dockerfile
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Payment Service
+
+↓
+
+Amazon EKS
+```
+
+Every release
+
+creates
+
+a new immutable image.
+
+---
+
+# Enterprise Dockerfile Structure
+
+```text
+Base Image
+
+↓
+
+System Packages
+
+↓
+
+Application Dependencies
+
+↓
+
+Copy Source
+
+↓
+
+Build Application
+
+↓
+
+Create Non-root User
+
+↓
+
+Expose Port
+
+↓
+
+Startup Command
+```
+
+A predictable structure
+
+improves maintainability.
+
+---
+
+# Dockerfile Best Practices
+
+- Use official base images.
+- Prefer Alpine or minimal images where appropriate.
+- Keep images small.
+- Use Multi-Stage Builds.
+- Minimize image layers.
+- Use `.dockerignore`.
+- Run containers as non-root users.
+- Pin image versions instead of using `latest`.
+- Store secrets outside the image.
+- Keep one responsibility per container.
+
+---
+
+# Common Mistakes
+
+- Using `latest` as the base image.
+- Installing unnecessary packages.
+- Running containers as root.
+- Copying the entire project unnecessarily.
+- Not using `.dockerignore`.
+- Creating too many layers.
+- Hardcoding secrets in Dockerfiles.
+- Building large production images.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Dockerfile?
+- What is the purpose of `FROM`?
+- What does `COPY` do?
+- What is `RUN`?
+- What is `CMD`?
+
+## Intermediate
+
+- `CMD` vs `ENTRYPOINT`.
+- `COPY` vs `ADD`.
+- `ARG` vs `ENV`.
+- Why use `.dockerignore`?
+- Explain Docker layer caching.
+
+## Advanced
+
+- Design an enterprise Docker build process using GitHub Actions, Multi-Stage Builds, Amazon ECR, vulnerability scanning, and Amazon EKS.
+- Explain how Dockerfile instructions create image layers and how instruction ordering affects build performance and caching.
+- A company builds Java, Python, and Node.js microservices. Explain how you would standardize Dockerfiles, optimize image sizes, secure containers, implement Multi-Stage Builds, and integrate automated image builds into a production CI/CD pipeline.
+
+---
+
