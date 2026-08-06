@@ -7894,3 +7894,847 @@ and enterprise security.
 
 ---
 
+# Chapter 10 - Kubernetes Production Best Practices
+
+Building a Kubernetes cluster is relatively straightforward.
+
+Operating it successfully in production is the real challenge.
+
+Enterprise Kubernetes platforms are designed around
+
+- Reliability
+- Security
+- Scalability
+- Performance
+- Cost Optimization
+- Disaster Recovery
+- Operational Excellence
+
+This chapter summarizes the practices followed by organizations running Kubernetes at scale.
+
+---
+
+# Production Architecture
+
+A typical enterprise Kubernetes platform looks like
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Ingress Controller
+
+↓
+
+Amazon EKS
+
+↓
+
+Managed Node Groups
+
+↓
+
+Pods
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon EFS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK Stack
+```
+
+Every component is deployed with high availability.
+
+---
+
+# High Availability
+
+Production clusters should never rely on a single point of failure.
+
+Recommended architecture
+
+```text
+Availability Zone A
+
+↓
+
+Worker Nodes
+
+────────────
+
+Availability Zone B
+
+↓
+
+Worker Nodes
+
+────────────
+
+Availability Zone C
+
+↓
+
+Worker Nodes
+```
+
+Pods are distributed across all Availability Zones.
+
+---
+
+# Node Groups
+
+Separate workloads by using dedicated node groups.
+
+Example
+
+```text
+Production Node Group
+
+↓
+
+Critical Applications
+
+────────────
+
+Monitoring Node Group
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+────────────
+
+Batch Node Group
+
+↓
+
+CronJobs
+
+↓
+
+Reporting
+```
+
+This improves isolation and scheduling.
+
+---
+
+# Namespace Strategy
+
+Avoid deploying everything into the
+
+```text
+default
+```
+
+namespace.
+
+Recommended structure
+
+```text
+production
+
+development
+
+staging
+
+monitoring
+
+logging
+
+ingress
+
+kube-system
+```
+
+Namespaces simplify
+
+- Resource Isolation
+- RBAC
+- Resource Quotas
+
+---
+
+# Resource Requests & Limits
+
+Every production workload should define
+
+```text
+CPU Request
+
+Memory Request
+
+CPU Limit
+
+Memory Limit
+```
+
+Benefits
+
+- Better Scheduling
+- Stable Performance
+- Prevent Resource Starvation
+
+---
+
+# Health Probes
+
+Always configure
+
+- Liveness Probe
+- Readiness Probe
+- Startup Probe
+
+Workflow
+
+```text
+Application
+
+↓
+
+Health Check
+
+↓
+
+Ready
+
+↓
+
+Receive Traffic
+```
+
+Pods should never receive production traffic before they are ready.
+
+---
+
+# Rolling Deployments
+
+Preferred deployment strategy
+
+```text
+Version 1
+
+↓
+
+Rolling Update
+
+↓
+
+Version 2
+```
+
+Avoid downtime during deployments.
+
+---
+
+# Rollback Strategy
+
+Every deployment must support rollback.
+
+Workflow
+
+```text
+Deploy
+
+↓
+
+Validate
+
+↓
+
+Issue Detected
+
+↓
+
+Rollback
+
+↓
+
+Recovery
+```
+
+Recovery should be automated whenever possible.
+
+---
+
+# Autoscaling Strategy
+
+Combine
+
+- Horizontal Pod Autoscaler
+- Cluster Autoscaler
+
+Architecture
+
+```text
+Traffic Increase
+
+↓
+
+HPA
+
+↓
+
+More Pods
+
+↓
+
+Cluster Autoscaler
+
+↓
+
+More Nodes
+```
+
+Applications scale automatically.
+
+---
+
+# Pod Disruption Budgets
+
+Prevent excessive Pod disruption during
+
+- Node Maintenance
+- Cluster Upgrades
+
+Example
+
+```text
+10 Pods
+
+↓
+
+Minimum Available
+
+↓
+
+8 Pods
+```
+
+The application remains available.
+
+---
+
+# Affinity Rules
+
+Use
+
+Pod Anti-Affinity
+
+for critical workloads.
+
+Example
+
+```text
+Replica 1
+
+↓
+
+Node A
+
+────────────
+
+Replica 2
+
+↓
+
+Node B
+
+────────────
+
+Replica 3
+
+↓
+
+Node C
+```
+
+This improves fault tolerance.
+
+---
+
+# Secure Workloads
+
+Containers should
+
+- Run as non-root
+- Use read-only filesystems
+- Drop unnecessary Linux capabilities
+- Avoid privileged mode
+
+Follow the principle of least privilege.
+
+---
+
+# Secret Management
+
+Store sensitive data using
+
+- Kubernetes Secrets
+- AWS Secrets Manager
+- External Secrets Operator (if adopted)
+
+Never
+
+- Commit credentials to Git
+- Hardcode passwords
+- Store AWS access keys in Pods
+
+---
+
+# Storage Best Practices
+
+Use
+
+Amazon EBS
+
+for
+
+```text
+Databases
+
+Stateful Applications
+```
+
+Use
+
+Amazon EFS
+
+for
+
+```text
+Shared Storage
+
+CMS
+
+ML Workloads
+```
+
+Avoid
+
+```text
+hostPath
+```
+
+in production.
+
+---
+
+# Networking
+
+Use
+
+```text
+Internet
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Ingress
+
+↓
+
+ClusterIP
+
+↓
+
+Pods
+```
+
+Avoid exposing backend services directly.
+
+---
+
+# Logging
+
+Centralize all logs.
+
+Architecture
+
+```text
+Pods
+
+↓
+
+Fluent Bit
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+Logs should remain available even if Pods are deleted.
+
+---
+
+# Monitoring
+
+Monitor
+
+- Cluster Health
+- Node Health
+- Pod Health
+- Application Metrics
+- Business Metrics
+
+Stack
+
+```text
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alertmanager
+```
+
+---
+
+# Alerting
+
+Create alerts for
+
+- Pod Restarts
+- High CPU
+- High Memory
+- Node Not Ready
+- PVC Full
+- Certificate Expiration
+- High API Latency
+
+Avoid excessive alerts that create noise.
+
+---
+
+# Backup Strategy
+
+Regularly back up
+
+- etcd (self-managed clusters)
+- Persistent Volumes
+- Databases
+- Configuration
+- Secrets
+
+Verify backup restoration procedures periodically.
+
+---
+
+# Disaster Recovery
+
+Maintain
+
+- Multi-AZ deployment
+- Backup strategy
+- Infrastructure as Code
+- Automated recovery procedures
+
+Recovery objectives should be documented.
+
+---
+
+# CI/CD Best Practices
+
+Pipeline example
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Smoke Tests
+
+↓
+
+Production
+```
+
+Every deployment should be repeatable and automated.
+
+---
+
+# Cost Optimization
+
+Optimize costs using
+
+- Cluster Autoscaler
+- Right-Sized Nodes
+- Spot Instances (where appropriate)
+- Image Cleanup
+- Resource Requests
+- Node Consolidation
+
+Monitor unused resources regularly.
+
+---
+
+# Upgrade Strategy
+
+Recommended sequence
+
+```text
+Control Plane
+
+↓
+
+Node Groups
+
+↓
+
+Add-ons
+
+↓
+
+Applications
+```
+
+Test upgrades in non-production environments first.
+
+---
+
+# Enterprise Security
+
+Enable
+
+- RBAC
+- Network Policies
+- IRSA
+- Secret Encryption
+- Image Scanning
+- Runtime Monitoring
+- Audit Logging
+
+Security should be integrated into every stage of the platform.
+
+---
+
+# Operational Excellence
+
+Successful platform teams focus on
+
+- Automation
+- Documentation
+- Monitoring
+- Incident Management
+- Continuous Improvement
+
+Every production incident should result in
+
+- Root Cause Analysis
+- Preventive Actions
+- Knowledge Sharing
+
+---
+
+# Enterprise Architecture Example
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+AWS WAF
+
+↓
+
+ALB
+
+↓
+
+Ingress
+
+↓
+
+Amazon EKS
+
+↓
+
+Deployments
+
+↓
+
+Services
+
+↓
+
+Pods
+
+↓
+
+Amazon Aurora
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+```
+
+This architecture supports
+
+- High Availability
+- Scalability
+- Security
+- Observability
+
+---
+
+# Kubernetes Production Checklist
+
+Before deploying to production, verify
+
+✓ Resource Requests & Limits
+
+✓ Liveness, Readiness & Startup Probes
+
+✓ RBAC
+
+✓ Network Policies
+
+✓ Secrets
+
+✓ TLS
+
+✓ Monitoring
+
+✓ Logging
+
+✓ Autoscaling
+
+✓ Rollback Plan
+
+✓ Backup Strategy
+
+✓ Disaster Recovery
+
+✓ CI/CD Validation
+
+---
+
+# Golden Rules
+
+1. Never deploy directly to production without testing.
+2. Never expose sensitive credentials inside container images.
+3. Always define resource requests and limits.
+4. Monitor applications, not just infrastructure.
+5. Keep clusters updated.
+6. Use Infrastructure as Code.
+7. Automate repetitive operational tasks.
+8. Design for failure from the beginning.
+
+---
+
+# Common Production Mistakes
+
+- Running workloads without health probes.
+- Ignoring resource requests.
+- Using the default namespace for everything.
+- Giving cluster-admin access to all users.
+- Deploying without rollback plans.
+- Not monitoring business metrics.
+- Forgetting backup validation.
+- Allowing configuration drift.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are Kubernetes production best practices?
+- Why are health probes important?
+- Why should workloads use resource limits?
+
+## Intermediate
+
+- Explain a production deployment strategy for Kubernetes.
+- How do you design a highly available Kubernetes cluster?
+- How do you secure a production EKS platform?
+
+## Advanced
+
+- Design a production-ready Kubernetes platform for an enterprise financial application, covering high availability, security, autoscaling, monitoring, disaster recovery, cost optimization, and CI/CD integration.
+- Explain your complete production readiness checklist before deploying a new microservice to Amazon EKS.
+- A global enterprise is migrating hundreds of applications to Amazon EKS. Describe the operational standards, deployment strategies, monitoring architecture, security controls, backup policies, upgrade process, and disaster recovery practices you would establish to ensure long-term platform reliability.
+
+---
+
