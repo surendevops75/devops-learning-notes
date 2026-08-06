@@ -2445,3 +2445,709 @@ improves maintainability.
 
 ---
 
+# Chapter 4 - Docker Volumes & Persistent Storage (Enterprise Guide)
+
+Containers are designed to be
+
+- Temporary
+- Disposable
+- Stateless
+
+When a container is removed,
+
+all data stored inside its writable layer is lost.
+
+Production applications require persistent storage for
+
+- Databases
+- Application Uploads
+- Logs
+- Configuration Files
+- Shared Data
+
+Docker solves this problem using **Volumes**.
+
+---
+
+# Why Persistent Storage?
+
+Consider a database running inside a container.
+
+```text
+Database Container
+
+↓
+
+Customer Data
+
+↓
+
+Container Deleted
+
+↓
+
+Data Lost
+```
+
+Without persistent storage,
+
+critical business data disappears.
+
+---
+
+# Docker Storage Architecture
+
+```text
+Docker Image
+
+↓
+
+Container
+
+↓
+
+Writable Layer
+
+↓
+
+Docker Volume
+
+↓
+
+Host Storage
+```
+
+Application data is stored
+
+outside the container.
+
+---
+
+# What is a Docker Volume?
+
+A Docker Volume is
+
+a managed storage location
+
+used to persist container data.
+
+Volumes exist independently
+
+of containers.
+
+Even if the container is deleted,
+
+the volume remains.
+
+---
+
+# Volume Workflow
+
+```text
+Docker Volume
+
+↓
+
+Container Starts
+
+↓
+
+Application Writes Data
+
+↓
+
+Container Stops
+
+↓
+
+Volume Still Exists
+```
+
+The data survives container recreation.
+
+---
+
+# Why Volumes?
+
+Without Volumes
+
+```text
+Container
+
+↓
+
+Application Data
+
+↓
+
+Container Removed
+
+↓
+
+Data Lost
+```
+
+---
+
+With Volumes
+
+```text
+Container
+
+↓
+
+Docker Volume
+
+↓
+
+Persistent Data
+
+↓
+
+Container Removed
+
+↓
+
+Data Still Available
+```
+
+---
+
+# Volume Lifecycle
+
+```text
+Create Volume
+
+↓
+
+Attach Container
+
+↓
+
+Store Data
+
+↓
+
+Stop Container
+
+↓
+
+Reuse Volume
+
+↓
+
+Delete Volume (Optional)
+```
+
+---
+
+# Named Volumes
+
+Named volumes
+
+are managed by Docker.
+
+Example
+
+```text
+postgres-data
+
+↓
+
+Docker Volume
+
+↓
+
+Database Container
+```
+
+Recommended for production applications.
+
+---
+
+# Anonymous Volumes
+
+Docker can create
+
+unnamed volumes automatically.
+
+Characteristics
+
+- Random Names
+- Difficult to Manage
+- Difficult to Reuse
+
+Generally avoided in production.
+
+---
+
+# Bind Mounts
+
+Bind mounts
+
+map
+
+host directories
+
+into containers.
+
+Architecture
+
+```text
+Host Directory
+
+↓
+
+Bind Mount
+
+↓
+
+Container Directory
+```
+
+Useful for
+
+development environments.
+
+---
+
+# Volume Types
+
+| Type | Description |
+|------|-------------|
+| Named Volume | Docker Managed |
+| Anonymous Volume | Docker Creates Automatically |
+| Bind Mount | Host Directory Mapping |
+| tmpfs | Memory-Based Storage |
+
+---
+
+# Named Volume Architecture
+
+```text
+Docker
+
+↓
+
+Named Volume
+
+↓
+
+Container
+
+↓
+
+Application
+```
+
+Docker manages
+
+the storage location.
+
+---
+
+# Bind Mount Architecture
+
+```text
+Host File System
+
+↓
+
+Directory
+
+↓
+
+Container
+
+↓
+
+Application
+```
+
+The container accesses
+
+host files directly.
+
+---
+
+# Named Volume vs Bind Mount
+
+| Named Volume | Bind Mount |
+|---------------|------------|
+| Docker Managed | Host Managed |
+| Portable | Host Dependent |
+| Recommended for Production | Common in Development |
+| Easier Backup | Direct File Access |
+
+---
+
+# tmpfs Mount
+
+tmpfs stores data
+
+in memory.
+
+```text
+RAM
+
+↓
+
+tmpfs
+
+↓
+
+Container
+```
+
+Characteristics
+
+- Very Fast
+- Non-Persistent
+- Automatically Removed
+
+Useful for
+
+temporary sensitive data.
+
+---
+
+# Volume Sharing
+
+Multiple containers
+
+can share
+
+the same volume.
+
+Architecture
+
+```text
+Volume
+
+├── Container A
+
+├── Container B
+
+└── Container C
+```
+
+Useful for
+
+shared application data.
+
+---
+
+# Database Example
+
+```text
+PostgreSQL Container
+
+↓
+
+Docker Volume
+
+↓
+
+Persistent Database Files
+```
+
+Even if PostgreSQL restarts,
+
+the database remains intact.
+
+---
+
+# Application Upload Example
+
+```text
+Application Container
+
+↓
+
+Docker Volume
+
+↓
+
+Uploaded Files
+```
+
+Customer uploads
+
+remain available
+
+after container recreation.
+
+---
+
+# Log Storage
+
+Instead of storing logs
+
+inside the container,
+
+store them
+
+on a volume.
+
+```text
+Application
+
+↓
+
+Docker Volume
+
+↓
+
+Log Files
+```
+
+Logs survive container restarts.
+
+---
+
+# Backup Strategy
+
+Volumes should be backed up regularly.
+
+Workflow
+
+```text
+Docker Volume
+
+↓
+
+Backup
+
+↓
+
+Amazon S3
+
+↓
+
+Recovery
+```
+
+Critical business data
+
+must never rely
+
+on a single copy.
+
+---
+
+# Restore Strategy
+
+```text
+Backup
+
+↓
+
+Docker Volume
+
+↓
+
+Container
+
+↓
+
+Application Restored
+```
+
+Disaster recovery
+
+depends on reliable backups.
+
+---
+
+# Volume Drivers
+
+Docker supports
+
+different storage drivers.
+
+Examples
+
+- Local
+- NFS
+- Amazon EFS
+- Azure Files
+- Third-Party Plugins
+
+Enterprise environments
+
+often use network storage.
+
+---
+
+# Docker with Amazon EFS
+
+```text
+Amazon EFS
+
+↓
+
+Docker Volume
+
+↓
+
+Multiple Containers
+
+↓
+
+Shared Storage
+```
+
+Useful for
+
+shared application data.
+
+---
+
+# Docker with Kubernetes
+
+Docker Volumes
+
+map conceptually
+
+to Kubernetes
+
+Persistent Volumes.
+
+```text
+Docker Volume
+
+↓
+
+Kubernetes
+
+↓
+
+Persistent Volume
+
+↓
+
+Persistent Volume Claim
+```
+
+Understanding Docker Volumes
+
+helps when learning Kubernetes storage.
+
+---
+
+# Enterprise Storage Architecture
+
+```text
+Application
+
+↓
+
+Docker Container
+
+↓
+
+Docker Volume
+
+↓
+
+Amazon EFS
+
+↓
+
+Backup
+
+↓
+
+Amazon S3
+```
+
+This provides
+
+persistent,
+
+highly available storage.
+
+---
+
+# Banking Example
+
+```text
+Payment Application
+
+↓
+
+Docker Container
+
+↓
+
+Persistent Volume
+
+↓
+
+Transaction Logs
+
+↓
+
+Backup
+
+↓
+
+Amazon S3
+```
+
+Business-critical data
+
+remains protected.
+
+---
+
+# Storage Best Practices
+
+- Keep containers stateless.
+- Store persistent data in volumes.
+- Use named volumes for production.
+- Back up volumes regularly.
+- Encrypt sensitive storage.
+- Avoid storing business data inside containers.
+- Monitor storage utilization.
+- Test restore procedures.
+
+---
+
+# Common Mistakes
+
+- Storing database files inside containers.
+- Using anonymous volumes in production.
+- Forgetting volume backups.
+- Mounting sensitive host directories.
+- Assuming containers preserve data after deletion.
+- Ignoring storage permissions.
+- Treating bind mounts as production storage.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Docker Volume?
+- Why are Docker Volumes needed?
+- Named Volume vs Bind Mount.
+- What happens to data when a container is deleted?
+
+## Intermediate
+
+- Explain the Docker storage architecture.
+- When would you use a bind mount?
+- What is tmpfs?
+- How do multiple containers share storage?
+- How do Docker Volumes relate to Kubernetes Persistent Volumes?
+
+## Advanced
+
+- Design a persistent storage architecture for containerized applications using Docker Volumes, Amazon EFS, backups, and disaster recovery.
+- Explain how Docker Volumes provide persistent storage while maintaining stateless application containers.
+- A financial application stores transaction data inside Docker containers. Explain how you would redesign the storage architecture using named volumes, shared storage, backup strategies, encryption, and disaster recovery to ensure production-grade reliability.
+
+---
+
