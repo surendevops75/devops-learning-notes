@@ -723,3 +723,721 @@ in production.
 
 ---
 
+# Chapter 2 - Installing ArgoCD & Understanding Core Components
+
+ArgoCD runs inside
+
+a Kubernetes cluster
+
+and continuously monitors
+
+Git repositories
+
+to synchronize
+
+the desired state
+
+with the cluster.
+
+A production installation
+
+should be
+
+- Secure
+- Highly Available
+- Scalable
+- Easy to Maintain
+
+---
+
+# ArgoCD Deployment Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Applications
+```
+
+ArgoCD
+
+acts as
+
+the deployment engine
+
+for Kubernetes.
+
+---
+
+# Where Does ArgoCD Run?
+
+ArgoCD
+
+runs
+
+inside Kubernetes
+
+as a set of Pods.
+
+Architecture
+
+```text
+Amazon EKS
+
+↓
+
+argocd Namespace
+
+↓
+
+ArgoCD Components
+```
+
+The entire platform
+
+is deployed
+
+inside
+
+its own namespace.
+
+---
+
+# ArgoCD Namespace
+
+Best practice
+
+is to install
+
+ArgoCD
+
+inside
+
+a dedicated namespace.
+
+Example
+
+```text
+Kubernetes Cluster
+
+├── kube-system
+
+├── monitoring
+
+├── ingress-nginx
+
+└── argocd
+```
+
+This provides
+
+better isolation.
+
+---
+
+# High-Level Architecture
+
+```text
+Git Repository
+
+↓
+
+Repository Server
+
+↓
+
+Application Controller
+
+↓
+
+API Server
+
+↓
+
+Kubernetes API
+
+↓
+
+Cluster Resources
+```
+
+Each component
+
+has
+
+a dedicated responsibility.
+
+---
+
+# ArgoCD Components
+
+The core components are
+
+- API Server
+- Repository Server
+- Application Controller
+- Redis
+- Dex (Optional)
+- Notifications Controller (Optional)
+- ApplicationSet Controller (Optional)
+
+---
+
+# API Server
+
+The API Server
+
+is the entry point
+
+for users.
+
+Responsibilities
+
+- Authentication
+- Authorization
+- Web UI
+- CLI
+- REST API
+
+Architecture
+
+```text
+User
+
+↓
+
+API Server
+
+↓
+
+ArgoCD
+```
+
+---
+
+# Repository Server
+
+The Repository Server
+
+communicates with
+
+Git repositories.
+
+Responsibilities
+
+- Clone Repository
+- Fetch Updates
+- Render Helm Charts
+- Process Kustomize
+- Generate Kubernetes Manifests
+
+Workflow
+
+```text
+Git Repository
+
+↓
+
+Repository Server
+
+↓
+
+Manifest Generation
+```
+
+---
+
+# Application Controller
+
+The Application Controller
+
+is the heart
+
+of ArgoCD.
+
+Responsibilities
+
+- Compare Desired State
+- Detect Drift
+- Synchronize Resources
+- Track Health
+- Track Sync Status
+
+Workflow
+
+```text
+Git
+
+↓
+
+Compare
+
+↓
+
+Cluster
+
+↓
+
+Sync
+```
+
+---
+
+# Redis
+
+Redis
+
+stores
+
+cached application data.
+
+Benefits
+
+- Faster UI
+- Improved Performance
+- Reduced Git Requests
+
+---
+
+# Dex (Optional)
+
+Dex provides
+
+Single Sign-On (SSO)
+
+using
+
+- LDAP
+- GitHub
+- Google
+- Microsoft Entra ID
+- OIDC Providers
+
+Enterprise environments
+
+commonly integrate
+
+Dex
+
+with corporate identity systems.
+
+---
+
+# Notifications Controller
+
+This optional component
+
+sends notifications
+
+for events such as
+
+- Successful Sync
+- Failed Sync
+- Health Degradation
+- Rollback
+
+Notification targets
+
+include
+
+- Slack
+- Microsoft Teams
+- Email
+- Webhooks
+
+---
+
+# ApplicationSet Controller
+
+ApplicationSet
+
+automatically creates
+
+multiple ArgoCD Applications.
+
+Useful for
+
+- Multiple Clusters
+- Multiple Environments
+- Hundreds of Microservices
+
+---
+
+# Component Interaction
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Repository Server
+
+↓
+
+Application Controller
+
+↓
+
+API Server
+
+↓
+
+Amazon EKS
+```
+
+All components
+
+work together
+
+to maintain
+
+cluster consistency.
+
+---
+
+# Installation Flow
+
+```text
+Kubernetes Cluster
+
+↓
+
+Create Namespace
+
+↓
+
+Install ArgoCD
+
+↓
+
+Pods Created
+
+↓
+
+API Available
+
+↓
+
+Applications Managed
+```
+
+---
+
+# Production Deployment
+
+Enterprise deployment
+
+typically includes
+
+```text
+Load Balancer
+
+↓
+
+ArgoCD API Server
+
+↓
+
+Application Controller
+
+↓
+
+Repository Server
+
+↓
+
+Redis
+```
+
+High availability
+
+can be achieved
+
+using multiple replicas.
+
+---
+
+# High Availability Architecture
+
+```text
+Load Balancer
+
+↓
+
+API Server (Replica 1)
+
+↓
+
+API Server (Replica 2)
+
+────────────
+
+Application Controller
+
+↓
+
+Multiple Replicas
+
+────────────
+
+Repository Server
+
+↓
+
+Multiple Replicas
+```
+
+Single component failures
+
+should not
+
+interrupt deployments.
+
+---
+
+# ArgoCD Data Flow
+
+```text
+Git Commit
+
+↓
+
+Repository Server
+
+↓
+
+Manifest Generation
+
+↓
+
+Application Controller
+
+↓
+
+Compare
+
+↓
+
+Synchronize
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Authentication Flow
+
+```text
+User
+
+↓
+
+SSO
+
+↓
+
+API Server
+
+↓
+
+RBAC
+
+↓
+
+Application Access
+```
+
+Authentication
+
+occurs
+
+before
+
+any operation.
+
+---
+
+# Sync Flow
+
+```text
+Git Repository
+
+↓
+
+Desired State
+
+↓
+
+Application Controller
+
+↓
+
+Compare
+
+↓
+
+Cluster
+
+↓
+
+Sync
+```
+
+If drift exists,
+
+ArgoCD
+
+restores
+
+the desired state.
+
+---
+
+# Enterprise Deployment
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Update Git Manifest
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Notice that
+
+Jenkins
+
+does **not**
+
+deploy directly.
+
+It only updates Git.
+
+ArgoCD
+
+performs
+
+the deployment.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+Payment Service
+
+↓
+
+GitHub
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Production changes
+
+always originate
+
+from Git.
+
+---
+
+# Enterprise Best Practices
+
+- Install ArgoCD in a dedicated namespace.
+- Use High Availability for production.
+- Enable SSO with Dex or an enterprise identity provider.
+- Protect API Server access using RBAC.
+- Scale Repository Server for large Git repositories.
+- Monitor Application Controller performance.
+- Separate ArgoCD from application namespaces.
+- Use ApplicationSet for large environments.
+
+---
+
+# Common Mistakes
+
+- Installing ArgoCD in the default namespace.
+- Running a single replica in production.
+- Allowing direct cluster changes.
+- Ignoring Repository Server performance.
+- Exposing the API Server publicly without authentication.
+- Disabling RBAC.
+- Running all environments from one unmanaged application.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Where does ArgoCD run?
+- What is the API Server?
+- What is the Repository Server?
+- What is the Application Controller?
+- Why does ArgoCD use Redis?
+
+## Intermediate
+
+- Explain ArgoCD component architecture.
+- How does the Application Controller detect drift?
+- What is Dex used for?
+- What is the ApplicationSet Controller?
+- How does ArgoCD authenticate users?
+
+## Advanced
+
+- Design a highly available ArgoCD deployment for Amazon EKS supporting hundreds of microservices, multiple development teams, and enterprise SSO.
+- Explain how the API Server, Repository Server, Application Controller, Redis, Dex, and ApplicationSet Controller work together to deliver secure and scalable GitOps deployments.
+- A financial organization wants to deploy ArgoCD in production across multiple Kubernetes clusters. Explain how you would design the namespace strategy, high availability architecture, authentication, RBAC, scalability, monitoring, and component interactions to ensure secure and reliable GitOps operations.
+
+---
+
