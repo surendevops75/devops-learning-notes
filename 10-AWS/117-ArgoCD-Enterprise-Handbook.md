@@ -3096,3 +3096,778 @@ different sync policies.
 
 ---
 
+# Chapter 5 - ArgoCD Application Lifecycle, Health Checks & Resource Tracking
+
+ArgoCD continuously manages
+
+the complete lifecycle
+
+of Kubernetes applications.
+
+An application
+
+does not simply deploy once.
+
+Instead,
+
+ArgoCD continuously
+
+- Tracks
+- Monitors
+- Synchronizes
+- Validates
+- Recovers
+
+applications
+
+throughout
+
+their lifecycle.
+
+---
+
+# Application Lifecycle
+
+```text
+Git Commit
+
+↓
+
+Application Created
+
+↓
+
+Sync
+
+↓
+
+Deployment
+
+↓
+
+Health Check
+
+↓
+
+Running
+
+↓
+
+Continuous Monitoring
+```
+
+The application
+
+remains
+
+under continuous management.
+
+---
+
+# Application Creation
+
+Every application
+
+starts
+
+from Git.
+
+Workflow
+
+```text
+Git Repository
+
+↓
+
+ArgoCD Application
+
+↓
+
+Amazon EKS
+```
+
+The Git repository
+
+defines
+
+the desired state.
+
+---
+
+# Desired State
+
+Desired State
+
+includes
+
+```text
+Deployment
+
+Service
+
+Ingress
+
+ConfigMap
+
+Secret
+
+PersistentVolumeClaim
+```
+
+Everything
+
+required
+
+to run
+
+the application.
+
+---
+
+# Manifest Generation
+
+ArgoCD
+
+generates manifests
+
+from
+
+- Plain YAML
+- Helm Charts
+- Kustomize
+- Jsonnet
+
+Workflow
+
+```text
+Git Repository
+
+↓
+
+Manifest Generation
+
+↓
+
+Kubernetes Resources
+```
+
+---
+
+# Resource Creation
+
+After synchronization,
+
+resources
+
+are created
+
+inside Kubernetes.
+
+```text
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+```
+
+Applications
+
+become operational.
+
+---
+
+# Resource Tracking
+
+ArgoCD tracks
+
+every Kubernetes resource
+
+belonging
+
+to an application.
+
+Examples
+
+```text
+Deployment
+
+Service
+
+Ingress
+
+ConfigMap
+
+Secret
+
+Job
+
+CronJob
+```
+
+Every resource
+
+is monitored.
+
+---
+
+# Resource Ownership
+
+ArgoCD identifies
+
+which resources
+
+belong
+
+to which application.
+
+Architecture
+
+```text
+Application
+
+↓
+
+Deployment
+
+↓
+
+Pods
+
+↓
+
+Service
+
+↓
+
+Ingress
+```
+
+Ownership
+
+prevents
+
+resource conflicts.
+
+---
+
+# Health Monitoring
+
+ArgoCD continuously checks
+
+resource health.
+
+Health states
+
+```text
+Healthy
+
+Progressing
+
+Degraded
+
+Suspended
+
+Missing
+
+Unknown
+```
+
+---
+
+# Healthy
+
+```text
+Desired State
+
+=
+
+Running State
+```
+
+The application
+
+is operating
+
+normally.
+
+---
+
+# Progressing
+
+Resources
+
+are still
+
+being created
+
+or updated.
+
+Examples
+
+```text
+Pod Starting
+
+Rolling Update
+
+Replica Creation
+```
+
+---
+
+# Degraded
+
+The application
+
+is deployed
+
+but not functioning correctly.
+
+Examples
+
+```text
+CrashLoopBackOff
+
+ImagePullBackOff
+
+Failed Pods
+
+Readiness Failure
+```
+
+Immediate investigation
+
+is required.
+
+---
+
+# Missing
+
+Expected resources
+
+cannot be found
+
+inside Kubernetes.
+
+Possible causes
+
+- Manual Deletion
+- Failed Deployment
+- Cluster Issues
+
+---
+
+# Unknown
+
+ArgoCD
+
+cannot determine
+
+resource health.
+
+Possible causes
+
+- API Server Failure
+- Cluster Connectivity
+- Repository Issues
+
+---
+
+# Health Evaluation
+
+```text
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+
+↓
+
+Health Status
+```
+
+ArgoCD evaluates
+
+multiple resources
+
+before determining
+
+overall application health.
+
+---
+
+# Sync vs Health
+
+| Sync Status | Health Status |
+|-------------|---------------|
+| Git vs Cluster | Application Condition |
+| Synced | Healthy |
+| OutOfSync | Degraded |
+| Unknown | Unknown |
+
+These represent
+
+different aspects
+
+of application management.
+
+---
+
+# Resource Tree
+
+ArgoCD
+
+displays
+
+application resources
+
+as a hierarchy.
+
+```text
+Application
+
+├── Deployment
+
+├── ReplicaSet
+
+├── Pods
+
+├── Service
+
+├── ConfigMap
+
+└── Ingress
+```
+
+This simplifies
+
+troubleshooting.
+
+---
+
+# Rolling Updates
+
+Application updates
+
+typically follow
+
+```text
+Old Pods
+
+↓
+
+New Pods
+
+↓
+
+Validation
+
+↓
+
+Traffic Shift
+```
+
+Health
+
+is monitored
+
+throughout
+
+the rollout.
+
+---
+
+# Failed Deployment
+
+If deployment fails
+
+```text
+Deployment
+
+↓
+
+Pods Fail
+
+↓
+
+Health Degraded
+
+↓
+
+Investigation
+```
+
+ArgoCD
+
+reports
+
+the failure immediately.
+
+---
+
+# Application Deletion
+
+When
+
+an application
+
+is removed
+
+from Git,
+
+ArgoCD
+
+can remove
+
+associated resources.
+
+Workflow
+
+```text
+Application Removed
+
+↓
+
+Git Updated
+
+↓
+
+Sync
+
+↓
+
+Resources Deleted
+```
+
+---
+
+# Drift Recovery
+
+Manual changes
+
+cause
+
+configuration drift.
+
+Workflow
+
+```text
+kubectl Edit
+
+↓
+
+OutOfSync
+
+↓
+
+Self-Heal
+
+↓
+
+Git State Restored
+```
+
+Applications
+
+remain consistent.
+
+---
+
+# Continuous Monitoring
+
+ArgoCD
+
+continuously monitors
+
+```text
+Git
+
+↓
+
+Resources
+
+↓
+
+Health
+
+↓
+
+Sync
+
+↓
+
+Cluster
+```
+
+Applications
+
+are never
+
+left unmanaged.
+
+---
+
+# Enterprise Lifecycle
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+Merge
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Health Monitoring
+
+↓
+
+Production
+```
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Git Update
+
+↓
+
+ArgoCD
+
+↓
+
+Rolling Deployment
+
+↓
+
+Health Check
+
+↓
+
+Production
+```
+
+Only healthy applications
+
+remain
+
+in production.
+
+---
+
+# Enterprise Dashboard
+
+ArgoCD Web UI
+
+shows
+
+```text
+Application
+
+↓
+
+Sync Status
+
+↓
+
+Health Status
+
+↓
+
+Revision
+
+↓
+
+History
+```
+
+Operations teams
+
+can quickly
+
+identify problems.
+
+---
+
+# Enterprise Best Practices
+
+- Monitor application health continuously.
+- Enable Self-Healing.
+- Track every Kubernetes resource.
+- Investigate degraded applications immediately.
+- Keep applications small and focused.
+- Use Health Status for operational monitoring.
+- Validate rollouts before promotion.
+- Remove orphaned resources using Prune.
+
+---
+
+# Common Mistakes
+
+- Ignoring degraded applications.
+- Confusing Sync Status with Health Status.
+- Allowing manual cluster changes.
+- Deploying unrelated services in one application.
+- Ignoring missing resources.
+- Not monitoring rollout progress.
+- Leaving orphaned Kubernetes resources.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an ArgoCD Application?
+- What is Health Status?
+- What is Sync Status?
+- What is Resource Tracking?
+- What is a Healthy application?
+
+## Intermediate
+
+- Healthy vs Progressing vs Degraded.
+- How does ArgoCD track Kubernetes resources?
+- Why is Resource Ownership important?
+- How does ArgoCD detect failed deployments?
+- Explain the application lifecycle.
+
+## Advanced
+
+- Design an enterprise application lifecycle using ArgoCD, Amazon EKS, rolling deployments, health checks, resource tracking, and continuous monitoring for large-scale microservices.
+- Explain how ArgoCD manages applications throughout their lifecycle using synchronization, health evaluation, resource ownership, and continuous reconciliation.
+- A financial organization manages over 300 microservices on Amazon EKS using ArgoCD. Explain how you would design application boundaries, health monitoring, resource tracking, rollout validation, drift recovery, and lifecycle management to ensure highly available, secure, and auditable GitOps deployments.
+
+---
+
