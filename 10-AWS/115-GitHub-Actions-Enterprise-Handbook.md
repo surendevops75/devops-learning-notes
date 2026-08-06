@@ -4806,3 +4806,795 @@ all applications.
 - Design an enterprise GitHub Actions platform using reusable workflows, composite actions, centralized CI/CD templates, GitHub Marketplace actions, and Amazon EKS deployments.
 - Explain how reusable workflows and composite actions reduce duplication, improve governance, and standardize CI/CD across hundreds of repositories.
 - A large enterprise has 500 application repositories maintained by different teams. Explain how you would design a centralized GitHub Actions platform with reusable workflows, composite actions, versioning, governance, security controls, and deployment automation to ensure consistency and maintainability across the organization.
+
+---
+
+# Chapter 7 - GitHub Actions Docker Build, Amazon ECR & Amazon EKS Deployment (Enterprise Guide)
+
+Modern cloud-native applications follow a standardized deployment pipeline.
+
+Instead of manually building and deploying applications,
+
+GitHub Actions automates
+
+- Docker Image Build
+- Security Scanning
+- Image Push
+- Infrastructure Validation
+- Kubernetes Deployment
+
+This chapter explains how GitHub Actions integrates with Docker, Amazon ECR, and Amazon EKS in enterprise environments.
+
+---
+
+# Enterprise Deployment Architecture
+
+```text
+Developer
+
+↓
+
+GitHub Repository
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Security Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Customers
+```
+
+This is one of the most common enterprise CI/CD architectures.
+
+---
+
+# CI/CD Deployment Flow
+
+```text
+Git Push
+
+↓
+
+Build
+
+↓
+
+Unit Tests
+
+↓
+
+Docker Image
+
+↓
+
+Security Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Deployment
+
+↓
+
+Amazon EKS
+```
+
+Every deployment follows
+
+the same automated workflow.
+
+---
+
+# Why Automate Deployments?
+
+Manual deployments
+
+often result in
+
+- Human Errors
+- Inconsistent Releases
+- Downtime
+- Slow Delivery
+
+Automation provides
+
+- Consistency
+- Reliability
+- Faster Releases
+- Repeatability
+
+---
+
+# Docker Build Stage
+
+The first deployment stage
+
+creates
+
+a Docker image.
+
+Workflow
+
+```text
+Source Code
+
+↓
+
+Dockerfile
+
+↓
+
+Docker Build
+
+↓
+
+Docker Image
+```
+
+The image becomes
+
+the deployment artifact.
+
+---
+
+# Image Tagging Strategy
+
+Every build
+
+should generate
+
+a unique image tag.
+
+Examples
+
+```text
+v1.0.0
+
+v2.1.3
+
+Commit SHA
+
+Build Number
+```
+
+Avoid
+
+using
+
+`latest`
+
+in production.
+
+---
+
+# Security Scanning
+
+Every image
+
+must be scanned
+
+before deployment.
+
+Common tools
+
+- Trivy
+- Amazon ECR Scan
+- Docker Scout
+
+Only approved images
+
+should continue
+
+through the pipeline.
+
+---
+
+# Amazon Elastic Container Registry (ECR)
+
+Amazon ECR
+
+stores
+
+Docker images.
+
+Architecture
+
+```text
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Versioned Repository
+```
+
+The registry
+
+becomes
+
+the source of truth
+
+for deployments.
+
+---
+
+# Image Push Workflow
+
+```text
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Security Scan
+
+↓
+
+Push Image
+
+↓
+
+Amazon ECR
+```
+
+The image
+
+is now available
+
+for deployment.
+
+---
+
+# Build Once, Deploy Everywhere
+
+Enterprise pipelines
+
+build
+
+one immutable image.
+
+```text
+Build
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Never rebuild
+
+for each environment.
+
+---
+
+# Amazon EKS Deployment
+
+After the image
+
+is stored
+
+in Amazon ECR,
+
+GitHub Actions
+
+deploys it
+
+to Amazon EKS.
+
+Workflow
+
+```text
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Application
+```
+
+---
+
+# Kubernetes Deployment
+
+GitHub Actions
+
+updates
+
+the Kubernetes deployment.
+
+Architecture
+
+```text
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+```
+
+The cluster
+
+pulls
+
+the latest approved image.
+
+---
+
+# Rolling Deployment
+
+Production deployments
+
+should use
+
+rolling updates.
+
+```text
+Old Pods
+
+↓
+
+New Pods
+
+↓
+
+Validation
+
+↓
+
+Traffic Shift
+```
+
+Downtime
+
+is minimized.
+
+---
+
+# Blue-Green Deployment
+
+Alternative strategy
+
+```text
+Blue Environment
+
+↓
+
+Green Environment
+
+↓
+
+Validation
+
+↓
+
+Switch Traffic
+```
+
+Rollback
+
+is immediate
+
+if issues occur.
+
+---
+
+# Canary Deployment
+
+Traffic
+
+is shifted gradually.
+
+```text
+10%
+
+↓
+
+25%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Production risk
+
+is reduced.
+
+---
+
+# Deployment Approval
+
+Many organizations
+
+require
+
+manual approval
+
+before production.
+
+Workflow
+
+```text
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+---
+
+# Environment Strategy
+
+One workflow
+
+supports
+
+multiple environments.
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Each environment
+
+uses
+
+its own configuration.
+
+---
+
+# Deployment Pipeline
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Fully automated
+
+from commit
+
+to deployment.
+
+---
+
+# Rollback Strategy
+
+If deployment fails
+
+```text
+Current Version
+
+↓
+
+Previous Image
+
+↓
+
+Redeploy
+
+↓
+
+Application Restored
+```
+
+Rollback
+
+should be fast
+
+and predictable.
+
+---
+
+# Deployment Verification
+
+After deployment
+
+verify
+
+- Pod Status
+- Health Checks
+- Application Logs
+- Metrics
+- Alerts
+
+Deployment
+
+is complete
+
+only after validation.
+
+---
+
+# Monitoring
+
+After deployment
+
+monitor
+
+- Pod Health
+- CPU
+- Memory
+- Restart Count
+- Latency
+
+Use
+
+- Prometheus
+- Grafana
+- ELK
+
+for observability.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+```
+
+This provides
+
+secure,
+
+observable,
+
+and automated deployments.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+Payment API
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Image Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Rolling Deployment
+
+↓
+
+Customers
+```
+
+Every release
+
+passes
+
+quality and security gates.
+
+---
+
+# Enterprise Deployment Checklist
+
+Before deployment verify
+
+✓ Build Successful
+
+✓ Unit Tests Passed
+
+✓ Security Scan Passed
+
+✓ Docker Image Tagged
+
+✓ Image Uploaded to Amazon ECR
+
+✓ Kubernetes Manifest Validated
+
+✓ Approval Completed
+
+✓ Monitoring Enabled
+
+✓ Rollback Plan Ready
+
+---
+
+# Best Practices
+
+- Build once, deploy everywhere.
+- Use immutable Docker images.
+- Tag images with versions or commit SHAs.
+- Scan images before deployment.
+- Use rolling or blue-green deployments.
+- Keep production deployments behind approvals.
+- Validate deployments after rollout.
+- Monitor applications continuously.
+
+---
+
+# Common Mistakes
+
+- Deploying unscanned images.
+- Using `latest` in production.
+- Rebuilding images for each environment.
+- Skipping deployment validation.
+- Ignoring rollback planning.
+- Deploying directly to production from feature branches.
+- Not monitoring deployments after release.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How does GitHub Actions deploy Docker applications?
+- What is Amazon ECR?
+- What is Amazon EKS?
+- Why is image tagging important?
+- Why should deployments be automated?
+
+## Intermediate
+
+- Explain the deployment pipeline from GitHub to Amazon EKS.
+- Rolling Deployment vs Blue-Green Deployment.
+- What is Canary Deployment?
+- Why Build Once, Deploy Everywhere?
+- How do you validate a deployment?
+
+## Advanced
+
+- Design a complete GitHub Actions deployment pipeline integrating Docker, Trivy, Amazon ECR, Amazon EKS, Prometheus, Grafana, and ELK Stack.
+- Explain how immutable Docker images, automated security scanning, deployment approvals, and Kubernetes rollout strategies work together to deliver secure and reliable production deployments.
+- A financial organization deploys hundreds of microservices to Amazon EKS every day. Explain how you would design the CI/CD pipeline, image management strategy, deployment approval process, rollback mechanism, monitoring, and governance to ensure high availability, security, and compliance.
+
+---
+
