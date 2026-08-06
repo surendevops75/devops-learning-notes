@@ -5383,3 +5383,728 @@ hundreds of deployments.
 
 ---
 
+# Chapter 8 - ArgoCD Security, RBAC, SSO & Enterprise Governance
+
+ArgoCD manages
+
+production Kubernetes deployments.
+
+It has access to
+
+- Git Repositories
+- Kubernetes Clusters
+- Production Applications
+- Secrets
+- Deployment History
+
+If ArgoCD is compromised,
+
+an attacker
+
+can modify
+
+production infrastructure.
+
+Enterprise deployments secure ArgoCD using
+
+- Authentication
+- Authorization
+- RBAC
+- SSO
+- Repository Restrictions
+- Cluster Restrictions
+- Audit Logging
+
+Security must be enforced
+
+throughout
+
+the GitOps platform.
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Developer
+
+↓
+
+SSO
+
+↓
+
+ArgoCD API Server
+
+↓
+
+RBAC
+
+↓
+
+Git Repository
+
+↓
+
+Amazon EKS
+```
+
+Every request
+
+is authenticated
+
+and authorized.
+
+---
+
+# Authentication
+
+Authentication answers
+
+```text
+Who are you?
+```
+
+ArgoCD supports
+
+- Local Users
+- OIDC
+- LDAP
+- GitHub
+- Google
+- Microsoft Entra ID
+- Dex
+
+Enterprise environments
+
+typically use
+
+Single Sign-On (SSO).
+
+---
+
+# Authorization
+
+Authorization determines
+
+```text
+What are you allowed to do?
+```
+
+Examples
+
+- View Applications
+- Sync Applications
+- Rollback Deployments
+- Manage Projects
+- Register Clusters
+
+Permissions
+
+are controlled
+
+through RBAC.
+
+---
+
+# Role-Based Access Control (RBAC)
+
+RBAC assigns
+
+permissions
+
+based on roles.
+
+Example
+
+```text
+Developer
+
+↓
+
+View Applications
+
+────────────
+
+DevOps Engineer
+
+↓
+
+Sync Applications
+
+────────────
+
+Platform Team
+
+↓
+
+Manage Projects
+
+────────────
+
+Administrator
+
+↓
+
+Full Access
+```
+
+---
+
+# Principle of Least Privilege
+
+Every user
+
+should receive
+
+only
+
+the permissions
+
+required
+
+to perform
+
+their job.
+
+Avoid
+
+giving
+
+cluster-wide
+
+administrative access.
+
+---
+
+# Single Sign-On (SSO)
+
+Enterprise users
+
+authenticate
+
+through
+
+corporate identity providers.
+
+Architecture
+
+```text
+Developer
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+Dex
+
+↓
+
+ArgoCD
+```
+
+Benefits
+
+- Centralized Identity
+- MFA Support
+- Easier User Management
+
+---
+
+# Dex Integration
+
+Dex
+
+acts as
+
+an authentication broker.
+
+Workflow
+
+```text
+Identity Provider
+
+↓
+
+Dex
+
+↓
+
+ArgoCD
+
+↓
+
+User Access
+```
+
+---
+
+# Repository Security
+
+ArgoCD
+
+connects only
+
+to
+
+approved repositories.
+
+Example
+
+```text
+Payments Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Payment Applications
+```
+
+Unauthorized repositories
+
+cannot deploy.
+
+---
+
+# Repository Credentials
+
+Git repositories
+
+may require
+
+authentication.
+
+Examples
+
+```text
+SSH Key
+
+HTTPS Token
+
+GitHub App
+
+Deploy Key
+```
+
+Credentials
+
+must be stored securely.
+
+---
+
+# Project Restrictions
+
+Projects restrict
+
+- Git Repositories
+- Kubernetes Namespaces
+- Destination Clusters
+
+Architecture
+
+```text
+Payments Project
+
+↓
+
+Payments Repository
+
+↓
+
+Payments Namespace
+
+↓
+
+Production Cluster
+```
+
+---
+
+# Namespace Restrictions
+
+Applications
+
+should deploy
+
+only
+
+to approved namespaces.
+
+Example
+
+```text
+Payments
+
+↓
+
+payments namespace
+```
+
+Cross-namespace deployments
+
+should be prevented.
+
+---
+
+# Cluster Restrictions
+
+Projects
+
+can restrict
+
+which clusters
+
+applications
+
+are allowed to access.
+
+Example
+
+```text
+Development Cluster
+
+────────────
+
+Testing Cluster
+
+────────────
+
+Production Cluster
+```
+
+---
+
+# Kubernetes RBAC
+
+ArgoCD itself
+
+uses Kubernetes RBAC
+
+to access
+
+cluster resources.
+
+Workflow
+
+```text
+ArgoCD
+
+↓
+
+Service Account
+
+↓
+
+Kubernetes API
+
+↓
+
+Resources
+```
+
+Only required permissions
+
+should be granted.
+
+---
+
+# Secrets Management
+
+Avoid storing
+
+plaintext secrets
+
+inside Git.
+
+Recommended approaches
+
+```text
+External Secrets
+
+↓
+
+Vault
+
+────────────
+
+AWS Secrets Manager
+
+────────────
+
+Sealed Secrets
+```
+
+Git repositories
+
+should not contain
+
+production secrets.
+
+---
+
+# Network Security
+
+Protect ArgoCD
+
+using
+
+- HTTPS
+- Ingress
+- Network Policies
+- Private Load Balancers
+- Firewall Rules
+
+Limit
+
+public exposure.
+
+---
+
+# Audit Logging
+
+Track
+
+- User Logins
+- Application Syncs
+- Rollbacks
+- Failed Authentication
+- Project Changes
+- Cluster Registration
+
+Audit logs
+
+support
+
+security investigations
+
+and compliance.
+
+---
+
+# Deployment Approval
+
+Production deployments
+
+may require
+
+manual approval
+
+before synchronization.
+
+Workflow
+
+```text
+Git Merge
+
+↓
+
+Approval
+
+↓
+
+Manual Sync
+
+↓
+
+Production
+```
+
+---
+
+# Git Branch Protection
+
+Protect
+
+production branches
+
+using
+
+- Pull Requests
+- Required Reviews
+- Status Checks
+- Signed Commits (optional)
+
+Every deployment
+
+should originate
+
+from
+
+an approved merge.
+
+---
+
+# Enterprise Governance
+
+Platform teams
+
+should define
+
+- Project Standards
+- Repository Standards
+- Naming Conventions
+- Sync Policies
+- Access Policies
+
+This ensures
+
+consistent GitOps
+
+across teams.
+
+---
+
+# Enterprise Security Pipeline
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Review
+
+↓
+
+Merge
+
+↓
+
+ArgoCD
+
+↓
+
+RBAC
+
+↓
+
+Amazon EKS
+```
+
+Only approved changes
+
+reach production.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+Microsoft Entra ID
+
+↓
+
+Dex
+
+↓
+
+ArgoCD
+
+↓
+
+Payments Project
+
+↓
+
+Amazon EKS
+```
+
+Production access
+
+is tightly controlled
+
+through SSO
+
+and RBAC.
+
+---
+
+# Enterprise Security Checklist
+
+Before production deployment verify
+
+✓ SSO Enabled
+
+✓ RBAC Configured
+
+✓ Least Privilege Applied
+
+✓ Repository Restrictions Configured
+
+✓ Namespace Restrictions Configured
+
+✓ Cluster Restrictions Configured
+
+✓ Git Branch Protection Enabled
+
+✓ Audit Logging Enabled
+
+✓ HTTPS Configured
+
+✓ Secrets Managed Securely
+
+---
+
+# Enterprise Best Practices
+
+- Integrate ArgoCD with enterprise SSO.
+- Enable RBAC for every user.
+- Restrict Projects to approved repositories.
+- Restrict deployments to approved namespaces.
+- Register clusters using least-privilege service accounts.
+- Protect production Git branches.
+- Keep secrets outside Git using a secure secret management solution.
+- Review audit logs regularly.
+
+---
+
+# Common Mistakes
+
+- Using local admin accounts in production.
+- Giving every user administrator access.
+- Allowing unrestricted Git repositories.
+- Storing secrets directly in Git.
+- Registering clusters with excessive permissions.
+- Disabling audit logging.
+- Deploying outside approved Projects.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is ArgoCD security important?
+- What is RBAC?
+- What is SSO?
+- Why use Dex?
+- Why should secrets not be stored in Git?
+
+## Intermediate
+
+- Authentication vs Authorization.
+- How do Projects improve security?
+- Explain namespace restrictions.
+- How does Kubernetes RBAC work with ArgoCD?
+- Why use branch protection in GitOps?
+
+## Advanced
+
+- Design a secure enterprise ArgoCD platform using SSO, Dex, RBAC, Project restrictions, Kubernetes RBAC, Git branch protection, and Amazon EKS.
+- Explain how authentication, authorization, RBAC, repository restrictions, namespace restrictions, and audit logging work together to secure enterprise GitOps deployments.
+- A financial organization wants to deploy ArgoCD across multiple AWS accounts and Kubernetes clusters while meeting strict compliance requirements. Explain how you would design authentication, SSO integration, RBAC, Project governance, cluster access, secrets management, branch protection, audit logging, and deployment approvals to ensure secure and compliant GitOps operations.
+
+---
+
