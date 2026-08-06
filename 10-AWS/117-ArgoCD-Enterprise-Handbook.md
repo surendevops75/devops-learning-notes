@@ -1441,3 +1441,801 @@ from Git.
 
 ---
 
+# Chapter 3 - ArgoCD Applications, Projects & Git Repository Management
+
+ArgoCD manages Kubernetes deployments using **Applications**.
+
+An Application defines
+
+- What to deploy
+- Where to deploy
+- Which Git repository to use
+- Which Kubernetes cluster to deploy into
+
+For enterprise environments,
+
+Applications are organized into **Projects** to provide security, governance, and multi-team isolation.
+
+---
+
+# What is an ArgoCD Application?
+
+An Application
+
+is the fundamental deployment object
+
+in ArgoCD.
+
+It connects
+
+```text
+Git Repository
+
+↓
+
+Kubernetes Cluster
+```
+
+An Application continuously synchronizes
+
+the desired state
+
+stored in Git
+
+with
+
+the actual cluster state.
+
+---
+
+# Application Architecture
+
+```text
+Git Repository
+
+↓
+
+ArgoCD Application
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+```
+
+The Application
+
+represents
+
+one deployable workload.
+
+---
+
+# Why Applications?
+
+Without Applications
+
+```text
+Git Repository
+
+↓
+
+Manual kubectl
+
+↓
+
+Cluster
+```
+
+Problems
+
+- Manual Deployments
+- No Ownership
+- Difficult Tracking
+
+---
+
+With Applications
+
+```text
+Git Repository
+
+↓
+
+Application
+
+↓
+
+Automatic Sync
+
+↓
+
+Cluster
+```
+
+Everything
+
+is managed
+
+centrally.
+
+---
+
+# Application Components
+
+Every Application contains
+
+```text
+Source
+
+↓
+
+Destination
+
+↓
+
+Project
+
+↓
+
+Sync Policy
+
+↓
+
+Health Status
+```
+
+These define
+
+how
+
+the application
+
+is managed.
+
+---
+
+# Source
+
+The Source defines
+
+where
+
+ArgoCD retrieves
+
+the application manifests.
+
+Examples
+
+```text
+Git Repository
+
+Helm Repository
+
+OCI Repository
+```
+
+---
+
+# Destination
+
+The Destination defines
+
+where
+
+the application
+
+is deployed.
+
+Examples
+
+```text
+Amazon EKS Cluster
+
+Namespace
+```
+
+Applications
+
+can target
+
+different clusters
+
+and namespaces.
+
+---
+
+# Target Revision
+
+ArgoCD
+
+deploys
+
+a specific revision.
+
+Examples
+
+```text
+Main Branch
+
+Release Branch
+
+Git Tag
+
+Commit SHA
+```
+
+Production
+
+typically deploys
+
+approved branches
+
+or tags.
+
+---
+
+# Application Workflow
+
+```text
+Developer
+
+↓
+
+Git Commit
+
+↓
+
+Repository
+
+↓
+
+Application
+
+↓
+
+Amazon EKS
+```
+
+Every deployment
+
+starts
+
+with Git.
+
+---
+
+# Desired State
+
+Desired State
+
+exists
+
+inside Git.
+
+Examples
+
+```text
+Deployment
+
+Service
+
+Ingress
+
+ConfigMap
+
+Secret
+
+Helm Values
+```
+
+---
+
+# Actual State
+
+Actual State
+
+is
+
+the running configuration
+
+inside Kubernetes.
+
+ArgoCD
+
+continuously compares
+
+desired
+
+and actual state.
+
+---
+
+# Health Status
+
+ArgoCD
+
+evaluates
+
+application health.
+
+Common states
+
+```text
+Healthy
+
+Progressing
+
+Degraded
+
+Missing
+
+Unknown
+```
+
+Health
+
+indicates
+
+application condition.
+
+---
+
+# Sync Status
+
+ArgoCD
+
+tracks
+
+synchronization status.
+
+Common states
+
+```text
+Synced
+
+OutOfSync
+
+Unknown
+```
+
+---
+
+# Application Lifecycle
+
+```text
+Git Commit
+
+↓
+
+Compare
+
+↓
+
+Sync
+
+↓
+
+Health Check
+
+↓
+
+Running
+```
+
+Applications
+
+remain under
+
+continuous monitoring.
+
+---
+
+# What is an ArgoCD Project?
+
+A Project
+
+groups
+
+multiple Applications.
+
+Projects provide
+
+- Security
+- RBAC
+- Namespace Restrictions
+- Repository Restrictions
+- Cluster Restrictions
+
+---
+
+# Project Architecture
+
+```text
+Project
+
+├── Payment API
+
+├── Orders API
+
+├── Inventory API
+
+└── Notification API
+```
+
+Related applications
+
+are managed together.
+
+---
+
+# Why Projects?
+
+Without Projects
+
+```text
+All Applications
+
+↓
+
+One Configuration
+```
+
+Problems
+
+- Poor Security
+- Difficult Governance
+- No Team Isolation
+
+---
+
+With Projects
+
+```text
+Payments Project
+
+↓
+
+Payment Apps
+
+────────────
+
+Retail Project
+
+↓
+
+Retail Apps
+```
+
+Each team
+
+manages
+
+its own applications.
+
+---
+
+# Repository Restrictions
+
+Projects
+
+can limit
+
+which repositories
+
+applications
+
+may use.
+
+Example
+
+```text
+Payments Project
+
+↓
+
+payments-git-repository
+```
+
+Unauthorized repositories
+
+cannot deploy.
+
+---
+
+# Namespace Restrictions
+
+Projects
+
+can restrict
+
+deployment namespaces.
+
+Example
+
+```text
+Payments Project
+
+↓
+
+payments namespace
+```
+
+Applications
+
+cannot deploy
+
+outside
+
+approved namespaces.
+
+---
+
+# Cluster Restrictions
+
+Projects
+
+can control
+
+which clusters
+
+applications
+
+may access.
+
+Example
+
+```text
+Development Cluster
+
+Testing Cluster
+
+Production Cluster
+```
+
+---
+
+# Multi-Team Architecture
+
+```text
+Payments Project
+
+↓
+
+Payment Applications
+
+────────────
+
+Retail Project
+
+↓
+
+Retail Applications
+
+────────────
+
+Platform Project
+
+↓
+
+Infrastructure Applications
+```
+
+Each team
+
+is isolated.
+
+---
+
+# Multi-Cluster Deployment
+
+One ArgoCD instance
+
+can manage
+
+multiple clusters.
+
+Architecture
+
+```text
+Git Repository
+
+↓
+
+ArgoCD
+
+├── Dev Cluster
+
+├── Test Cluster
+
+└── Production Cluster
+```
+
+Applications
+
+target
+
+specific clusters.
+
+---
+
+# Git Repository Structure
+
+Enterprise Git repositories
+
+are commonly organized as
+
+```text
+gitops/
+
+├── development/
+
+├── testing/
+
+├── staging/
+
+└── production/
+```
+
+Each environment
+
+contains
+
+its own manifests.
+
+---
+
+# Environment Promotion
+
+Applications move
+
+through environments
+
+using Git.
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Promotion
+
+is controlled
+
+through pull requests
+
+and approvals.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+Developer
+
+↓
+
+Application Repository
+
+↓
+
+CI Pipeline
+
+↓
+
+Manifest Repository
+
+↓
+
+ArgoCD Application
+
+↓
+
+Amazon EKS
+```
+
+CI
+
+updates Git.
+
+ArgoCD
+
+performs deployment.
+
+---
+
+# Banking Example
+
+```text
+Payments Project
+
+↓
+
+Payment API
+
+↓
+
+Git Repository
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Every banking application
+
+belongs
+
+to an approved project.
+
+---
+
+# Enterprise Best Practices
+
+- Create one Application per deployable workload.
+- Group related applications into Projects.
+- Restrict repositories using Projects.
+- Restrict namespaces using Projects.
+- Separate environments into different Git directories or repositories.
+- Deploy only approved branches or tags.
+- Keep Git as the single source of truth.
+- Use pull requests for environment promotion.
+
+---
+
+# Common Mistakes
+
+- Placing every application in the default Project.
+- Allowing unrestricted Git repositories.
+- Deploying to any namespace.
+- Mixing development and production manifests.
+- Using one Application for unrelated services.
+- Bypassing Git for production changes.
+- Ignoring OutOfSync applications.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is an ArgoCD Application?
+- What is an ArgoCD Project?
+- What is the difference between Health Status and Sync Status?
+- What is the Source field?
+- What is the Destination field?
+
+## Intermediate
+
+- How do Projects improve security?
+- Why should repositories be restricted?
+- Explain namespace restrictions.
+- How does ArgoCD manage multiple clusters?
+- What is environment promotion in GitOps?
+
+## Advanced
+
+- Design an enterprise GitOps architecture using ArgoCD Applications, Projects, multiple Git repositories, and Amazon EKS clusters for secure multi-team deployments.
+- Explain how Applications, Projects, repository restrictions, namespace restrictions, and cluster restrictions work together to provide governance and security in ArgoCD.
+- A financial organization manages hundreds of microservices across Development, Testing, Staging, and Production environments. Explain how you would design the Application hierarchy, Project structure, Git repository organization, multi-cluster deployment strategy, RBAC, and promotion workflow to ensure secure, scalable, and auditable GitOps operations.
+
+---
+
