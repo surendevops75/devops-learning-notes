@@ -703,3 +703,974 @@ a complete DevOps automation platform.
 
 ---
 
+# Chapter 2 - GitHub Actions Workflow Syntax (Deep Dive)
+
+Every GitHub Actions automation starts with a **Workflow YAML file**.
+
+Understanding workflow syntax is the foundation for building production-grade CI/CD pipelines.
+
+This chapter explains
+
+- Workflow Structure
+- YAML Syntax
+- Events
+- Jobs
+- Steps
+- Expressions
+- Variables
+- Contexts
+- Dependencies
+- Timeouts
+- Permissions
+
+---
+
+# Workflow File Location
+
+Every workflow must be stored inside
+
+```text
+.github/
+
+↓
+
+workflows/
+
+↓
+
+workflow.yml
+```
+
+GitHub automatically detects
+
+all workflow files
+
+inside this directory.
+
+---
+
+# Workflow Architecture
+
+```text
+GitHub Event
+
+↓
+
+Workflow
+
+↓
+
+Jobs
+
+↓
+
+Steps
+
+↓
+
+Runner
+
+↓
+
+Result
+```
+
+Every workflow follows this execution model.
+
+---
+
+# Basic Workflow Structure
+
+A workflow consists of
+
+```text
+Name
+
+↓
+
+Trigger
+
+↓
+
+Jobs
+
+↓
+
+Steps
+```
+
+These are the minimum required components.
+
+---
+
+# Workflow Lifecycle
+
+```text
+Developer Push
+
+↓
+
+GitHub Event
+
+↓
+
+Workflow Starts
+
+↓
+
+Runner Allocated
+
+↓
+
+Jobs Execute
+
+↓
+
+Workflow Completed
+```
+
+---
+
+# Workflow Name
+
+Every workflow
+
+should have
+
+a meaningful name.
+
+Example
+
+```text
+Build Application
+
+Terraform Deployment
+
+Docker Build
+
+Production Deployment
+```
+
+Meaningful names
+
+improve visibility.
+
+---
+
+# Events (Triggers)
+
+Events determine
+
+when
+
+a workflow starts.
+
+Common events
+
+```text
+Push
+
+Pull Request
+
+Release
+
+Schedule
+
+Manual Trigger
+```
+
+---
+
+# Push Event
+
+Workflow starts
+
+whenever code
+
+is pushed.
+
+Architecture
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Workflow
+```
+
+Used for
+
+Continuous Integration.
+
+---
+
+# Pull Request Event
+
+Triggered
+
+when
+
+a Pull Request
+
+is created,
+
+updated,
+
+or merged.
+
+Workflow
+
+```text
+Developer
+
+↓
+
+Pull Request
+
+↓
+
+Validation
+
+↓
+
+Review
+```
+
+Useful
+
+for code quality checks.
+
+---
+
+# Release Event
+
+Triggered
+
+when
+
+a GitHub Release
+
+is published.
+
+Typical workflow
+
+```text
+Release
+
+↓
+
+Build
+
+↓
+
+Deploy
+```
+
+---
+
+# Schedule Event
+
+Workflows
+
+can execute
+
+automatically
+
+using schedules.
+
+Examples
+
+- Nightly Builds
+- Weekly Scans
+- Monthly Reports
+
+---
+
+# Manual Workflow
+
+GitHub supports
+
+manual execution.
+
+Workflow
+
+```text
+Engineer
+
+↓
+
+Manual Trigger
+
+↓
+
+Workflow
+```
+
+Useful
+
+for production deployments.
+
+---
+
+# Multiple Triggers
+
+One workflow
+
+may respond
+
+to multiple events.
+
+Example
+
+```text
+Push
+
+↓
+
+OR
+
+↓
+
+Pull Request
+
+↓
+
+Workflow
+```
+
+---
+
+# Jobs
+
+A Job
+
+groups
+
+related tasks.
+
+Example
+
+```text
+Build Job
+
+↓
+
+Compile
+
+↓
+
+Test
+
+↓
+
+Package
+```
+
+---
+
+# Multiple Jobs
+
+One workflow
+
+can contain
+
+multiple jobs.
+
+Architecture
+
+```text
+Workflow
+
+├── Build
+
+├── Test
+
+├── Security
+
+└── Deploy
+```
+
+Jobs
+
+can execute
+
+in parallel
+
+or sequentially.
+
+---
+
+# Job Dependencies
+
+Example
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Deploy
+```
+
+Deployment
+
+starts only
+
+after testing succeeds.
+
+---
+
+# Parallel Jobs
+
+Independent jobs
+
+can execute
+
+simultaneously.
+
+```text
+Build
+
+↓
+
+Test
+
+↓
+
+Lint
+
+↓
+
+Security Scan
+```
+
+This reduces
+
+pipeline execution time.
+
+---
+
+# Steps
+
+Each Job
+
+contains
+
+multiple Steps.
+
+Example
+
+```text
+Checkout Code
+
+↓
+
+Install Dependencies
+
+↓
+
+Run Tests
+
+↓
+
+Build Docker Image
+```
+
+Steps execute
+
+in order.
+
+---
+
+# Actions
+
+Most steps
+
+use reusable
+
+GitHub Actions.
+
+Examples
+
+```text
+Checkout Repository
+
+Setup Java
+
+Setup Node
+
+Upload Artifact
+
+AWS Login
+```
+
+---
+
+# Run Commands
+
+Steps
+
+may also execute
+
+shell commands.
+
+Workflow
+
+```text
+Runner
+
+↓
+
+Shell
+
+↓
+
+Command
+
+↓
+
+Output
+```
+
+---
+
+# Runner Selection
+
+Every Job
+
+requires
+
+a Runner.
+
+Options
+
+```text
+GitHub Hosted
+
+↓
+
+OR
+
+↓
+
+Self-hosted
+```
+
+---
+
+# Environment Variables
+
+Workflows
+
+support
+
+environment variables.
+
+Architecture
+
+```text
+Workflow
+
+↓
+
+Environment Variable
+
+↓
+
+Job
+
+↓
+
+Step
+```
+
+Used for
+
+configuration.
+
+---
+
+# Variables Scope
+
+Variables
+
+can exist
+
+at
+
+```text
+Workflow Level
+
+↓
+
+Job Level
+
+↓
+
+Step Level
+```
+
+Choose
+
+the appropriate scope
+
+to reduce duplication.
+
+---
+
+# Expressions
+
+GitHub Actions
+
+supports expressions
+
+for dynamic logic.
+
+Workflow
+
+```text
+Condition
+
+↓
+
+Expression
+
+↓
+
+Execute
+```
+
+Used for
+
+conditional execution.
+
+---
+
+# Contexts
+
+Contexts provide
+
+workflow information.
+
+Examples
+
+```text
+Repository
+
+↓
+
+Branch
+
+↓
+
+Commit
+
+↓
+
+Actor
+
+↓
+
+Event
+```
+
+Contexts make
+
+workflows dynamic.
+
+---
+
+# Conditional Execution
+
+Jobs
+
+or Steps
+
+may execute
+
+only when
+
+certain conditions
+
+are met.
+
+Example
+
+```text
+Main Branch
+
+↓
+
+Deploy
+
+────────────
+
+Feature Branch
+
+↓
+
+Skip Deployment
+```
+
+---
+
+# Matrix Strategy
+
+A matrix
+
+runs
+
+the same job
+
+multiple times.
+
+Example
+
+```text
+Ubuntu
+
+↓
+
+Windows
+
+↓
+
+macOS
+```
+
+Useful
+
+for cross-platform testing.
+
+---
+
+# Artifacts
+
+Artifacts
+
+store
+
+workflow outputs.
+
+Examples
+
+```text
+Build Package
+
+Test Reports
+
+Terraform Plan
+
+Coverage Report
+```
+
+Artifacts
+
+are available
+
+after workflow completion.
+
+---
+
+# Timeouts
+
+Jobs
+
+should define
+
+reasonable timeouts.
+
+Benefits
+
+- Prevent Hanging Jobs
+- Reduce Runner Usage
+- Faster Failure Detection
+
+---
+
+# Permissions
+
+GitHub Actions
+
+supports
+
+fine-grained permissions.
+
+Grant only
+
+required permissions.
+
+Avoid
+
+full repository access
+
+unless necessary.
+
+---
+
+# Enterprise Workflow Architecture
+
+```text
+Push
+
+↓
+
+Workflow
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Deploy
+```
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+Git Push
+
+↓
+
+Workflow
+
+↓
+
+Build
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production
+```
+
+Every deployment
+
+is validated
+
+before production.
+
+---
+
+# Enterprise Workflow Structure
+
+```text
+.github/
+
+└── workflows/
+
+    ├── build.yml
+
+    ├── test.yml
+
+    ├── docker.yml
+
+    ├── terraform.yml
+
+    ├── deploy.yml
+
+    └── cleanup.yml
+```
+
+Each workflow
+
+has
+
+one responsibility.
+
+---
+
+# Best Practices
+
+- Use meaningful workflow names.
+- Keep workflows modular.
+- Separate CI and CD.
+- Use job dependencies.
+- Minimize workflow permissions.
+- Reuse common actions.
+- Use artifacts between jobs.
+- Set job timeouts.
+
+---
+
+# Common Mistakes
+
+- One huge workflow for everything.
+- Hardcoding environment values.
+- Running production deployments on every push.
+- Giving workflows write permissions unnecessarily.
+- Ignoring failed jobs.
+- Not using reusable actions.
+- Duplicating workflow logic.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a GitHub Actions Workflow?
+- What are workflow triggers?
+- What is a Job?
+- What is a Step?
+- What is a Runner?
+
+## Intermediate
+
+- Explain workflow execution.
+- Job vs Step.
+- Workflow vs Action.
+- Explain matrix strategy.
+- What are GitHub contexts?
+
+## Advanced
+
+- Design a modular GitHub Actions workflow architecture for a large enterprise with separate workflows for Build, Testing, Security, Docker, Terraform, and Production Deployment.
+- Explain how workflow syntax, job dependencies, reusable actions, artifacts, permissions, and conditional execution help create scalable CI/CD pipelines.
+- A company has over 300 repositories and wants standardized CI/CD pipelines. Explain how you would organize workflow files, reuse actions, manage permissions, optimize execution time, and maintain consistency across all projects.
+
+---
+
