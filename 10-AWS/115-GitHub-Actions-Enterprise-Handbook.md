@@ -2385,3 +2385,1680 @@ the organization's network.
 
 ---
 
+# Chapter 4 - GitHub Actions Variables, Secrets & Contexts (Enterprise Guide)
+
+Modern CI/CD pipelines must support
+
+- Multiple Environments
+- Dynamic Configuration
+- Secure Credentials
+- Conditional Logic
+
+Hardcoding values inside workflows makes pipelines
+
+- Difficult to Maintain
+- Insecure
+- Environment Dependent
+
+GitHub Actions solves this using
+
+- Variables
+- Secrets
+- Contexts
+- Expressions
+- Environment Variables
+
+These features make workflows secure, reusable, and enterprise-ready.
+
+---
+
+# Configuration Flow
+
+```text
+Repository
+
+↓
+
+Variables
+
+↓
+
+Secrets
+
+↓
+
+Contexts
+
+↓
+
+Workflow
+
+↓
+
+Job
+
+↓
+
+Step
+```
+
+Dynamic values
+
+flow through
+
+the workflow.
+
+---
+
+# Why Variables?
+
+Without variables
+
+```text
+Workflow
+
+↓
+
+Hardcoded Values
+
+↓
+
+Development
+
+↓
+
+Production
+
+↓
+
+Modify YAML
+```
+
+Every environment
+
+requires editing the workflow.
+
+---
+
+With variables
+
+```text
+Variables
+
+↓
+
+Workflow
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+One workflow
+
+supports multiple environments.
+
+---
+
+# Types of Variables
+
+GitHub Actions supports
+
+- Environment Variables
+- Repository Variables
+- Organization Variables
+- Environment-specific Variables
+
+Each serves
+
+a different purpose.
+
+---
+
+# Environment Variables
+
+Environment variables
+
+store
+
+configuration values.
+
+Examples
+
+```text
+Application Name
+
+Environment
+
+Region
+
+Port
+
+Cluster Name
+```
+
+They are available
+
+during workflow execution.
+
+---
+
+# Repository Variables
+
+Repository variables
+
+are shared
+
+across workflows
+
+inside one repository.
+
+Example
+
+```text
+AWS Region
+
+Application Name
+
+Docker Repository
+```
+
+Useful
+
+for reusable configuration.
+
+---
+
+# Organization Variables
+
+Organizations
+
+can define
+
+shared variables
+
+used across
+
+multiple repositories.
+
+Architecture
+
+```text
+Organization
+
+↓
+
+Repository
+
+↓
+
+Workflow
+```
+
+This reduces duplication.
+
+---
+
+# Environment Variables (GitHub Environment)
+
+GitHub Environments
+
+allow
+
+environment-specific values.
+
+Example
+
+```text
+Development
+
+↓
+
+EKS Dev
+
+────────────
+
+Production
+
+↓
+
+EKS Prod
+```
+
+One workflow
+
+deploys to
+
+different environments.
+
+---
+
+# Variable Scope
+
+Variables
+
+can exist at
+
+```text
+Workflow
+
+↓
+
+Job
+
+↓
+
+Step
+```
+
+Choose
+
+the smallest scope
+
+required.
+
+---
+
+# What are Secrets?
+
+Secrets store
+
+sensitive information.
+
+Examples
+
+```text
+AWS Credentials
+
+GitHub Token
+
+API Keys
+
+Database Passwords
+```
+
+Secrets
+
+are encrypted
+
+and masked
+
+during workflow execution.
+
+---
+
+# Secret Flow
+
+```text
+GitHub Secret
+
+↓
+
+Workflow
+
+↓
+
+Runner
+
+↓
+
+Application
+```
+
+Secrets
+
+are never exposed
+
+in logs.
+
+---
+
+# Why Secrets?
+
+Without secrets
+
+```text
+Workflow
+
+↓
+
+Hardcoded Password
+
+↓
+
+Git Repository
+```
+
+Major security risk.
+
+---
+
+With secrets
+
+```text
+Encrypted Secret
+
+↓
+
+Workflow
+
+↓
+
+Temporary Usage
+```
+
+Credentials remain protected.
+
+---
+
+# Repository Secrets
+
+Repository Secrets
+
+are available
+
+only inside
+
+that repository.
+
+Examples
+
+```text
+AWS_ACCESS_KEY
+
+AWS_SECRET_KEY
+
+DOCKER_PASSWORD
+```
+
+---
+
+# Organization Secrets
+
+Organization Secrets
+
+are shared
+
+across
+
+multiple repositories.
+
+Architecture
+
+```text
+Organization
+
+↓
+
+Repositories
+
+↓
+
+Workflows
+```
+
+Ideal
+
+for enterprise platforms.
+
+---
+
+# Environment Secrets
+
+GitHub Environments
+
+can store
+
+environment-specific secrets.
+
+Example
+
+```text
+Development
+
+↓
+
+Dev Credentials
+
+────────────
+
+Production
+
+↓
+
+Prod Credentials
+```
+
+This prevents
+
+cross-environment credential reuse.
+
+---
+
+# Variables vs Secrets
+
+| Variables | Secrets |
+|------------|---------|
+| Plain Configuration | Sensitive Data |
+| Visible | Encrypted |
+| Application Settings | Credentials |
+| Region | Password |
+| Cluster Name | API Token |
+
+---
+
+# GitHub Contexts
+
+Contexts provide
+
+dynamic workflow information.
+
+Examples
+
+```text
+Repository
+
+Branch
+
+Commit
+
+Actor
+
+Workflow
+
+Runner
+```
+
+Contexts
+
+make workflows
+
+dynamic.
+
+---
+
+# Context Architecture
+
+```text
+GitHub Event
+
+↓
+
+Context
+
+↓
+
+Workflow
+
+↓
+
+Decision
+```
+
+---
+
+# Common Contexts
+
+Frequently used contexts
+
+```text
+github
+
+env
+
+runner
+
+job
+
+steps
+
+secrets
+
+vars
+```
+
+Each provides
+
+specific information.
+
+---
+
+# GitHub Context
+
+Provides
+
+repository metadata.
+
+Examples
+
+```text
+Repository Name
+
+Branch Name
+
+Commit SHA
+
+Actor
+
+Event Name
+```
+
+Useful
+
+for deployment logic.
+
+---
+
+# Runner Context
+
+Provides information
+
+about
+
+the runner.
+
+Example
+
+```text
+Operating System
+
+Architecture
+
+Temporary Directory
+```
+
+---
+
+# Job Context
+
+Contains
+
+job-related information.
+
+Examples
+
+```text
+Job Status
+
+Job ID
+
+Outputs
+```
+
+---
+
+# Step Context
+
+Provides information
+
+from previous steps.
+
+Example
+
+```text
+Step Result
+
+Outputs
+
+Status
+```
+
+---
+
+# Expressions
+
+GitHub Actions
+
+supports expressions
+
+for dynamic workflows.
+
+Workflow
+
+```text
+Condition
+
+↓
+
+Expression
+
+↓
+
+Decision
+```
+
+---
+
+# Conditional Execution
+
+Example
+
+```text
+Main Branch
+
+↓
+
+Deploy
+
+────────────
+
+Feature Branch
+
+↓
+
+Skip Deployment
+```
+
+One workflow
+
+supports multiple scenarios.
+
+---
+
+# Dynamic Deployment
+
+```text
+Branch
+
+↓
+
+Expression
+
+↓
+
+Development
+
+────────────
+
+Main
+
+↓
+
+Production
+```
+
+Deployment target
+
+changes automatically.
+
+---
+
+# Enterprise Variable Strategy
+
+```text
+Repository Variables
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Production
+
+↓
+
+Workflow
+```
+
+Configuration remains centralized.
+
+---
+
+# Secure Authentication
+
+Instead of
+
+storing AWS keys,
+
+modern workflows use
+
+```text
+GitHub
+
+↓
+
+OIDC
+
+↓
+
+AWS IAM Role
+
+↓
+
+Temporary Credentials
+```
+
+This eliminates
+
+long-lived credentials.
+
+---
+
+# Enterprise CI/CD Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Variables
+
+↓
+
+Secrets
+
+↓
+
+Workflow
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Sensitive values
+
+remain protected.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Repository Variables
+
+↓
+
+Environment Secrets
+
+↓
+
+GitHub Actions
+
+↓
+
+Production Deployment
+```
+
+Different environments
+
+use
+
+different credentials
+
+without modifying workflows.
+
+---
+
+# Enterprise Best Practices
+
+- Store configuration in variables.
+- Store credentials in secrets.
+- Use environment-specific secrets.
+- Prefer OIDC over long-lived AWS keys.
+- Minimize variable scope.
+- Never print secrets in logs.
+- Use organization secrets for shared platforms.
+- Keep workflows environment-independent.
+
+---
+
+# Common Mistakes
+
+- Hardcoding passwords.
+- Storing AWS credentials in YAML.
+- Printing secrets in workflow logs.
+- Using production credentials in development.
+- Duplicating variables across repositories.
+- Using repository secrets when environment secrets are more appropriate.
+- Ignoring least-privilege access.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are GitHub Actions Variables?
+- What are GitHub Secrets?
+- Variables vs Secrets.
+- What are Contexts?
+
+## Intermediate
+
+- Explain GitHub Contexts.
+- Repository Variables vs Organization Variables.
+- Repository Secrets vs Environment Secrets.
+- How do expressions work?
+- Why should secrets never be hardcoded?
+
+## Advanced
+
+- Design a secure GitHub Actions workflow using variables, environment-specific secrets, GitHub contexts, expressions, and OIDC authentication for deploying applications to Amazon EKS.
+- Explain how GitHub Actions variables, secrets, contexts, and expressions work together to build reusable and secure enterprise CI/CD pipelines.
+- A large enterprise manages hundreds of repositories deploying applications across Development, Testing, and Production AWS accounts. Explain how you would design a centralized variable strategy, secure secret management, environment isolation, conditional deployments, and governance using GitHub Actions.
+
+---
+
+# Chapter 5 - GitHub Actions Artifacts, Cache & Dependency Management (Enterprise Guide)
+
+Modern CI/CD pipelines generate many files during execution.
+
+Examples
+
+- Build Packages
+- Test Reports
+- Docker Metadata
+- Terraform Plans
+- Coverage Reports
+- Dependencies
+
+Without proper storage,
+
+every job would rebuild everything,
+
+making pipelines
+
+slow and inefficient.
+
+GitHub Actions provides
+
+- Artifacts
+- Cache
+
+to improve
+
+pipeline efficiency.
+
+---
+
+# Build Pipeline
+
+```text
+Source Code
+
+↓
+
+Build
+
+↓
+
+Artifacts
+
+↓
+
+Deploy
+```
+
+Build outputs
+
+can be reused
+
+by later jobs.
+
+---
+
+# Why Artifacts?
+
+Without Artifacts
+
+```text
+Build
+
+↓
+
+Package
+
+↓
+
+Job Ends
+
+↓
+
+Package Lost
+```
+
+The next job
+
+must rebuild
+
+everything.
+
+---
+
+With Artifacts
+
+```text
+Build
+
+↓
+
+Artifact
+
+↓
+
+Store
+
+↓
+
+Download
+
+↓
+
+Deploy
+```
+
+The build output
+
+is reused.
+
+---
+
+# What is an Artifact?
+
+An Artifact is
+
+a file
+
+or collection of files
+
+generated during
+
+workflow execution.
+
+Examples
+
+- JAR Files
+- ZIP Packages
+- HTML Reports
+- Terraform Plans
+- Test Results
+
+Artifacts
+
+are available
+
+after workflow completion.
+
+---
+
+# Artifact Lifecycle
+
+```text
+Workflow
+
+↓
+
+Build
+
+↓
+
+Upload Artifact
+
+↓
+
+Storage
+
+↓
+
+Download Artifact
+
+↓
+
+Deployment
+```
+
+---
+
+# Artifact Workflow
+
+```text
+Build Job
+
+↓
+
+Artifact
+
+↓
+
+Test Job
+
+↓
+
+Deploy Job
+```
+
+Multiple jobs
+
+share
+
+the same build output.
+
+---
+
+# Common Artifact Examples
+
+Artifacts commonly include
+
+```text
+Application Package
+
+Docker Metadata
+
+Terraform Plan
+
+Coverage Report
+
+JUnit Report
+```
+
+---
+
+# Artifact Storage
+
+GitHub
+
+stores artifacts
+
+temporarily.
+
+Workflow
+
+```text
+Runner
+
+↓
+
+Upload
+
+↓
+
+GitHub Storage
+
+↓
+
+Download
+```
+
+Artifacts
+
+can be downloaded
+
+from workflow history.
+
+---
+
+# Artifact Retention
+
+Artifacts
+
+remain available
+
+for
+
+a configurable period.
+
+Example
+
+```text
+Build
+
+↓
+
+Artifact
+
+↓
+
+Retention Period
+
+↓
+
+Automatic Cleanup
+```
+
+Older artifacts
+
+are removed automatically.
+
+---
+
+# Enterprise Artifact Flow
+
+```text
+Developer
+
+↓
+
+Build
+
+↓
+
+Artifact
+
+↓
+
+Security Scan
+
+↓
+
+Deploy
+```
+
+The same build
+
+moves
+
+through
+
+every stage.
+
+---
+
+# What is Cache?
+
+Cache stores
+
+dependencies
+
+that rarely change.
+
+Examples
+
+```text
+Maven Dependencies
+
+NPM Packages
+
+Python Libraries
+
+Gradle Cache
+
+Terraform Plugins
+```
+
+Unlike artifacts,
+
+cache
+
+is intended
+
+to speed up
+
+future workflow executions.
+
+---
+
+# Cache Workflow
+
+```text
+Dependencies
+
+↓
+
+Cache
+
+↓
+
+Next Build
+
+↓
+
+Reuse
+```
+
+Downloads
+
+are avoided.
+
+---
+
+# Why Cache?
+
+Without Cache
+
+```text
+Workflow
+
+↓
+
+Download Dependencies
+
+↓
+
+Build
+
+↓
+
+Finish
+```
+
+Every execution
+
+downloads
+
+the same packages.
+
+---
+
+With Cache
+
+```text
+Workflow
+
+↓
+
+Cache Found
+
+↓
+
+Reuse Dependencies
+
+↓
+
+Fast Build
+```
+
+Pipeline execution
+
+becomes much faster.
+
+---
+
+# Cache Lifecycle
+
+```text
+First Build
+
+↓
+
+Download Dependencies
+
+↓
+
+Save Cache
+
+────────────
+
+Second Build
+
+↓
+
+Restore Cache
+
+↓
+
+Build
+```
+
+---
+
+# Cache vs Artifact
+
+| Cache | Artifact |
+|--------|----------|
+| Speeds Future Builds | Shares Build Output |
+| Dependencies | Build Results |
+| Reused Across Runs | Used Within Pipeline |
+| Performance Optimization | Deployment Asset |
+
+---
+
+# Cache Examples
+
+Common cache directories
+
+```text
+Maven
+
+↓
+
+Repository
+
+────────────
+
+Node.js
+
+↓
+
+node_modules
+
+────────────
+
+Python
+
+↓
+
+pip Cache
+```
+
+---
+
+# Docker Layer Cache
+
+Docker builds
+
+also benefit
+
+from caching.
+
+Workflow
+
+```text
+Base Image
+
+↓
+
+Dependencies
+
+↓
+
+Application
+
+↓
+
+Reuse Layers
+```
+
+Only changed layers
+
+are rebuilt.
+
+---
+
+# Terraform Cache
+
+Terraform downloads
+
+providers
+
+and modules.
+
+Caching them
+
+reduces
+
+pipeline execution time.
+
+---
+
+# Multi-Job Workflow
+
+```text
+Build
+
+↓
+
+Upload Artifact
+
+↓
+
+Security Scan
+
+↓
+
+Download Artifact
+
+↓
+
+Deploy
+```
+
+No rebuilding
+
+is required.
+
+---
+
+# CI/CD Optimization
+
+```text
+Cache
+
+↓
+
+Dependencies
+
+↓
+
+Artifacts
+
+↓
+
+Deployment
+```
+
+Both mechanisms
+
+work together
+
+to optimize pipelines.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+GitHub Actions
+
+↓
+
+Build
+
+↓
+
+Cache
+
+↓
+
+Artifact
+
+↓
+
+Security Scan
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Build
+
+↓
+
+Artifact
+
+↓
+
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production
+```
+
+The exact same build
+
+is promoted
+
+to production.
+
+---
+
+# Artifact Promotion
+
+Best practice
+
+```text
+Build Once
+
+↓
+
+Artifact
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+Never rebuild
+
+between environments.
+
+---
+
+# Enterprise Pipeline
+
+```text
+Build
+
+↓
+
+Artifact
+
+↓
+
+Quality Checks
+
+↓
+
+Security Scan
+
+↓
+
+Deployment
+```
+
+Every stage
+
+uses
+
+the same artifact.
+
+---
+
+# Performance Optimization
+
+Use cache for
+
+- Dependencies
+- Package Managers
+- Terraform Plugins
+- Docker Layers
+
+Use artifacts for
+
+- Build Packages
+- Reports
+- Deployment Files
+
+---
+
+# Best Practices
+
+- Build once, deploy everywhere.
+- Use artifacts for deployment packages.
+- Use cache for dependencies.
+- Keep artifacts versioned.
+- Configure retention policies.
+- Avoid caching unnecessary files.
+- Reuse Docker layer cache.
+- Download artifacts instead of rebuilding.
+
+---
+
+# Common Mistakes
+
+- Using artifacts as dependency cache.
+- Rebuilding applications in every job.
+- Caching temporary files.
+- Keeping artifacts forever.
+- Uploading unnecessary large artifacts.
+- Ignoring cache invalidation.
+- Mixing artifacts from different builds.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What are GitHub Actions Artifacts?
+- What is GitHub Actions Cache?
+- Cache vs Artifact.
+- Why do we use artifacts?
+
+## Intermediate
+
+- How do artifacts move between jobs?
+- Why is dependency caching important?
+- Explain Docker layer caching in CI/CD.
+- How do Terraform providers benefit from caching?
+- What is artifact retention?
+
+## Advanced
+
+- Design an enterprise GitHub Actions pipeline using artifacts, dependency caching, Docker layer caching, Terraform plugin caching, Amazon ECR, and Amazon EKS to minimize build time while ensuring consistent deployments.
+- Explain the difference between artifacts and caches, and describe how both contribute to scalable and efficient CI/CD pipelines.
+- A large enterprise builds hundreds of Java, Node.js, and Python applications daily. Explain how you would design artifact management, dependency caching, retention policies, build promotion, and pipeline optimization to reduce execution time while maintaining deployment consistency and traceability.
+
+
+---
+
