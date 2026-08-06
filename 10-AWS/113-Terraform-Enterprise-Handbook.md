@@ -3170,3 +3170,826 @@ not inside the repository.
 
 ---
 
+# Chapter 5 - Terraform Modules & Reusable Infrastructure (Deep Dive)
+
+As infrastructure grows,
+
+Terraform configurations become
+
+- Large
+- Difficult to Maintain
+- Difficult to Reuse
+- Error-Prone
+
+Imagine deploying
+
+- 20 VPCs
+- 50 EC2 Instances
+- 10 EKS Clusters
+- Multiple RDS Databases
+
+Copy-pasting Terraform code is not a scalable solution.
+
+Terraform solves this problem using **Modules**.
+
+Modules are one of the most important concepts for enterprise Infrastructure as Code.
+
+---
+
+# What is a Terraform Module?
+
+A module is a reusable collection of Terraform resources.
+
+Instead of writing infrastructure repeatedly,
+
+you write it once
+
+and reuse it everywhere.
+
+```text
+Module
+
+↓
+
+Reusable Infrastructure
+
+↓
+
+Multiple Environments
+```
+
+---
+
+# Why Modules?
+
+Without Modules
+
+```text
+Development
+
+↓
+
+VPC Code
+
+↓
+
+Production
+
+↓
+
+Copy Same Code
+
+↓
+
+Testing
+
+↓
+
+Copy Again
+```
+
+Problems
+
+- Duplicate Code
+- Difficult Maintenance
+- Higher Risk of Errors
+
+---
+
+With Modules
+
+```text
+Terraform Module
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Production
+```
+
+One module
+
+can deploy infrastructure
+
+for multiple environments.
+
+---
+
+# Module Architecture
+
+```text
+Root Module
+
+↓
+
+VPC Module
+
+↓
+
+Subnet Module
+
+↓
+
+EKS Module
+
+↓
+
+RDS Module
+
+↓
+
+ALB Module
+```
+
+Every module
+
+has a single responsibility.
+
+---
+
+# Root Module
+
+The root module
+
+is the entry point
+
+of every Terraform project.
+
+It coordinates
+
+all child modules.
+
+```text
+Root Module
+
+↓
+
+Calls Child Modules
+
+↓
+
+Infrastructure Created
+```
+
+---
+
+# Child Modules
+
+Child modules
+
+perform specific tasks.
+
+Examples
+
+- VPC Module
+- IAM Module
+- EKS Module
+- EC2 Module
+- RDS Module
+
+---
+
+# Module Workflow
+
+```text
+Root Module
+
+↓
+
+Input Variables
+
+↓
+
+Child Module
+
+↓
+
+Resources
+
+↓
+
+Outputs
+
+↓
+
+Root Outputs
+```
+
+---
+
+# Module Structure
+
+A typical module contains
+
+```text
+main.tf
+
+variables.tf
+
+outputs.tf
+
+README.md
+```
+
+Each module
+
+is self-contained.
+
+---
+
+# Enterprise Folder Structure
+
+```text
+terraform/
+
+├── backend.tf
+
+├── provider.tf
+
+├── main.tf
+
+├── variables.tf
+
+├── outputs.tf
+
+├── environments/
+
+│   ├── dev
+
+│   ├── stage
+
+│   └── prod
+
+└── modules/
+
+    ├── vpc/
+
+    ├── iam/
+
+    ├── eks/
+
+    ├── alb/
+
+    ├── rds/
+
+    ├── ecr/
+
+    ├── route53/
+
+    └── security-group/
+```
+
+This is the most common enterprise layout.
+
+---
+
+# Module Inputs
+
+Modules receive
+
+input values
+
+through variables.
+
+Example
+
+```text
+Environment
+
+↓
+
+CIDR
+
+↓
+
+Region
+
+↓
+
+Cluster Name
+```
+
+The module
+
+uses these values
+
+to create infrastructure.
+
+---
+
+# Module Outputs
+
+Modules expose
+
+important information.
+
+Example
+
+```text
+VPC Module
+
+↓
+
+VPC ID
+
+↓
+
+Subnet IDs
+
+↓
+
+Route Tables
+```
+
+Other modules
+
+can consume these outputs.
+
+---
+
+# Module Communication
+
+```text
+VPC Module
+
+↓
+
+Outputs
+
+↓
+
+EKS Module
+
+↓
+
+Uses VPC ID
+```
+
+Modules communicate
+
+through outputs.
+
+---
+
+# Dependency Between Modules
+
+Example
+
+```text
+VPC
+
+↓
+
+Security Groups
+
+↓
+
+EKS
+
+↓
+
+Applications
+```
+
+Terraform automatically
+
+determines execution order.
+
+---
+
+# Local Modules
+
+Stored inside
+
+the same repository.
+
+```text
+terraform/
+
+↓
+
+modules/
+
+↓
+
+vpc/
+```
+
+Best for
+
+internal projects.
+
+---
+
+# Remote Modules
+
+Modules can also come from
+
+- GitHub
+- Terraform Registry
+- Private Git Repository
+
+Architecture
+
+```text
+Terraform
+
+↓
+
+Git Repository
+
+↓
+
+Reusable Module
+```
+
+---
+
+# Terraform Registry
+
+HashiCorp maintains
+
+the Terraform Registry.
+
+It provides
+
+production-ready modules
+
+for
+
+- AWS
+- Azure
+- GCP
+- Kubernetes
+
+Large organizations
+
+often build
+
+private module registries.
+
+---
+
+# Module Versioning
+
+Production environments
+
+should version modules.
+
+Example
+
+```text
+VPC Module
+
+↓
+
+v1.0
+
+↓
+
+v1.1
+
+↓
+
+v2.0
+```
+
+Versioning prevents
+
+unexpected infrastructure changes.
+
+---
+
+# Module Reusability
+
+One VPC module
+
+can create
+
+```text
+Development VPC
+
+↓
+
+Testing VPC
+
+↓
+
+Production VPC
+```
+
+Only input values change.
+
+---
+
+# Module Granularity
+
+Keep modules
+
+focused.
+
+Good examples
+
+```text
+VPC Module
+
+IAM Module
+
+ALB Module
+
+RDS Module
+```
+
+Avoid
+
+large modules
+
+that perform
+
+many unrelated tasks.
+
+---
+
+# Nested Modules
+
+Modules
+
+can call
+
+other modules.
+
+Example
+
+```text
+Platform Module
+
+↓
+
+Networking Module
+
+↓
+
+Security Module
+
+↓
+
+EKS Module
+```
+
+Useful
+
+for enterprise platforms.
+
+---
+
+# Module Lifecycle
+
+```text
+Input Variables
+
+↓
+
+Terraform Module
+
+↓
+
+Resources Created
+
+↓
+
+Outputs Generated
+```
+
+---
+
+# AWS Example
+
+```text
+Root Module
+
+↓
+
+VPC Module
+
+↓
+
+Private Subnets
+
+↓
+
+EKS Module
+
+↓
+
+Node Groups
+
+↓
+
+Application
+```
+
+Every infrastructure layer
+
+remains independent.
+
+---
+
+# Your Project Example
+
+Based on your infrastructure,
+
+modules may include
+
+```text
+00-vpc
+
+10-security-groups
+
+20-bastion
+
+30-security-group-rules
+
+40-ecr
+
+50-route53
+
+60-rds
+
+70-acm
+
+80-frontend-alb
+
+90-eks
+```
+
+Each module
+
+has a single responsibility,
+
+making infrastructure easier to maintain and reuse.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Terraform
+
+↓
+
+Root Module
+
+↓
+
+Child Modules
+
+↓
+
+AWS Infrastructure
+```
+
+Infrastructure provisioning
+
+becomes fully automated.
+
+---
+
+# Banking Example
+
+```text
+Root Module
+
+↓
+
+VPC
+
+↓
+
+Private Subnets
+
+↓
+
+Amazon EKS
+
+↓
+
+Aurora PostgreSQL
+
+↓
+
+Application Load Balancer
+
+↓
+
+Route53
+```
+
+Each component
+
+is deployed
+
+using reusable modules.
+
+---
+
+# Module vs Resource
+
+| Module | Resource |
+|----------|----------|
+| Collection of Resources | Single Infrastructure Object |
+| Reusable | Individual Component |
+| Higher Level | Lower Level |
+| Encourages Standardization | Basic Building Block |
+
+---
+
+# Monolithic vs Modular Terraform
+
+| Monolithic | Modular |
+|------------|----------|
+| Huge main.tf | Small Reusable Modules |
+| Difficult Maintenance | Easy Maintenance |
+| Poor Reusability | High Reusability |
+| Hard to Scale | Enterprise Ready |
+
+---
+
+# Benefits
+
+- Code Reuse
+- Standardization
+- Easier Maintenance
+- Faster Development
+- Reduced Errors
+- Better Collaboration
+- Enterprise Scalability
+- Environment Consistency
+
+---
+
+# Best Practices
+
+- Build small, focused modules.
+- One module should have one responsibility.
+- Version every production module.
+- Document module inputs and outputs.
+- Avoid hardcoding values inside modules.
+- Reuse modules across environments.
+- Store modules in Git repositories.
+- Keep module interfaces stable.
+
+---
+
+# Common Mistakes
+
+- Creating one massive module for everything.
+- Copy-pasting infrastructure instead of using modules.
+- Hardcoding values inside modules.
+- Not versioning modules.
+- Tight coupling between modules.
+- Exposing unnecessary outputs.
+- Breaking module compatibility with every change.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Terraform module?
+- Why do we use modules?
+- What is a root module?
+- What is a child module?
+- What are module outputs?
+
+## Intermediate
+
+- Local module vs remote module.
+- How do modules communicate?
+- Why should modules be versioned?
+- How do modules improve Infrastructure as Code?
+- Explain module dependencies.
+
+## Advanced
+
+- Design an enterprise Terraform repository for deploying Amazon EKS, VPC, IAM, ALB, RDS, and Route 53 using reusable modules.
+- Explain how modules enable large organizations to standardize infrastructure across multiple AWS accounts and environments.
+- Your organization manages hundreds of AWS environments with multiple DevOps teams. Explain how Terraform modules, versioning, GitHub Actions, and remote state work together to provide reusable, maintainable, and production-ready Infrastructure as Code.
+
+---
+
