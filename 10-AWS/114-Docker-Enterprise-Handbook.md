@@ -3151,3 +3151,777 @@ remains protected.
 
 ---
 
+# Chapter 5 - Docker Networking (Enterprise Guide)
+
+Containers are isolated by default.
+
+If multiple containers need to communicate,
+
+Docker provides networking.
+
+Networking enables communication between
+
+- Containers
+- Host Machine
+- External Clients
+- Internet
+- Other Containers
+
+Without Docker networking,
+
+microservices cannot communicate with each other.
+
+---
+
+# Why Docker Networking?
+
+Consider an application
+
+consisting of
+
+- Frontend
+- Backend
+- Database
+
+Without networking
+
+```text
+Frontend
+
+×
+
+Backend
+
+×
+
+Database
+```
+
+No communication is possible.
+
+---
+
+With Docker networking
+
+```text
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Database
+```
+
+Containers communicate securely.
+
+---
+
+# Docker Networking Architecture
+
+```text
+Client
+
+↓
+
+Docker Host
+
+↓
+
+Docker Network
+
+├── Frontend
+
+├── Backend
+
+└── Database
+```
+
+Docker manages
+
+network communication.
+
+---
+
+# Default Networking
+
+When Docker starts,
+
+it automatically creates
+
+default networks.
+
+Examples
+
+- bridge
+- host
+- none
+
+These provide
+
+different networking behaviors.
+
+---
+
+# Network Types
+
+Docker supports
+
+- Bridge Network
+- Host Network
+- None Network
+- Overlay Network
+- Macvlan Network
+
+---
+
+# Bridge Network
+
+The default network.
+
+Architecture
+
+```text
+Docker Host
+
+↓
+
+Bridge Network
+
+├── Container A
+
+├── Container B
+
+└── Container C
+```
+
+Containers
+
+communicate
+
+using private IP addresses.
+
+---
+
+# Bridge Network Workflow
+
+```text
+Container A
+
+↓
+
+Bridge Network
+
+↓
+
+Container B
+```
+
+The communication
+
+never leaves
+
+the Docker host.
+
+---
+
+# Host Network
+
+Host networking
+
+shares
+
+the host's network stack.
+
+Architecture
+
+```text
+Application
+
+↓
+
+Host Network
+
+↓
+
+Physical Network
+```
+
+The container
+
+does not receive
+
+its own IP address.
+
+---
+
+# Host Network Characteristics
+
+Advantages
+
+- Better Performance
+- No Network Translation
+
+Disadvantages
+
+- Reduced Isolation
+- Port Conflicts
+
+Usually used
+
+only for
+
+special workloads.
+
+---
+
+# None Network
+
+The container
+
+has
+
+no network access.
+
+```text
+Container
+
+↓
+
+No Network
+```
+
+Useful for
+
+highly isolated workloads.
+
+---
+
+# Overlay Network
+
+Overlay networking
+
+connects containers
+
+across multiple Docker hosts.
+
+Architecture
+
+```text
+Host A
+
+↓
+
+Overlay Network
+
+↓
+
+Host B
+
+↓
+
+Container Communication
+```
+
+Commonly used
+
+with Docker Swarm.
+
+---
+
+# Macvlan Network
+
+Macvlan
+
+assigns
+
+containers
+
+their own MAC address.
+
+Architecture
+
+```text
+Physical Network
+
+↓
+
+Container
+
+↓
+
+Own MAC Address
+```
+
+Useful
+
+when containers
+
+must appear
+
+as physical devices.
+
+---
+
+# Network Drivers
+
+| Driver | Purpose |
+|---------|----------|
+| Bridge | Default Local Networking |
+| Host | Host Network Stack |
+| None | No Networking |
+| Overlay | Multi-Host Networking |
+| Macvlan | Physical Network Integration |
+
+---
+
+# Container Communication
+
+Containers
+
+communicate
+
+using
+
+- IP Addresses
+- Container Names
+- DNS
+
+Docker provides
+
+automatic DNS resolution.
+
+---
+
+# DNS Resolution
+
+Example
+
+```text
+Frontend
+
+↓
+
+backend
+
+↓
+
+Backend Container
+```
+
+Container names
+
+can be used
+
+instead of IP addresses.
+
+---
+
+# User-Defined Networks
+
+Instead of using
+
+the default bridge,
+
+production environments
+
+create
+
+dedicated networks.
+
+Example
+
+```text
+frontend-network
+
+backend-network
+
+monitoring-network
+```
+
+Provides
+
+better isolation.
+
+---
+
+# Multi-Tier Architecture
+
+```text
+Internet
+
+↓
+
+Frontend Container
+
+↓
+
+Backend Container
+
+↓
+
+Database Container
+```
+
+Each layer
+
+communicates only
+
+with required services.
+
+---
+
+# Port Mapping
+
+Containers
+
+run on
+
+private ports.
+
+External users
+
+cannot access them
+
+unless ports are mapped.
+
+Architecture
+
+```text
+Host Port
+
+↓
+
+Container Port
+
+↓
+
+Application
+```
+
+---
+
+# Port Publishing
+
+Workflow
+
+```text
+Internet
+
+↓
+
+Host Port
+
+↓
+
+Docker Container
+
+↓
+
+Application
+```
+
+The host forwards
+
+traffic
+
+to the container.
+
+---
+
+# Exposed Ports
+
+Dockerfile
+
+may include
+
+```text
+EXPOSE
+```
+
+This documents
+
+which ports
+
+the application uses.
+
+Actual access
+
+requires
+
+port publishing.
+
+---
+
+# Network Isolation
+
+Separate networks
+
+improve security.
+
+Example
+
+```text
+Frontend Network
+
+↓
+
+Frontend
+
+────────────
+
+Backend Network
+
+↓
+
+Backend
+
+↓
+
+Database
+```
+
+Database
+
+cannot be accessed
+
+directly
+
+from external clients.
+
+---
+
+# Container to Host Communication
+
+Sometimes
+
+containers
+
+must communicate
+
+with the host.
+
+Architecture
+
+```text
+Container
+
+↓
+
+Docker Host
+
+↓
+
+Local Services
+```
+
+Useful
+
+during development.
+
+---
+
+# Docker Compose Networking
+
+Docker Compose
+
+creates
+
+a dedicated network
+
+for every application.
+
+```text
+Compose
+
+↓
+
+Application Network
+
+↓
+
+All Services
+```
+
+Containers
+
+communicate
+
+using service names.
+
+---
+
+# Docker Networking in Kubernetes
+
+Docker networking concepts
+
+extend naturally
+
+to Kubernetes.
+
+Comparison
+
+```text
+Docker Network
+
+↓
+
+Kubernetes CNI
+
+↓
+
+Pod Networking
+```
+
+Understanding Docker networking
+
+makes Kubernetes networking
+
+easier to understand.
+
+---
+
+# Enterprise Architecture
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Frontend Container
+
+↓
+
+Backend Container
+
+↓
+
+Redis
+
+↓
+
+PostgreSQL
+```
+
+Each service
+
+communicates
+
+over
+
+private networks.
+
+---
+
+# Banking Example
+
+```text
+Customers
+
+↓
+
+Load Balancer
+
+↓
+
+Payment API
+
+↓
+
+Authentication Service
+
+↓
+
+Database
+```
+
+Database
+
+remains isolated
+
+from public access.
+
+---
+
+# Docker Networking Best Practices
+
+- Use user-defined bridge networks.
+- Separate frontend and backend traffic.
+- Publish only required ports.
+- Use container names instead of IP addresses.
+- Avoid host networking unless necessary.
+- Keep databases on private networks.
+- Minimize network exposure.
+- Monitor network traffic.
+
+---
+
+# Common Mistakes
+
+- Publishing every container port publicly.
+- Using the default bridge network for all applications.
+- Hardcoding container IP addresses.
+- Running databases on public networks.
+- Using host networking unnecessarily.
+- Ignoring DNS-based service discovery.
+- Mixing unrelated applications on one network.
+
+---
+
+# Docker Networking vs Kubernetes Networking
+
+| Docker | Kubernetes |
+|----------|------------|
+| Bridge Network | CNI Plugin |
+| Container IP | Pod IP |
+| Container Name | Service DNS |
+| Port Mapping | Service |
+| Overlay | Cluster Networking |
+
+---
+
+# Benefits
+
+- Secure Communication
+- Container Isolation
+- Built-in DNS
+- Multi-Tier Architecture
+- Service Discovery
+- Network Segmentation
+- Scalability
+- Enterprise Security
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Docker Networking?
+- What are the Docker network types?
+- What is a Bridge Network?
+- What is Port Mapping?
+- Why are containers isolated by default?
+
+## Intermediate
+
+- Bridge vs Host Network.
+- What is an Overlay Network?
+- Why use user-defined networks?
+- How does Docker DNS work?
+- Explain container-to-container communication.
+
+## Advanced
+
+- Design a secure Docker networking architecture for a microservices platform consisting of Frontend, Backend, Redis, PostgreSQL, and Monitoring services.
+- Explain how Docker networking enables secure service communication, DNS-based discovery, port mapping, and network isolation in enterprise environments.
+- A company is migrating a monolithic application into multiple Docker containers. Explain how you would design the networking architecture, separate application tiers, secure database communication, expose only required services, and prepare the application for future Kubernetes deployment.
+
+---
+
