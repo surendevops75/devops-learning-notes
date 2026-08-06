@@ -3925,3 +3925,741 @@ from public access.
 
 ---
 
+# Chapter 6 - Docker Compose (Enterprise Guide)
+
+Modern applications rarely consist of a single container.
+
+A typical application includes
+
+- Frontend
+- Backend
+- Database
+- Redis
+- Message Queue
+- Monitoring
+
+Managing each container individually becomes difficult.
+
+Docker Compose solves this problem by allowing multiple containers to be managed as a single application.
+
+---
+
+# What is Docker Compose?
+
+Docker Compose is a tool used to define and manage
+
+**multi-container Docker applications**.
+
+Instead of running multiple
+
+```bash
+docker run
+```
+
+commands,
+
+all services are defined in a single YAML file.
+
+---
+
+# Why Docker Compose?
+
+Without Docker Compose
+
+```text
+Run Frontend
+
+↓
+
+Run Backend
+
+↓
+
+Run Database
+
+↓
+
+Configure Network
+
+↓
+
+Configure Volumes
+
+↓
+
+Start Application
+```
+
+Problems
+
+- Many Commands
+- Difficult Management
+- Manual Configuration
+- Hard to Reproduce
+
+---
+
+With Docker Compose
+
+```text
+docker compose up
+
+↓
+
+Entire Application Starts
+```
+
+---
+
+# Docker Compose Architecture
+
+```text
+compose.yaml
+
+↓
+
+Docker Compose
+
+↓
+
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Database
+
+↓
+
+Redis
+```
+
+Everything starts together.
+
+---
+
+# Compose Workflow
+
+```text
+Compose File
+
+↓
+
+Build Images
+
+↓
+
+Create Networks
+
+↓
+
+Create Volumes
+
+↓
+
+Start Containers
+
+↓
+
+Application Ready
+```
+
+---
+
+# Compose File
+
+Docker Compose uses
+
+```text
+compose.yaml
+```
+
+(or `docker-compose.yml` in older projects.)
+
+The file defines
+
+- Services
+- Networks
+- Volumes
+- Environment Variables
+
+---
+
+# Compose Components
+
+A Compose file typically contains
+
+- Services
+- Networks
+- Volumes
+- Environment Variables
+- Secrets
+- Configurations
+
+---
+
+# Services
+
+Every container
+
+is defined
+
+as a service.
+
+Example
+
+```text
+Frontend
+
+Backend
+
+Redis
+
+PostgreSQL
+```
+
+Each service
+
+becomes
+
+its own container.
+
+---
+
+# Multi-Service Architecture
+
+```text
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Redis
+
+↓
+
+PostgreSQL
+```
+
+Compose starts
+
+all services
+
+in the correct order.
+
+---
+
+# Networks
+
+Compose automatically creates
+
+an isolated network.
+
+```text
+Compose Network
+
+├── Frontend
+
+├── Backend
+
+├── Redis
+
+└── PostgreSQL
+```
+
+Containers communicate
+
+using service names.
+
+---
+
+# Service Discovery
+
+Docker Compose provides
+
+built-in DNS.
+
+Example
+
+```text
+Frontend
+
+↓
+
+backend
+
+↓
+
+Backend Container
+```
+
+No IP addresses
+
+are required.
+
+---
+
+# Volumes
+
+Compose supports
+
+persistent storage.
+
+Architecture
+
+```text
+PostgreSQL
+
+↓
+
+Docker Volume
+
+↓
+
+Persistent Data
+```
+
+Database data
+
+survives container recreation.
+
+---
+
+# Environment Variables
+
+Applications
+
+often require
+
+configuration.
+
+Examples
+
+```text
+Database Host
+
+Database Port
+
+Application Port
+
+Environment
+```
+
+Compose injects
+
+these values
+
+into containers.
+
+---
+
+# Build vs Image
+
+Compose supports
+
+two approaches.
+
+### Build
+
+```text
+Source Code
+
+↓
+
+Dockerfile
+
+↓
+
+Image
+
+↓
+
+Container
+```
+
+---
+
+### Image
+
+```text
+Registry
+
+↓
+
+Pull Image
+
+↓
+
+Container
+```
+
+Use
+
+build
+
+during development
+
+and
+
+prebuilt images
+
+in production.
+
+---
+
+# Dependency Management
+
+Services
+
+may depend
+
+on one another.
+
+Example
+
+```text
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Database
+```
+
+Compose starts
+
+services
+
+according to dependencies.
+
+---
+
+# Container Lifecycle
+
+```text
+Compose Up
+
+↓
+
+Containers Created
+
+↓
+
+Application Running
+
+↓
+
+Compose Down
+
+↓
+
+Containers Removed
+```
+
+Volumes
+
+can remain
+
+after containers are removed.
+
+---
+
+# Scaling Services
+
+Compose can run
+
+multiple instances
+
+of stateless services.
+
+Example
+
+```text
+Backend
+
+↓
+
+Instance 1
+
+Instance 2
+
+Instance 3
+```
+
+This is useful
+
+for development
+
+and testing.
+
+---
+
+# Enterprise Development Workflow
+
+```text
+Developer
+
+↓
+
+Git Clone
+
+↓
+
+docker compose up
+
+↓
+
+Complete Application Running
+```
+
+A new developer
+
+can start
+
+the entire environment
+
+with one command.
+
+---
+
+# Local Development
+
+Compose is ideal for
+
+- Local Development
+- Integration Testing
+- Proof of Concept
+- Small Deployments
+
+Production Kubernetes environments
+
+typically replace Compose.
+
+---
+
+# Docker Compose vs Kubernetes
+
+| Docker Compose | Kubernetes |
+|----------------|------------|
+| Local Development | Production Orchestration |
+| Single Host | Multi-Node Cluster |
+| Simple Deployment | Enterprise Scale |
+| Basic Scaling | Advanced Autoscaling |
+| Developer Friendly | Production Ready |
+
+---
+
+# Compose with GitHub Actions
+
+Typical pipeline
+
+```text
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Docker Compose Test
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Compose
+
+is commonly used
+
+for automated testing
+
+before deployment.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+Compose
+
+↓
+
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Redis
+
+↓
+
+PostgreSQL
+
+↓
+
+Testing
+
+↓
+
+CI/CD
+```
+
+---
+
+# Banking Example
+
+Local banking application
+
+```text
+Customer Portal
+
+↓
+
+Payment API
+
+↓
+
+Authentication API
+
+↓
+
+Redis
+
+↓
+
+PostgreSQL
+```
+
+Developers
+
+run the complete application
+
+using Docker Compose
+
+before deploying to Amazon EKS.
+
+---
+
+# Compose in Your DevOps Pipeline
+
+A practical workflow
+
+```text
+Developer
+
+↓
+
+Docker Compose
+
+↓
+
+Local Testing
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Compose ensures
+
+developers test
+
+the same services
+
+that will later run in Kubernetes.
+
+---
+
+# Docker Compose Best Practices
+
+- One Compose file per application.
+- Use named volumes for databases.
+- Use service names instead of IP addresses.
+- Keep environment variables external where possible.
+- Separate development and production configurations.
+- Use prebuilt images in production pipelines.
+- Keep services loosely coupled.
+- Store Compose files in Git.
+
+---
+
+# Common Mistakes
+
+- Using Docker Compose for large production clusters.
+- Hardcoding passwords in Compose files.
+- Exposing unnecessary ports.
+- Using bind mounts for production databases.
+- Running all applications on the default network.
+- Ignoring environment-specific configuration.
+- Treating Compose as a Kubernetes replacement.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is Docker Compose?
+- Why do we use Docker Compose?
+- What is a Compose file?
+- What is a service in Docker Compose?
+- How does Docker Compose simplify multi-container applications?
+
+## Intermediate
+
+- Explain Docker Compose networking.
+- Build vs Image in Compose.
+- How does Compose manage volumes?
+- How does service discovery work?
+- Docker Compose vs Kubernetes.
+
+## Advanced
+
+- Design a Docker Compose architecture for a microservices application consisting of Frontend, Backend, Redis, PostgreSQL, and Monitoring services.
+- Explain how Docker Compose integrates into a GitHub Actions CI/CD pipeline before deployment to Amazon EKS.
+- A development team needs a consistent local environment that mirrors production as closely as possible. Explain how you would design Docker Compose files, networking, persistent storage, environment configuration, and testing workflows to support efficient development while preparing applications for Kubernetes deployment.
+
+---
+
