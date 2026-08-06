@@ -680,3 +680,846 @@ with immutable infrastructure.
 
 ---
 
+# Chapter 2 - Docker Images, Containers & Image Layers (Deep Dive)
+
+Docker revolves around three core concepts
+
+- Images
+- Containers
+- Layers
+
+Understanding the relationship between these components is essential for building efficient, secure, and production-ready containerized applications.
+
+---
+
+# Docker Lifecycle
+
+```text
+Source Code
+
+↓
+
+Dockerfile
+
+↓
+
+Docker Image
+
+↓
+
+Docker Registry
+
+↓
+
+Docker Pull
+
+↓
+
+Docker Container
+```
+
+Every Docker deployment follows this lifecycle.
+
+---
+
+# What is a Docker Image?
+
+A Docker Image is
+
+a read-only,
+
+immutable template
+
+used to create containers.
+
+It contains
+
+- Application Code
+- Runtime
+- Libraries
+- Dependencies
+- Environment Configuration
+
+An image does not execute by itself.
+
+It becomes useful only when a container is created from it.
+
+---
+
+# Image Architecture
+
+```text
+Application
+
+↓
+
+Libraries
+
+↓
+
+Dependencies
+
+↓
+
+Operating System Files
+
+↓
+
+Docker Image
+```
+
+---
+
+# What is a Docker Container?
+
+A container is
+
+a running instance
+
+of a Docker image.
+
+Workflow
+
+```text
+Docker Image
+
+↓
+
+docker run
+
+↓
+
+Docker Container
+```
+
+One image
+
+can create
+
+multiple containers.
+
+---
+
+# Image vs Container
+
+```text
+Docker Image
+
+↓
+
+Container A
+
+Container B
+
+Container C
+```
+
+Every container
+
+shares the same image
+
+but maintains
+
+its own writable layer.
+
+---
+
+# Image Characteristics
+
+Docker Images are
+
+- Immutable
+- Versioned
+- Portable
+- Read-only
+- Shareable
+
+Images should never be modified after creation.
+
+---
+
+# Container Characteristics
+
+Containers are
+
+- Lightweight
+- Isolated
+- Ephemeral
+- Fast to Start
+- Disposable
+
+Containers should be treated as temporary compute resources.
+
+---
+
+# What are Docker Layers?
+
+Every Docker image
+
+is built using
+
+multiple layers.
+
+Example
+
+```text
+Application Layer
+
+↓
+
+Dependencies
+
+↓
+
+Runtime
+
+↓
+
+Operating System Layer
+```
+
+Each instruction in a Dockerfile typically creates a new layer.
+
+---
+
+# Layer Architecture
+
+```text
+Layer 5
+
+Application
+
+────────────
+
+Layer 4
+
+Dependencies
+
+────────────
+
+Layer 3
+
+Libraries
+
+────────────
+
+Layer 2
+
+Runtime
+
+────────────
+
+Layer 1
+
+Base Image
+```
+
+Docker stacks these layers
+
+to build the final image.
+
+---
+
+# Why Layers?
+
+Layers provide
+
+- Reusability
+- Faster Builds
+- Smaller Downloads
+- Efficient Storage
+
+If only one layer changes,
+
+Docker rebuilds
+
+only that layer
+
+and the layers above it.
+
+---
+
+# Image Build Process
+
+```text
+Dockerfile
+
+↓
+
+Instruction 1
+
+↓
+
+Layer 1
+
+↓
+
+Instruction 2
+
+↓
+
+Layer 2
+
+↓
+
+Instruction 3
+
+↓
+
+Layer 3
+
+↓
+
+Docker Image
+```
+
+---
+
+# Layer Caching
+
+Docker caches layers.
+
+Example
+
+```text
+Base Image
+
+↓
+
+Cached
+
+↓
+
+Dependencies
+
+↓
+
+Cached
+
+↓
+
+Application Code
+
+↓
+
+Changed
+```
+
+Only the application layer
+
+is rebuilt.
+
+This significantly speeds up builds.
+
+---
+
+# Writable Container Layer
+
+When a container starts,
+
+Docker adds
+
+one writable layer.
+
+```text
+Docker Image
+
+↓
+
+Read-only Layers
+
+↓
+
+Writable Layer
+
+↓
+
+Running Container
+```
+
+Any runtime changes
+
+exist only inside this writable layer.
+
+---
+
+# Container Deletion
+
+```text
+Container Deleted
+
+↓
+
+Writable Layer Deleted
+
+↓
+
+Image Remains
+```
+
+Data stored only inside the writable layer
+
+is lost.
+
+Persistent data should use Docker Volumes.
+
+---
+
+# Image IDs
+
+Every Docker image
+
+has
+
+a unique ID.
+
+Example
+
+```text
+Docker Image
+
+↓
+
+Image ID
+
+↓
+
+Tag
+```
+
+Images are identified internally
+
+using their IDs.
+
+---
+
+# Image Tags
+
+Tags identify
+
+specific image versions.
+
+Examples
+
+```text
+v1.0
+
+v2.0
+
+v2.1
+
+latest
+```
+
+Production deployments
+
+should use explicit version tags
+
+instead of
+
+`latest`.
+
+---
+
+# latest Tag
+
+Many beginners assume
+
+```text
+latest
+```
+
+means
+
+the newest version.
+
+It actually means
+
+the image tagged as
+
+`latest`.
+
+Always use
+
+versioned tags
+
+in production.
+
+---
+
+# Image Repository
+
+A repository stores
+
+multiple versions
+
+of an image.
+
+Example
+
+```text
+payment-service
+
+├── v1.0
+
+├── v1.1
+
+├── v2.0
+```
+
+---
+
+# Image Pull
+
+Workflow
+
+```text
+Docker Client
+
+↓
+
+Docker Registry
+
+↓
+
+Pull Image
+
+↓
+
+Local Machine
+```
+
+Images are downloaded
+
+only if they don't already exist locally.
+
+---
+
+# Image Push
+
+Workflow
+
+```text
+Developer
+
+↓
+
+Docker Build
+
+↓
+
+Docker Image
+
+↓
+
+Docker Push
+
+↓
+
+Registry
+```
+
+Other systems
+
+can then pull
+
+the same image.
+
+---
+
+# Multiple Containers
+
+One image
+
+can create
+
+many containers.
+
+```text
+Payment Image
+
+↓
+
+Container 1
+
+↓
+
+Container 2
+
+↓
+
+Container 3
+```
+
+Each container
+
+runs independently.
+
+---
+
+# Image Lifecycle
+
+```text
+Dockerfile
+
+↓
+
+Build Image
+
+↓
+
+Push Registry
+
+↓
+
+Pull Image
+
+↓
+
+Run Container
+
+↓
+
+Stop Container
+
+↓
+
+Remove Container
+```
+
+---
+
+# Container Lifecycle
+
+```text
+Created
+
+↓
+
+Running
+
+↓
+
+Paused
+
+↓
+
+Stopped
+
+↓
+
+Removed
+```
+
+Containers move
+
+through these states.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+```
+
+Each Pod
+
+runs one or more containers
+
+created from Docker images.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Docker Image v2.3
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+20 Payment Pods
+```
+
+Every Pod
+
+runs the exact same image,
+
+ensuring consistency.
+
+---
+
+# Image Optimization
+
+Well-designed images
+
+- Build Quickly
+- Consume Less Storage
+- Start Faster
+- Reduce Network Transfer
+
+Smaller images
+
+also reduce security risks
+
+by minimizing unnecessary packages.
+
+---
+
+# Layer Reuse
+
+Suppose
+
+multiple applications
+
+use
+
+the same base image.
+
+```text
+Ubuntu Base
+
+↓
+
+Application A
+
+↓
+
+Application B
+
+↓
+
+Application C
+```
+
+Docker stores
+
+shared layers only once,
+
+saving disk space.
+
+---
+
+# Image vs Container
+
+| Docker Image | Docker Container |
+|---------------|------------------|
+| Blueprint | Running Instance |
+| Read-only | Writable |
+| Immutable | Temporary |
+| Versioned | Runtime Process |
+| Build Time | Run Time |
+
+---
+
+# Image Layers vs Virtual Machine
+
+| Docker Layers | Virtual Machine |
+|----------------|----------------|
+| Shared | Independent |
+| Lightweight | Large |
+| Fast Downloads | Large Images |
+| Cached | No Layer Caching |
+
+---
+
+# Benefits
+
+- Image Reusability
+- Faster Builds
+- Efficient Storage
+- Faster Deployments
+- Consistent Runtime
+- Easy Rollback
+- Immutable Infrastructure
+- Reduced Network Usage
+
+---
+
+# Best Practices
+
+- Keep images immutable.
+- Use version tags.
+- Keep images small.
+- Reuse base layers.
+- Avoid storing application data inside containers.
+- Push images to private registries.
+- Scan images before deployment.
+- Rebuild images instead of modifying containers.
+
+---
+
+# Common Mistakes
+
+- Using the `latest` tag in production.
+- Logging into running containers to install packages.
+- Treating containers like virtual machines.
+- Building unnecessarily large images.
+- Storing persistent data inside containers.
+- Rebuilding every layer unnecessarily.
+- Ignoring Docker cache optimization.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Docker Image?
+- What is a Docker Container?
+- Image vs Container.
+- What are Docker Layers?
+- Why are Docker Images immutable?
+
+## Intermediate
+
+- Explain Docker layer caching.
+- What happens when a container starts?
+- Why should production avoid the `latest` tag?
+- Explain the container lifecycle.
+- How does Docker optimize image storage?
+
+## Advanced
+
+- Design an enterprise Docker image strategy for deploying hundreds of microservices using Amazon ECR, GitHub Actions, and Amazon EKS.
+- Explain how Docker image layers improve build performance, storage efficiency, and deployment speed in large-scale cloud environments.
+- A company has hundreds of microservices sharing common runtimes. Explain how Docker images, layered architecture, caching, tagging strategy, and immutable infrastructure principles reduce build time, simplify deployments, and improve operational consistency.
+
+---
+
