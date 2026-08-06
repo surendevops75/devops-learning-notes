@@ -5673,3 +5673,803 @@ Benefits
 
 ---
 
+# Chapter 8 - Jenkins Docker Integration, Amazon ECR & Amazon EKS Deployment
+
+Modern Jenkins pipelines are responsible for
+
+- Building Applications
+- Running Tests
+- Building Docker Images
+- Scanning Images
+- Publishing Images
+- Deploying to Kubernetes
+
+Jenkins integrates seamlessly with
+
+- Docker
+- Amazon ECR
+- Amazon EKS
+
+to automate the complete software delivery lifecycle.
+
+---
+
+# Enterprise Deployment Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Monitoring
+```
+
+Every deployment
+
+follows
+
+a standardized pipeline.
+
+---
+
+# Why Docker Integration?
+
+Without Docker
+
+```text
+Build
+
+↓
+
+Package
+
+↓
+
+Manual Server Deployment
+```
+
+Problems
+
+- Environment Differences
+- Manual Configuration
+- Inconsistent Deployments
+
+---
+
+With Docker
+
+```text
+Build
+
+↓
+
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+```
+
+Deployments become
+
+portable
+
+and consistent.
+
+---
+
+# Docker Build Stage
+
+The first container stage
+
+creates
+
+a Docker image.
+
+Workflow
+
+```text
+Source Code
+
+↓
+
+Dockerfile
+
+↓
+
+Docker Build
+
+↓
+
+Docker Image
+```
+
+The Docker image
+
+becomes
+
+the deployment artifact.
+
+---
+
+# Image Tagging Strategy
+
+Every Docker image
+
+should have
+
+a unique tag.
+
+Examples
+
+```text
+v1.0.0
+
+Build Number
+
+Git Commit SHA
+
+Release Tag
+```
+
+Avoid
+
+using
+
+`latest`
+
+in production.
+
+---
+
+# Security Scanning
+
+Every image
+
+must be scanned
+
+before deployment.
+
+Common tools
+
+- Trivy
+- Docker Scout
+- Amazon ECR Scan
+
+Critical vulnerabilities
+
+should block
+
+the pipeline.
+
+---
+
+# Amazon Elastic Container Registry (ECR)
+
+Amazon ECR
+
+is a private
+
+container registry.
+
+Architecture
+
+```text
+Docker Image
+
+↓
+
+Amazon ECR
+
+↓
+
+Versioned Repository
+```
+
+Only approved images
+
+should be stored.
+
+---
+
+# Docker Push Workflow
+
+```text
+Build
+
+↓
+
+Docker Image
+
+↓
+
+Security Scan
+
+↓
+
+Amazon ECR
+```
+
+The image
+
+is now available
+
+for deployment.
+
+---
+
+# Build Once, Deploy Everywhere
+
+Enterprise CI/CD
+
+builds
+
+one immutable image.
+
+```text
+Build
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Never rebuild
+
+for each environment.
+
+---
+
+# Amazon EKS Deployment
+
+After publishing
+
+the Docker image,
+
+Jenkins deploys
+
+to Amazon EKS.
+
+Workflow
+
+```text
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Pods
+
+↓
+
+Application
+```
+
+---
+
+# Kubernetes Deployment
+
+Deployment flow
+
+```text
+Deployment
+
+↓
+
+ReplicaSet
+
+↓
+
+Pods
+```
+
+The Kubernetes cluster
+
+pulls
+
+the approved image
+
+from Amazon ECR.
+
+---
+
+# Rolling Deployment
+
+Recommended deployment strategy
+
+```text
+Old Pods
+
+↓
+
+New Pods
+
+↓
+
+Validation
+
+↓
+
+Traffic Shift
+```
+
+Minimizes downtime.
+
+---
+
+# Blue-Green Deployment
+
+Alternative strategy
+
+```text
+Blue Environment
+
+↓
+
+Green Environment
+
+↓
+
+Validation
+
+↓
+
+Traffic Switch
+```
+
+Rollback
+
+is immediate.
+
+---
+
+# Canary Deployment
+
+Production traffic
+
+is shifted
+
+gradually.
+
+```text
+10%
+
+↓
+
+25%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Reduces deployment risk.
+
+---
+
+# Deployment Approval
+
+Production deployments
+
+often require
+
+manual approval.
+
+Workflow
+
+```text
+Security Scan
+
+↓
+
+Approval
+
+↓
+
+Production Deployment
+```
+
+Provides
+
+an additional
+
+security checkpoint.
+
+---
+
+# Environment Strategy
+
+One Jenkins pipeline
+
+supports
+
+multiple environments.
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Configuration
+
+changes automatically
+
+using parameters
+
+and environment variables.
+
+---
+
+# Rollback Strategy
+
+If deployment fails
+
+```text
+Current Version
+
+↓
+
+Previous Docker Image
+
+↓
+
+Redeploy
+
+↓
+
+Production Restored
+```
+
+Rollback
+
+should be
+
+quick
+
+and predictable.
+
+---
+
+# Deployment Validation
+
+After deployment
+
+verify
+
+- Pod Status
+- Health Checks
+- Logs
+- Metrics
+- Application Availability
+
+Deployment
+
+is successful
+
+only after validation.
+
+---
+
+# Monitoring
+
+Monitor
+
+- Pod Health
+- CPU Usage
+- Memory Usage
+- Restart Count
+- Response Time
+
+Use
+
+- Prometheus
+- Grafana
+- ELK
+
+for observability.
+
+---
+
+# Enterprise Deployment Pipeline
+
+```text
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Unit Test
+
+↓
+
+SonarQube
+
+↓
+
+Trivy
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+The pipeline
+
+automates
+
+the complete delivery process.
+
+---
+
+# Banking Example
+
+```text
+Payment Service
+
+↓
+
+Jenkins
+
+↓
+
+Docker Build
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Amazon EKS
+
+↓
+
+Rolling Deployment
+
+↓
+
+Customers
+```
+
+Every release
+
+passes
+
+security
+
+and quality gates.
+
+---
+
+# Enterprise Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Docker
+
+↓
+
+Trivy
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+ELK
+```
+
+This architecture
+
+provides
+
+secure,
+
+automated,
+
+and observable deployments.
+
+---
+
+# Enterprise Deployment Checklist
+
+Before production deployment verify
+
+✓ Build Successful
+
+✓ Unit Tests Passed
+
+✓ SonarQube Passed
+
+✓ Trivy Scan Passed
+
+✓ Docker Image Tagged
+
+✓ Image Uploaded to Amazon ECR
+
+✓ Terraform Validated
+
+✓ Amazon EKS Deployment Successful
+
+✓ Monitoring Enabled
+
+✓ Rollback Strategy Ready
+
+---
+
+# Enterprise Best Practices
+
+- Build immutable Docker images.
+- Use versioned image tags.
+- Scan images before deployment.
+- Use Amazon ECR as the source of truth.
+- Deploy using rolling or blue-green strategies.
+- Validate deployments before completion.
+- Automate rollback procedures.
+- Monitor production continuously.
+
+---
+
+# Common Mistakes
+
+- Using the `latest` image tag.
+- Deploying unscanned images.
+- Rebuilding images for each environment.
+- Skipping deployment validation.
+- Ignoring rollback planning.
+- Deploying directly from feature branches.
+- Not monitoring production deployments.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- How does Jenkins build Docker images?
+- What is Amazon ECR?
+- What is Amazon EKS?
+- Why is Docker image tagging important?
+- Why automate deployments?
+
+## Intermediate
+
+- Explain the deployment pipeline from Jenkins to Amazon EKS.
+- Rolling Deployment vs Blue-Green Deployment.
+- What is Canary Deployment?
+- Why Build Once, Deploy Everywhere?
+- How do you validate a Kubernetes deployment?
+
+## Advanced
+
+- Design a complete Jenkins CI/CD pipeline integrating Docker, SonarQube, Trivy, Amazon ECR, Terraform, Amazon EKS, Prometheus, Grafana, and ELK.
+- Explain how immutable Docker images, automated security scanning, deployment approvals, and Kubernetes rollout strategies work together to deliver secure and reliable production deployments.
+- A financial organization deploys hundreds of microservices to Amazon EKS every day using Jenkins. Explain how you would design the CI/CD pipeline, image management strategy, deployment approval process, rollback mechanism, monitoring, and governance to ensure high availability, security, and compliance.
+
+---
+
