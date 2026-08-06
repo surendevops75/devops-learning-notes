@@ -1674,3 +1674,714 @@ one responsibility.
 
 ---
 
+# Chapter 3 - GitHub Actions Runners (GitHub Hosted & Self-hosted) - Enterprise Guide
+
+Every GitHub Actions workflow needs a machine to execute its jobs.
+
+This machine is called a **Runner**.
+
+Without a runner,
+
+a workflow cannot execute
+
+- Build
+- Test
+- Scan
+- Deploy
+- Package
+
+Understanding runners is essential for designing secure and scalable CI/CD pipelines.
+
+---
+
+# What is a Runner?
+
+A Runner is
+
+the execution environment
+
+that runs
+
+GitHub Actions jobs.
+
+Architecture
+
+```text
+GitHub
+
+↓
+
+Workflow
+
+↓
+
+Runner
+
+↓
+
+Job Execution
+```
+
+Every job
+
+runs on
+
+a runner.
+
+---
+
+# Runner Workflow
+
+```text
+Developer Push
+
+↓
+
+Workflow Trigger
+
+↓
+
+Runner Assigned
+
+↓
+
+Job Executes
+
+↓
+
+Results Uploaded
+```
+
+---
+
+# Types of Runners
+
+GitHub Actions supports
+
+- GitHub Hosted Runner
+- Self-hosted Runner
+
+Each has
+
+different use cases.
+
+---
+
+# GitHub Hosted Runner
+
+GitHub provides
+
+fully managed virtual machines.
+
+Architecture
+
+```text
+GitHub
+
+↓
+
+GitHub Hosted Runner
+
+↓
+
+Workflow
+
+↓
+
+Result
+```
+
+GitHub
+
+creates,
+
+manages,
+
+and destroys
+
+the runner automatically.
+
+---
+
+# Hosted Runner Lifecycle
+
+```text
+Workflow Starts
+
+↓
+
+Runner Created
+
+↓
+
+Jobs Execute
+
+↓
+
+Runner Destroyed
+```
+
+Each workflow
+
+gets
+
+a fresh environment.
+
+---
+
+# Advantages of Hosted Runners
+
+- No Infrastructure Management
+- Automatic Updates
+- Fast Provisioning
+- Clean Environment
+- Easy Maintenance
+- Scalable
+
+Ideal for
+
+most CI workloads.
+
+---
+
+# Limitations of Hosted Runners
+
+- Limited Runtime
+- Internet Dependency
+- No Access to Private Networks
+- Shared Infrastructure
+- Limited Customization
+
+---
+
+# Self-hosted Runner
+
+A Self-hosted Runner
+
+is managed
+
+by your organization.
+
+Architecture
+
+```text
+GitHub
+
+↓
+
+Self-hosted Runner
+
+↓
+
+Private Network
+
+↓
+
+Infrastructure
+```
+
+Useful when
+
+deployment targets
+
+are inside private networks.
+
+---
+
+# Self-hosted Runner Lifecycle
+
+```text
+Runner Installed
+
+↓
+
+Registers with GitHub
+
+↓
+
+Waits for Jobs
+
+↓
+
+Executes Jobs
+
+↓
+
+Ready Again
+```
+
+Unlike hosted runners,
+
+self-hosted runners
+
+remain online
+
+until stopped.
+
+---
+
+# Hosted vs Self-hosted
+
+| GitHub Hosted | Self-hosted |
+|---------------|-------------|
+| Managed by GitHub | Managed by Organization |
+| Temporary VM | Persistent Machine |
+| Easy Setup | Requires Maintenance |
+| Public Internet | Private Networks Supported |
+| Automatic Updates | Manual Updates |
+
+---
+
+# Runner Labels
+
+Runners
+
+can have
+
+labels
+
+to identify capabilities.
+
+Examples
+
+```text
+Linux
+
+Windows
+
+macOS
+
+Docker
+
+Terraform
+
+Production
+```
+
+Workflows
+
+select runners
+
+using labels.
+
+---
+
+# Runner Groups
+
+Large organizations
+
+group runners.
+
+Example
+
+```text
+Development
+
+↓
+
+Dev Runners
+
+────────────
+
+Production
+
+↓
+
+Prod Runners
+```
+
+Improves
+
+security
+
+and organization.
+
+---
+
+# Operating Systems
+
+GitHub Hosted Runners
+
+support
+
+```text
+Ubuntu
+
+Windows
+
+macOS
+```
+
+Teams choose
+
+the appropriate runner
+
+based on application requirements.
+
+---
+
+# Runner Resources
+
+Each runner provides
+
+- CPU
+- Memory
+- Storage
+- Network
+
+Resource-intensive workloads
+
+may require
+
+larger runners
+
+or self-hosted infrastructure.
+
+---
+
+# Parallel Execution
+
+Multiple runners
+
+allow
+
+parallel execution.
+
+Example
+
+```text
+Build
+
+↓
+
+Runner 1
+
+────────────
+
+Test
+
+↓
+
+Runner 2
+
+────────────
+
+Security Scan
+
+↓
+
+Runner 3
+```
+
+Pipeline execution time
+
+is significantly reduced.
+
+---
+
+# Runner Communication
+
+```text
+GitHub
+
+↓
+
+Runner
+
+↓
+
+Repository
+
+↓
+
+Workflow
+
+↓
+
+Results
+```
+
+The runner
+
+downloads
+
+workflow instructions,
+
+executes them,
+
+and uploads results.
+
+---
+
+# Runner Security
+
+A runner executes
+
+repository code.
+
+Therefore,
+
+security is critical.
+
+Protect runners using
+
+- Least Privilege
+- Network Isolation
+- IAM Roles
+- Short-lived Credentials
+
+---
+
+# Self-hosted Runner Security
+
+Best practices
+
+- Dedicated Machines
+- Private Network
+- Regular Updates
+- Restricted Repository Access
+- Monitoring
+- Least Privilege
+
+Never share
+
+production runners
+
+with development workloads.
+
+---
+
+# Runner Cleanup
+
+Hosted runners
+
+are destroyed automatically.
+
+Self-hosted runners
+
+require periodic cleanup.
+
+Remove
+
+- Temporary Files
+- Docker Images
+- Build Cache
+- Logs
+
+to maintain performance.
+
+---
+
+# Auto Scaling Self-hosted Runners
+
+Enterprise platforms
+
+often auto-scale runners.
+
+Architecture
+
+```text
+GitHub
+
+↓
+
+Auto Scaling
+
+↓
+
+EC2 Instances
+
+↓
+
+Workflow
+
+↓
+
+Terminate After Completion
+```
+
+This combines
+
+flexibility
+
+with cost optimization.
+
+---
+
+# Private Deployment Example
+
+```text
+GitHub
+
+↓
+
+Self-hosted Runner
+
+↓
+
+Private VPC
+
+↓
+
+Amazon EKS
+
+↓
+
+Deployment
+```
+
+The runner
+
+can access
+
+private AWS resources
+
+that hosted runners cannot.
+
+---
+
+# Enterprise CI/CD Architecture
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+GitHub Actions
+
+↓
+
+Runner
+
+↓
+
+Docker Build
+
+↓
+
+Amazon ECR
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+```
+
+The runner
+
+executes
+
+every stage
+
+of the pipeline.
+
+---
+
+# Banking Example
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Self-hosted Runner
+
+↓
+
+Private AWS Account
+
+↓
+
+Terraform
+
+↓
+
+Amazon EKS
+
+↓
+
+Production
+```
+
+Sensitive deployments
+
+remain inside
+
+the organization's network.
+
+---
+
+# Runner Selection Strategy
+
+| Scenario | Recommended Runner |
+|----------|--------------------|
+| Open Source Project | GitHub Hosted |
+| Internal Application | GitHub Hosted |
+| Private Infrastructure | Self-hosted |
+| Production Deployment | Self-hosted (Common) |
+| High Security Environment | Self-hosted |
+
+---
+
+# Enterprise Best Practices
+
+- Use GitHub Hosted runners for standard CI jobs.
+- Use Self-hosted runners for private infrastructure.
+- Separate development and production runners.
+- Apply least-privilege permissions.
+- Keep runners updated.
+- Enable monitoring and logging.
+- Auto-scale runners where possible.
+- Remove unused runners.
+
+---
+
+# Common Mistakes
+
+- Running production deployments from shared runners.
+- Giving runners excessive permissions.
+- Using one runner for all environments.
+- Ignoring runner updates.
+- Allowing unrestricted repository access.
+- Leaving self-hosted runners unmonitored.
+- Accumulating Docker images and build cache on self-hosted runners.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a GitHub Actions Runner?
+- What are the types of runners?
+- What is a GitHub Hosted Runner?
+- What is a Self-hosted Runner?
+- Why does every workflow require a runner?
+
+## Intermediate
+
+- GitHub Hosted vs Self-hosted Runner.
+- Explain runner labels.
+- What are runner groups?
+- Why are self-hosted runners used?
+- How do runners execute workflows?
+
+## Advanced
+
+- Design a secure GitHub Actions runner architecture for deploying applications to private Amazon EKS clusters using Docker, Terraform, and IAM roles.
+- Explain how GitHub Hosted and Self-hosted runners differ in terms of scalability, security, maintenance, and enterprise deployment strategies.
+- A financial organization requires CI/CD pipelines to deploy applications into private AWS accounts without exposing infrastructure to the public internet. Explain how you would design the runner architecture, networking, IAM permissions, auto-scaling strategy, monitoring, and governance for GitHub Actions.
+
+---
+
