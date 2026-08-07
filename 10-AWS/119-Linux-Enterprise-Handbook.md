@@ -1148,3 +1148,691 @@ A DevOps Engineer frequently inspects these directories during troubleshooting.
 
 ---
 
+# Chapter 3 - Linux Users, Groups, Permissions & Access Control
+
+Linux is a **multi-user operating system**, meaning multiple users can access the same system simultaneously.
+
+To ensure security and proper resource management, Linux provides:
+
+- User Management
+- Group Management
+- File Permissions
+- Ownership
+- Access Control Lists (ACLs)
+- Privilege Management
+
+Understanding these concepts is essential for managing production Linux servers securely.
+
+---
+
+# Multi-User Architecture
+
+Linux allows multiple users to work on the same system while maintaining isolation.
+
+```text
+User 1
+    │
+User 2
+    │
+User 3
+    │
+    ▼
+Linux Operating System
+    │
+    ▼
+Files, Processes, Resources
+```
+
+Each user has independent permissions and access rights.
+
+---
+
+# Types of Users
+
+Linux supports three main types of users.
+
+| User Type | Description |
+|-----------|-------------|
+| Root User | Full administrative privileges |
+| System User | Used by services and applications |
+| Regular User | Used by human users |
+
+---
+
+# Root User
+
+The **root** user is the superuser.
+
+Capabilities include:
+
+- Install software
+- Manage users
+- Modify system files
+- Start and stop services
+- Change permissions
+- Access all files
+
+Example:
+
+```text
+Username: root
+
+Home Directory: /root
+
+UID: 0
+```
+
+Avoid using the root account for daily activities.
+
+---
+
+# Regular Users
+
+Regular users perform day-to-day tasks.
+
+Example:
+
+```text
+surendra
+
+devops
+
+developer
+
+admin
+```
+
+Their home directories are located under:
+
+```text
+/home
+```
+
+---
+
+# System Users
+
+System users run background services.
+
+Examples:
+
+```text
+nginx
+
+mysql
+
+postgres
+
+jenkins
+
+docker
+```
+
+These users usually do not have login access.
+
+---
+
+# User Identification (UID)
+
+Each user has a unique User ID (UID).
+
+Examples:
+
+| UID | Purpose |
+|-----|----------|
+| 0 | Root User |
+| 1-999 | System Users (varies by distribution) |
+| 1000+ | Regular Users |
+
+Linux uses the UID internally rather than the username.
+
+---
+
+# Groups
+
+Groups simplify permission management.
+
+Instead of assigning permissions to individual users, permissions are assigned to groups.
+
+Example:
+
+```text
+Developers
+
+↓
+
+Alice
+
+Bob
+
+Charlie
+```
+
+All members inherit the group's permissions.
+
+---
+
+# Group Identification (GID)
+
+Every group has a unique Group ID (GID).
+
+Example:
+
+```text
+developers
+
+↓
+
+GID 1001
+```
+
+---
+
+# Primary Group
+
+Each user belongs to one primary group.
+
+Example:
+
+```text
+User
+
+↓
+
+surendra
+
+↓
+
+Primary Group
+
+↓
+
+developers
+```
+
+New files are generally assigned to the user's primary group.
+
+---
+
+# Secondary Groups
+
+A user can belong to multiple secondary groups.
+
+Example:
+
+```text
+surendra
+
+↓
+
+developers
+
+docker
+
+sudo
+
+kubernetes
+```
+
+This allows flexible access control.
+
+---
+
+# User Management Commands
+
+Create a user:
+
+```bash
+useradd devops
+```
+
+Create a user with a home directory:
+
+```bash
+useradd -m devops
+```
+
+Set a password:
+
+```bash
+passwd devops
+```
+
+Delete a user:
+
+```bash
+userdel devops
+```
+
+Delete a user along with the home directory:
+
+```bash
+userdel -r devops
+```
+
+---
+
+# Group Management Commands
+
+Create a group:
+
+```bash
+groupadd developers
+```
+
+Delete a group:
+
+```bash
+groupdel developers
+```
+
+Add a user to a group:
+
+```bash
+usermod -aG docker devops
+```
+
+View group membership:
+
+```bash
+groups devops
+```
+
+---
+
+# Linux File Ownership
+
+Every file has:
+
+- Owner
+- Group
+
+Example:
+
+```text
+surendra developers app.py
+```
+
+Owner and group determine who can access the file.
+
+---
+
+# View File Ownership
+
+Display ownership information:
+
+```bash
+ls -l
+```
+
+Example output:
+
+```text
+-rw-r--r-- 1 surendra developers 1200 app.py
+```
+
+---
+
+# Change File Owner
+
+Change owner:
+
+```bash
+chown devops file.txt
+```
+
+Change owner and group:
+
+```bash
+chown devops:developers file.txt
+```
+
+---
+
+# Change Group Ownership
+
+```bash
+chgrp developers file.txt
+```
+
+Useful when sharing files among teams.
+
+---
+
+# Linux Permissions
+
+Linux permissions are divided into three categories.
+
+```text
+Owner
+
+Group
+
+Others
+```
+
+Each category can have:
+
+- Read (r)
+- Write (w)
+- Execute (x)
+
+---
+
+# Permission Representation
+
+Example:
+
+```text
+-rwxr-xr--
+```
+
+Breakdown:
+
+```text
+Owner  → rwx
+
+Group  → r-x
+
+Others → r--
+```
+
+---
+
+# Permission Values
+
+| Permission | Value |
+|------------|------:|
+| Read (r) | 4 |
+| Write (w) | 2 |
+| Execute (x) | 1 |
+
+These values are used in numeric permission notation.
+
+---
+
+# Numeric Permissions
+
+Examples:
+
+| Permission | Meaning |
+|------------|---------|
+| 777 | Full access to everyone |
+| 755 | Owner full, others read & execute |
+| 700 | Owner only |
+| 644 | Owner read/write, others read only |
+| 600 | Owner read/write only |
+
+---
+
+# Change Permissions
+
+Grant execute permission:
+
+```bash
+chmod +x script.sh
+```
+
+Numeric format:
+
+```bash
+chmod 755 script.sh
+```
+
+Restrict access:
+
+```bash
+chmod 600 secret.txt
+```
+
+---
+
+# Symbolic Mode
+
+Examples:
+
+```bash
+chmod u+x script.sh
+
+chmod g+w file.txt
+
+chmod o-r file.txt
+```
+
+Where:
+
+- u = User
+- g = Group
+- o = Others
+- a = All
+
+---
+
+# Default Permissions
+
+When files are created, Linux assigns default permissions.
+
+Typical defaults:
+
+| Resource | Default Permission |
+|----------|--------------------|
+| File | 644 |
+| Directory | 755 |
+
+These defaults are influenced by **umask**.
+
+---
+
+# umask
+
+The **umask** defines which permissions are removed from newly created files and directories.
+
+View current umask:
+
+```bash
+umask
+```
+
+Example:
+
+```text
+022
+```
+
+A common enterprise setting is:
+
+```text
+022
+```
+
+---
+
+# Special Permissions
+
+Linux provides three special permissions.
+
+| Permission | Purpose |
+|------------|---------|
+| SUID | Run as file owner |
+| SGID | Inherit group ownership |
+| Sticky Bit | Restrict file deletion in shared directories |
+
+---
+
+# SUID
+
+When SUID is set,
+
+a program runs with the permissions of the file owner.
+
+Example:
+
+```text
+passwd
+```
+
+The `passwd` command needs temporary root privileges to update password files.
+
+---
+
+# SGID
+
+When applied to directories,
+
+new files inherit the directory's group.
+
+Useful for shared project folders.
+
+---
+
+# Sticky Bit
+
+Commonly used on:
+
+```text
+/tmp
+```
+
+Only the file owner can delete their own files inside the directory.
+
+---
+
+# Access Control Lists (ACL)
+
+Standard Linux permissions provide only:
+
+- Owner
+- Group
+- Others
+
+ACLs allow assigning permissions to specific users or groups.
+
+Example:
+
+```text
+Project Directory
+
+↓
+
+Owner
+
+↓
+
+developers
+
+↓
+
+tester
+```
+
+Different users can have different permissions.
+
+---
+
+# sudo
+
+Instead of logging in as root,
+
+users are granted administrative privileges through **sudo**.
+
+Example:
+
+```bash
+sudo systemctl restart nginx
+```
+
+This provides accountability and improves security.
+
+---
+
+# Enterprise Example
+
+A Jenkins server may use:
+
+```text
+jenkins
+
+↓
+
+docker
+
+↓
+
+developers
+```
+
+The Jenkins user is added to the **docker** group to build container images without using the root account.
+
+---
+
+# Kubernetes Example
+
+On Kubernetes worker nodes:
+
+```text
+kubelet
+
+↓
+
+containerd
+
+↓
+
+root
+```
+
+System services run under dedicated service accounts with controlled permissions.
+
+---
+
+# Enterprise Best Practices
+
+- Use regular users for daily work.
+- Avoid direct root logins.
+- Grant administrative access using `sudo`.
+- Follow the principle of least privilege.
+- Assign users to groups instead of managing permissions individually.
+- Use ACLs when standard permissions are insufficient.
+- Regularly review file ownership and permissions.
+- Protect sensitive files with restrictive permissions.
+
+---
+
+# Common Mistakes
+
+- Running daily tasks as the root user.
+- Assigning `777` permissions to files or directories.
+- Giving unnecessary sudo access.
+- Ignoring group-based permission management.
+- Forgetting to set execute permission on scripts.
+- Misconfiguring shared directories.
+- Leaving sensitive files world-readable.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is the difference between the root user and a regular user?
+2. What is a UID and GID?
+3. Explain Linux file permissions.
+4. What is the difference between `chmod`, `chown`, and `chgrp`?
+5. What is `sudo`?
+
+## Intermediate
+
+1. Explain numeric permissions such as `755`, `644`, and `700`.
+2. What is `umask`?
+3. Explain SUID, SGID, and Sticky Bit.
+4. What are ACLs, and when would you use them?
+5. Why is group-based access control preferred in enterprise environments?
+
+## Advanced
+
+1. Design a secure user and permission model for a production Jenkins server where developers can build Docker images without granting full root access.
+2. Explain how Linux users, groups, permissions, ACLs, and `sudo` work together to implement the principle of least privilege in enterprise environments.
+3. A financial organization hosts hundreds of applications on Linux servers. Design a secure access control strategy covering user management, service accounts, shared directories, file permissions, administrative access, and auditability.
+
+---
+
