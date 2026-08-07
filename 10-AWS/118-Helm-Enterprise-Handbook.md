@@ -5475,3 +5475,730 @@ the entire lifecycle.
 
 ---
 
+# Chapter 8 - Helm Security, OCI Registries & Enterprise Best Practices
+
+Helm Charts
+
+define
+
+how applications
+
+are deployed
+
+to Kubernetes.
+
+If a Helm Chart
+
+is compromised,
+
+an attacker
+
+can deploy
+
+malicious workloads
+
+to production.
+
+Enterprise organizations
+
+secure Helm using
+
+- Chart Versioning
+- OCI Registries
+- RBAC
+- Secrets Management
+- Signed Charts
+- Repository Security
+- GitOps Governance
+
+Security must be applied
+
+throughout
+
+the Helm lifecycle.
+
+---
+
+# Enterprise Security Architecture
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Helm Chart
+
+↓
+
+OCI Registry
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Every deployment
+
+is versioned,
+
+validated,
+
+and auditable.
+
+---
+
+# Why Helm Security?
+
+Without security
+
+```text
+Developer
+
+↓
+
+Modified Chart
+
+↓
+
+Production
+
+↓
+
+Security Risk
+```
+
+Problems
+
+- Malicious Templates
+- Unauthorized Changes
+- Configuration Tampering
+- Supply Chain Attacks
+
+---
+
+With security
+
+```text
+Developer
+
+↓
+
+Code Review
+
+↓
+
+Signed Chart
+
+↓
+
+OCI Registry
+
+↓
+
+ArgoCD
+
+↓
+
+Production
+```
+
+Only approved charts
+
+reach production.
+
+---
+
+# Chart Integrity
+
+A Helm Chart
+
+should always be
+
+- Version Controlled
+- Reviewed
+- Tested
+- Verified
+
+Charts
+
+should never be modified
+
+directly
+
+inside production clusters.
+
+---
+
+# Git as Source of Truth
+
+Store
+
+all Helm Charts
+
+inside Git.
+
+Workflow
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+Review
+
+↓
+
+Merge
+
+↓
+
+OCI Registry
+```
+
+Git
+
+remains
+
+the source of truth.
+
+---
+
+# OCI Registry
+
+Modern Helm
+
+supports
+
+OCI (Open Container Initiative)
+
+registries.
+
+Examples
+
+```text
+Amazon ECR
+
+Harbor
+
+GitHub Container Registry
+
+Azure Container Registry
+
+JFrog Artifactory
+```
+
+Charts
+
+are stored
+
+like container images.
+
+---
+
+# OCI Architecture
+
+```text
+Helm Chart
+
+↓
+
+OCI Registry
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+The registry
+
+acts as
+
+a secure chart repository.
+
+---
+
+# Public vs Private Repositories
+
+| Public Repository | Private Repository |
+|-------------------|-------------------|
+| Open Access | Restricted Access |
+| Community Charts | Enterprise Charts |
+| Public Software | Internal Applications |
+
+Production charts
+
+should be stored
+
+in private repositories.
+
+---
+
+# Repository Authentication
+
+Private repositories
+
+require authentication.
+
+Common methods
+
+```text
+Username & Password
+
+Access Token
+
+IAM Authentication
+
+OCI Credentials
+```
+
+Never expose
+
+repository credentials.
+
+---
+
+# Chart Versioning
+
+Every chart
+
+must have
+
+its own version.
+
+Example
+
+```text
+1.0.0
+
+↓
+
+1.1.0
+
+↓
+
+2.0.0
+```
+
+Never overwrite
+
+existing chart versions.
+
+---
+
+# Immutable Releases
+
+Published chart versions
+
+should remain immutable.
+
+```text
+Version 1.0.0
+
+↓
+
+Published
+
+↓
+
+Never Modified
+```
+
+If changes are required,
+
+publish
+
+a new version.
+
+---
+
+# Chart Signing
+
+Charts
+
+can be digitally signed
+
+to verify
+
+their authenticity.
+
+Benefits
+
+- Integrity Verification
+- Publisher Validation
+- Supply Chain Security
+
+Only trusted charts
+
+should be installed.
+
+---
+
+# Secrets Management
+
+Never store
+
+plaintext secrets
+
+inside
+
+```text
+values.yaml
+
+Templates
+
+Git Repository
+```
+
+Recommended solutions
+
+```text
+AWS Secrets Manager
+
+────────────
+
+External Secrets Operator
+
+────────────
+
+HashiCorp Vault
+
+────────────
+
+Sealed Secrets
+```
+
+---
+
+# RBAC
+
+Helm itself
+
+uses Kubernetes permissions.
+
+Only authorized users
+
+should be allowed
+
+to
+
+- Install Charts
+- Upgrade Releases
+- Rollback Deployments
+- Delete Releases
+
+Apply
+
+least privilege
+
+at all times.
+
+---
+
+# CI/CD Security
+
+Secure deployment flow
+
+```text
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Helm Chart
+
+↓
+
+OCI Registry
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Separate
+
+build
+
+from
+
+deployment.
+
+---
+
+# Supply Chain Security
+
+Protect
+
+the software supply chain.
+
+Validate
+
+- Source Code
+- Helm Chart
+- Docker Image
+- Dependencies
+
+before deployment.
+
+---
+
+# Dependency Security
+
+Dependencies
+
+must be
+
+reviewed regularly.
+
+Check
+
+```text
+Redis
+
+RabbitMQ
+
+PostgreSQL
+
+NGINX
+```
+
+for
+
+security updates.
+
+---
+
+# Branch Protection
+
+Protect
+
+production branches
+
+using
+
+- Pull Requests
+- Mandatory Reviews
+- CI Validation
+- Approval Policies
+
+Every chart change
+
+should be reviewed.
+
+---
+
+# Audit Logging
+
+Track
+
+- Chart Changes
+- Release Upgrades
+- Rollbacks
+- Repository Access
+- Production Deployments
+
+Audit logs
+
+support
+
+compliance
+
+and investigations.
+
+---
+
+# Enterprise Governance
+
+Platform teams
+
+should standardize
+
+- Chart Structure
+- Naming Conventions
+- Versioning
+- Repository Layout
+- Security Policies
+
+Governance
+
+ensures
+
+consistent deployments.
+
+---
+
+# Enterprise Deployment
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Pull Request
+
+↓
+
+OCI Registry
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Every deployment
+
+is reviewed,
+
+versioned,
+
+and audited.
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Helm Chart
+
+↓
+
+Amazon ECR (OCI)
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Production
+
+uses
+
+only approved
+
+versioned charts.
+
+---
+
+# Enterprise Security Checklist
+
+Before deployment verify
+
+✓ Chart Reviewed
+
+✓ Chart Version Updated
+
+✓ OCI Registry Accessible
+
+✓ Repository Authentication Configured
+
+✓ Secrets Stored Securely
+
+✓ RBAC Applied
+
+✓ Dependency Versions Reviewed
+
+✓ Git Branch Protection Enabled
+
+✓ Chart Validation Completed
+
+✓ Monitoring Enabled
+
+---
+
+# Enterprise Best Practices
+
+- Store Helm Charts in Git.
+- Publish charts to a private OCI registry.
+- Never overwrite published chart versions.
+- Digitally sign production charts when supported.
+- Keep secrets outside Helm values files.
+- Apply least-privilege RBAC.
+- Review dependency updates regularly.
+- Protect production branches with mandatory reviews.
+
+---
+
+# Common Mistakes
+
+- Storing secrets in `values.yaml`.
+- Using public repositories for proprietary charts.
+- Overwriting chart versions.
+- Deploying unreviewed chart changes.
+- Ignoring dependency vulnerabilities.
+- Giving all users cluster-admin permissions.
+- Modifying production charts manually.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- Why is Helm security important?
+- What is an OCI registry?
+- Why use private Helm repositories?
+- What is chart versioning?
+- Why shouldn't secrets be stored in values files?
+
+## Intermediate
+
+- OCI Registry vs traditional Helm repository.
+- Why are immutable chart versions important?
+- How does RBAC secure Helm deployments?
+- Why review chart dependencies?
+- Explain supply chain security in Helm.
+
+## Advanced
+
+- Design a secure enterprise Helm platform using GitHub, OCI registries, ArgoCD, Amazon EKS, RBAC, secrets management, and GitOps governance.
+- Explain how chart versioning, OCI registries, repository authentication, RBAC, dependency validation, and branch protection work together to secure Helm-based Kubernetes deployments.
+- A financial organization deploys more than 800 microservices using Helm and ArgoCD across multiple Amazon EKS clusters. Explain how you would design chart repositories, OCI registry management, versioning strategy, RBAC, secrets management, dependency governance, audit logging, and GitOps workflows to provide secure, scalable, and compliant application deployments.
+
+---
