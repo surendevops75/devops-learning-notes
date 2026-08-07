@@ -3586,3 +3586,539 @@ Implement reproducible builds, standardized environments, monitoring, and pipeli
 
 ---
 
+# Chapter 7 - Terraform Production Troubleshooting Scenarios (251–300)
+
+Terraform enables Infrastructure as Code (IaC), but production issues can occur during planning, provisioning, state management, module usage, or cloud resource creation.
+
+This chapter covers **50 real-world Terraform production troubleshooting scenarios** commonly encountered in enterprise environments.
+
+---
+
+# Scenario 251 - Terraform Init Fails
+
+### Symptoms
+
+- Initialization fails.
+- Providers cannot be downloaded.
+
+### Investigation
+
+```bash
+terraform init
+```
+
+Review:
+
+- Internet connectivity
+- Provider source
+- Backend configuration
+
+### Root Cause
+
+Invalid provider or backend configuration.
+
+### Resolution
+
+Correct configuration and re-run `terraform init`.
+
+### Prevention
+
+Pin provider versions and validate backend settings.
+
+---
+
+# Scenario 252 - Terraform Plan Fails
+
+### Investigation
+
+```bash
+terraform plan
+```
+
+Review:
+
+- Variable values
+- Syntax errors
+- Provider authentication
+
+### Root Cause
+
+Configuration or authentication issue.
+
+---
+
+# Scenario 253 - Terraform Apply Fails
+
+### Symptoms
+
+Resources are partially created.
+
+### Investigation
+
+Review apply output.
+
+Identify the failed resource.
+
+### Resolution
+
+Fix the error and re-run `terraform apply`.
+
+---
+
+# Scenario 254 - State Lock Error
+
+### Symptoms
+
+```
+Error acquiring the state lock
+```
+
+### Investigation
+
+Verify whether another Terraform operation is running.
+
+### Root Cause
+
+Existing state lock.
+
+### Resolution
+
+Wait for the active operation or safely release the lock.
+
+---
+
+# Scenario 255 - State File Corruption
+
+### Investigation
+
+Verify remote backend.
+
+Review backup state.
+
+### Resolution
+
+Restore a valid state backup.
+
+---
+
+# Scenario 256 - Backend Initialization Failure
+
+Review:
+
+- Backend bucket
+- Access permissions
+- Configuration
+
+---
+
+# Scenario 257 - Provider Authentication Failure
+
+### Investigation
+
+```bash
+terraform providers
+```
+
+Verify cloud credentials.
+
+---
+
+# Scenario 258 - Invalid Variable Value
+
+Review:
+
+```bash
+terraform validate
+```
+
+Verify variable definitions.
+
+---
+
+# Scenario 259 - Module Source Not Found
+
+Review:
+
+- Module path
+- Git URL
+- Version
+
+---
+
+# Scenario 260 - Module Version Conflict
+
+Verify module version compatibility.
+
+---
+
+# Scenario 261 - Resource Already Exists
+
+### Symptoms
+
+Terraform attempts to create an existing resource.
+
+### Resolution
+
+Import the resource into Terraform state.
+
+---
+
+# Scenario 262 - Resource Drift
+
+### Investigation
+
+```bash
+terraform plan
+```
+
+### Root Cause
+
+Manual infrastructure changes.
+
+### Resolution
+
+Reconcile infrastructure with Terraform configuration.
+
+---
+
+# Scenario 263 - Import Failure
+
+Review resource ID format.
+
+Verify permissions.
+
+---
+
+# Scenario 264 - Destroy Failure
+
+Investigate dependency errors.
+
+Review resource relationships.
+
+---
+
+# Scenario 265 - Dependency Cycle
+
+### Symptoms
+
+```
+Cycle detected
+```
+
+### Resolution
+
+Refactor dependencies.
+
+Remove circular references.
+
+---
+
+# Scenario 266 - Invalid Resource Reference
+
+Verify resource names and outputs.
+
+---
+
+# Scenario 267 - Output Value Missing
+
+Review output definitions.
+
+Verify resource creation.
+
+---
+
+# Scenario 268 - Data Source Failure
+
+Review:
+
+- Data source configuration
+- Permissions
+- Resource availability
+
+---
+
+# Scenario 269 - Invalid Terraform Syntax
+
+Run:
+
+```bash
+terraform fmt
+
+terraform validate
+```
+
+---
+
+# Scenario 270 - Unsupported Provider Version
+
+Update provider constraints.
+
+Reinitialize providers.
+
+---
+
+# Scenario 271 - Terraform Workspace Confusion
+
+Verify active workspace.
+
+```bash
+terraform workspace list
+
+terraform workspace show
+```
+
+---
+
+# Scenario 272 - Wrong Environment Deployed
+
+Verify:
+
+- Workspace
+- Variables
+- Backend
+
+---
+
+# Scenario 273 - Sensitive Values Exposed
+
+Review:
+
+- Outputs
+- Variables
+- Logs
+
+Mark sensitive values appropriately.
+
+---
+
+# Scenario 274 - Backend Permission Denied
+
+Verify cloud IAM permissions.
+
+---
+
+# Scenario 275 - S3 Backend Unreachable
+
+Review:
+
+- Bucket
+- Region
+- Credentials
+- Network
+
+---
+
+# Scenario 276 - State File Deleted
+
+Restore from backup.
+
+Verify backend recovery.
+
+---
+
+# Scenario 277 - Parallel Apply Conflict
+
+Avoid concurrent Terraform executions.
+
+---
+
+# Scenario 278 - Resource Timeout
+
+Increase timeout if appropriate.
+
+Investigate cloud API delays.
+
+---
+
+# Scenario 279 - API Rate Limiting
+
+Reduce parallelism.
+
+Retry after delay.
+
+---
+
+# Scenario 280 - Cloud Resource Limit Reached
+
+Review service quotas.
+
+Request quota increase.
+
+---
+
+# Scenario 281 - Invalid AMI ID
+
+Verify AMI availability in the selected region.
+
+---
+
+# Scenario 282 - Invalid Security Group
+
+Verify Security Group ID.
+
+Review dependencies.
+
+---
+
+# Scenario 283 - Invalid Subnet
+
+Review subnet ID and Availability Zone.
+
+---
+
+# Scenario 284 - Invalid IAM Role
+
+Verify role exists and trust policy.
+
+---
+
+# Scenario 285 - Invalid Route Table
+
+Review VPC routing configuration.
+
+---
+
+# Scenario 286 - Resource Recreation Unexpected
+
+Review lifecycle configuration.
+
+Check changed arguments.
+
+---
+
+# Scenario 287 - Lifecycle Ignore Changes Not Working
+
+Verify lifecycle block syntax.
+
+---
+
+# Scenario 288 - Count Index Error
+
+Review:
+
+- count
+- references
+- indexing
+
+---
+
+# Scenario 289 - for_each Key Changed
+
+Changing keys causes resource recreation.
+
+Use stable identifiers.
+
+---
+
+# Scenario 290 - Dynamic Block Failure
+
+Review iterator and variable structure.
+
+---
+
+# Scenario 291 - Local Values Incorrect
+
+Verify expressions and references.
+
+---
+
+# Scenario 292 - Remote State Not Accessible
+
+Verify backend permissions and connectivity.
+
+---
+
+# Scenario 293 - Secret Rotation Breaks Apply
+
+Update Terraform variables or secret references.
+
+---
+
+# Scenario 294 - Terraform Upgrade Failure
+
+Review version compatibility.
+
+Upgrade incrementally.
+
+---
+
+# Scenario 295 - CI/CD Terraform Failure
+
+Verify:
+
+- Credentials
+- Backend
+- Variables
+- Network
+
+---
+
+# Scenario 296 - Terraform Plan Diff Unexpected
+
+Investigate:
+
+- Manual changes
+- Provider upgrades
+- Variable changes
+
+---
+
+# Scenario 297 - Infrastructure Created but Application Fails
+
+Verify infrastructure first.
+
+Then validate application configuration.
+
+---
+
+# Scenario 298 - Multiple Engineers Modify Same Infrastructure
+
+Use:
+
+- Remote Backend
+- State Locking
+- Code Reviews
+- Version Control
+
+---
+
+# Scenario 299 - Drift After Manual Console Changes
+
+Run:
+
+```bash
+terraform plan
+```
+
+Reconcile drift using Infrastructure as Code.
+
+---
+
+# Scenario 300 - Random Terraform Production Failure
+
+### Investigation
+
+Review:
+
+- Terraform Logs
+- Backend
+- State
+- Provider
+- Cloud API
+- Recent Changes
+- Resource Limits
+
+### Root Cause
+
+Usually configuration errors, state inconsistencies, provider issues, cloud API failures, or manual infrastructure changes.
+
+### Resolution
+
+Use a structured troubleshooting process and avoid manual modifications during investigation.
+
+### Prevention
+
+Implement remote state management, state locking, version pinning, code reviews, automated validation, and Infrastructure as Code best practices.
+
+---
+
