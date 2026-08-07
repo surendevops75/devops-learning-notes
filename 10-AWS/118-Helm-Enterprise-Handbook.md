@@ -701,3 +701,840 @@ configuration.
 
 ---
 
+# Chapter 2 - Helm Charts, Chart Structure & Repository Management
+
+A Helm Chart
+
+is the fundamental deployment package
+
+used by Helm.
+
+Every production Kubernetes application
+
+is packaged
+
+inside a Chart,
+
+making deployments
+
+- Reusable
+- Versioned
+- Portable
+- Easy to Upgrade
+
+Enterprise organizations maintain
+
+hundreds of Helm Charts
+
+for their applications.
+
+---
+
+# Helm Chart Architecture
+
+```text
+Developer
+
+↓
+
+Git Repository
+
+↓
+
+Helm Chart
+
+↓
+
+Values
+
+↓
+
+Rendered Manifests
+
+↓
+
+Amazon EKS
+```
+
+The Chart
+
+contains
+
+everything required
+
+to deploy
+
+an application.
+
+---
+
+# What is a Helm Chart?
+
+A Helm Chart
+
+is a collection
+
+of Kubernetes resources
+
+and templates
+
+packaged together.
+
+Examples
+
+```text
+Deployment
+
+Service
+
+Ingress
+
+ConfigMap
+
+Secret
+
+HPA
+
+NetworkPolicy
+```
+
+A single Chart
+
+represents
+
+one deployable application.
+
+---
+
+# Why Charts?
+
+Without Charts
+
+```text
+Deployment.yaml
+
+↓
+
+Service.yaml
+
+↓
+
+Ingress.yaml
+
+↓
+
+ConfigMap.yaml
+
+↓
+
+Secret.yaml
+```
+
+Problems
+
+- Duplicate YAML
+- Difficult Upgrades
+- No Versioning
+- Manual Maintenance
+
+---
+
+With Charts
+
+```text
+Helm Chart
+
+↓
+
+Parameterized Templates
+
+↓
+
+Deployment
+```
+
+One reusable package
+
+supports
+
+multiple environments.
+
+---
+
+# Standard Chart Structure
+
+```text
+payment-service/
+
+├── Chart.yaml
+
+├── values.yaml
+
+├── values-dev.yaml
+
+├── values-test.yaml
+
+├── values-prod.yaml
+
+├── templates/
+
+├── charts/
+
+├── .helmignore
+
+└── README.md
+```
+
+Every file
+
+has
+
+a specific responsibility.
+
+---
+
+# Chart.yaml
+
+`Chart.yaml`
+
+contains
+
+chart metadata.
+
+Typical information
+
+```text
+Chart Name
+
+Version
+
+Application Version
+
+Description
+
+Dependencies
+
+Maintainer
+```
+
+It identifies
+
+the chart
+
+and its version.
+
+---
+
+# Chart Version
+
+Chart Version
+
+tracks
+
+the Helm package.
+
+Example
+
+```text
+1.0.0
+
+↓
+
+1.1.0
+
+↓
+
+2.0.0
+```
+
+Used
+
+for chart lifecycle
+
+and upgrades.
+
+---
+
+# Application Version
+
+Application Version
+
+tracks
+
+the deployed application.
+
+Example
+
+```text
+Application
+
+2.5.0
+
+────────────
+
+Chart
+
+1.8.0
+```
+
+Chart version
+
+and application version
+
+are independent.
+
+---
+
+# values.yaml
+
+Stores
+
+default configuration.
+
+Examples
+
+```text
+Replica Count
+
+Docker Image
+
+Service Port
+
+CPU
+
+Memory
+
+Environment Variables
+```
+
+Templates
+
+consume
+
+these values.
+
+---
+
+# Environment Values
+
+Enterprise deployments
+
+typically maintain
+
+separate values files.
+
+```text
+values-dev.yaml
+
+↓
+
+Development
+
+────────────
+
+values-test.yaml
+
+↓
+
+Testing
+
+────────────
+
+values-prod.yaml
+
+↓
+
+Production
+```
+
+Each environment
+
+has
+
+its own configuration.
+
+---
+
+# templates Directory
+
+The `templates/`
+
+directory
+
+contains
+
+parameterized Kubernetes manifests.
+
+Examples
+
+```text
+deployment.yaml
+
+service.yaml
+
+ingress.yaml
+
+configmap.yaml
+
+secret.yaml
+
+hpa.yaml
+```
+
+Helm
+
+renders
+
+these templates
+
+during deployment.
+
+---
+
+# charts Directory
+
+The `charts/`
+
+directory
+
+stores
+
+chart dependencies.
+
+Example
+
+```text
+Payment Application
+
+↓
+
+Redis
+
+↓
+
+RabbitMQ
+
+↓
+
+PostgreSQL
+```
+
+Dependencies
+
+can be packaged
+
+or downloaded.
+
+---
+
+# .helmignore
+
+Similar to
+
+`.gitignore`
+
+it excludes
+
+unnecessary files
+
+from
+
+the packaged chart.
+
+Examples
+
+```text
+Tests
+
+Local Files
+
+Documentation Drafts
+```
+
+---
+
+# README.md
+
+Every enterprise chart
+
+should include
+
+documentation.
+
+Typical contents
+
+- Purpose
+- Installation
+- Configuration
+- Values
+- Dependencies
+- Upgrade Notes
+
+---
+
+# Chart Packaging
+
+Workflow
+
+```text
+Chart Directory
+
+↓
+
+Package
+
+↓
+
+Versioned Archive
+
+↓
+
+Repository
+```
+
+Charts
+
+are distributed
+
+as packaged artifacts.
+
+---
+
+# Helm Repository
+
+A Helm Repository
+
+stores
+
+versioned charts.
+
+Architecture
+
+```text
+Chart
+
+↓
+
+Repository
+
+↓
+
+Install
+
+↓
+
+Cluster
+```
+
+Repositories
+
+allow
+
+chart sharing.
+
+---
+
+# Public Repositories
+
+Examples
+
+```text
+Bitnami
+
+Prometheus Community
+
+NGINX
+```
+
+Useful
+
+for open-source software.
+
+---
+
+# Private Repositories
+
+Enterprise organizations
+
+use
+
+private repositories
+
+for internal charts.
+
+Examples
+
+```text
+JFrog Artifactory
+
+Harbor
+
+OCI Registry
+
+Amazon ECR (OCI)
+
+GitHub Container Registry
+```
+
+---
+
+# Repository Workflow
+
+```text
+Developer
+
+↓
+
+Build Chart
+
+↓
+
+Repository
+
+↓
+
+Deployment
+```
+
+Charts
+
+are version controlled
+
+before deployment.
+
+---
+
+# Chart Repository Strategy
+
+Separate repositories
+
+can be maintained
+
+for
+
+```text
+Infrastructure Charts
+
+↓
+
+Application Charts
+
+↓
+
+Shared Charts
+```
+
+Improves
+
+organization
+
+and reuse.
+
+---
+
+# Chart Dependencies
+
+Applications
+
+often require
+
+other services.
+
+Example
+
+```text
+Payment Service
+
+↓
+
+Redis
+
+↓
+
+RabbitMQ
+
+↓
+
+PostgreSQL
+```
+
+Dependencies
+
+are managed
+
+within the chart.
+
+---
+
+# Dependency Management
+
+Workflow
+
+```text
+Application Chart
+
+↓
+
+Resolve Dependencies
+
+↓
+
+Package
+
+↓
+
+Deploy
+```
+
+All required components
+
+are available
+
+during installation.
+
+---
+
+# Enterprise Repository Layout
+
+```text
+helm-repository/
+
+├── infrastructure/
+
+├── platform/
+
+├── payments/
+
+├── retail/
+
+└── shared/
+```
+
+Teams
+
+manage
+
+their own charts
+
+while sharing
+
+common components.
+
+---
+
+# Enterprise Deployment
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Helm Chart
+
+↓
+
+Private Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Charts
+
+are stored
+
+centrally
+
+and deployed
+
+through GitOps.
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Payment Chart
+
+↓
+
+Private Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Every release
+
+uses
+
+a versioned chart.
+
+---
+
+# Enterprise Best Practices
+
+- Create one chart per deployable application.
+- Keep Chart.yaml updated.
+- Version every chart release.
+- Separate chart version from application version.
+- Use environment-specific values files.
+- Store charts in a private repository.
+- Keep templates generic and reusable.
+- Document every chart with a README.
+
+---
+
+# Common Mistakes
+
+- Hardcoding production values.
+- Creating separate charts for each environment.
+- Not versioning charts.
+- Mixing application code with chart files.
+- Ignoring dependency management.
+- Storing charts only on local machines.
+- Forgetting to document configuration options.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Helm Chart?
+- What is Chart.yaml?
+- What is values.yaml?
+- What is the templates directory?
+- What is a Helm Repository?
+
+## Intermediate
+
+- Chart Version vs Application Version.
+- Why use separate values files?
+- What is the charts directory?
+- Public vs Private Helm repositories.
+- Explain chart dependencies.
+
+## Advanced
+
+- Design an enterprise Helm repository strategy using private repositories, reusable charts, dependency management, versioning, and ArgoCD integration for Amazon EKS deployments.
+- Explain how Chart.yaml, values files, templates, dependencies, and repositories work together to create reusable and maintainable Kubernetes deployments.
+- A financial organization manages over 500 microservices on Amazon EKS. Explain how you would organize Helm Charts, repository structure, chart versioning, dependency management, values files, documentation, and GitOps workflows to support scalable, secure, and auditable application deployments.
