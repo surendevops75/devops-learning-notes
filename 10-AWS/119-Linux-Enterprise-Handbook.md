@@ -1836,3 +1836,653 @@ System services run under dedicated service accounts with controlled permissions
 
 ---
 
+# Chapter 4 - Linux Process Management, Services & systemd
+
+Every application running on Linux is executed as a **process**.
+
+Whether you are running:
+
+- Nginx
+- Docker
+- Kubernetes
+- Jenkins
+- MySQL
+- Redis
+
+they all run as Linux processes.
+
+Understanding process management is one of the most important skills for every DevOps Engineer because most production incidents involve process or service failures.
+
+---
+
+# What is a Process?
+
+A process is a **running instance of a program**.
+
+For example:
+
+```text
+Program
+
+↓
+
+Execution
+
+↓
+
+Process
+```
+
+Examples:
+
+- Running Nginx
+- Running Docker
+- Running Jenkins
+- Running PostgreSQL
+
+Each running application creates one or more processes.
+
+---
+
+# Process Lifecycle
+
+A process moves through several states during its lifetime.
+
+```text
+New
+
+↓
+
+Ready
+
+↓
+
+Running
+
+↓
+
+Waiting
+
+↓
+
+Completed
+```
+
+The Linux kernel manages every transition.
+
+---
+
+# Process States
+
+Common process states include:
+
+| State | Description |
+|--------|-------------|
+| Running (R) | Currently executing |
+| Sleeping (S) | Waiting for an event |
+| Disk Sleep (D) | Waiting for disk I/O |
+| Stopped (T) | Suspended by user or debugger |
+| Zombie (Z) | Process finished but not cleaned up |
+
+Understanding these states helps during production troubleshooting.
+
+---
+
+# Process Identifier (PID)
+
+Every process has a unique **Process ID (PID)**.
+
+Example:
+
+```text
+PID 1
+
+↓
+
+systemd
+```
+
+Every new process receives a unique PID from the kernel.
+
+---
+
+# Parent and Child Processes
+
+Linux processes are created in a hierarchy.
+
+```text
+systemd (PID 1)
+
+↓
+
+Jenkins
+
+↓
+
+Java
+
+↓
+
+Shell Script
+
+↓
+
+Docker Build
+```
+
+Every process except `PID 1` has a parent process.
+
+---
+
+# PID 1
+
+The first process started by the Linux kernel is:
+
+```text
+systemd
+```
+
+It is responsible for:
+
+- Starting services
+- Managing child processes
+- System initialization
+- Service recovery
+
+If PID 1 fails, the system becomes unstable.
+
+---
+
+# Viewing Running Processes
+
+Display running processes:
+
+```bash
+ps
+```
+
+Detailed process list:
+
+```bash
+ps -ef
+```
+
+Show processes for current user:
+
+```bash
+ps -u username
+```
+
+---
+
+# top Command
+
+Monitor system activity in real time.
+
+```bash
+top
+```
+
+Displays:
+
+- CPU usage
+- Memory usage
+- Running processes
+- Load average
+- Process states
+
+Widely used during production incidents.
+
+---
+
+# htop
+
+An improved interactive version of `top`.
+
+Features:
+
+- Better interface
+- Process search
+- Process tree
+- Interactive management
+
+```bash
+htop
+```
+
+---
+
+# Process Tree
+
+Display parent-child relationships.
+
+```bash
+pstree
+```
+
+Example:
+
+```text
+systemd
+
+├── sshd
+
+├── nginx
+
+├── docker
+
+└── jenkins
+```
+
+Useful for identifying dependent processes.
+
+---
+
+# Finding Processes
+
+Search for a process by name:
+
+```bash
+pgrep nginx
+```
+
+Or:
+
+```bash
+ps -ef | grep nginx
+```
+
+Commonly used during troubleshooting.
+
+---
+
+# Foreground vs Background Processes
+
+Foreground process:
+
+```bash
+python app.py
+```
+
+The terminal waits until execution completes.
+
+Background process:
+
+```bash
+python app.py &
+```
+
+The terminal remains available.
+
+---
+
+# Job Control
+
+View background jobs:
+
+```bash
+jobs
+```
+
+Bring a job to the foreground:
+
+```bash
+fg
+```
+
+Move a process to the background:
+
+```bash
+bg
+```
+
+Useful during administration tasks.
+
+---
+
+# Killing Processes
+
+Terminate a process gracefully:
+
+```bash
+kill PID
+```
+
+Force termination:
+
+```bash
+kill -9 PID
+```
+
+Terminate by name:
+
+```bash
+pkill nginx
+```
+
+Use force termination only when necessary.
+
+---
+
+# Process Priority
+
+Linux schedules processes using priorities.
+
+Nice values range from:
+
+```text
+-20
+
+↓
+
+Highest Priority
+
+↓
+
+0
+
+↓
+
+19
+
+↓
+
+Lowest Priority
+```
+
+Lower values receive more CPU time.
+
+---
+
+# nice Command
+
+Start a process with a specific priority.
+
+Example:
+
+```bash
+nice -n 10 python app.py
+```
+
+Higher nice values reduce process priority.
+
+---
+
+# renice
+
+Change the priority of a running process.
+
+Example:
+
+```bash
+renice 5 -p 1234
+```
+
+Useful for balancing system resources.
+
+---
+
+# Services in Linux
+
+A **service** is a long-running background process managed by the operating system.
+
+Examples:
+
+- nginx
+- docker
+- sshd
+- kubelet
+- containerd
+- jenkins
+
+Services usually start automatically during boot.
+
+---
+
+# systemd
+
+Most modern Linux distributions use **systemd** to manage services.
+
+Responsibilities include:
+
+- Starting services
+- Stopping services
+- Restarting services
+- Monitoring failures
+- Managing dependencies
+
+---
+
+# systemctl
+
+`systemctl` is the primary command used to manage services.
+
+Check service status:
+
+```bash
+systemctl status nginx
+```
+
+Start a service:
+
+```bash
+systemctl start nginx
+```
+
+Stop a service:
+
+```bash
+systemctl stop nginx
+```
+
+Restart a service:
+
+```bash
+systemctl restart nginx
+```
+
+Reload configuration:
+
+```bash
+systemctl reload nginx
+```
+
+---
+
+# Enable and Disable Services
+
+Start automatically during boot:
+
+```bash
+systemctl enable nginx
+```
+
+Disable automatic startup:
+
+```bash
+systemctl disable nginx
+```
+
+---
+
+# Check Boot Status
+
+View failed services:
+
+```bash
+systemctl --failed
+```
+
+List all services:
+
+```bash
+systemctl list-units --type=service
+```
+
+---
+
+# Service Unit Files
+
+systemd stores service definitions as unit files.
+
+Common location:
+
+```text
+/etc/systemd/system/
+```
+
+Example:
+
+```text
+jenkins.service
+
+docker.service
+
+nginx.service
+```
+
+---
+
+# Example Service File
+
+A typical service file contains:
+
+- Service description
+- Startup command
+- Restart policy
+- Dependencies
+- User account
+
+These files define how services behave.
+
+---
+
+# Journald
+
+systemd includes its own logging system called **journald**.
+
+View logs:
+
+```bash
+journalctl
+```
+
+Logs for a specific service:
+
+```bash
+journalctl -u nginx
+```
+
+Follow logs:
+
+```bash
+journalctl -fu nginx
+```
+
+Useful during troubleshooting.
+
+---
+
+# Enterprise Example
+
+A Jenkins deployment might follow this sequence:
+
+```text
+systemd
+
+↓
+
+jenkins.service
+
+↓
+
+Java Process
+
+↓
+
+Build Agent
+
+↓
+
+Shell Script
+
+↓
+
+Docker Build
+```
+
+Understanding the process tree helps identify failures quickly.
+
+---
+
+# Kubernetes Example
+
+A Kubernetes worker node runs several critical services.
+
+```text
+systemd
+
+├── kubelet
+
+├── containerd
+
+├── sshd
+
+└── chronyd
+```
+
+If `kubelet` stops, workloads cannot be scheduled.
+
+---
+
+# Enterprise Best Practices
+
+- Monitor long-running services regularly.
+- Use `systemctl` instead of legacy service commands.
+- Avoid using `kill -9` unless absolutely necessary.
+- Review service logs using `journalctl`.
+- Configure services to restart automatically after failures.
+- Monitor CPU and memory usage during incidents.
+- Understand parent-child process relationships.
+- Verify service status after every deployment.
+
+---
+
+# Common Mistakes
+
+- Killing critical system processes.
+- Using `kill -9` without investigation.
+- Forgetting to enable services after installation.
+- Ignoring failed systemd services.
+- Restarting services without checking logs.
+- Running production workloads in the foreground.
+- Ignoring zombie processes.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a Linux process?
+2. What is a PID?
+3. Explain process states.
+4. What is `systemd`?
+5. What is the difference between a process and a service?
+
+## Intermediate
+
+1. Explain parent and child processes.
+2. Difference between `kill` and `kill -9`.
+3. What is the purpose of `nice` and `renice`?
+4. How does `systemctl` manage services?
+5. How do you troubleshoot a failed service using `journalctl`?
+
+## Advanced
+
+1. Design a process monitoring strategy for a production Linux server running Jenkins, Docker, and Kubernetes components.
+2. A production application becomes unresponsive after deployment. Explain how you would investigate processes, service status, logs, CPU usage, memory usage, and process hierarchy to identify the root cause.
+3. A Kubernetes worker node suddenly stops scheduling pods. Describe your step-by-step troubleshooting approach using `systemctl`, `journalctl`, process inspection, and service dependency analysis.
+
+---
+
