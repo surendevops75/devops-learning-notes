@@ -522,3 +522,629 @@ Even though customers interact with the application through a browser, every req
 
 ---
 
+# Chapter 2 - Linux File System, Files, Directories & Navigation
+
+The Linux File System is one of the most important topics for every DevOps Engineer.
+
+Whether you are working with:
+
+- Docker
+- Kubernetes
+- Jenkins
+- Terraform
+- Ansible
+- AWS EC2
+
+you interact with the Linux file system every day.
+
+A strong understanding of the Linux file system is essential for managing production servers efficiently.
+
+---
+
+# What is a File System?
+
+A file system is the method Linux uses to organize and store data on storage devices.
+
+It provides:
+
+- File Storage
+- Directory Structure
+- Permissions
+- Metadata
+- Access Control
+
+Without a file system, Linux cannot store or retrieve data.
+
+---
+
+# Linux File System Architecture
+
+```text
+Application
+
+↓
+
+System Calls
+
+↓
+
+Virtual File System (VFS)
+
+↓
+
+File System
+
+↓
+
+Storage Device
+```
+
+The Virtual File System (VFS) allows Linux to support multiple file system types through a common interface.
+
+---
+
+# Everything is a File
+
+One of the core principles of Linux is:
+
+> **Everything is a file.**
+
+Examples include:
+
+- Regular files
+- Directories
+- Hard disks
+- USB devices
+- Network sockets
+- Processes
+- Pipes
+- Terminals
+
+This design simplifies administration and scripting.
+
+---
+
+# File System Hierarchy Standard (FHS)
+
+Linux follows the **Filesystem Hierarchy Standard (FHS)**, which defines the purpose of each directory.
+
+```text
+/
+
+├── bin
+├── boot
+├── dev
+├── etc
+├── home
+├── lib
+├── media
+├── mnt
+├── opt
+├── proc
+├── root
+├── run
+├── sbin
+├── srv
+├── sys
+├── tmp
+├── usr
+└── var
+```
+
+Every Linux administrator should know this hierarchy.
+
+---
+
+# Root Directory (/)
+
+The root directory (`/`) is the top-level directory in Linux.
+
+Every file and directory exists beneath it.
+
+Example:
+
+```text
+/
+
+├── etc
+
+├── home
+
+├── var
+
+├── usr
+```
+
+There is only **one root directory**.
+
+---
+
+# Home Directory
+
+Each user has a personal home directory.
+
+Example:
+
+```text
+/home/surendra
+
+/home/admin
+
+/home/devops
+```
+
+User-specific files are stored here.
+
+---
+
+# Root User Home
+
+Do not confuse:
+
+```text
+/
+
+with
+
+/root
+```
+
+`/root`
+
+is the home directory
+
+for the **root user**.
+
+---
+
+# Important Directories
+
+| Directory | Purpose |
+|-----------|---------|
+| `/etc` | System configuration files |
+| `/var` | Logs, cache, mail, spool |
+| `/usr` | User applications and libraries |
+| `/tmp` | Temporary files |
+| `/opt` | Third-party software |
+| `/boot` | Kernel and boot files |
+| `/dev` | Device files |
+| `/proc` | Process and kernel information |
+| `/sys` | Kernel device information |
+| `/run` | Runtime system information |
+
+---
+
+# Linux File Types
+
+Linux supports multiple file types.
+
+| File Type | Description |
+|-----------|-------------|
+| Regular File | Stores data |
+| Directory | Stores files and directories |
+| Symbolic Link | Shortcut to another file |
+| Character Device | Keyboard, terminal |
+| Block Device | Hard disks, SSDs |
+| Socket | Network communication |
+| FIFO (Named Pipe) | Process communication |
+
+---
+
+# Absolute Path
+
+An absolute path starts from the root directory.
+
+Example:
+
+```text
+/home/devops/project/app.py
+```
+
+It always begins with:
+
+```text
+/
+```
+
+---
+
+# Relative Path
+
+A relative path starts from the current working directory.
+
+Example:
+
+```text
+project/app.py
+```
+
+Relative paths are shorter and commonly used in scripts.
+
+---
+
+# Present Working Directory (pwd)
+
+Displays the current directory.
+
+Example:
+
+```bash
+pwd
+```
+
+Output:
+
+```text
+/home/devops
+```
+
+Useful when navigating large directory structures.
+
+---
+
+# List Files (ls)
+
+Displays files and directories.
+
+Basic command:
+
+```bash
+ls
+```
+
+Common options:
+
+```bash
+ls -l
+```
+
+Long listing format.
+
+```bash
+ls -a
+```
+
+Show hidden files.
+
+```bash
+ls -lh
+```
+
+Human-readable file sizes.
+
+```bash
+ls -ltr
+```
+
+Sort by modification time.
+
+---
+
+# Change Directory (cd)
+
+Move between directories.
+
+Examples:
+
+```bash
+cd /etc
+
+cd /var/log
+
+cd ~
+
+cd ..
+
+cd -
+```
+
+Understanding navigation is essential for system administration.
+
+---
+
+# Create Directories
+
+Create a directory:
+
+```bash
+mkdir project
+```
+
+Create nested directories:
+
+```bash
+mkdir -p project/dev/backend
+```
+
+The `-p` option creates parent directories if they do not exist.
+
+---
+
+# Remove Directories
+
+Remove an empty directory:
+
+```bash
+rmdir project
+```
+
+Remove recursively:
+
+```bash
+rm -r project
+```
+
+Force deletion:
+
+```bash
+rm -rf project
+```
+
+⚠️ Use `rm -rf` carefully in production.
+
+---
+
+# Create Files
+
+Create an empty file:
+
+```bash
+touch file.txt
+```
+
+Create multiple files:
+
+```bash
+touch app.py config.yaml Dockerfile
+```
+
+---
+
+# Copy Files
+
+Copy a file:
+
+```bash
+cp source.txt destination.txt
+```
+
+Copy directories:
+
+```bash
+cp -r source destination
+```
+
+Useful during backups and deployments.
+
+---
+
+# Move Files
+
+Rename a file:
+
+```bash
+mv old.txt new.txt
+```
+
+Move a file:
+
+```bash
+mv app.py /opt/apps/
+```
+
+The same command performs both move and rename operations.
+
+---
+
+# Delete Files
+
+Delete a file:
+
+```bash
+rm file.txt
+```
+
+Delete multiple files:
+
+```bash
+rm file1.txt file2.txt
+```
+
+Always verify the path before deletion.
+
+---
+
+# View File Contents
+
+Display entire file:
+
+```bash
+cat file.txt
+```
+
+View large files:
+
+```bash
+less file.txt
+```
+
+Display first 10 lines:
+
+```bash
+head file.txt
+```
+
+Display last 10 lines:
+
+```bash
+tail file.txt
+```
+
+Monitor logs continuously:
+
+```bash
+tail -f /var/log/messages
+```
+
+This is widely used in production troubleshooting.
+
+---
+
+# Hidden Files
+
+Files beginning with a dot (`.`) are hidden.
+
+Examples:
+
+```text
+.bashrc
+
+.profile
+
+.gitignore
+
+.ssh
+```
+
+Display them using:
+
+```bash
+ls -a
+```
+
+---
+
+# File Metadata
+
+Each file stores metadata such as:
+
+- Owner
+- Group
+- Permissions
+- Size
+- Last Modified Time
+- Inode Number
+
+This information is useful for troubleshooting.
+
+---
+
+# Inodes
+
+Every file has an inode.
+
+An inode stores:
+
+- Ownership
+- Permissions
+- File Size
+- Timestamps
+- Block Locations
+
+The filename itself is **not** stored inside the inode.
+
+---
+
+# Enterprise Example
+
+Consider a Jenkins server.
+
+```text
+/var/lib/jenkins
+
+↓
+
+Jobs
+
+↓
+
+Workspace
+
+↓
+
+Build Artifacts
+
+↓
+
+Logs
+```
+
+Understanding the filesystem helps locate build failures quickly.
+
+---
+
+# Kubernetes Example
+
+A Kubernetes worker node stores data in locations such as:
+
+```text
+/var/lib/kubelet
+
+↓
+
+Pods
+
+↓
+
+Volumes
+
+↓
+
+Container Data
+```
+
+A DevOps Engineer frequently inspects these directories during troubleshooting.
+
+---
+
+# Enterprise Best Practices
+
+- Learn the purpose of every major Linux directory.
+- Always use absolute paths in production scripts.
+- Avoid using `rm -rf` without verification.
+- Store application data in appropriate directories.
+- Monitor log files under `/var/log`.
+- Use `less` instead of `cat` for large files.
+- Understand inode usage for troubleshooting.
+- Keep temporary files under `/tmp`.
+
+---
+
+# Common Mistakes
+
+- Confusing `/` with `/root`.
+- Deleting files using incorrect paths.
+- Using relative paths in production automation.
+- Ignoring hidden configuration files.
+- Editing files directly without backups.
+- Storing application data in system directories.
+- Forgetting that `rm` permanently deletes files.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is the Linux File System?
+2. What does "Everything is a file" mean?
+3. What is the difference between an absolute path and a relative path?
+4. Explain the purpose of `/etc`, `/var`, and `/usr`.
+5. What are hidden files?
+
+## Intermediate
+
+1. What is an inode?
+2. Explain the File System Hierarchy Standard (FHS).
+3. Why is `/var/log` important?
+4. Difference between `cp` and `mv`.
+5. Explain `tail -f` and where you use it in production.
+
+## Advanced
+
+1. Design a Linux filesystem layout for a production Kubernetes worker node and explain where logs, containers, volumes, and application data should reside.
+2. A production Jenkins server is running out of disk space. Explain how you would investigate the filesystem, identify large directories, locate build artifacts, and safely reclaim space without affecting running jobs.
+3. Explain how knowledge of the Linux filesystem hierarchy helps troubleshoot Docker, Kubernetes, Jenkins, and application issues in enterprise environments.
+
+---
+
