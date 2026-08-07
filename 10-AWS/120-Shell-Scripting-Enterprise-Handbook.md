@@ -1148,3 +1148,511 @@ The same script can be used for development, staging, and production by changing
 
 ---
 
+# Chapter 3 - Conditional Statements & Decision Making
+
+Conditional statements allow a shell script to make decisions based on specific conditions.
+
+Instead of executing every command sequentially, a script can evaluate a condition and choose the appropriate action.
+
+Conditional statements are heavily used in:
+
+- Deployment Automation
+- Health Checks
+- Backup Scripts
+- Monitoring Scripts
+- CI/CD Pipelines
+- Kubernetes Automation
+- AWS Automation
+
+Without conditional logic, automation scripts cannot respond intelligently to changing situations.
+
+---
+
+# Why Use Conditional Statements?
+
+Consider a deployment script.
+
+Without conditions:
+
+```text
+Deploy Application
+
+↓
+
+Restart Service
+
+↓
+
+Send Notification
+```
+
+Even if the deployment fails, the script continues executing.
+
+With conditional logic:
+
+```text
+Deploy Application
+
+↓
+
+Success?
+
+↓
+
+Yes → Restart Service
+
+↓
+
+No → Exit & Notify Team
+```
+
+This makes automation safer and more reliable.
+
+---
+
+# The if Statement
+
+The simplest decision-making statement is `if`.
+
+Syntax:
+
+```bash
+if [ condition ]
+then
+    commands
+fi
+```
+
+If the condition evaluates to **true**, the commands inside the block are executed.
+
+---
+
+# Example - Numeric Comparison
+
+```bash
+AGE=20
+
+if [ $AGE -ge 18 ]
+then
+    echo "Eligible to Vote"
+fi
+```
+
+Output:
+
+```text
+Eligible to Vote
+```
+
+---
+
+# if...else Statement
+
+Execute one block if the condition is true and another if it is false.
+
+Syntax:
+
+```bash
+if [ condition ]
+then
+    commands
+else
+    commands
+fi
+```
+
+Example:
+
+```bash
+STATUS="FAILED"
+
+if [ "$STATUS" = "SUCCESS" ]
+then
+    echo "Deployment Successful"
+else
+    echo "Deployment Failed"
+fi
+```
+
+---
+
+# if...elif...else Statement
+
+Use multiple conditions.
+
+Syntax:
+
+```bash
+if [ condition ]
+then
+    commands
+elif [ condition ]
+then
+    commands
+else
+    commands
+fi
+```
+
+Example:
+
+```bash
+ENV="stage"
+
+if [ "$ENV" = "dev" ]
+then
+    echo "Development"
+elif [ "$ENV" = "stage" ]
+then
+    echo "Staging"
+else
+    echo "Production"
+fi
+```
+
+---
+
+# Test Command
+
+Linux provides the `test` command to evaluate conditions.
+
+Example:
+
+```bash
+test 10 -gt 5
+```
+
+Equivalent syntax:
+
+```bash
+[ 10 -gt 5 ]
+```
+
+Both forms produce the same result.
+
+---
+
+# Numeric Comparison Operators
+
+| Operator | Meaning |
+|----------|---------|
+| `-eq` | Equal |
+| `-ne` | Not Equal |
+| `-gt` | Greater Than |
+| `-lt` | Less Than |
+| `-ge` | Greater Than or Equal |
+| `-le` | Less Than or Equal |
+
+Example:
+
+```bash
+if [ $A -gt $B ]
+then
+    echo "A is greater"
+fi
+```
+
+---
+
+# String Comparison Operators
+
+| Operator | Meaning |
+|----------|---------|
+| `=` | Equal |
+| `!=` | Not Equal |
+| `-z` | Empty String |
+| `-n` | Non-empty String |
+
+Example:
+
+```bash
+NAME="DevOps"
+
+if [ "$NAME" = "DevOps" ]
+then
+    echo "Matched"
+fi
+```
+
+---
+
+# File Test Operators
+
+Shell scripts frequently check files before performing operations.
+
+| Operator | Description |
+|----------|-------------|
+| `-f` | Regular file exists |
+| `-d` | Directory exists |
+| `-e` | File or directory exists |
+| `-r` | Readable |
+| `-w` | Writable |
+| `-x` | Executable |
+| `-s` | File is not empty |
+
+Example:
+
+```bash
+if [ -f backup.tar ]
+then
+    echo "Backup exists"
+fi
+```
+
+---
+
+# Directory Check
+
+Example:
+
+```bash
+if [ -d /var/log ]
+then
+    echo "Directory exists"
+else
+    echo "Directory missing"
+fi
+```
+
+---
+
+# Logical Operators
+
+Combine multiple conditions.
+
+| Operator | Meaning |
+|----------|---------|
+| `&&` | AND |
+| `||` | OR |
+| `!` | NOT |
+
+Example:
+
+```bash
+if [ $AGE -ge 18 ] && [ $AGE -le 60 ]
+then
+    echo "Eligible"
+fi
+```
+
+---
+
+# Nested if Statements
+
+Conditions can be placed inside other conditions.
+
+Example:
+
+```bash
+if [ "$ENV" = "production" ]
+then
+    if [ "$STATUS" = "SUCCESS" ]
+    then
+        echo "Deployment Completed"
+    fi
+fi
+```
+
+Nested conditions are useful for complex workflows.
+
+---
+
+# case Statement
+
+Use `case` when multiple values need to be matched.
+
+Syntax:
+
+```bash
+case $VALUE in
+    option1)
+        commands
+        ;;
+    option2)
+        commands
+        ;;
+    *)
+        default
+        ;;
+esac
+```
+
+---
+
+# Example - Environment Selection
+
+```bash
+ENV="prod"
+
+case $ENV in
+    dev)
+        echo "Development"
+        ;;
+    test)
+        echo "Testing"
+        ;;
+    prod)
+        echo "Production"
+        ;;
+    *)
+        echo "Unknown Environment"
+        ;;
+esac
+```
+
+`case` statements are cleaner than multiple `if...elif` blocks.
+
+---
+
+# Exit on Failure
+
+Many enterprise scripts stop immediately when a critical command fails.
+
+Example:
+
+```bash
+cp file.txt /backup
+
+if [ $? -ne 0 ]
+then
+    echo "Backup Failed"
+    exit 1
+fi
+```
+
+This prevents later commands from executing after an error.
+
+---
+
+# Using Exit Codes in Conditions
+
+Example:
+
+```bash
+systemctl status nginx
+
+if [ $? -eq 0 ]
+then
+    echo "Nginx is Running"
+else
+    echo "Nginx is Down"
+fi
+```
+
+Exit codes are widely used in automation scripts.
+
+---
+
+# Kubernetes Example
+
+Check whether a namespace exists.
+
+```bash
+kubectl get namespace production >/dev/null 2>&1
+
+if [ $? -eq 0 ]
+then
+    echo "Namespace Found"
+else
+    echo "Namespace Missing"
+fi
+```
+
+---
+
+# AWS Example
+
+Verify whether an EC2 instance exists.
+
+```bash
+INSTANCE=$(aws ec2 describe-instances ...)
+
+if [ -n "$INSTANCE" ]
+then
+    echo "Instance Found"
+else
+    echo "Instance Not Found"
+fi
+```
+
+---
+
+# CI/CD Example
+
+A deployment pipeline should stop when tests fail.
+
+```text
+Build
+
+↓
+
+Run Tests
+
+↓
+
+Tests Passed?
+
+↓
+
+Yes → Deploy
+
+↓
+
+No → Exit Pipeline
+```
+
+Conditional logic protects production environments.
+
+---
+
+# Enterprise Best Practices
+
+- Always validate user input.
+- Quote string variables inside conditions.
+- Check exit codes after critical commands.
+- Use `case` for multiple fixed values.
+- Keep conditions simple and readable.
+- Exit immediately after critical failures.
+- Use meaningful condition names.
+- Test scripts with both success and failure scenarios.
+
+---
+
+# Common Mistakes
+
+- Forgetting spaces inside `[ ]`.
+- Comparing strings without quotes.
+- Ignoring command exit codes.
+- Writing deeply nested conditions that are difficult to read.
+- Using multiple `if...elif` blocks where `case` is more appropriate.
+- Continuing execution after critical failures.
+- Hardcoding environment names.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is an `if` statement?
+2. What is the difference between `if` and `if...else`?
+3. What is the purpose of the `test` command?
+4. Explain numeric comparison operators.
+5. Explain string comparison operators.
+
+## Intermediate
+
+1. Difference between `if...elif` and `case`.
+2. Explain file test operators.
+3. How do you check whether a directory exists?
+4. Explain logical operators in shell scripting.
+5. Why should scripts check exit codes?
+
+## Advanced
+
+1. Design a deployment script that validates input, checks service status, verifies Kubernetes namespaces, and exits safely on failures using conditional statements.
+2. Explain how conditional statements improve reliability in enterprise automation scripts used by Jenkins, GitHub Actions, and Kubernetes.
+3. A CI/CD pipeline deploys applications to production. Design a shell script using `if`, `case`, file checks, logical operators, and exit codes to validate deployment prerequisites, handle failures gracefully, and prevent accidental production deployments.
+
+---
+
