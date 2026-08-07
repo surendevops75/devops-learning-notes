@@ -3639,3 +3639,607 @@ findmnt
 
 ---
 
+# Chapter 7 - Linux Networking Fundamentals & Enterprise Network Administration
+
+Networking is one of the most critical skills for every DevOps Engineer.
+
+Whether you are managing:
+
+- Kubernetes Clusters
+- Docker Containers
+- Jenkins Servers
+- AWS EC2 Instances
+- Load Balancers
+- Databases
+
+every component communicates through the network.
+
+Many production incidents are caused by:
+
+- Network Connectivity Issues
+- DNS Failures
+- Firewall Rules
+- Port Conflicts
+- Routing Problems
+- Network Latency
+
+Understanding Linux networking is essential for diagnosing and resolving these issues.
+
+---
+
+# Linux Networking Architecture
+
+A simplified networking stack is shown below.
+
+```text
+Application
+
+↓
+
+Socket
+
+↓
+
+TCP / UDP
+
+↓
+
+IP
+
+↓
+
+Network Interface
+
+↓
+
+Physical Network
+```
+
+The Linux kernel manages the networking stack and forwards packets between applications and network interfaces.
+
+---
+
+# Network Interface
+
+A network interface connects the Linux system to a network.
+
+Examples:
+
+```text
+eth0
+
+ens5
+
+enp0s3
+
+lo
+```
+
+Each interface has its own IP address and configuration.
+
+---
+
+# Loopback Interface
+
+The loopback interface is used for communication within the same machine.
+
+```text
+Interface
+
+↓
+
+lo
+
+↓
+
+127.0.0.1
+```
+
+Applications commonly use the loopback interface for local communication.
+
+---
+
+# IP Address
+
+Every device connected to a network requires an IP address.
+
+Example:
+
+```text
+192.168.1.10
+```
+
+An IP address uniquely identifies a device on the network.
+
+---
+
+# Types of IP Addresses
+
+| Type | Example |
+|------|---------|
+| Private IP | 10.0.0.5 |
+| Public IP | 54.x.x.x |
+| Loopback | 127.0.0.1 |
+| Link Local | 169.254.x.x |
+
+Cloud servers usually have both private and public IPs.
+
+---
+
+# View IP Configuration
+
+Display network interfaces:
+
+```bash
+ip addr
+```
+
+or
+
+```bash
+ip a
+```
+
+This shows:
+
+- IP Address
+- Interface Status
+- MAC Address
+
+---
+
+# Display Routing Table
+
+View routing information:
+
+```bash
+ip route
+```
+
+Example:
+
+```text
+default via 10.0.0.1
+
+10.0.0.0/24 dev eth0
+```
+
+The routing table determines where packets are forwarded.
+
+---
+
+# Default Gateway
+
+The default gateway forwards traffic destined for external networks.
+
+```text
+Linux Server
+
+↓
+
+Gateway
+
+↓
+
+Internet
+```
+
+Without a valid default gateway, external communication fails.
+
+---
+
+# DNS (Domain Name System)
+
+DNS converts hostnames into IP addresses.
+
+Example:
+
+```text
+google.com
+
+↓
+
+142.x.x.x
+```
+
+Applications depend on DNS for hostname resolution.
+
+---
+
+# DNS Configuration
+
+DNS servers are typically configured in:
+
+```text
+/etc/resolv.conf
+```
+
+Example:
+
+```text
+nameserver 8.8.8.8
+
+nameserver 1.1.1.1
+```
+
+---
+
+# Test DNS Resolution
+
+Resolve a hostname:
+
+```bash
+nslookup google.com
+```
+
+or
+
+```bash
+dig google.com
+```
+
+These commands help troubleshoot DNS-related issues.
+
+---
+
+# Hostname
+
+View the system hostname:
+
+```bash
+hostname
+```
+
+Display detailed information:
+
+```bash
+hostnamectl
+```
+
+Set a new hostname:
+
+```bash
+hostnamectl set-hostname devops-server
+```
+
+---
+
+# Hosts File
+
+The local hosts file allows manual hostname resolution.
+
+Location:
+
+```text
+/etc/hosts
+```
+
+Example:
+
+```text
+127.0.0.1 localhost
+
+10.0.0.25 jenkins.internal
+```
+
+The hosts file is checked before querying DNS.
+
+---
+
+# Ping
+
+Verify network connectivity:
+
+```bash
+ping google.com
+```
+
+Ping tests:
+
+- Connectivity
+- Latency
+- Packet Loss
+
+---
+
+# Traceroute
+
+Trace the path packets take to a destination.
+
+```bash
+traceroute google.com
+```
+
+Useful for identifying routing issues.
+
+---
+
+# Network Ports
+
+Applications communicate through ports.
+
+Examples:
+
+| Service | Port |
+|----------|-----:|
+| SSH | 22 |
+| HTTP | 80 |
+| HTTPS | 443 |
+| DNS | 53 |
+| MySQL | 3306 |
+| PostgreSQL | 5432 |
+| Jenkins | 8080 |
+| Kubernetes API | 6443 |
+
+---
+
+# View Listening Ports
+
+Display active listening ports:
+
+```bash
+ss -lnt
+```
+
+or
+
+```bash
+netstat -lnt
+```
+
+Useful during service troubleshooting.
+
+---
+
+# Check Port Usage
+
+Identify which process is using a port:
+
+```bash
+ss -tulpn
+```
+
+or
+
+```bash
+lsof -i :8080
+```
+
+Commonly used to detect port conflicts.
+
+---
+
+# Network Connections
+
+Display active connections:
+
+```bash
+ss -tunap
+```
+
+This command shows:
+
+- Established Connections
+- Listening Ports
+- Process Information
+
+---
+
+# Test Remote Ports
+
+Test whether a remote port is reachable:
+
+```bash
+nc -zv server.example.com 443
+```
+
+Useful for validating firewall and network access.
+
+---
+
+# File Transfer
+
+Download files:
+
+```bash
+wget https://example.com/file.zip
+```
+
+or
+
+```bash
+curl -O https://example.com/file.zip
+```
+
+These commands are commonly used in automation scripts.
+
+---
+
+# SSH
+
+Secure Shell (SSH) provides encrypted remote access.
+
+Connect to a server:
+
+```bash
+ssh user@server
+```
+
+Copy files:
+
+```bash
+scp file.txt user@server:/tmp/
+```
+
+Secure remote access is fundamental in Linux administration.
+
+---
+
+# Firewall
+
+Linux systems commonly use:
+
+- firewalld
+- iptables
+- nftables
+- UFW (Ubuntu)
+
+Firewalls control incoming and outgoing network traffic.
+
+---
+
+# Check Firewall Status
+
+For firewalld:
+
+```bash
+systemctl status firewalld
+```
+
+View firewall rules:
+
+```bash
+firewall-cmd --list-all
+```
+
+---
+
+# Network Troubleshooting Workflow
+
+When a network issue occurs, investigate in this order:
+
+```text
+Application
+
+↓
+
+Port
+
+↓
+
+Firewall
+
+↓
+
+DNS
+
+↓
+
+Gateway
+
+↓
+
+Network Interface
+
+↓
+
+Physical Network
+```
+
+Following a structured approach reduces troubleshooting time.
+
+---
+
+# Enterprise Example
+
+A Jenkins server communicates with GitHub.
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+HTTPS (443)
+
+↓
+
+Jenkins
+
+↓
+
+Build
+```
+
+If port **443** is blocked, repository cloning fails.
+
+---
+
+# Kubernetes Example
+
+A Kubernetes worker node communicates with the API server.
+
+```text
+Worker Node
+
+↓
+
+Kubernetes API
+
+↓
+
+Port 6443
+
+↓
+
+Cluster
+```
+
+If connectivity is lost, the node becomes **NotReady**.
+
+---
+
+# Enterprise Best Practices
+
+- Use static private IPs for critical servers.
+- Monitor network latency and packet loss.
+- Keep firewall rules minimal and well documented.
+- Verify DNS before investigating applications.
+- Use SSH key-based authentication.
+- Regularly audit open ports.
+- Separate management and application networks where possible.
+- Document routing and network architecture.
+
+---
+
+# Common Mistakes
+
+- Assuming DNS is working without verification.
+- Opening unnecessary firewall ports.
+- Ignoring routing issues.
+- Disabling firewalls instead of fixing rules.
+- Using passwords instead of SSH keys.
+- Forgetting to check listening ports.
+- Troubleshooting the application before verifying network connectivity.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is an IP address?
+2. What is the purpose of DNS?
+3. What is a default gateway?
+4. What is the loopback interface?
+5. What is SSH?
+
+## Intermediate
+
+1. Difference between `ip addr` and `ip route`.
+2. Explain the purpose of `/etc/resolv.conf`.
+3. Difference between `ping` and `traceroute`.
+4. How do you check if a port is listening?
+5. Explain how the Linux networking stack works.
+
+## Advanced
+
+1. A production application cannot connect to its database. Explain your step-by-step troubleshooting approach, including interface validation, routing, DNS, firewall rules, port connectivity, and application logs.
+2. Design a secure Linux network architecture for Jenkins, Kubernetes worker nodes, databases, and application servers running in AWS.
+3. A Kubernetes node suddenly changes to **NotReady**. Explain how you would investigate network interfaces, routing, DNS resolution, API server connectivity, firewall rules, and Linux networking services to restore the node.
+
+---
+
