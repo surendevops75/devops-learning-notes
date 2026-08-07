@@ -4122,3 +4122,522 @@ Implement remote state management, state locking, version pinning, code reviews,
 
 ---
 
+# Chapter 8 - Networking & Load Balancer Production Troubleshooting Scenarios (301–350)
+
+Networking issues are among the most challenging production problems because they affect multiple services simultaneously.
+
+A single misconfigured route, firewall rule, or DNS record can bring down an entire application.
+
+This chapter covers **50 real-world networking and load balancer troubleshooting scenarios** commonly encountered in enterprise environments.
+
+---
+
+# Scenario 301 - Application Not Reachable
+
+### Symptoms
+
+- Users cannot access the application.
+- Browser times out.
+
+### Investigation
+
+Check:
+
+- DNS
+- Load Balancer
+- Security Groups
+- Application Health
+
+### Root Cause
+
+Network path interruption.
+
+### Resolution
+
+Restore connectivity.
+
+### Prevention
+
+Continuous monitoring and health checks.
+
+---
+
+# Scenario 302 - Ping Fails
+
+### Investigation
+
+```bash
+ping <host>
+```
+
+Verify routing and firewall.
+
+---
+
+# Scenario 303 - Traceroute Stops Midway
+
+### Investigation
+
+```bash
+traceroute <host>
+
+mtr <host>
+```
+
+### Root Cause
+
+Intermediate network failure.
+
+---
+
+# Scenario 304 - DNS Lookup Failure
+
+### Investigation
+
+```bash
+dig example.com
+
+nslookup example.com
+```
+
+### Root Cause
+
+DNS server unavailable or incorrect record.
+
+---
+
+# Scenario 305 - Incorrect DNS Record
+
+Verify:
+
+- A Record
+- CNAME
+- Alias
+- TTL
+
+---
+
+# Scenario 306 - Slow DNS Resolution
+
+Review:
+
+- DNS latency
+- Resolver configuration
+- Upstream DNS servers
+
+---
+
+# Scenario 307 - SSL Certificate Expired
+
+### Symptoms
+
+HTTPS connection fails.
+
+### Investigation
+
+```bash
+openssl s_client -connect host:443
+```
+
+### Resolution
+
+Renew certificate.
+
+---
+
+# Scenario 308 - TLS Handshake Failure
+
+Review:
+
+- Certificate
+- Cipher Suites
+- Protocol Versions
+
+---
+
+# Scenario 309 - HTTPS Redirect Loop
+
+Review application and load balancer redirect rules.
+
+---
+
+# Scenario 310 - Firewall Blocking Traffic
+
+Verify:
+
+- Security Groups
+- Firewall Rules
+- Network ACLs
+
+---
+
+# Scenario 311 - Port Closed
+
+### Investigation
+
+```bash
+ss -lnt
+
+netstat -lnt
+```
+
+---
+
+# Scenario 312 - Service Listening on Wrong Port
+
+Review application configuration.
+
+---
+
+# Scenario 313 - Load Balancer Returns 502
+
+### Investigation
+
+Review:
+
+- Backend Service
+- Health Checks
+- Application Logs
+
+---
+
+# Scenario 314 - Load Balancer Returns 503
+
+### Root Cause
+
+No healthy backend targets.
+
+---
+
+# Scenario 315 - Load Balancer Returns 504
+
+### Root Cause
+
+Backend timeout.
+
+Review application latency.
+
+---
+
+# Scenario 316 - Backend Health Check Failure
+
+Verify:
+
+- Health Endpoint
+- Port
+- Timeout
+- Expected Response
+
+---
+
+# Scenario 317 - Sticky Session Failure
+
+Review session persistence configuration.
+
+---
+
+# Scenario 318 - Uneven Traffic Distribution
+
+Review:
+
+- Load Balancing Algorithm
+- Health Status
+- Target Registration
+
+---
+
+# Scenario 319 - Target Registration Failure
+
+Verify target group membership.
+
+---
+
+# Scenario 320 - Reverse Proxy Misconfiguration
+
+Review:
+
+- Proxy Rules
+- Headers
+- Backend URLs
+
+---
+
+# Scenario 321 - API Gateway Returns 502
+
+Review backend integration.
+
+---
+
+# Scenario 322 - Gateway Timeout
+
+Review upstream response time.
+
+---
+
+# Scenario 323 - Proxy Connection Refused
+
+Verify backend application status.
+
+---
+
+# Scenario 324 - Network Latency High
+
+### Investigation
+
+```bash
+ping
+
+mtr
+```
+
+Review network utilization.
+
+---
+
+# Scenario 325 - Packet Loss
+
+Review:
+
+- Network Hardware
+- Routing
+- Congestion
+
+---
+
+# Scenario 326 - Routing Loop
+
+Verify routing tables.
+
+---
+
+# Scenario 327 - Incorrect Route Table
+
+Review:
+
+```bash
+ip route
+```
+
+---
+
+# Scenario 328 - NAT Gateway Failure
+
+Private instances lose internet connectivity.
+
+Verify NAT Gateway and routing.
+
+---
+
+# Scenario 329 - Internet Gateway Missing
+
+Verify VPC internet connectivity.
+
+---
+
+# Scenario 330 - VPN Tunnel Down
+
+Review:
+
+- Tunnel Status
+- Encryption
+- Routing
+
+---
+
+# Scenario 331 - VPC Peering Failure
+
+Verify:
+
+- Route Tables
+- CIDR Overlap
+- Peering Status
+
+---
+
+# Scenario 332 - CIDR Conflict
+
+Review network address allocation.
+
+---
+
+# Scenario 333 - Subnet Misconfiguration
+
+Verify subnet association.
+
+---
+
+# Scenario 334 - Network ACL Deny Rule
+
+Review explicit deny rules.
+
+---
+
+# Scenario 335 - Security Group Misconfiguration
+
+Verify inbound and outbound rules.
+
+---
+
+# Scenario 336 - Kubernetes Ingress Failure
+
+Review:
+
+```bash
+kubectl describe ingress
+```
+
+---
+
+# Scenario 337 - Ingress 404 Error
+
+Verify:
+
+- Host Rules
+- Path Rules
+- Backend Service
+
+---
+
+# Scenario 338 - Ingress TLS Failure
+
+Verify certificate secret.
+
+---
+
+# Scenario 339 - CoreDNS Failure
+
+Review CoreDNS logs.
+
+---
+
+# Scenario 340 - Service Discovery Failure
+
+Verify:
+
+- DNS
+- Service Registration
+- Endpoints
+
+---
+
+# Scenario 341 - Pod Cannot Reach External Service
+
+Review:
+
+- Egress Rules
+- DNS
+- Firewall
+
+---
+
+# Scenario 342 - Pod-to-Pod Communication Failure
+
+Verify:
+
+- CNI Plugin
+- Network Policies
+
+---
+
+# Scenario 343 - MTU Mismatch
+
+Symptoms:
+
+- Intermittent connectivity
+- Packet fragmentation
+
+Review interface MTU configuration.
+
+---
+
+# Scenario 344 - ARP Resolution Failure
+
+Verify Layer-2 connectivity.
+
+---
+
+# Scenario 345 - Excessive Network Connections
+
+### Investigation
+
+```bash
+ss -s
+
+netstat -an
+```
+
+Review connection states.
+
+---
+
+# Scenario 346 - Ephemeral Port Exhaustion
+
+Review:
+
+```bash
+cat /proc/sys/net/ipv4/ip_local_port_range
+```
+
+Monitor TIME_WAIT connections.
+
+---
+
+# Scenario 347 - SYN Flood Attack
+
+Review firewall and load balancer protection.
+
+Enable SYN cookies where appropriate.
+
+---
+
+# Scenario 348 - DDoS Traffic Spike
+
+Review:
+
+- Traffic Sources
+- WAF Rules
+- CDN Protection
+- Rate Limiting
+
+---
+
+# Scenario 349 - Cross-Region Connectivity Failure
+
+Verify:
+
+- Peering
+- Transit Gateway
+- VPN
+- DNS
+
+---
+
+# Scenario 350 - Random Network Production Failure
+
+### Investigation
+
+Review:
+
+- DNS
+- Routing
+- Firewalls
+- Load Balancer
+- Security Groups
+- Network ACLs
+- Application Logs
+- Recent Infrastructure Changes
+
+### Root Cause
+
+Usually routing issues, firewall rules, DNS problems, load balancer health, or infrastructure configuration changes.
+
+### Resolution
+
+Follow the complete network path from client to backend, validating each hop before making changes.
+
+### Prevention
+
+Implement end-to-end network monitoring, automated health checks, infrastructure as code, and periodic network validation.
+
+---
+
