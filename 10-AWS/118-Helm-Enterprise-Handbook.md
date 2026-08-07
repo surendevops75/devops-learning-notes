@@ -3840,3 +3840,801 @@ every environment.
 
 ---
 
+# Chapter 6 - Helm Chart Dependencies, Subcharts & Library Charts
+
+Enterprise applications
+
+rarely consist
+
+of a single service.
+
+A typical microservices platform
+
+may require
+
+- Database
+- Cache
+- Message Queue
+- Monitoring
+- Logging
+
+Instead of creating
+
+everything manually,
+
+Helm supports
+
+- Chart Dependencies
+- Subcharts
+- Library Charts
+
+This enables
+
+modular,
+
+reusable,
+
+and maintainable
+
+Kubernetes deployments.
+
+---
+
+# Dependency Architecture
+
+```text
+Application Chart
+
+↓
+
+Dependencies
+
+├── Redis
+
+├── PostgreSQL
+
+├── RabbitMQ
+
+└── Prometheus
+```
+
+One chart
+
+can deploy
+
+an entire platform.
+
+---
+
+# Why Chart Dependencies?
+
+Without Dependencies
+
+```text
+Application
+
+↓
+
+Install Redis
+
+↓
+
+Install PostgreSQL
+
+↓
+
+Install RabbitMQ
+
+↓
+
+Configure Networking
+```
+
+Problems
+
+- Manual Installation
+- Version Mismatch
+- Deployment Complexity
+
+---
+
+With Dependencies
+
+```text
+Application Chart
+
+↓
+
+Dependencies
+
+↓
+
+One Installation
+```
+
+Everything
+
+is deployed
+
+together.
+
+---
+
+# What is a Dependency?
+
+A Dependency
+
+is another Helm Chart
+
+required
+
+by
+
+your application.
+
+Examples
+
+```text
+Redis
+
+PostgreSQL
+
+RabbitMQ
+
+NGINX
+
+Prometheus
+```
+
+Dependencies
+
+are managed
+
+automatically.
+
+---
+
+# Enterprise Architecture
+
+```text
+Payment Service
+
+↓
+
+Redis
+
+↓
+
+RabbitMQ
+
+↓
+
+PostgreSQL
+
+↓
+
+Amazon EKS
+```
+
+The application
+
+depends
+
+on supporting services.
+
+---
+
+# charts Directory
+
+Dependencies
+
+are stored
+
+inside
+
+the
+
+```text
+charts/
+```
+
+directory.
+
+Example
+
+```text
+payment-chart/
+
+├── Chart.yaml
+
+├── values.yaml
+
+├── templates/
+
+└── charts/
+```
+
+---
+
+# Dependency Lifecycle
+
+```text
+Application Chart
+
+↓
+
+Resolve Dependencies
+
+↓
+
+Download Charts
+
+↓
+
+Render Templates
+
+↓
+
+Deploy
+```
+
+Dependencies
+
+are processed
+
+before deployment.
+
+---
+
+# Dependency Versioning
+
+Each dependency
+
+should have
+
+its own version.
+
+Example
+
+```text
+Payment Service
+
+↓
+
+Redis 18.0.0
+
+↓
+
+RabbitMQ 12.1.0
+
+↓
+
+PostgreSQL 15.2.0
+```
+
+Version control
+
+improves stability.
+
+---
+
+# Dependency Repository
+
+Dependencies
+
+may be downloaded
+
+from
+
+```text
+Private Repository
+
+↓
+
+OCI Registry
+
+↓
+
+Public Repository
+```
+
+Enterprise organizations
+
+prefer
+
+private repositories.
+
+---
+
+# Dependency Update
+
+Workflow
+
+```text
+Chart
+
+↓
+
+Update Dependency
+
+↓
+
+New Version
+
+↓
+
+Deployment
+```
+
+Dependencies
+
+can evolve
+
+independently.
+
+---
+
+# Subcharts
+
+A Subchart
+
+is
+
+a complete Helm Chart
+
+included
+
+inside another chart.
+
+Architecture
+
+```text
+Parent Chart
+
+├── Application
+
+├── Redis
+
+├── RabbitMQ
+
+└── PostgreSQL
+```
+
+Each subchart
+
+remains
+
+independent.
+
+---
+
+# Parent Chart
+
+The Parent Chart
+
+controls
+
+the overall deployment.
+
+Responsibilities
+
+- Application
+- Dependency Configuration
+- Environment Values
+- Release Management
+
+---
+
+# Child Chart
+
+A Child Chart
+
+provides
+
+one reusable component.
+
+Examples
+
+```text
+Redis
+
+RabbitMQ
+
+MySQL
+
+Prometheus
+```
+
+---
+
+# Parent-Child Relationship
+
+```text
+Parent Chart
+
+↓
+
+Child Chart
+
+↓
+
+Resources
+
+↓
+
+Deployment
+```
+
+The Parent
+
+coordinates
+
+all deployments.
+
+---
+
+# Dependency Configuration
+
+Parent charts
+
+can configure
+
+child charts.
+
+Example
+
+```text
+Application
+
+↓
+
+Redis Replica Count
+
+↓
+
+Redis Resources
+```
+
+One chart
+
+manages
+
+all components.
+
+---
+
+# Shared Values
+
+Parent charts
+
+can pass
+
+configuration
+
+to dependencies.
+
+Workflow
+
+```text
+Parent Values
+
+↓
+
+Dependency
+
+↓
+
+Deployment
+```
+
+This ensures
+
+consistent configuration.
+
+---
+
+# Library Charts
+
+A Library Chart
+
+contains
+
+reusable templates
+
+but
+
+does not deploy
+
+resources directly.
+
+Examples
+
+```text
+Labels
+
+Annotations
+
+Selectors
+
+Common Metadata
+```
+
+---
+
+# Library Chart Architecture
+
+```text
+Library Chart
+
+↓
+
+Reusable Templates
+
+↓
+
+Application Charts
+```
+
+Multiple applications
+
+reuse
+
+the same logic.
+
+---
+
+# Why Library Charts?
+
+Without Library Charts
+
+```text
+Application A
+
+↓
+
+Duplicate Labels
+
+────────────
+
+Application B
+
+↓
+
+Duplicate Labels
+```
+
+Problems
+
+- Duplicate Templates
+- Inconsistent Naming
+- Difficult Maintenance
+
+---
+
+With Library Charts
+
+```text
+Shared Templates
+
+↓
+
+Application A
+
+↓
+
+Application B
+
+↓
+
+Application C
+```
+
+One implementation
+
+serves
+
+every application.
+
+---
+
+# Enterprise Microservices
+
+```text
+Platform
+
+├── Payment
+
+├── Orders
+
+├── Inventory
+
+├── User
+
+├── Notification
+
+├── Redis
+
+├── RabbitMQ
+
+└── PostgreSQL
+```
+
+Every service
+
+can reuse
+
+common charts.
+
+---
+
+# Dependency Resolution
+
+Before deployment
+
+Helm resolves
+
+every dependency.
+
+Workflow
+
+```text
+Chart
+
+↓
+
+Dependencies
+
+↓
+
+Template Rendering
+
+↓
+
+Deployment
+```
+
+No dependency
+
+is skipped.
+
+---
+
+# Enterprise Deployment
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Parent Chart
+
+↓
+
+Dependencies
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Everything
+
+is deployed
+
+as one release.
+
+---
+
+# Banking Example
+
+```text
+Payment Platform
+
+↓
+
+Payment Chart
+
+↓
+
+Redis
+
+↓
+
+RabbitMQ
+
+↓
+
+Amazon EKS
+```
+
+All required services
+
+deploy
+
+together.
+
+---
+
+# Enterprise Repository Structure
+
+```text
+helm/
+
+├── applications/
+
+├── infrastructure/
+
+├── libraries/
+
+├── monitoring/
+
+└── shared/
+```
+
+Charts
+
+are organized
+
+by purpose.
+
+---
+
+# Enterprise Best Practices
+
+- Keep dependencies versioned.
+- Use private repositories for enterprise charts.
+- Use parent charts for complete applications.
+- Keep child charts independent.
+- Create Library Charts for reusable templates.
+- Minimize duplicated templates.
+- Review dependency updates before production.
+- Document dependency relationships.
+
+---
+
+# Common Mistakes
+
+- Copying dependency charts manually.
+- Ignoring dependency versions.
+- Hardcoding child chart configuration.
+- Mixing unrelated services into one chart.
+- Creating duplicate helper templates.
+- Not testing dependency upgrades.
+- Using public charts without validation.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Helm dependency?
+- What is a Subchart?
+- What is a Parent Chart?
+- What is a Child Chart?
+- What is a Library Chart?
+
+## Intermediate
+
+- Parent Chart vs Child Chart.
+- Why use dependencies?
+- How does Helm resolve dependencies?
+- What are shared values?
+- Why use Library Charts?
+
+## Advanced
+
+- Design an enterprise Helm architecture using parent charts, subcharts, library charts, reusable dependencies, and ArgoCD for Amazon EKS deployments.
+- Explain how Helm dependencies, subcharts, shared values, and library charts simplify large-scale Kubernetes application deployments.
+- A financial organization manages more than 500 microservices requiring Redis, RabbitMQ, PostgreSQL, Prometheus, and shared deployment standards. Explain how you would design parent charts, dependency management, library charts, repository organization, version control, and GitOps integration to create scalable, reusable, and maintainable Kubernetes deployments.
+
+---
+
