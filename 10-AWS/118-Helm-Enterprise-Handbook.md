@@ -3104,3 +3104,739 @@ the application lifecycle.
 
 ---
 
+# Chapter 5 - Helm Release Management, Upgrades & Rollbacks
+
+One of Helm's biggest advantages
+
+over plain Kubernetes manifests
+
+is
+
+Release Management.
+
+Helm tracks
+
+every deployment
+
+as a **Release**,
+
+making it easy to
+
+- Upgrade Applications
+- Rollback Changes
+- View Deployment History
+- Compare Versions
+- Recover from Failures
+
+Enterprise organizations
+
+rely heavily
+
+on Helm Releases
+
+for safe production deployments.
+
+---
+
+# Release Management Architecture
+
+```text
+Helm Chart
+
+↓
+
+Install
+
+↓
+
+Release
+
+↓
+
+Upgrade
+
+↓
+
+Rollback
+```
+
+Helm
+
+maintains
+
+the deployment history.
+
+---
+
+# What is a Release?
+
+A Release
+
+is
+
+a deployed instance
+
+of a Helm Chart.
+
+Example
+
+```text
+Payment Chart
+
+↓
+
+Production Release
+```
+
+The same chart
+
+can have
+
+multiple releases.
+
+---
+
+# Chart vs Release
+
+| Chart | Release |
+|--------|----------|
+| Blueprint | Installed Instance |
+| Stored in Repository | Stored in Kubernetes |
+| Reusable | Environment Specific |
+
+Charts
+
+are reusable.
+
+Releases
+
+represent
+
+running deployments.
+
+---
+
+# Release Lifecycle
+
+```text
+Chart
+
+↓
+
+Install
+
+↓
+
+Release
+
+↓
+
+Upgrade
+
+↓
+
+Rollback
+
+↓
+
+Delete
+```
+
+Helm
+
+tracks
+
+every stage
+
+of the lifecycle.
+
+---
+
+# Installation Flow
+
+```text
+Helm Chart
+
+↓
+
+Render Templates
+
+↓
+
+Create Resources
+
+↓
+
+Release Created
+
+↓
+
+Amazon EKS
+```
+
+A release
+
+is created
+
+after
+
+successful deployment.
+
+---
+
+# Release History
+
+Helm
+
+stores
+
+deployment history.
+
+Example
+
+```text
+Revision 1
+
+↓
+
+Revision 2
+
+↓
+
+Revision 3
+
+↓
+
+Revision 4
+```
+
+Every upgrade
+
+creates
+
+a new revision.
+
+---
+
+# Release Revision
+
+Each deployment
+
+receives
+
+a revision number.
+
+Example
+
+```text
+Revision 1
+
+↓
+
+Initial Deployment
+
+────────────
+
+Revision 2
+
+↓
+
+Application Upgrade
+```
+
+Revisions
+
+simplify rollbacks.
+
+---
+
+# Upgrade Process
+
+Application upgrades
+
+reuse
+
+the same chart
+
+with
+
+new configuration
+
+or images.
+
+Workflow
+
+```text
+New Chart
+
+↓
+
+Upgrade
+
+↓
+
+New Revision
+
+↓
+
+Production
+```
+
+No manual
+
+resource recreation
+
+is required.
+
+---
+
+# Configuration Upgrade
+
+Configuration changes
+
+follow
+
+the same workflow.
+
+```text
+Updated Values
+
+↓
+
+Template Rendering
+
+↓
+
+Upgrade
+
+↓
+
+New Release Revision
+```
+
+Only
+
+modified resources
+
+are updated.
+
+---
+
+# Image Upgrade
+
+Application upgrades
+
+typically involve
+
+a new Docker image.
+
+Workflow
+
+```text
+New Image Tag
+
+↓
+
+Values File
+
+↓
+
+Helm Upgrade
+
+↓
+
+Rolling Update
+```
+
+---
+
+# Rolling Upgrade
+
+Kubernetes
+
+performs
+
+a rolling deployment.
+
+```text
+Old Pods
+
+↓
+
+New Pods
+
+↓
+
+Health Check
+
+↓
+
+Traffic Shift
+```
+
+Application availability
+
+is maintained.
+
+---
+
+# Rollback
+
+If an upgrade fails,
+
+Helm
+
+can restore
+
+a previous release.
+
+Workflow
+
+```text
+Failed Upgrade
+
+↓
+
+Previous Revision
+
+↓
+
+Rollback
+
+↓
+
+Production Restored
+```
+
+Rollback
+
+uses
+
+stored release history.
+
+---
+
+# Rollback Strategy
+
+```text
+Revision 1
+
+↓
+
+Revision 2
+
+↓
+
+Revision 3
+
+↓
+
+Failure
+
+↓
+
+Rollback
+
+↓
+
+Revision 2
+```
+
+Recovery
+
+takes only
+
+a few moments.
+
+---
+
+# Release History Architecture
+
+```text
+Release
+
+├── Revision 1
+
+├── Revision 2
+
+├── Revision 3
+
+└── Revision 4
+```
+
+Every revision
+
+is recorded.
+
+---
+
+# Failed Upgrade
+
+Possible causes
+
+- Invalid Configuration
+- Image Not Found
+- Kubernetes Validation Error
+- Resource Conflict
+
+Helm
+
+reports
+
+the failure.
+
+---
+
+# Release Status
+
+Common release states
+
+```text
+Deployed
+
+Pending Install
+
+Pending Upgrade
+
+Pending Rollback
+
+Failed
+
+Uninstalled
+```
+
+Status
+
+helps
+
+during troubleshooting.
+
+---
+
+# Rollback Validation
+
+After rollback
+
+verify
+
+- Pods Running
+- Services Available
+- Application Health
+- Logs
+- Metrics
+
+Rollback
+
+is complete
+
+only after validation.
+
+---
+
+# Release Deletion
+
+When
+
+an application
+
+is no longer required
+
+the release
+
+can be removed.
+
+Workflow
+
+```text
+Release
+
+↓
+
+Delete
+
+↓
+
+Resources Removed
+```
+
+Associated resources
+
+are deleted
+
+from Kubernetes.
+
+---
+
+# Release History Retention
+
+Organizations
+
+may retain
+
+release history
+
+for
+
+- Auditing
+- Rollback
+- Compliance
+
+Release metadata
+
+supports
+
+production investigations.
+
+---
+
+# Enterprise Deployment Flow
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Helm Chart
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+
+↓
+
+Release Revision
+```
+
+Each deployment
+
+creates
+
+a new revision.
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Release v12
+
+↓
+
+Upgrade
+
+↓
+
+Release v13
+
+↓
+
+Failure
+
+↓
+
+Rollback
+
+↓
+
+Release v12
+```
+
+Production
+
+is restored
+
+quickly.
+
+---
+
+# Enterprise Upgrade Strategy
+
+```text
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Promote
+
+validated releases
+
+through
+
+every environment.
+
+---
+
+# Enterprise Best Practices
+
+- Version every release.
+- Review release history regularly.
+- Validate upgrades before production.
+- Test rollback procedures.
+- Use rolling updates.
+- Monitor application health after upgrades.
+- Promote releases through environments.
+- Keep release history for auditing.
+
+---
+
+# Common Mistakes
+
+- Upgrading production without testing.
+- Deleting release history.
+- Ignoring failed upgrade warnings.
+- Not validating rollback success.
+- Mixing configuration and application upgrades.
+- Skipping health verification after deployment.
+- Deploying directly to production.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Helm Release?
+- Chart vs Release.
+- What is a Release Revision?
+- What is Helm Upgrade?
+- What is Helm Rollback?
+
+## Intermediate
+
+- How does Helm track release history?
+- Why is rollback faster with Helm?
+- What happens during a Helm upgrade?
+- Explain rolling upgrades with Helm.
+- What are common release states?
+
+## Advanced
+
+- Design an enterprise Helm release management strategy using release revisions, rolling upgrades, rollback procedures, GitOps, ArgoCD, and Amazon EKS.
+- Explain how Helm manages release history, upgrades, rollback, deployment validation, and production recovery for enterprise Kubernetes applications.
+- A financial organization deploys hundreds of microservices daily to Amazon EKS using Helm and ArgoCD. Explain how you would design release management, revision tracking, upgrade validation, rollback strategy, release retention, monitoring, and governance to ensure highly available, secure, and auditable deployments.
+
+---
+
