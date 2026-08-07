@@ -2788,3 +2788,650 @@ Storage remains durable and recoverable.
 
 ---
 
+# Chapter 6 - Enterprise Database Architecture & Data Design Patterns
+
+Databases are the heart of every enterprise application.
+
+Applications generate and consume data continuously, including:
+
+- Customer Information
+- Orders
+- Payments
+- Inventory
+- Transactions
+- Logs
+- Analytics
+- Authentication Data
+
+A poorly designed database architecture becomes a bottleneck regardless of how scalable the application is.
+
+Enterprise database architectures focus on:
+
+- High Availability
+- Scalability
+- Performance
+- Reliability
+- Security
+- Disaster Recovery
+
+---
+
+# Enterprise Database Architecture
+
+A typical production architecture.
+
+```text
+Users
+
+↓
+
+Load Balancer
+
+↓
+
+Application Layer
+
+↓
+
+Database Cluster
+
+↓
+
+Storage
+
+↓
+
+Backup
+
+↓
+
+Disaster Recovery
+```
+
+Applications should never connect directly to storage.
+
+---
+
+# Database Categories
+
+Enterprise systems generally use two database categories.
+
+| Database Type | Examples | Best For |
+|--------------|----------|----------|
+| Relational (SQL) | PostgreSQL, MySQL, Oracle | Structured Data |
+| NoSQL | MongoDB, DynamoDB, Cassandra | Flexible & High-Scale Workloads |
+
+Selecting the right database depends on application requirements.
+
+---
+
+# Relational Database Pattern
+
+```text
+Application
+
+↓
+
+SQL Database
+
+↓
+
+Tables
+
+↓
+
+Rows
+
+↓
+
+Columns
+```
+
+Characteristics:
+
+- ACID Transactions
+- Strong Consistency
+- Foreign Keys
+- Structured Schema
+
+Ideal for financial and transactional systems.
+
+---
+
+# NoSQL Pattern
+
+```text
+Application
+
+↓
+
+NoSQL Database
+
+↓
+
+Documents
+
+↓
+
+Key-Value
+
+↓
+
+Wide Column
+
+↓
+
+Graph
+```
+
+Characteristics:
+
+- Flexible Schema
+- Horizontal Scaling
+- High Throughput
+- Distributed Storage
+
+Ideal for modern internet-scale applications.
+
+---
+
+# Primary Database Pattern
+
+Applications write to a primary database.
+
+```text
+Application
+
+↓
+
+Primary Database
+
+↓
+
+Storage
+```
+
+All write operations occur on the primary node.
+
+---
+
+# Read Replica Pattern
+
+Read traffic is distributed across replicas.
+
+```text
+Application
+
+↓
+
+Primary Database
+
+↓
+
+Replica 1
+
+Replica 2
+
+Replica 3
+```
+
+Benefits:
+
+- Improved Read Performance
+- Reduced Load
+- Better Scalability
+
+---
+
+# Database Replication
+
+Replication copies data from the primary database to replicas.
+
+```text
+Primary
+
+↓
+
+Replication
+
+↓
+
+Replica
+```
+
+Replication improves:
+
+- Availability
+- Disaster Recovery
+- Read Scalability
+
+---
+
+# Multi-AZ Database Pattern
+
+Enterprise databases are deployed across multiple Availability Zones.
+
+```text
+AZ-1
+
+↓
+
+Primary
+
+──────────
+
+AZ-2
+
+↓
+
+Standby
+```
+
+If the primary database fails,
+
+the standby becomes the new primary.
+
+---
+
+# Database Clustering
+
+Some enterprise databases run as clusters.
+
+```text
+Node 1
+
+↓
+
+Cluster
+
+↑
+
+Node 2
+
+↑
+
+Node 3
+```
+
+Benefits:
+
+- High Availability
+- Fault Tolerance
+- Load Distribution
+
+---
+
+# Sharding Pattern
+
+Large datasets are divided across multiple database servers.
+
+```text
+Users A-F
+
+↓
+
+Shard 1
+
+──────────
+
+Users G-L
+
+↓
+
+Shard 2
+
+──────────
+
+Users M-Z
+
+↓
+
+Shard 3
+```
+
+Sharding improves scalability.
+
+---
+
+# Database Partitioning
+
+Large tables are divided into smaller partitions.
+
+```text
+Orders
+
+↓
+
+2024
+
+↓
+
+2025
+
+↓
+
+2026
+```
+
+Benefits:
+
+- Faster Queries
+- Easier Maintenance
+- Better Performance
+
+---
+
+# Connection Pooling
+
+Applications should reuse database connections.
+
+Without Pooling
+
+```text
+Application
+
+↓
+
+New Connection
+
+↓
+
+Database
+```
+
+With Pooling
+
+```text
+Application
+
+↓
+
+Connection Pool
+
+↓
+
+Database
+```
+
+Benefits:
+
+- Lower Latency
+- Reduced Overhead
+- Better Resource Utilization
+
+---
+
+# Database Caching Pattern
+
+Frequently accessed data is stored in cache.
+
+```text
+Application
+
+↓
+
+Redis
+
+↓
+
+Database
+```
+
+Benefits:
+
+- Faster Response
+- Lower Database Load
+- Better Scalability
+
+---
+
+# CQRS Pattern
+
+Separate read and write operations.
+
+```text
+Application
+
+↓
+
+Write Database
+
+──────────
+
+Read Database
+```
+
+Useful for high-traffic enterprise applications.
+
+---
+
+# Event-Driven Database Pattern
+
+Microservices communicate using events.
+
+```text
+Order Service
+
+↓
+
+Event
+
+↓
+
+Inventory
+
+↓
+
+Payment
+
+↓
+
+Notification
+```
+
+Services remain loosely coupled.
+
+---
+
+# Backup Strategy
+
+Enterprise databases require automated backups.
+
+```text
+Primary Database
+
+↓
+
+Snapshot
+
+↓
+
+Backup Storage
+
+↓
+
+Cross-Region Backup
+```
+
+Backups must be tested regularly.
+
+---
+
+# Disaster Recovery
+
+Recovery workflow.
+
+```text
+Failure
+
+↓
+
+Promote Replica
+
+↓
+
+Restore Backup
+
+↓
+
+Application Recovery
+```
+
+Recovery procedures should be automated where possible.
+
+---
+
+# Database Security
+
+Enterprise databases should implement:
+
+- IAM Authentication
+- Network Isolation
+- Encryption at Rest
+- Encryption in Transit
+- Secrets Management
+- Audit Logging
+
+Security is critical for protecting sensitive information.
+
+---
+
+# Database Monitoring
+
+Monitor:
+
+- CPU Usage
+- Memory Usage
+- Connections
+- Slow Queries
+- Replication Lag
+- Storage Usage
+- Query Latency
+- Backup Status
+
+Monitoring enables proactive issue detection.
+
+---
+
+# Kubernetes Database Pattern
+
+Applications running on Kubernetes connect to managed databases.
+
+```text
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Amazon RDS
+
+↓
+
+Read Replica
+
+↓
+
+Backup
+```
+
+Stateful databases are generally managed outside Kubernetes in enterprise environments.
+
+---
+
+# Enterprise Example
+
+Production banking platform.
+
+```text
+Users
+
+↓
+
+Application
+
+↓
+
+Amazon RDS PostgreSQL
+
+↓
+
+Read Replicas
+
+↓
+
+Redis Cache
+
+↓
+
+Amazon S3 Backups
+
+↓
+
+Cross-Region DR
+```
+
+This architecture delivers high availability and scalability.
+
+---
+
+# Enterprise Best Practices
+
+- Separate application and database tiers.
+- Deploy databases across multiple Availability Zones.
+- Use read replicas for scaling read traffic.
+- Automate backups and restoration testing.
+- Encrypt all sensitive data.
+- Monitor replication lag.
+- Use connection pooling.
+- Cache frequently accessed data.
+- Keep database credentials in a secrets manager.
+- Regularly review slow queries.
+
+---
+
+# Common Mistakes
+
+- Hosting databases on application servers.
+- Running production databases without backups.
+- Ignoring replication lag.
+- Allowing direct internet access to databases.
+- Not using connection pooling.
+- Overloading the primary database with read traffic.
+- Ignoring query optimization.
+- Failing to test disaster recovery procedures.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a relational database?
+2. What is a NoSQL database?
+3. What is a read replica?
+4. What is database replication?
+5. What is database partitioning?
+
+---
+
+## Intermediate
+
+1. Explain Multi-AZ database architecture.
+2. Difference between replication and sharding.
+3. What is connection pooling?
+4. Why is Redis used with databases?
+5. Explain CQRS.
+
+---
+
+## Advanced
+
+1. Design a highly available database architecture for a banking application handling millions of daily transactions while ensuring ACID compliance, high availability, disaster recovery, and low latency.
+2. Explain how replication, read replicas, connection pooling, caching, backups, partitioning, and monitoring contribute to enterprise database scalability and reliability.
+3. A global e-commerce platform experiences extremely high read traffic during seasonal sales. Design a database architecture that supports automatic scaling, fault tolerance, disaster recovery, secure access, and efficient query performance while minimizing operational complexity.
+
+---
+
