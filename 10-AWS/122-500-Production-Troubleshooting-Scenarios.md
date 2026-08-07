@@ -1912,3 +1912,565 @@ Implement monitoring, health checks, resource limits, and deployment validation.
 
 ---
 
+# Chapter 4 - Kubernetes Production Troubleshooting Scenarios (101–150)
+
+Kubernetes simplifies application deployment and scaling, but it also introduces new operational challenges.
+
+Production issues can occur at multiple layers:
+
+- Cluster
+- Control Plane
+- Worker Nodes
+- Pods
+- Deployments
+- Services
+- Networking
+- Storage
+- Security
+
+This chapter covers **50 real-world Kubernetes production troubleshooting scenarios**, including diagnosis, root cause analysis, resolution, and prevention.
+
+---
+
+# Scenario 101 - Pod Stuck in Pending State
+
+### Symptoms
+
+- Pod never starts.
+- Status remains **Pending**.
+
+### Investigation
+
+```bash
+kubectl get pods
+
+kubectl describe pod <pod-name>
+```
+
+### Root Cause
+
+- Insufficient CPU or Memory
+- Node Selector mismatch
+- Taints & Tolerations
+- PVC not bound
+
+### Resolution
+
+Resolve scheduling constraints.
+
+### Prevention
+
+Monitor cluster capacity and validate scheduling rules.
+
+---
+
+# Scenario 102 - CrashLoopBackOff
+
+### Symptoms
+
+Pod continuously restarts.
+
+### Investigation
+
+```bash
+kubectl logs <pod> --previous
+
+kubectl describe pod <pod>
+```
+
+### Root Cause
+
+- Application crash
+- Missing configuration
+- Database connectivity failure
+- Incorrect startup command
+
+### Resolution
+
+Fix application startup issue.
+
+---
+
+# Scenario 103 - ImagePullBackOff
+
+### Investigation
+
+```bash
+kubectl describe pod
+```
+
+### Root Cause
+
+- Wrong image name
+- Missing image tag
+- Registry authentication failure
+
+### Resolution
+
+Correct image reference and registry credentials.
+
+---
+
+# Scenario 104 - ErrImagePull
+
+### Investigation
+
+Verify:
+
+- Image Repository
+- Registry Access
+- Network Connectivity
+
+---
+
+# Scenario 105 - Pod OOMKilled
+
+### Investigation
+
+```bash
+kubectl describe pod
+```
+
+Review:
+
+- Memory Limits
+- Events
+
+### Root Cause
+
+Application exceeded memory limit.
+
+### Resolution
+
+Increase limits or optimize memory usage.
+
+---
+
+# Scenario 106 - Liveness Probe Failure
+
+### Investigation
+
+```bash
+kubectl describe pod
+```
+
+### Root Cause
+
+Health check endpoint failing.
+
+### Resolution
+
+Fix application or probe configuration.
+
+---
+
+# Scenario 107 - Readiness Probe Failure
+
+### Symptoms
+
+Pod Running but Service unavailable.
+
+### Root Cause
+
+Readiness probe fails.
+
+### Resolution
+
+Correct readiness configuration.
+
+---
+
+# Scenario 108 - Startup Probe Failure
+
+Application initialization takes longer than configured.
+
+Adjust startup probe thresholds.
+
+---
+
+# Scenario 109 - Pod Evicted
+
+### Investigation
+
+```bash
+kubectl describe pod
+```
+
+### Root Cause
+
+Node resource pressure.
+
+---
+
+# Scenario 110 - Node NotReady
+
+### Investigation
+
+```bash
+kubectl get nodes
+
+kubectl describe node
+```
+
+### Root Cause
+
+- Kubelet failure
+- Network issue
+- Resource exhaustion
+
+---
+
+# Scenario 111 - Node Disk Pressure
+
+Review:
+
+```bash
+df -h
+```
+
+Free disk space.
+
+---
+
+# Scenario 112 - Node Memory Pressure
+
+Review node memory utilization.
+
+Optimize workloads.
+
+---
+
+# Scenario 113 - Node PID Pressure
+
+Too many running processes.
+
+Review process count.
+
+---
+
+# Scenario 114 - Deployment Stuck
+
+### Investigation
+
+```bash
+kubectl rollout status deployment
+```
+
+Review events.
+
+---
+
+# Scenario 115 - Rollout Failure
+
+Investigate:
+
+```bash
+kubectl rollout history
+```
+
+Rollback if required.
+
+---
+
+# Scenario 116 - Deployment Rollback Failure
+
+Review previous ReplicaSets.
+
+Verify image availability.
+
+---
+
+# Scenario 117 - ReplicaSet Not Creating Pods
+
+Review deployment events.
+
+---
+
+# Scenario 118 - DaemonSet Not Running
+
+Verify:
+
+- Node Labels
+- Taints
+- Scheduling Rules
+
+---
+
+# Scenario 119 - StatefulSet Pod Failure
+
+Review:
+
+- PVC
+- Storage
+- Pod Identity
+
+---
+
+# Scenario 120 - Job Not Completing
+
+Review:
+
+```bash
+kubectl logs job-name
+```
+
+---
+
+# Scenario 121 - CronJob Not Executing
+
+Verify:
+
+```bash
+kubectl describe cronjob
+```
+
+---
+
+# Scenario 122 - Service Unreachable
+
+Review:
+
+```bash
+kubectl get svc
+
+kubectl describe svc
+```
+
+---
+
+# Scenario 123 - Endpoint Missing
+
+Verify:
+
+```bash
+kubectl get endpoints
+```
+
+---
+
+# Scenario 124 - ClusterIP Not Working
+
+Review Service selector.
+
+---
+
+# Scenario 125 - NodePort Not Accessible
+
+Verify firewall and node networking.
+
+---
+
+# Scenario 126 - LoadBalancer Pending
+
+Cloud Load Balancer provisioning failed.
+
+Verify cloud integration.
+
+---
+
+# Scenario 127 - Ingress Returning 404
+
+Review:
+
+- Host Rules
+- Path Rules
+- Backend Service
+
+---
+
+# Scenario 128 - Ingress TLS Failure
+
+Verify certificate and secret.
+
+---
+
+# Scenario 129 - DNS Resolution Failure
+
+Review CoreDNS.
+
+```bash
+kubectl get pods -n kube-system
+```
+
+---
+
+# Scenario 130 - CoreDNS CrashLoopBackOff
+
+Investigate logs.
+
+Restart after configuration fix.
+
+---
+
+# Scenario 131 - PersistentVolume Pending
+
+Verify StorageClass.
+
+---
+
+# Scenario 132 - PVC Not Bound
+
+Review:
+
+```bash
+kubectl describe pvc
+```
+
+---
+
+# Scenario 133 - StorageClass Missing
+
+Verify StorageClass exists.
+
+---
+
+# Scenario 134 - Secret Missing
+
+Review:
+
+```bash
+kubectl get secret
+```
+
+---
+
+# Scenario 135 - ConfigMap Missing
+
+Verify ConfigMap creation.
+
+---
+
+# Scenario 136 - Environment Variable Missing
+
+Review Deployment manifest.
+
+---
+
+# Scenario 137 - Pod Cannot Reach Database
+
+Verify:
+
+- Service
+- DNS
+- Network Policy
+
+---
+
+# Scenario 138 - NetworkPolicy Blocking Traffic
+
+Review ingress and egress rules.
+
+---
+
+# Scenario 139 - Pod-to-Pod Communication Failure
+
+Verify CNI plugin.
+
+---
+
+# Scenario 140 - High API Server Latency
+
+Review:
+
+- Control Plane Metrics
+- etcd Performance
+
+---
+
+# Scenario 141 - etcd Performance Degradation
+
+Monitor:
+
+- Disk Latency
+- Storage
+- CPU
+
+---
+
+# Scenario 142 - Control Plane Unavailable
+
+Verify control plane components.
+
+---
+
+# Scenario 143 - Authentication Failure
+
+Review RBAC configuration.
+
+---
+
+# Scenario 144 - Authorization Denied
+
+Check RoleBindings and ClusterRoleBindings.
+
+---
+
+# Scenario 145 - HPA Not Scaling
+
+Verify:
+
+- Metrics Server
+- Resource Requests
+- CPU Metrics
+
+---
+
+# Scenario 146 - Metrics Server Failure
+
+Check Metrics Server deployment.
+
+---
+
+# Scenario 147 - Container Cannot Pull Secret
+
+Review ImagePullSecrets.
+
+---
+
+# Scenario 148 - Excessive Pod Restarts
+
+Investigate:
+
+- Application Logs
+- Health Checks
+- Resource Limits
+
+---
+
+# Scenario 149 - Slow Deployment
+
+Review:
+
+- Image Pull Time
+- Scheduling
+- Readiness Probes
+
+---
+
+# Scenario 150 - Random Kubernetes Failures
+
+### Investigation
+
+Review:
+
+- Cluster Events
+- Pod Logs
+- Node Health
+- Metrics
+- Recent Deployments
+- Resource Utilization
+
+### Root Cause
+
+Usually infrastructure, application, or configuration issues.
+
+### Resolution
+
+Use a systematic troubleshooting approach.
+
+### Prevention
+
+Implement monitoring, alerts, resource limits, health probes, and deployment validation.
+
+---
+
