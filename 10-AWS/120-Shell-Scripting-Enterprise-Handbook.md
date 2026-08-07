@@ -1656,3 +1656,556 @@ Conditional logic protects production environments.
 
 ---
 
+# Chapter 4 - Loops, Iteration & Automation
+
+One of the biggest advantages of shell scripting is the ability to perform repetitive tasks automatically.
+
+Instead of executing the same command multiple times, loops allow a script to execute a block of code repeatedly.
+
+Loops are widely used in:
+
+- Server Automation
+- User Management
+- Backup Scripts
+- Log Processing
+- Kubernetes Administration
+- AWS Automation
+- CI/CD Pipelines
+
+Understanding loops is essential for writing efficient automation scripts.
+
+---
+
+# Why Use Loops?
+
+Without loops:
+
+```text
+Backup Server 1
+
+Backup Server 2
+
+Backup Server 3
+
+Backup Server 4
+
+Backup Server 5
+```
+
+Each command must be written manually.
+
+With loops:
+
+```text
+Server List
+
+↓
+
+Loop
+
+↓
+
+Backup Every Server
+```
+
+The same logic is reused for every server.
+
+---
+
+# Types of Loops
+
+Bash provides three primary looping mechanisms.
+
+- for Loop
+- while Loop
+- until Loop
+
+Each loop is suitable for different automation scenarios.
+
+---
+
+# The for Loop
+
+The `for` loop executes a block of code for every item in a list.
+
+Syntax:
+
+```bash
+for VARIABLE in LIST
+do
+    commands
+done
+```
+
+---
+
+# Example - Simple for Loop
+
+```bash
+for NAME in DevOps Docker Kubernetes
+do
+    echo $NAME
+done
+```
+
+Output:
+
+```text
+DevOps
+
+Docker
+
+Kubernetes
+```
+
+---
+
+# Numeric for Loop
+
+Loop through a sequence of numbers.
+
+```bash
+for i in {1..5}
+do
+    echo $i
+done
+```
+
+Output:
+
+```text
+1
+
+2
+
+3
+
+4
+
+5
+```
+
+---
+
+# Increment Values
+
+Specify a step value.
+
+```bash
+for i in {10..50..10}
+do
+    echo $i
+done
+```
+
+Output:
+
+```text
+10
+
+20
+
+30
+
+40
+
+50
+```
+
+---
+
+# C-Style for Loop
+
+Similar to programming languages like C or Java.
+
+```bash
+for ((i=1;i<=5;i++))
+do
+    echo $i
+done
+```
+
+Useful when complex conditions are required.
+
+---
+
+# Loop Through Files
+
+Process every file in a directory.
+
+```bash
+for FILE in *.log
+do
+    echo $FILE
+done
+```
+
+This is commonly used for log management.
+
+---
+
+# Loop Through Directories
+
+```bash
+for DIR in /home/*
+do
+    echo $DIR
+done
+```
+
+Useful for administration scripts.
+
+---
+
+# The while Loop
+
+The `while` loop executes as long as a condition is true.
+
+Syntax:
+
+```bash
+while [ condition ]
+do
+    commands
+done
+```
+
+---
+
+# Example - while Loop
+
+```bash
+COUNT=1
+
+while [ $COUNT -le 5 ]
+do
+    echo $COUNT
+    COUNT=$((COUNT+1))
+done
+```
+
+Output:
+
+```text
+1
+
+2
+
+3
+
+4
+
+5
+```
+
+---
+
+# Read File Line by Line
+
+One of the most common enterprise use cases.
+
+```bash
+while read SERVER
+do
+    echo $SERVER
+done < servers.txt
+```
+
+Example `servers.txt`
+
+```text
+server1
+
+server2
+
+server3
+```
+
+This technique is widely used in infrastructure automation.
+
+---
+
+# Infinite Loop
+
+```bash
+while true
+do
+    echo "Running..."
+    sleep 5
+done
+```
+
+Useful for continuous monitoring scripts.
+
+Always provide a way to terminate infinite loops safely.
+
+---
+
+# The until Loop
+
+The `until` loop executes until a condition becomes true.
+
+Syntax:
+
+```bash
+until [ condition ]
+do
+    commands
+done
+```
+
+---
+
+# Example - until Loop
+
+```bash
+COUNT=1
+
+until [ $COUNT -gt 5 ]
+do
+    echo $COUNT
+    COUNT=$((COUNT+1))
+done
+```
+
+The loop stops when the condition evaluates to true.
+
+---
+
+# break Statement
+
+The `break` statement immediately exits the loop.
+
+Example:
+
+```bash
+for i in {1..10}
+do
+    if [ $i -eq 5 ]
+    then
+        break
+    fi
+
+    echo $i
+done
+```
+
+Output:
+
+```text
+1
+
+2
+
+3
+
+4
+```
+
+---
+
+# continue Statement
+
+The `continue` statement skips the current iteration.
+
+Example:
+
+```bash
+for i in {1..5}
+do
+    if [ $i -eq 3 ]
+    then
+        continue
+    fi
+
+    echo $i
+done
+```
+
+Output:
+
+```text
+1
+
+2
+
+4
+
+5
+```
+
+---
+
+# Nested Loops
+
+Loops can be placed inside other loops.
+
+Example:
+
+```bash
+for ENV in dev stage prod
+do
+    for APP in payment order inventory
+    do
+        echo "$APP -> $ENV"
+    done
+done
+```
+
+Useful for deploying multiple applications across environments.
+
+---
+
+# Processing Command Output
+
+Loop through command results.
+
+```bash
+for USER in $(cut -d: -f1 /etc/passwd)
+do
+    echo $USER
+done
+```
+
+This processes every user account on the system.
+
+---
+
+# Kubernetes Example
+
+Restart multiple deployments.
+
+```bash
+for APP in payment order inventory
+do
+    kubectl rollout restart deployment/$APP
+done
+```
+
+Instead of restarting each deployment manually, the loop automates the process.
+
+---
+
+# AWS Example
+
+Stop multiple EC2 instances.
+
+```bash
+for ID in i-123 i-456 i-789
+do
+    aws ec2 stop-instances --instance-ids $ID
+done
+```
+
+Loops simplify cloud administration.
+
+---
+
+# CI/CD Example
+
+Deploy to multiple environments.
+
+```text
+Build
+
+↓
+
+for Environment
+
+↓
+
+Deploy
+
+↓
+
+Run Tests
+
+↓
+
+Next Environment
+```
+
+This approach reduces duplicate pipeline logic.
+
+---
+
+# Enterprise Example
+
+Perform health checks on multiple servers.
+
+```bash
+while read SERVER
+do
+    ping -c 2 $SERVER
+done < servers.txt
+```
+
+The script checks connectivity for every server listed in the input file.
+
+---
+
+# Performance Considerations
+
+When working with large datasets:
+
+- Avoid unnecessary nested loops.
+- Read files efficiently.
+- Minimize external command execution inside loops.
+- Exit loops early when possible.
+- Reuse variables where appropriate.
+
+Efficient loops improve script performance.
+
+---
+
+# Enterprise Best Practices
+
+- Use `for` loops for fixed lists.
+- Use `while` loops for file processing.
+- Use `break` to stop unnecessary processing.
+- Use `continue` to skip invalid entries.
+- Keep loop bodies simple and readable.
+- Validate input before processing.
+- Avoid infinite loops unless required.
+- Add logging inside long-running loops.
+
+---
+
+# Common Mistakes
+
+- Creating infinite loops accidentally.
+- Forgetting to update loop variables.
+- Running expensive commands repeatedly inside loops.
+- Using nested loops unnecessarily.
+- Not validating input files.
+- Forgetting to quote variables.
+- Processing empty input without checks.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a loop in shell scripting?
+2. What are the different types of loops?
+3. Explain the `for` loop.
+4. Explain the `while` loop.
+5. What is the purpose of the `until` loop?
+
+## Intermediate
+
+1. Difference between `for` and `while`.
+2. Explain the `break` statement.
+3. Explain the `continue` statement.
+4. How do you process a file line by line?
+5. What are nested loops?
+
+## Advanced
+
+1. Design a shell script that reads a list of servers from a file, verifies connectivity, collects disk usage, and generates a health report using loops.
+2. Explain how loops are used in enterprise automation for Kubernetes deployments, AWS resource management, and CI/CD pipelines.
+3. A company manages hundreds of Kubernetes deployments across multiple environments. Design a scalable automation script using loops to perform rolling restarts, health checks, logging, and failure handling while minimizing execution time.
+
+---
+
