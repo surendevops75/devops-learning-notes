@@ -5188,3 +5188,552 @@ Implement continuous monitoring, automated backups, regular restore testing, sto
 
 ---
 
+# Chapter 10 - Security, Monitoring & Miscellaneous Production Troubleshooting Scenarios (401–450)
+
+Enterprise production incidents are not limited to infrastructure and applications.
+
+Many outages originate from:
+
+- Security Misconfigurations
+- Monitoring Failures
+- Certificate Expiration
+- Authentication Issues
+- Logging Problems
+- Compliance Violations
+- Configuration Drift
+
+This chapter covers **50 real-world production troubleshooting scenarios** focused on security, monitoring, observability, and operational reliability.
+
+---
+
+# Scenario 401 - Application Suddenly Returns 403 Forbidden
+
+### Symptoms
+
+- Users receive HTTP 403.
+- Authentication succeeds but authorization fails.
+
+### Investigation
+
+Review:
+
+- IAM Policies
+- RBAC
+- Application Roles
+- API Gateway Policies
+
+### Root Cause
+
+Permission changes or incorrect authorization configuration.
+
+### Resolution
+
+Restore appropriate permissions.
+
+### Prevention
+
+Implement least privilege with regular access reviews.
+
+---
+
+# Scenario 402 - Users Cannot Authenticate
+
+### Investigation
+
+Verify:
+
+- Identity Provider
+- Authentication Service
+- User Directory
+- MFA Configuration
+
+### Root Cause
+
+Authentication service failure.
+
+---
+
+# Scenario 403 - Token Validation Failure
+
+Review:
+
+- JWT Expiration
+- Signing Key
+- Clock Synchronization
+
+---
+
+# Scenario 404 - Session Expiring Frequently
+
+Verify:
+
+- Session Timeout
+- Redis Availability
+- Load Balancer Stickiness
+
+---
+
+# Scenario 405 - Secret Rotation Breaks Production
+
+### Investigation
+
+Review:
+
+- Secret Version
+- Application Configuration
+- Deployment Status
+
+### Root Cause
+
+Application still using old credentials.
+
+---
+
+# Scenario 406 - Certificate Expired
+
+### Symptoms
+
+HTTPS unavailable.
+
+### Investigation
+
+```bash
+openssl x509 -enddate -noout -in certificate.crt
+```
+
+### Resolution
+
+Renew and deploy certificate.
+
+---
+
+# Scenario 407 - Certificate Chain Invalid
+
+Verify intermediate certificates.
+
+Review trust chain.
+
+---
+
+# Scenario 408 - TLS Handshake Failure
+
+Review:
+
+- Protocol Version
+- Cipher Suites
+- Certificate
+
+---
+
+# Scenario 409 - Unauthorized API Requests
+
+Verify:
+
+- API Keys
+- OAuth Tokens
+- IAM Permissions
+
+---
+
+# Scenario 410 - Excessive Failed Login Attempts
+
+Investigate:
+
+- Authentication Logs
+- Source IPs
+- Brute-force Attempts
+
+Implement rate limiting.
+
+---
+
+# Scenario 411 - Security Group Accidentally Modified
+
+Review:
+
+- Change History
+- Infrastructure as Code
+- Audit Logs
+
+Restore approved configuration.
+
+---
+
+# Scenario 412 - IAM Policy Too Permissive
+
+Review least privilege.
+
+Reduce unnecessary permissions.
+
+---
+
+# Scenario 413 - Kubernetes Secret Missing
+
+Verify:
+
+```bash
+kubectl get secrets
+```
+
+---
+
+# Scenario 414 - RBAC Denies Access
+
+Review:
+
+- Roles
+- ClusterRoles
+- RoleBindings
+
+---
+
+# Scenario 415 - Service Account Misconfigured
+
+Verify ServiceAccount assignment.
+
+---
+
+# Scenario 416 - Audit Logs Missing
+
+Review logging configuration.
+
+Verify storage destination.
+
+---
+
+# Scenario 417 - Log Collector Stopped
+
+Verify logging agent.
+
+Restart collector.
+
+---
+
+# Scenario 418 - Centralized Logging Not Receiving Data
+
+Review:
+
+- Log Forwarder
+- Network
+- Storage
+
+---
+
+# Scenario 419 - Monitoring Dashboard Empty
+
+Verify:
+
+- Monitoring Service
+- Metrics Collection
+- Data Source
+
+---
+
+# Scenario 420 - Metrics Missing
+
+Review metrics exporter.
+
+Check scraping configuration.
+
+---
+
+# Scenario 421 - Alert Not Triggering
+
+Verify:
+
+- Alert Rule
+- Threshold
+- Evaluation Window
+
+---
+
+# Scenario 422 - Alert Storm
+
+Too many alerts generated.
+
+Review thresholds and deduplication.
+
+---
+
+# Scenario 423 - Alert Fatigue
+
+Review:
+
+- Alert Priority
+- Escalation Rules
+- Noise Reduction
+
+---
+
+# Scenario 424 - Monitoring Agent Crashed
+
+Restart monitoring agent.
+
+Review logs.
+
+---
+
+# Scenario 425 - Dashboard Shows Incorrect Data
+
+Verify:
+
+- Query
+- Time Range
+- Data Source
+
+---
+
+# Scenario 426 - Time-Series Database Full
+
+Review retention policy.
+
+Archive old metrics.
+
+---
+
+# Scenario 427 - Log Storage Full
+
+Enable log rotation and lifecycle policies.
+
+---
+
+# Scenario 428 - Audit Trail Incomplete
+
+Review:
+
+- Logging Pipeline
+- Permissions
+- Storage
+
+---
+
+# Scenario 429 - Compliance Scan Failure
+
+Review security policies.
+
+Verify required controls.
+
+---
+
+# Scenario 430 - Vulnerability Scan Reports Critical Issues
+
+Prioritize remediation.
+
+Patch affected systems.
+
+---
+
+# Scenario 431 - Malware Detected
+
+Isolate affected host.
+
+Investigate source.
+
+Restore from trusted backup if required.
+
+---
+
+# Scenario 432 - Unexpected Privilege Escalation
+
+Review IAM logs.
+
+Investigate recent role changes.
+
+---
+
+# Scenario 433 - Suspicious Network Traffic
+
+Review:
+
+- Firewall Logs
+- Flow Logs
+- IDS Alerts
+
+---
+
+# Scenario 434 - DDoS Attack Detected
+
+Enable:
+
+- WAF
+- CDN
+- Rate Limiting
+- Traffic Filtering
+
+---
+
+# Scenario 435 - Web Application Firewall Blocking Valid Users
+
+Review WAF rules.
+
+Adjust false-positive signatures.
+
+---
+
+# Scenario 436 - Secrets Exposed in Logs
+
+Remove exposed logs.
+
+Rotate credentials immediately.
+
+---
+
+# Scenario 437 - Public Storage Bucket Detected
+
+Review bucket policies.
+
+Restrict public access.
+
+---
+
+# Scenario 438 - Configuration Drift
+
+Compare running configuration with Infrastructure as Code.
+
+Restore approved state.
+
+---
+
+# Scenario 439 - Unauthorized Infrastructure Change
+
+Review:
+
+- Audit Logs
+- Terraform State
+- Cloud Activity Logs
+
+---
+
+# Scenario 440 - Backup Encryption Failure
+
+Verify encryption key and permissions.
+
+---
+
+# Scenario 441 - Monitoring System Outage
+
+Verify monitoring infrastructure.
+
+Use secondary monitoring if available.
+
+---
+
+# Scenario 442 - Incident Notification Failure
+
+Review:
+
+- Email
+- Slack
+- Teams
+- Pager Configuration
+
+---
+
+# Scenario 443 - Pager Not Triggered
+
+Verify escalation policies.
+
+Review notification rules.
+
+---
+
+# Scenario 444 - Time Synchronization Failure
+
+Review:
+
+```bash
+timedatectl
+```
+
+Verify NTP synchronization.
+
+---
+
+# Scenario 445 - Unexpected Configuration Rollback
+
+Review:
+
+- Deployment History
+- Git History
+- GitOps Synchronization
+
+---
+
+# Scenario 446 - Drift Between Git and Production
+
+Compare:
+
+- Git Repository
+- Running Configuration
+
+Restore desired state.
+
+---
+
+# Scenario 447 - Compliance Audit Failure
+
+Review:
+
+- IAM
+- Encryption
+- Logging
+- Backup
+- Network Security
+
+---
+
+# Scenario 448 - Multiple Simultaneous Alerts
+
+Correlate:
+
+- Metrics
+- Logs
+- Recent Deployments
+
+Avoid treating every alert as an independent incident.
+
+---
+
+# Scenario 449 - Root Cause Cannot Be Identified
+
+Perform:
+
+- Timeline Analysis
+- Change Analysis
+- Log Correlation
+- Metric Correlation
+- Team Review
+
+Document findings.
+
+---
+
+# Scenario 450 - Random Security & Monitoring Production Failure
+
+### Investigation
+
+Review:
+
+- Authentication Logs
+- Audit Logs
+- Monitoring Dashboards
+- Alert History
+- Configuration Changes
+- Security Events
+- Certificate Status
+- Recent Deployments
+
+### Root Cause
+
+Usually caused by configuration drift, security policy changes, expired certificates, monitoring failures, authentication issues, or operational misconfigurations.
+
+### Resolution
+
+Use a structured incident response process, validate security controls, restore monitoring visibility, and verify system health before closing the incident.
+
+### Prevention
+
+Implement continuous security monitoring, centralized logging, automated certificate renewal, Infrastructure as Code, regular compliance reviews, and periodic incident response drills.
+
+---
+
