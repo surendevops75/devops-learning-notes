@@ -1538,3 +1538,806 @@ a versioned chart.
 - Design an enterprise Helm repository strategy using private repositories, reusable charts, dependency management, versioning, and ArgoCD integration for Amazon EKS deployments.
 - Explain how Chart.yaml, values files, templates, dependencies, and repositories work together to create reusable and maintainable Kubernetes deployments.
 - A financial organization manages over 500 microservices on Amazon EKS. Explain how you would organize Helm Charts, repository structure, chart versioning, dependency management, values files, documentation, and GitOps workflows to support scalable, secure, and auditable application deployments.
+
+---
+
+# Chapter 3 - Helm Templates, Template Functions & Values
+
+One of Helm's biggest advantages
+
+is its
+
+templating engine.
+
+Instead of maintaining
+
+multiple Kubernetes YAML files
+
+for different environments,
+
+Helm generates
+
+deployment manifests
+
+using
+
+- Templates
+- Variables
+- Values Files
+- Built-in Functions
+
+This enables
+
+reusable,
+
+environment-independent
+
+Kubernetes deployments.
+
+---
+
+# Template Rendering Architecture
+
+```text
+Helm Chart
+
+↓
+
+Templates
+
+↓
+
+Values File
+
+↓
+
+Rendered YAML
+
+↓
+
+Amazon EKS
+```
+
+Templates
+
+become
+
+standard Kubernetes manifests
+
+before deployment.
+
+---
+
+# Why Templates?
+
+Without Templates
+
+```text
+Development Deployment
+
+↓
+
+Testing Deployment
+
+↓
+
+Production Deployment
+```
+
+Problems
+
+- Duplicate YAML
+- Difficult Maintenance
+- Environment Drift
+
+---
+
+With Templates
+
+```text
+One Template
+
+↓
+
+Multiple Values
+
+↓
+
+Generated Manifests
+```
+
+One template
+
+supports
+
+all environments.
+
+---
+
+# What is a Template?
+
+A Template
+
+is
+
+a Kubernetes manifest
+
+containing
+
+dynamic placeholders.
+
+Instead of hardcoded values,
+
+templates use
+
+variables
+
+that are replaced
+
+during rendering.
+
+---
+
+# Template Workflow
+
+```text
+Template
+
+↓
+
+Values
+
+↓
+
+Render
+
+↓
+
+Deployment YAML
+```
+
+Rendering happens
+
+before
+
+deployment.
+
+---
+
+# Templates Directory
+
+The `templates/`
+
+directory
+
+contains
+
+all Kubernetes resource templates.
+
+Examples
+
+```text
+deployment.yaml
+
+service.yaml
+
+ingress.yaml
+
+configmap.yaml
+
+secret.yaml
+
+hpa.yaml
+
+serviceaccount.yaml
+```
+
+Each resource
+
+is generated
+
+during installation.
+
+---
+
+# Values Injection
+
+Templates
+
+read values
+
+from
+
+`values.yaml`
+
+or
+
+environment-specific values files.
+
+Example
+
+```text
+values-dev.yaml
+
+↓
+
+Replica = 1
+
+────────────
+
+values-prod.yaml
+
+↓
+
+Replica = 5
+```
+
+The template
+
+remains unchanged.
+
+---
+
+# Template Rendering Process
+
+```text
+Chart
+
+↓
+
+Templates
+
+↓
+
+Values
+
+↓
+
+Manifest Generation
+
+↓
+
+Kubernetes YAML
+```
+
+The Kubernetes cluster
+
+receives
+
+fully rendered manifests.
+
+---
+
+# Default Values
+
+Every chart
+
+contains
+
+default values
+
+inside
+
+`values.yaml`.
+
+Examples
+
+```text
+Image Repository
+
+Image Tag
+
+Replica Count
+
+Service Port
+```
+
+These values
+
+can be overridden.
+
+---
+
+# Environment Override
+
+Environment-specific values
+
+override
+
+default values.
+
+Workflow
+
+```text
+Default Values
+
+↓
+
+Production Values
+
+↓
+
+Rendered Deployment
+```
+
+Production
+
+receives
+
+its own configuration.
+
+---
+
+# Template Variables
+
+Templates
+
+can generate
+
+dynamic values
+
+such as
+
+```text
+Application Name
+
+Namespace
+
+Image Tag
+
+Labels
+
+Annotations
+```
+
+Variables
+
+increase
+
+template reusability.
+
+---
+
+# Built-in Objects
+
+Helm provides
+
+built-in objects
+
+during rendering.
+
+Common objects
+
+```text
+Chart
+
+Release
+
+Values
+
+Capabilities
+
+Files
+```
+
+These objects
+
+provide
+
+deployment information.
+
+---
+
+# Release Object
+
+The Release object
+
+contains
+
+information
+
+about
+
+the installed release.
+
+Examples
+
+```text
+Release Name
+
+Namespace
+
+Revision
+```
+
+Useful
+
+for dynamic configuration.
+
+---
+
+# Chart Object
+
+The Chart object
+
+contains
+
+chart metadata.
+
+Examples
+
+```text
+Chart Name
+
+Chart Version
+
+Application Version
+```
+
+---
+
+# Values Object
+
+The Values object
+
+contains
+
+configuration
+
+loaded from
+
+values files.
+
+Templates
+
+retrieve
+
+runtime configuration
+
+from this object.
+
+---
+
+# Functions
+
+Helm
+
+includes
+
+built-in template functions.
+
+Examples
+
+- String Functions
+- Default Values
+- Conditional Logic
+- Loops
+- Encoding Functions
+
+Functions
+
+reduce
+
+template complexity.
+
+---
+
+# Conditional Rendering
+
+Templates
+
+can include
+
+conditional logic.
+
+Example
+
+```text
+Development
+
+↓
+
+Skip Ingress
+
+────────────
+
+Production
+
+↓
+
+Create Ingress
+```
+
+Different environments
+
+render
+
+different resources.
+
+---
+
+# Loops
+
+Templates
+
+can generate
+
+multiple resources
+
+using loops.
+
+Example
+
+```text
+Application
+
+↓
+
+Multiple ConfigMaps
+
+↓
+
+Generated Automatically
+```
+
+---
+
+# Named Templates
+
+Reusable template blocks
+
+can be shared
+
+across resources.
+
+Benefits
+
+- Reusability
+- Consistency
+- Reduced Duplication
+
+---
+
+# Helper Templates
+
+Common logic
+
+is placed
+
+inside helper templates.
+
+Examples
+
+```text
+Labels
+
+Names
+
+Annotations
+
+Selectors
+```
+
+Every resource
+
+shares
+
+the same conventions.
+
+---
+
+# Template Validation
+
+Before deployment,
+
+templates
+
+should be validated.
+
+Workflow
+
+```text
+Template
+
+↓
+
+Render
+
+↓
+
+Validation
+
+↓
+
+Deployment
+```
+
+This catches
+
+configuration errors
+
+early.
+
+---
+
+# Manifest Generation
+
+Helm
+
+renders
+
+every resource
+
+before
+
+sending it
+
+to Kubernetes.
+
+```text
+Templates
+
+↓
+
+Rendered YAML
+
+↓
+
+Kubernetes API
+```
+
+Kubernetes
+
+never receives
+
+template syntax.
+
+---
+
+# Enterprise Deployment
+
+```text
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Helm Chart
+
+↓
+
+Templates
+
+↓
+
+Values
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Templates
+
+generate
+
+environment-specific manifests.
+
+---
+
+# Banking Example
+
+```text
+Payment API
+
+↓
+
+Shared Template
+
+↓
+
+Production Values
+
+↓
+
+Amazon EKS
+```
+
+The same template
+
+supports
+
+every environment.
+
+---
+
+# Enterprise Template Strategy
+
+```text
+One Chart
+
+↓
+
+Reusable Templates
+
+↓
+
+Development
+
+↓
+
+Testing
+
+↓
+
+Staging
+
+↓
+
+Production
+```
+
+Configuration changes,
+
+not templates.
+
+---
+
+# Enterprise Best Practices
+
+- Keep templates generic.
+- Store environment values separately.
+- Reuse helper templates.
+- Validate templates before deployment.
+- Minimize duplicated template logic.
+- Follow consistent naming conventions.
+- Use built-in objects instead of hardcoding values.
+- Keep templates readable and modular.
+
+---
+
+# Common Mistakes
+
+- Hardcoding environment values.
+- Creating duplicate templates.
+- Mixing application logic with deployment templates.
+- Ignoring template validation.
+- Creating overly complex conditional logic.
+- Repeating labels across templates.
+- Modifying rendered YAML manually.
+
+---
+
+# Interview Questions
+
+## Basic
+
+- What is a Helm template?
+- Why do we use templates?
+- What is values.yaml?
+- What is template rendering?
+- What is the templates directory?
+
+## Intermediate
+
+- Default values vs overridden values.
+- What are built-in objects?
+- Explain the Release object.
+- What are helper templates?
+- Why validate templates before deployment?
+
+## Advanced
+
+- Design an enterprise Helm templating strategy using reusable templates, helper templates, environment-specific values, and ArgoCD for Amazon EKS deployments.
+- Explain how Helm templates, values files, built-in objects, helper templates, and rendering work together to generate reusable Kubernetes manifests.
+- A financial organization deploys more than 400 microservices across multiple Kubernetes environments. Explain how you would design reusable Helm templates, values management, helper templates, conditional rendering, validation, and GitOps integration to create scalable, maintainable, and secure Kubernetes deployments.
+
+---
+
