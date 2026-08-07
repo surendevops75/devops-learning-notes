@@ -459,3 +459,823 @@ Accurate timelines improve post-incident reviews.
 
 ---
 
+# Chapter 2 - Linux Production Troubleshooting Scenarios (1–50)
+
+Linux is the operating system behind most enterprise infrastructure.
+
+Before troubleshooting Kubernetes, Docker, Jenkins, or cloud platforms, engineers must verify the health of the underlying Linux server.
+
+This chapter covers **50 real-world Linux production troubleshooting scenarios**, focusing on systematic diagnosis, root cause identification, resolution, and preventive measures.
+
+---
+
+# Scenario 1 - Linux Server Is Unreachable
+
+### Symptoms
+
+- SSH connection fails.
+- Monitoring reports the server as down.
+- Applications become inaccessible.
+
+### Investigation
+
+- Check cloud instance status.
+- Verify network connectivity.
+- Confirm Security Group or firewall rules.
+- Review console logs.
+
+### Root Cause
+
+The instance is stopped, crashed, or blocked by network policies.
+
+### Resolution
+
+- Start or reboot the instance.
+- Correct firewall or Security Group rules.
+- Restore network connectivity.
+
+### Prevention
+
+Implement infrastructure monitoring and automated recovery.
+
+---
+
+# Scenario 2 - High CPU Usage
+
+### Symptoms
+
+- Slow application response.
+- High load average.
+- Monitoring alerts.
+
+### Investigation
+
+```bash
+top
+
+htop
+
+ps -eo pid,ppid,cmd,%cpu --sort=-%cpu
+```
+
+### Root Cause
+
+A process consumes excessive CPU resources.
+
+### Resolution
+
+- Optimize the application.
+- Restart the affected process if required.
+- Scale the workload.
+
+### Prevention
+
+Monitor CPU utilization and configure alerts.
+
+---
+
+# Scenario 3 - High Memory Usage
+
+### Symptoms
+
+- Applications become slow.
+- Out Of Memory (OOM) events.
+- Server instability.
+
+### Investigation
+
+```bash
+free -h
+
+top
+
+vmstat
+```
+
+### Root Cause
+
+Memory leak or insufficient RAM.
+
+### Resolution
+
+- Restart the leaking application.
+- Increase available memory.
+- Optimize memory usage.
+
+### Prevention
+
+Monitor memory trends and detect leaks early.
+
+---
+
+# Scenario 4 - OOM Killer Terminates Application
+
+### Symptoms
+
+Application exits unexpectedly.
+
+### Investigation
+
+```bash
+dmesg | grep -i oom
+```
+
+### Root Cause
+
+Kernel OOM Killer terminated the process.
+
+### Resolution
+
+Reduce memory consumption or increase available RAM.
+
+### Prevention
+
+Set appropriate memory limits and monitor usage.
+
+---
+
+# Scenario 5 - Disk Usage Reaches 100%
+
+### Symptoms
+
+- Applications fail to write data.
+- Database errors.
+- Deployment failures.
+
+### Investigation
+
+```bash
+df -h
+
+du -sh /*
+```
+
+### Root Cause
+
+Filesystem completely full.
+
+### Resolution
+
+- Remove unnecessary files.
+- Archive old logs.
+- Extend storage if required.
+
+### Prevention
+
+Enable disk usage monitoring and log rotation.
+
+---
+
+# Scenario 6 - Inode Exhaustion
+
+### Symptoms
+
+Disk has free space but new files cannot be created.
+
+### Investigation
+
+```bash
+df -i
+```
+
+### Root Cause
+
+All available inodes are consumed.
+
+### Resolution
+
+Delete unnecessary small files.
+
+### Prevention
+
+Monitor inode usage regularly.
+
+---
+
+# Scenario 7 - SSH Login Fails
+
+### Symptoms
+
+Users cannot connect via SSH.
+
+### Investigation
+
+```bash
+systemctl status sshd
+
+journalctl -u sshd
+```
+
+### Root Cause
+
+- SSH service stopped.
+- Firewall issue.
+- Invalid authentication.
+
+### Resolution
+
+Restart SSH service and verify configuration.
+
+### Prevention
+
+Continuously monitor SSH availability.
+
+---
+
+# Scenario 8 - DNS Resolution Failure
+
+### Symptoms
+
+Applications cannot reach external services.
+
+### Investigation
+
+```bash
+nslookup google.com
+
+dig google.com
+```
+
+### Root Cause
+
+DNS server unavailable or misconfigured.
+
+### Resolution
+
+Correct DNS configuration.
+
+### Prevention
+
+Use redundant DNS servers.
+
+---
+
+# Scenario 9 - Time Synchronization Failure
+
+### Symptoms
+
+Authentication failures.
+
+TLS certificate validation errors.
+
+### Investigation
+
+```bash
+timedatectl
+```
+
+### Root Cause
+
+Incorrect system time.
+
+### Resolution
+
+Synchronize using NTP.
+
+### Prevention
+
+Monitor time synchronization services.
+
+---
+
+# Scenario 10 - Service Fails After Reboot
+
+### Symptoms
+
+Application unavailable after server restart.
+
+### Investigation
+
+```bash
+systemctl status service-name
+
+systemctl is-enabled service-name
+```
+
+### Root Cause
+
+Service not enabled.
+
+### Resolution
+
+```bash
+systemctl enable service-name
+```
+
+### Prevention
+
+Verify service startup configuration.
+
+---
+
+# Scenario 11 - Network Interface Down
+
+### Symptoms
+
+Server loses network connectivity.
+
+### Investigation
+
+```bash
+ip addr
+
+ip link
+```
+
+### Root Cause
+
+Interface disabled or configuration issue.
+
+### Resolution
+
+Bring interface online and verify network configuration.
+
+---
+
+# Scenario 12 - Packet Loss
+
+### Investigation
+
+```bash
+ping
+
+mtr
+
+traceroute
+```
+
+### Root Cause
+
+Network congestion or hardware issue.
+
+### Resolution
+
+Identify faulty network component.
+
+---
+
+# Scenario 13 - High Load Average
+
+### Investigation
+
+```bash
+uptime
+
+top
+```
+
+### Root Cause
+
+CPU saturation or blocked I/O.
+
+### Resolution
+
+Identify bottleneck and optimize workload.
+
+---
+
+# Scenario 14 - Swap Usage Extremely High
+
+### Investigation
+
+```bash
+free -h
+
+vmstat
+```
+
+### Root Cause
+
+Insufficient memory.
+
+### Resolution
+
+Optimize applications or add RAM.
+
+---
+
+# Scenario 15 - Zombie Processes
+
+### Investigation
+
+```bash
+ps -el | grep Z
+```
+
+### Root Cause
+
+Parent process failed to clean child process.
+
+### Resolution
+
+Restart parent process.
+
+---
+
+# Scenario 16 - Defunct Process Accumulation
+
+### Investigation
+
+```bash
+ps aux | grep defunct
+```
+
+### Root Cause
+
+Improper process management.
+
+### Resolution
+
+Restart responsible service.
+
+---
+
+# Scenario 17 - Failed Systemd Service
+
+### Investigation
+
+```bash
+systemctl status service
+
+journalctl -xe
+```
+
+### Root Cause
+
+Configuration or dependency issue.
+
+### Resolution
+
+Correct configuration and restart.
+
+---
+
+# Scenario 18 - Port Already in Use
+
+### Investigation
+
+```bash
+ss -lntp
+
+lsof -i :8080
+```
+
+### Root Cause
+
+Another process owns the port.
+
+### Resolution
+
+Stop conflicting process or use another port.
+
+---
+
+# Scenario 19 - File Permission Denied
+
+### Investigation
+
+```bash
+ls -l
+```
+
+### Root Cause
+
+Incorrect ownership or permissions.
+
+### Resolution
+
+```bash
+chmod
+
+chown
+```
+
+---
+
+# Scenario 20 - SELinux Blocking Application
+
+### Investigation
+
+```bash
+getenforce
+
+ausearch
+```
+
+### Root Cause
+
+SELinux policy restriction.
+
+### Resolution
+
+Update policy or application configuration.
+
+---
+
+# Scenario 21 - Log Files Growing Rapidly
+
+### Root Cause
+
+Application generating excessive logs.
+
+### Resolution
+
+Enable log rotation.
+
+---
+
+# Scenario 22 - Log Rotation Not Working
+
+### Investigation
+
+```bash
+logrotate -d
+```
+
+### Root Cause
+
+Invalid logrotate configuration.
+
+---
+
+# Scenario 23 - Cron Job Not Running
+
+### Investigation
+
+```bash
+crontab -l
+
+systemctl status crond
+```
+
+### Root Cause
+
+Cron service stopped or incorrect schedule.
+
+---
+
+# Scenario 24 - Incorrect File Ownership
+
+### Investigation
+
+```bash
+ls -l
+```
+
+### Resolution
+
+```bash
+chown
+```
+
+---
+
+# Scenario 25 - Package Installation Failure
+
+### Investigation
+
+```bash
+dnf install
+
+apt install
+```
+
+### Root Cause
+
+Repository unavailable or dependency issue.
+
+---
+
+# Scenario 26 - Repository Unreachable
+
+### Investigation
+
+Verify internet connectivity and repository configuration.
+
+---
+
+# Scenario 27 - Filesystem Mounted Read-Only
+
+### Investigation
+
+```bash
+mount
+```
+
+### Root Cause
+
+Filesystem corruption.
+
+---
+
+# Scenario 28 - Filesystem Corruption
+
+### Investigation
+
+```bash
+fsck
+```
+
+---
+
+# Scenario 29 - High Disk I/O
+
+### Investigation
+
+```bash
+iostat
+
+iotop
+```
+
+---
+
+# Scenario 30 - Slow File Operations
+
+### Investigation
+
+Check storage latency and disk utilization.
+
+---
+
+# Scenario 31 - Authentication Failures
+
+Investigate:
+
+```bash
+/var/log/secure
+```
+
+---
+
+# Scenario 32 - Excessive Failed SSH Attempts
+
+Investigate authentication logs.
+
+Implement Fail2Ban or firewall rules.
+
+---
+
+# Scenario 33 - User Account Locked
+
+Verify PAM configuration and authentication logs.
+
+---
+
+# Scenario 34 - Password Expired
+
+Use:
+
+```bash
+chage
+```
+
+---
+
+# Scenario 35 - Server Boot Failure
+
+Investigate GRUB configuration and boot logs.
+
+---
+
+# Scenario 36 - Kernel Panic
+
+Review console logs and recent kernel updates.
+
+---
+
+# Scenario 37 - Kernel Upgrade Failure
+
+Verify installed kernel versions.
+
+Rollback if required.
+
+---
+
+# Scenario 38 - Network Routing Issue
+
+Investigate:
+
+```bash
+ip route
+```
+
+---
+
+# Scenario 39 - Firewall Blocking Traffic
+
+Verify:
+
+```bash
+firewall-cmd
+
+iptables
+```
+
+---
+
+# Scenario 40 - DNS Configuration Incorrect
+
+Review:
+
+```text
+/etc/resolv.conf
+```
+
+---
+
+# Scenario 41 - SSL Certificate Expired
+
+Verify certificate expiration.
+
+Renew and reload services.
+
+---
+
+# Scenario 42 - System Clock Drift
+
+Synchronize with NTP.
+
+---
+
+# Scenario 43 - Unexpected Server Reboot
+
+Review:
+
+```bash
+last reboot
+
+journalctl
+```
+
+---
+
+# Scenario 44 - Excessive Process Creation
+
+Investigate parent processes.
+
+---
+
+# Scenario 45 - Service Starts Slowly
+
+Review dependencies and startup logs.
+
+---
+
+# Scenario 46 - Application Cannot Write Files
+
+Check permissions, ownership, and available disk space.
+
+---
+
+# Scenario 47 - Backup Script Failure
+
+Verify storage availability and permissions.
+
+---
+
+# Scenario 48 - NFS Mount Failure
+
+Verify server availability and mount configuration.
+
+---
+
+# Scenario 49 - Performance Degradation After Patch
+
+Compare:
+
+- Kernel Version
+- Packages
+- Configuration Changes
+
+Rollback if necessary.
+
+---
+
+# Scenario 50 - Random System Slowdowns
+
+### Investigation
+
+Review:
+
+- CPU
+- Memory
+- Disk
+- Network
+- Logs
+- Recent Changes
+
+### Root Cause
+
+Typically resource contention or configuration drift.
+
+### Resolution
+
+Identify the bottleneck using metrics and logs.
+
+### Prevention
+
+Continuous monitoring and capacity planning.
+
+---
+
