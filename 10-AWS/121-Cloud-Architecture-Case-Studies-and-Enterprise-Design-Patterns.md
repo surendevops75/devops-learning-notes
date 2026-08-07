@@ -994,3 +994,628 @@ Each service scales independently.
 
 ---
 
+# Chapter 3 - Enterprise Networking Architecture & Design Patterns
+
+Networking is the foundation of every cloud architecture.
+
+Every request made by a user travels through multiple networking layers before reaching an application.
+
+A well-designed enterprise network provides:
+
+- High Availability
+- Security
+- Scalability
+- Isolation
+- Low Latency
+- Fault Tolerance
+
+Without a proper networking architecture, even the best application cannot operate reliably.
+
+---
+
+# Enterprise Network Architecture
+
+A typical cloud network follows this structure.
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+CDN
+
+↓
+
+Web Application Firewall
+
+↓
+
+Load Balancer
+
+↓
+
+Application Tier
+
+↓
+
+Database Tier
+
+↓
+
+Storage
+```
+
+Each layer performs a specific role.
+
+---
+
+# Virtual Private Cloud (VPC)
+
+A **Virtual Private Cloud (VPC)** is a logically isolated network within a cloud provider.
+
+It allows organizations to define:
+
+- IP Address Range
+- Subnets
+- Routing
+- Security Rules
+- Internet Connectivity
+
+Every production application begins with a properly designed VPC.
+
+---
+
+# VPC Architecture
+
+```text
+AWS Region
+
+↓
+
+VPC
+
+↓
+
+Subnets
+
+↓
+
+Resources
+```
+
+A VPC provides complete network isolation from other customers.
+
+---
+
+# CIDR Block Planning
+
+Every VPC is assigned a CIDR block.
+
+Example:
+
+```text
+10.0.0.0/16
+```
+
+Subnets are created within the VPC.
+
+Example:
+
+```text
+10.0.1.0/24
+
+10.0.2.0/24
+
+10.0.3.0/24
+```
+
+Proper CIDR planning prevents IP exhaustion and simplifies future expansion.
+
+---
+
+# Public and Private Subnets
+
+Enterprise architectures separate workloads into public and private subnets.
+
+Public Subnet
+
+```text
+Internet
+
+↓
+
+Internet Gateway
+
+↓
+
+Public Subnet
+
+↓
+
+Load Balancer
+
+Bastion Host
+```
+
+Private Subnet
+
+```text
+Private Subnet
+
+↓
+
+Application Servers
+
+↓
+
+Databases
+
+↓
+
+Internal Services
+```
+
+Only internet-facing resources should reside in public subnets.
+
+---
+
+# Multi-AZ Architecture
+
+High availability is achieved by distributing resources across multiple Availability Zones.
+
+```text
+VPC
+
+├── Public AZ-1
+
+├── Private AZ-1
+
+├── Public AZ-2
+
+└── Private AZ-2
+```
+
+Applications continue operating even if one Availability Zone becomes unavailable.
+
+---
+
+# Internet Gateway (IGW)
+
+An Internet Gateway enables communication between the VPC and the internet.
+
+```text
+Internet
+
+↓
+
+Internet Gateway
+
+↓
+
+Public Subnet
+```
+
+Without an Internet Gateway, public resources cannot communicate with the internet.
+
+---
+
+# NAT Gateway
+
+Private resources often require outbound internet access.
+
+Example:
+
+```text
+Private EC2
+
+↓
+
+NAT Gateway
+
+↓
+
+Internet
+```
+
+Common use cases:
+
+- Package Updates
+- Docker Image Downloads
+- API Calls
+- Software Installation
+
+Private resources remain inaccessible from the internet.
+
+---
+
+# Route Tables
+
+Route tables determine how network traffic is forwarded.
+
+Example:
+
+```text
+Destination
+
+↓
+
+Next Hop
+
+↓
+
+Internet Gateway
+
+↓
+
+NAT Gateway
+
+↓
+
+Local Network
+```
+
+Every subnet is associated with a route table.
+
+---
+
+# Security Groups
+
+Security Groups act as virtual firewalls.
+
+Characteristics:
+
+- Stateful
+- Instance Level
+- Allow Rules Only
+
+Example:
+
+```text
+Allow
+
+HTTPS 443
+
+SSH 22
+
+Application Port
+```
+
+Traffic not explicitly allowed is denied.
+
+---
+
+# Network ACLs
+
+Network ACLs provide subnet-level security.
+
+Characteristics:
+
+- Stateless
+- Allow Rules
+- Deny Rules
+
+Comparison:
+
+| Security Group | Network ACL |
+|---------------|-------------|
+| Stateful | Stateless |
+| Instance Level | Subnet Level |
+| Allow Only | Allow & Deny |
+
+Most production environments use both.
+
+---
+
+# DNS Architecture
+
+Enterprise DNS workflow:
+
+```text
+User
+
+↓
+
+DNS
+
+↓
+
+Load Balancer
+
+↓
+
+Application
+```
+
+DNS provides location transparency and simplifies infrastructure changes.
+
+---
+
+# Load Balancer
+
+A Load Balancer distributes incoming requests.
+
+```text
+Users
+
+↓
+
+Application Load Balancer
+
+↓
+
+Server 1
+
+Server 2
+
+Server 3
+```
+
+Benefits:
+
+- High Availability
+- Fault Tolerance
+- Automatic Health Checks
+
+---
+
+# Reverse Proxy Pattern
+
+Enterprise applications commonly use reverse proxies.
+
+```text
+Client
+
+↓
+
+Load Balancer
+
+↓
+
+Reverse Proxy
+
+↓
+
+Applications
+```
+
+Advantages:
+
+- SSL Termination
+- Routing
+- Authentication
+- Caching
+
+---
+
+# Bastion Host Pattern
+
+Administrative access should never be exposed directly.
+
+```text
+Administrator
+
+↓
+
+SSH
+
+↓
+
+Bastion Host
+
+↓
+
+Private Servers
+```
+
+Only the bastion host is internet accessible.
+
+---
+
+# Three-Tier Network Architecture
+
+A common enterprise design.
+
+```text
+Presentation Tier
+
+↓
+
+Application Tier
+
+↓
+
+Database Tier
+```
+
+Example:
+
+```text
+Internet
+
+↓
+
+Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Amazon RDS
+```
+
+Each tier is isolated from the others.
+
+---
+
+# Zero Trust Networking
+
+Modern architectures follow Zero Trust principles.
+
+Key concepts:
+
+- Verify Every Request
+- Least Privilege
+- Strong Authentication
+- Network Segmentation
+- Continuous Monitoring
+
+Never trust traffic based solely on network location.
+
+---
+
+# Kubernetes Networking
+
+Enterprise Kubernetes networking:
+
+```text
+Internet
+
+↓
+
+Application Load Balancer
+
+↓
+
+Ingress Controller
+
+↓
+
+Services
+
+↓
+
+Pods
+```
+
+Traffic flows through multiple networking layers before reaching containers.
+
+---
+
+# Hybrid Cloud Pattern
+
+Some organizations combine on-premises infrastructure with the cloud.
+
+```text
+On-Premises
+
+↓
+
+VPN / Direct Connect
+
+↓
+
+AWS Cloud
+
+↓
+
+Applications
+```
+
+Hybrid networking enables gradual cloud migration.
+
+---
+
+# Enterprise Example
+
+Production microservices network.
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+CloudFront
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon S3
+```
+
+Every layer contributes to security and scalability.
+
+---
+
+# Enterprise Best Practices
+
+- Design VPCs with future growth in mind.
+- Separate public and private workloads.
+- Deploy across multiple Availability Zones.
+- Use NAT Gateways for private subnet internet access.
+- Restrict inbound traffic using Security Groups.
+- Use Network ACLs for additional subnet protection.
+- Minimize administrative access.
+- Implement Zero Trust networking.
+- Document network architecture thoroughly.
+- Continuously monitor network traffic.
+
+---
+
+# Common Mistakes
+
+- Placing databases in public subnets.
+- Using a single Availability Zone.
+- Opening unnecessary ports.
+- Poor CIDR planning.
+- Allowing unrestricted SSH access.
+- Mixing production and development workloads.
+- Ignoring network monitoring.
+- Creating overly permissive Security Groups.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a VPC?
+2. What is a subnet?
+3. Difference between public and private subnets.
+4. What is an Internet Gateway?
+5. What is a NAT Gateway?
+
+## Intermediate
+
+1. Difference between Security Groups and Network ACLs.
+2. Explain Multi-AZ architecture.
+3. Why are route tables required?
+4. Explain the Bastion Host pattern.
+5. What is Zero Trust networking?
+
+## Advanced
+
+1. Design a secure networking architecture for a production Kubernetes platform hosting microservices on AWS, including VPC, subnets, routing, Security Groups, NAT Gateways, and Load Balancers.
+2. Explain how networking components such as VPCs, CIDR blocks, public/private subnets, Internet Gateways, NAT Gateways, Security Groups, and Network ACLs work together to provide secure and scalable cloud infrastructure.
+3. A financial organization is migrating to AWS and must securely host internet-facing applications, internal APIs, databases, and Kubernetes clusters. Design the complete networking architecture while ensuring high availability, least privilege, fault tolerance, and future scalability.
+
+---
+
