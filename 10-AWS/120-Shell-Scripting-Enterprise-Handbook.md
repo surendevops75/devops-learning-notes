@@ -3516,3 +3516,636 @@ This approach is frequently used for security investigations.
 
 ---
 
+# Chapter 7 - File Handling, Input/Output & Logging
+
+Enterprise shell scripts constantly interact with files.
+
+Typical operations include:
+
+- Reading Configuration Files
+- Processing CSV Files
+- Parsing Log Files
+- Creating Reports
+- Backing Up Files
+- Writing Audit Logs
+- Generating Deployment Reports
+
+A DevOps Engineer spends a significant amount of time writing scripts that read data from files and write results to new files.
+
+---
+
+# Why File Handling?
+
+Consider a production environment with hundreds of servers.
+
+Without file handling:
+
+```text
+Login Server 1
+
+↓
+
+Run Command
+
+↓
+
+Login Server 2
+
+↓
+
+Run Command
+
+↓
+
+Repeat
+```
+
+With file handling:
+
+```text
+servers.txt
+
+↓
+
+Shell Script
+
+↓
+
+Read Servers
+
+↓
+
+Execute Commands
+
+↓
+
+Generate Report
+```
+
+Automation becomes scalable and repeatable.
+
+---
+
+# Input and Output Streams
+
+Every Linux process uses three standard streams.
+
+| Stream | Description |
+|----------|-------------|
+| STDIN (0) | Standard Input |
+| STDOUT (1) | Standard Output |
+| STDERR (2) | Standard Error |
+
+```text
+Keyboard
+
+↓
+
+STDIN
+
+↓
+
+Program
+
+↓
+
+STDOUT
+
+↓
+
+Screen
+```
+
+Errors are written to **STDERR**.
+
+---
+
+# Reading a File
+
+Display file contents.
+
+```bash
+cat servers.txt
+```
+
+Example:
+
+```text
+web01
+
+web02
+
+web03
+```
+
+Useful for small files.
+
+---
+
+# Reading File Line by Line
+
+Recommended approach for large files.
+
+```bash
+while read SERVER
+do
+    echo $SERVER
+done < servers.txt
+```
+
+This method is memory efficient and widely used in production scripts.
+
+---
+
+# Reading CSV Files
+
+Example CSV:
+
+```text
+Name,Environment
+
+Payment,Production
+
+Order,Stage
+```
+
+Script:
+
+```bash
+while IFS=',' read APP ENV
+do
+    echo "$APP -> $ENV"
+done < apps.csv
+```
+
+CSV processing is common in automation.
+
+---
+
+# Check if File Exists
+
+```bash
+if [ -f config.yaml ]
+then
+    echo "File Exists"
+else
+    echo "File Missing"
+fi
+```
+
+Always validate files before processing them.
+
+---
+
+# Check Directory Exists
+
+```bash
+if [ -d /backup ]
+then
+    echo "Directory Found"
+fi
+```
+
+---
+
+# Create Files
+
+```bash
+touch report.txt
+```
+
+Create multiple files:
+
+```bash
+touch app.log deploy.log backup.log
+```
+
+---
+
+# Create Directories
+
+```bash
+mkdir reports
+```
+
+Create nested directories:
+
+```bash
+mkdir -p reports/2026/august
+```
+
+---
+
+# Copy Files
+
+```bash
+cp app.conf backup.conf
+```
+
+Copy directories:
+
+```bash
+cp -r configs backup/
+```
+
+---
+
+# Move Files
+
+```bash
+mv report.txt archive/
+```
+
+Rename a file:
+
+```bash
+mv report.txt report_old.txt
+```
+
+---
+
+# Delete Files
+
+```bash
+rm report.txt
+```
+
+Delete directory recursively:
+
+```bash
+rm -rf reports/
+```
+
+⚠️ Always verify paths before deleting files.
+
+---
+
+# File Redirection
+
+Overwrite file contents:
+
+```bash
+echo "Deployment Successful" > report.txt
+```
+
+Append to a file:
+
+```bash
+echo "Deployment Completed" >> report.txt
+```
+
+Difference:
+
+| Operator | Action |
+|----------|--------|
+| `>` | Overwrite |
+| `>>` | Append |
+
+---
+
+# Redirect Errors
+
+Write errors to a file.
+
+```bash
+command 2> errors.log
+```
+
+Append errors:
+
+```bash
+command 2>> errors.log
+```
+
+---
+
+# Redirect Output and Errors
+
+Store both standard output and errors.
+
+```bash
+command > output.log 2>&1
+```
+
+Or using modern Bash syntax:
+
+```bash
+command &> output.log
+```
+
+This is commonly used in automation scripts.
+
+---
+
+# Ignore Output
+
+Suppress command output.
+
+```bash
+command > /dev/null
+```
+
+Suppress both output and errors.
+
+```bash
+command > /dev/null 2>&1
+```
+
+Useful for silent validation checks.
+
+---
+
+# Here Document (HEREDOC)
+
+Write multiple lines into a file.
+
+```bash
+cat <<EOF > config.txt
+Application=Payment
+Environment=Production
+Version=1.0
+EOF
+```
+
+HEREDOCs simplify configuration generation.
+
+---
+
+# Temporary Files
+
+Create a secure temporary file.
+
+```bash
+mktemp
+```
+
+Example output:
+
+```text
+/tmp/tmp.aBc123
+```
+
+Temporary files should be removed after use.
+
+---
+
+# Logging
+
+Every production script should generate logs.
+
+Example:
+
+```bash
+echo "$(date) : Deployment Started" >> deploy.log
+```
+
+Example log:
+
+```text
+2026-08-18 10:30 Deployment Started
+```
+
+Logs simplify troubleshooting.
+
+---
+
+# Centralized Logging Function
+
+```bash
+log() {
+
+    echo "$(date '+%F %T') : $1" >> deploy.log
+}
+```
+
+Usage:
+
+```bash
+log "Application Deployed"
+```
+
+This avoids repeated logging code.
+
+---
+
+# Backup Files
+
+Simple backup:
+
+```bash
+cp app.conf app.conf.bak
+```
+
+Timestamped backup:
+
+```bash
+cp app.conf app.conf.$(date +%F)
+```
+
+This preserves previous versions.
+
+---
+
+# Process Large Files
+
+Read only the first few lines:
+
+```bash
+head application.log
+```
+
+Read the last few lines:
+
+```bash
+tail application.log
+```
+
+Follow a growing log:
+
+```bash
+tail -f application.log
+```
+
+These commands are essential during production troubleshooting.
+
+---
+
+# Count Records
+
+Count lines.
+
+```bash
+wc -l servers.txt
+```
+
+Count words.
+
+```bash
+wc -w notes.txt
+```
+
+Count characters.
+
+```bash
+wc -c file.txt
+```
+
+---
+
+# Search Within Files
+
+```bash
+grep ERROR application.log
+```
+
+Search recursively.
+
+```bash
+grep -r "database" .
+```
+
+Count matches.
+
+```bash
+grep ERROR application.log | wc -l
+```
+
+---
+
+# Kubernetes Example
+
+Read deployment names from a file.
+
+```bash
+while read APP
+do
+    kubectl rollout restart deployment/$APP
+done < deployments.txt
+```
+
+One script can restart hundreds of deployments.
+
+---
+
+# AWS Example
+
+Read EC2 instance IDs.
+
+```bash
+while read ID
+do
+    aws ec2 stop-instances --instance-ids $ID
+done < instances.txt
+```
+
+This approach is commonly used for infrastructure automation.
+
+---
+
+# CI/CD Example
+
+Generate deployment reports.
+
+```text
+Pipeline
+
+↓
+
+Deployment
+
+↓
+
+Log File
+
+↓
+
+Report
+
+↓
+
+Notification
+```
+
+Logs provide traceability for every deployment.
+
+---
+
+# Enterprise Example
+
+Daily backup workflow.
+
+```text
+Read Server List
+
+↓
+
+Connect
+
+↓
+
+Backup Database
+
+↓
+
+Write Log
+
+↓
+
+Generate Report
+```
+
+Each step records success or failure.
+
+---
+
+# Enterprise Best Practices
+
+- Always verify file existence before reading.
+- Use append (`>>`) for log files.
+- Redirect errors to separate log files.
+- Use timestamped backups.
+- Remove temporary files after use.
+- Store logs in a dedicated directory.
+- Validate input files before processing.
+- Generate audit logs for critical operations.
+
+---
+
+# Common Mistakes
+
+- Overwriting log files using `>`.
+- Ignoring error output.
+- Using hardcoded file paths.
+- Forgetting to close HEREDOCs correctly.
+- Leaving temporary files behind.
+- Deleting files without validation.
+- Running destructive commands without backups.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What are STDIN, STDOUT, and STDERR?
+2. What is the difference between `>` and `>>`?
+3. How do you check whether a file exists?
+4. How do you read a file line by line?
+5. What is `/dev/null`?
+
+## Intermediate
+
+1. Explain output redirection.
+2. What is a HEREDOC?
+3. How do you redirect both output and errors to a file?
+4. Why should production scripts generate logs?
+5. How do you process CSV files in Bash?
+
+## Advanced
+
+1. Design a shell script that reads a list of servers from a file, performs health checks, logs results, generates timestamped reports, and stores failures in a separate error log.
+2. Explain how file handling, input/output redirection, logging, and temporary files contribute to reliable enterprise automation.
+3. A CI/CD platform deploys applications to hundreds of servers every day. Design a shell scripting framework that reads deployment targets from configuration files, captures logs, redirects errors, creates backups, and generates deployment reports while ensuring reliability and auditability.
+
+---
+
