@@ -2881,3 +2881,638 @@ Each function performs one clearly defined task.
 
 ---
 
+# Chapter 6 - Arrays, String Manipulation & Text Processing
+
+Most enterprise automation scripts work with collections of data rather than single values.
+
+Examples include:
+
+- Server Lists
+- Kubernetes Namespaces
+- Docker Images
+- AWS Instance IDs
+- Log Files
+- User Accounts
+
+Arrays and string manipulation make it easy to process large amounts of information efficiently.
+
+Text processing tools such as `grep`, `cut`, `awk`, and `sed` are among the most frequently used utilities by DevOps engineers.
+
+---
+
+# What is an Array?
+
+An array is a collection of multiple values stored under a single variable.
+
+Instead of creating multiple variables:
+
+```bash
+SERVER1=web01
+
+SERVER2=web02
+
+SERVER3=web03
+```
+
+Use one array:
+
+```bash
+SERVERS=("web01" "web02" "web03")
+```
+
+Arrays simplify automation tasks.
+
+---
+
+# Creating an Array
+
+Example:
+
+```bash
+TOOLS=("Docker" "Kubernetes" "Terraform" "Jenkins")
+```
+
+This creates an array containing four values.
+
+---
+
+# Accessing Array Elements
+
+Retrieve a specific element using its index.
+
+```bash
+echo ${TOOLS[0]}
+```
+
+Output:
+
+```text
+Docker
+```
+
+```bash
+echo ${TOOLS[2]}
+```
+
+Output:
+
+```text
+Terraform
+```
+
+Array indexing starts at **0**.
+
+---
+
+# Display All Elements
+
+Print every element in the array.
+
+```bash
+echo "${TOOLS[@]}"
+```
+
+Output:
+
+```text
+Docker Kubernetes Terraform Jenkins
+```
+
+---
+
+# Array Length
+
+Determine the number of elements.
+
+```bash
+echo ${#TOOLS[@]}
+```
+
+Output:
+
+```text
+4
+```
+
+Useful when processing dynamic datasets.
+
+---
+
+# Add Elements
+
+Append a new value.
+
+```bash
+TOOLS+=("Ansible")
+```
+
+Updated array:
+
+```text
+Docker Kubernetes Terraform Jenkins Ansible
+```
+
+---
+
+# Loop Through an Array
+
+Example:
+
+```bash
+for TOOL in "${TOOLS[@]}"
+do
+    echo $TOOL
+done
+```
+
+Output:
+
+```text
+Docker
+
+Kubernetes
+
+Terraform
+
+Jenkins
+```
+
+---
+
+# Associative Arrays
+
+Bash also supports key-value pairs.
+
+```bash
+declare -A SERVERS
+
+SERVERS[dev]="10.0.0.10"
+
+SERVERS[prod]="10.0.1.20"
+```
+
+Access a value:
+
+```bash
+echo ${SERVERS[prod]}
+```
+
+Output:
+
+```text
+10.0.1.20
+```
+
+Associative arrays require Bash 4 or later.
+
+---
+
+# Strings
+
+A string is a sequence of characters.
+
+Example:
+
+```bash
+NAME="DevOps Engineer"
+```
+
+Strings are widely used for:
+
+- File Names
+- URLs
+- Image Tags
+- Branch Names
+- Environment Names
+
+---
+
+# String Length
+
+Determine string length.
+
+```bash
+NAME="Docker"
+
+echo ${#NAME}
+```
+
+Output:
+
+```text
+6
+```
+
+---
+
+# String Concatenation
+
+Join multiple strings.
+
+```bash
+APP="payment"
+
+ENV="production"
+
+echo "$APP-$ENV"
+```
+
+Output:
+
+```text
+payment-production
+```
+
+---
+
+# Substring
+
+Extract part of a string.
+
+```bash
+TEXT="Kubernetes"
+
+echo ${TEXT:0:4}
+```
+
+Output:
+
+```text
+Kube
+```
+
+---
+
+# Replace Text
+
+Replace part of a string.
+
+```bash
+APP="payment-service"
+
+echo ${APP/service/api}
+```
+
+Output:
+
+```text
+payment-api
+```
+
+---
+
+# Convert to Uppercase
+
+```bash
+NAME="docker"
+
+echo ${NAME^^}
+```
+
+Output:
+
+```text
+DOCKER
+```
+
+---
+
+# Convert to Lowercase
+
+```bash
+NAME="KUBERNETES"
+
+echo ${NAME,,}
+```
+
+Output:
+
+```text
+kubernetes
+```
+
+---
+
+# grep
+
+`grep` searches for matching text.
+
+Example:
+
+```bash
+grep "ERROR" application.log
+```
+
+Ignore case:
+
+```bash
+grep -i "failed" application.log
+```
+
+Show line numbers:
+
+```bash
+grep -n "timeout" application.log
+```
+
+Recursive search:
+
+```bash
+grep -r "database" .
+```
+
+`grep` is one of the most frequently used Linux commands.
+
+---
+
+# cut
+
+Extract specific fields.
+
+Example:
+
+```bash
+echo "Docker,Kubernetes,Jenkins" | cut -d',' -f2
+```
+
+Output:
+
+```text
+Kubernetes
+```
+
+---
+
+# sort
+
+Sort text.
+
+```bash
+sort servers.txt
+```
+
+Reverse order:
+
+```bash
+sort -r servers.txt
+```
+
+---
+
+# uniq
+
+Remove duplicate entries.
+
+```bash
+sort users.txt | uniq
+```
+
+Count duplicates:
+
+```bash
+sort users.txt | uniq -c
+```
+
+---
+
+# wc
+
+Count lines, words, or characters.
+
+```bash
+wc -l servers.txt
+```
+
+Count words:
+
+```bash
+wc -w notes.txt
+```
+
+---
+
+# tr
+
+Translate characters.
+
+Convert lowercase to uppercase:
+
+```bash
+echo "devops" | tr 'a-z' 'A-Z'
+```
+
+Output:
+
+```text
+DEVOPS
+```
+
+---
+
+# sed
+
+`sed` is a stream editor used to modify text.
+
+Replace text:
+
+```bash
+sed 's/dev/stage/' config.txt
+```
+
+Replace globally:
+
+```bash
+sed 's/dev/prod/g' config.txt
+```
+
+Edit a file directly:
+
+```bash
+sed -i 's/8080/9090/g' application.properties
+```
+
+`sed` is commonly used to update configuration files during deployments.
+
+---
+
+# awk
+
+`awk` processes structured text.
+
+Print the first column:
+
+```bash
+awk '{print $1}' users.txt
+```
+
+Print specific fields:
+
+```bash
+awk '{print $1,$3}' users.txt
+```
+
+`awk` is extremely powerful for parsing logs and reports.
+
+---
+
+# xargs
+
+Convert input into command arguments.
+
+Example:
+
+```bash
+cat files.txt | xargs rm
+```
+
+This removes every file listed in `files.txt`.
+
+Always verify the input before executing destructive commands.
+
+---
+
+# Combining Commands
+
+Linux commands are often combined using pipes.
+
+Example:
+
+```bash
+cat application.log | grep ERROR | wc -l
+```
+
+Workflow:
+
+```text
+Read File
+
+↓
+
+Find Errors
+
+↓
+
+Count Matches
+```
+
+Pipelines are fundamental to shell scripting.
+
+---
+
+# Kubernetes Example
+
+List all running pods.
+
+```bash
+kubectl get pods | grep Running
+```
+
+Extract pod names.
+
+```bash
+kubectl get pods | awk '{print $1}'
+```
+
+Restart multiple deployments.
+
+```bash
+kubectl get deploy | awk '{print $1}'
+```
+
+---
+
+# AWS Example
+
+Extract EC2 instance IDs.
+
+```bash
+aws ec2 describe-instances | grep InstanceId
+```
+
+Process the results using `awk`, `cut`, or loops.
+
+---
+
+# CI/CD Example
+
+Update image tags.
+
+```bash
+sed -i 's/v1.0/v1.1/g' deployment.yaml
+```
+
+Commit updated manifests.
+
+Deploy using GitOps.
+
+---
+
+# Enterprise Example
+
+Find failed login attempts.
+
+```bash
+grep "Failed password" /var/log/secure
+```
+
+Count failures.
+
+```bash
+grep "Failed password" /var/log/secure | wc -l
+```
+
+This approach is frequently used for security investigations.
+
+---
+
+# Enterprise Best Practices
+
+- Use arrays for collections of related values.
+- Quote array expansions to handle spaces correctly.
+- Prefer `grep`, `awk`, and `sed` over complex shell logic for text processing.
+- Use pipelines to simplify scripts.
+- Test text-processing commands before modifying production files.
+- Keep string operations readable.
+- Validate command output before further processing.
+- Avoid unnecessary command chaining.
+
+---
+
+# Common Mistakes
+
+- Forgetting that array indexing starts at zero.
+- Omitting quotes around array variables.
+- Using `sed -i` without testing the replacement.
+- Parsing structured data with fragile string operations.
+- Running `xargs rm` without verifying input.
+- Ignoring whitespace in string processing.
+- Writing overly complex pipelines that are difficult to debug.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is an array in Bash?
+2. How do you access array elements?
+3. What is the difference between indexed and associative arrays?
+4. What does `grep` do?
+5. What is the purpose of `sed`?
+
+## Intermediate
+
+1. Explain string manipulation in Bash.
+2. Difference between `grep`, `sed`, and `awk`.
+3. How does `cut` work?
+4. Explain Linux pipelines.
+5. How do you remove duplicate lines from a file?
+
+## Advanced
+
+1. Design a shell script that reads a list of Kubernetes namespaces from an array, updates deployment manifests using `sed`, validates them using `grep`, and deploys them automatically.
+2. Explain how `grep`, `awk`, `sed`, `cut`, `sort`, `uniq`, and `xargs` work together in enterprise automation and log analysis.
+3. A production Linux server generates multi-gigabyte log files every day. Design an efficient shell script using arrays, string manipulation, and Linux text-processing utilities to identify failed logins, summarize errors, extract key metrics, and generate a daily operational report.
+
+---
+
