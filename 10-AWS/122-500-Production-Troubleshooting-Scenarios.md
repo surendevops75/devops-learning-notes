@@ -3011,3 +3011,578 @@ Implement monitoring, Infrastructure as Code, automated validation, and continuo
 
 ---
 
+# Chapter 6 - Jenkins, GitHub Actions & CI/CD Production Troubleshooting Scenarios (201–250)
+
+CI/CD pipelines are the backbone of modern software delivery.
+
+When a pipeline fails, deployments stop, releases are delayed, and production incidents become more likely.
+
+This chapter covers **50 real-world CI/CD troubleshooting scenarios** involving:
+
+- Jenkins
+- GitHub Actions
+- Git
+- Build Tools
+- Artifact Management
+- Deployment Automation
+- Secrets Management
+- Pipeline Performance
+
+---
+
+# Scenario 201 - Jenkins Server Unreachable
+
+### Symptoms
+
+- Jenkins UI inaccessible.
+- Builds cannot start.
+
+### Investigation
+
+```bash
+systemctl status jenkins
+
+journalctl -u jenkins
+```
+
+### Root Cause
+
+Jenkins service stopped or server unavailable.
+
+### Resolution
+
+Restart Jenkins and investigate logs.
+
+### Prevention
+
+Enable service monitoring and automatic recovery.
+
+---
+
+# Scenario 202 - Jenkins Service Fails to Start
+
+### Investigation
+
+```bash
+journalctl -u jenkins
+```
+
+Review:
+
+- Java version
+- Configuration
+- Plugin errors
+
+### Root Cause
+
+Configuration or dependency issue.
+
+---
+
+# Scenario 203 - Jenkins Job Stuck in Queue
+
+### Symptoms
+
+Build never starts.
+
+### Investigation
+
+Review:
+
+- Available executors
+- Offline agents
+- Queue status
+
+### Root Cause
+
+No available build executor.
+
+---
+
+# Scenario 204 - Jenkins Agent Offline
+
+### Investigation
+
+Verify:
+
+- Agent connectivity
+- SSH connection
+- JNLP connection
+- Agent logs
+
+### Root Cause
+
+Network issue or agent service failure.
+
+---
+
+# Scenario 205 - Git Clone Failure
+
+### Investigation
+
+Review:
+
+```bash
+git clone
+```
+
+Check:
+
+- Repository URL
+- Credentials
+- Network
+
+### Root Cause
+
+Authentication or repository access issue.
+
+---
+
+# Scenario 206 - Git Authentication Failed
+
+### Investigation
+
+Verify:
+
+- SSH Keys
+- Personal Access Token
+- Credentials
+
+---
+
+# Scenario 207 - Git Merge Conflict
+
+### Investigation
+
+Review conflicting files.
+
+### Resolution
+
+Resolve conflicts and commit.
+
+### Prevention
+
+Frequent rebasing and smaller pull requests.
+
+---
+
+# Scenario 208 - Pipeline Syntax Error
+
+### Investigation
+
+Validate:
+
+- Jenkinsfile
+- YAML syntax
+- Script formatting
+
+---
+
+# Scenario 209 - Jenkinsfile Not Found
+
+Verify repository structure and pipeline configuration.
+
+---
+
+# Scenario 210 - GitHub Actions Workflow Not Triggered
+
+### Investigation
+
+Verify:
+
+- Trigger event
+- Branch
+- Workflow location
+
+### Root Cause
+
+Workflow trigger misconfiguration.
+
+---
+
+# Scenario 211 - GitHub Actions Runner Offline
+
+Review runner status.
+
+Restart runner if required.
+
+---
+
+# Scenario 212 - Runner Permission Denied
+
+Verify runner user permissions.
+
+---
+
+# Scenario 213 - Pipeline Environment Variables Missing
+
+Review:
+
+- Environment section
+- Secrets
+- Variable scope
+
+---
+
+# Scenario 214 - Secret Not Available
+
+Verify:
+
+- Jenkins Credentials
+- GitHub Secrets
+- Secret names
+
+---
+
+# Scenario 215 - Build Failure
+
+### Investigation
+
+Review build logs.
+
+Check:
+
+- Dependencies
+- Build configuration
+- Source changes
+
+---
+
+# Scenario 216 - Maven Build Failure
+
+Verify:
+
+- pom.xml
+- Repository access
+- Dependencies
+
+---
+
+# Scenario 217 - Gradle Build Failure
+
+Review Gradle logs.
+
+Check dependency resolution.
+
+---
+
+# Scenario 218 - npm Build Failure
+
+Verify:
+
+```bash
+package.json
+
+package-lock.json
+```
+
+---
+
+# Scenario 219 - Docker Build Failure in Pipeline
+
+Review Docker build logs.
+
+Check Dockerfile.
+
+---
+
+# Scenario 220 - Docker Push Failure
+
+Verify:
+
+- Registry authentication
+- Repository permissions
+
+---
+
+# Scenario 221 - Artifact Upload Failure
+
+Review artifact repository connectivity.
+
+---
+
+# Scenario 222 - Artifact Download Failure
+
+Verify:
+
+- Repository
+- Credentials
+- Artifact version
+
+---
+
+# Scenario 223 - Pipeline Timeout
+
+Review:
+
+- Long-running stages
+- External dependencies
+
+Optimize execution.
+
+---
+
+# Scenario 224 - Pipeline Hanging
+
+Review waiting stages.
+
+Check blocked resources.
+
+---
+
+# Scenario 225 - Workspace Full
+
+Review:
+
+```bash
+df -h
+```
+
+Clean old workspaces.
+
+---
+
+# Scenario 226 - Disk Full on Jenkins Server
+
+Remove unused:
+
+- Builds
+- Logs
+- Docker Images
+- Workspaces
+
+---
+
+# Scenario 227 - Pipeline Slow
+
+Investigate:
+
+- Build Cache
+- Dependency Downloads
+- Parallelization
+
+---
+
+# Scenario 228 - Parallel Stage Failure
+
+Review shared resource conflicts.
+
+---
+
+# Scenario 229 - Test Stage Failure
+
+Investigate:
+
+- Unit Tests
+- Integration Tests
+- Environment
+
+---
+
+# Scenario 230 - Flaky Tests
+
+Identify unstable tests.
+
+Stabilize before deployment.
+
+---
+
+# Scenario 231 - Deployment Stage Failure
+
+Verify:
+
+- Deployment scripts
+- Kubernetes
+- Infrastructure
+
+---
+
+# Scenario 232 - Rollback Failure
+
+Review previous deployment artifacts.
+
+---
+
+# Scenario 233 - Deployment Succeeds but Application Fails
+
+Review:
+
+- Application Logs
+- Health Checks
+- Database Connectivity
+
+---
+
+# Scenario 234 - Kubernetes Deployment Failure
+
+Verify:
+
+- kubectl access
+- Namespace
+- Image
+- Secrets
+
+---
+
+# Scenario 235 - Terraform Stage Failure
+
+Review:
+
+```bash
+terraform plan
+
+terraform apply
+```
+
+---
+
+# Scenario 236 - Terraform State Lock
+
+Verify lock status.
+
+Release only after confirming no active operation.
+
+---
+
+# Scenario 237 - Pipeline Credential Expired
+
+Update credentials.
+
+Verify secret rotation.
+
+---
+
+# Scenario 238 - Expired Certificate in Pipeline
+
+Renew certificate.
+
+Restart affected services.
+
+---
+
+# Scenario 239 - SCM Polling Not Working
+
+Verify:
+
+- Webhook
+- Poll schedule
+- Repository access
+
+---
+
+# Scenario 240 - Webhook Failure
+
+Check:
+
+- Delivery logs
+- Firewall
+- Endpoint availability
+
+---
+
+# Scenario 241 - Plugin Compatibility Issue
+
+Review plugin versions.
+
+Update carefully after testing.
+
+---
+
+# Scenario 242 - Jenkins Upgrade Failure
+
+Verify:
+
+- Plugin compatibility
+- Java version
+- Backup
+
+---
+
+# Scenario 243 - GitHub API Rate Limit
+
+Reduce unnecessary API requests.
+
+Use authenticated access.
+
+---
+
+# Scenario 244 - Pipeline Permission Denied
+
+Review:
+
+- File permissions
+- User permissions
+- Execution rights
+
+---
+
+# Scenario 245 - Build Cache Corruption
+
+Clean cache and rebuild.
+
+---
+
+# Scenario 246 - Pipeline Produces Different Results
+
+Investigate:
+
+- Environment differences
+- Dependency versions
+- Build reproducibility
+
+---
+
+# Scenario 247 - Notification Failure
+
+Verify:
+
+- Email server
+- Slack webhook
+- Teams webhook
+
+---
+
+# Scenario 248 - Scheduled Build Not Running
+
+Review cron schedule and Jenkins scheduler.
+
+---
+
+# Scenario 249 - Pipeline Works Locally but Fails in CI
+
+Compare:
+
+- Environment variables
+- Dependency versions
+- Operating System
+- File paths
+
+---
+
+# Scenario 250 - Random CI/CD Pipeline Failures
+
+### Investigation
+
+Review:
+
+- Build Logs
+- Agent Health
+- Infrastructure
+- Network
+- Recent Changes
+- Dependency Versions
+
+### Root Cause
+
+Usually environment inconsistency, infrastructure instability, dependency issues, or configuration drift.
+
+### Resolution
+
+Use systematic troubleshooting and compare successful vs failed executions.
+
+### Prevention
+
+Implement reproducible builds, standardized environments, monitoring, and pipeline validation.
+
+---
+
