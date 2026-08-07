@@ -4149,3 +4149,573 @@ Each step records success or failure.
 
 ---
 
+# Chapter 8 - Shell Scripting Automation for Linux, AWS, Docker & Kubernetes
+
+One of the biggest advantages of shell scripting is its ability to automate repetitive administrative tasks.
+
+Enterprise DevOps engineers use shell scripts to automate:
+
+- Linux Administration
+- AWS Operations
+- Docker Management
+- Kubernetes Administration
+- CI/CD Pipelines
+- Backup & Recovery
+- Health Checks
+- Monitoring
+
+Automation improves consistency, reduces human error, and saves time.
+
+---
+
+# Automation Workflow
+
+A typical automation workflow looks like this:
+
+```text
+Input
+
+↓
+
+Validation
+
+↓
+
+Execute Commands
+
+↓
+
+Collect Results
+
+↓
+
+Generate Logs
+
+↓
+
+Exit
+```
+
+Every production script should follow a structured workflow.
+
+---
+
+# Linux Administration Automation
+
+Common Linux automation tasks include:
+
+- Creating Users
+- Managing Services
+- Installing Packages
+- Cleaning Log Files
+- Disk Monitoring
+- Backup Management
+- System Updates
+
+Example:
+
+```bash
+#!/bin/bash
+
+systemctl restart nginx
+
+systemctl status nginx
+```
+
+---
+
+# User Creation Automation
+
+Create multiple users automatically.
+
+```bash
+#!/bin/bash
+
+for USER in dev1 dev2 dev3
+do
+    useradd $USER
+    echo "$USER created successfully"
+done
+```
+
+Automation removes repetitive manual work.
+
+---
+
+# Service Monitoring
+
+Check if a service is running.
+
+```bash
+#!/bin/bash
+
+if systemctl is-active --quiet nginx
+then
+    echo "Nginx is running"
+else
+    echo "Nginx is stopped"
+fi
+```
+
+This script can be executed periodically using Cron.
+
+---
+
+# Disk Usage Monitoring
+
+Monitor root filesystem usage.
+
+```bash
+#!/bin/bash
+
+USAGE=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
+
+if [ "$USAGE" -gt 80 ]
+then
+    echo "Disk usage exceeds 80%"
+fi
+```
+
+This helps prevent production outages caused by full disks.
+
+---
+
+# Backup Automation
+
+Backup configuration files.
+
+```bash
+#!/bin/bash
+
+cp /etc/nginx/nginx.conf \
+/backup/nginx.conf.$(date +%F)
+```
+
+Timestamped backups simplify recovery.
+
+---
+
+# AWS CLI Automation
+
+Shell scripts frequently automate AWS resources.
+
+Examples:
+
+- EC2
+- S3
+- IAM
+- EKS
+- CloudFormation
+- Route53
+
+---
+
+# List EC2 Instances
+
+```bash
+#!/bin/bash
+
+aws ec2 describe-instances
+```
+
+This command retrieves information about EC2 instances.
+
+---
+
+# Start an EC2 Instance
+
+```bash
+#!/bin/bash
+
+INSTANCE=i-123456789
+
+aws ec2 start-instances \
+--instance-ids $INSTANCE
+```
+
+---
+
+# Stop an EC2 Instance
+
+```bash
+#!/bin/bash
+
+INSTANCE=i-123456789
+
+aws ec2 stop-instances \
+--instance-ids $INSTANCE
+```
+
+Useful for cost optimization in non-production environments.
+
+---
+
+# Upload Files to S3
+
+```bash
+#!/bin/bash
+
+aws s3 cp backup.tar.gz \
+s3://company-backups/
+```
+
+A common backup strategy is to upload archives to Amazon S3.
+
+---
+
+# Docker Automation
+
+Shell scripts simplify Docker administration.
+
+Common tasks:
+
+- Build Images
+- Run Containers
+- Remove Containers
+- Clean Images
+- Push Images
+
+---
+
+# Build Docker Image
+
+```bash
+#!/bin/bash
+
+docker build -t payment:v1 .
+```
+
+---
+
+# Run Container
+
+```bash
+docker run -d \
+--name payment \
+payment:v1
+```
+
+---
+
+# Remove Stopped Containers
+
+```bash
+docker container prune -f
+```
+
+Regular cleanup prevents storage exhaustion.
+
+---
+
+# Remove Unused Images
+
+```bash
+docker image prune -a -f
+```
+
+Useful on CI/CD build servers.
+
+---
+
+# Kubernetes Automation
+
+Shell scripting is widely used with `kubectl`.
+
+Common operations:
+
+- Deploy Applications
+- Restart Deployments
+- Check Pods
+- Verify Nodes
+- Collect Logs
+
+---
+
+# Check Cluster Nodes
+
+```bash
+kubectl get nodes
+```
+
+Automated node verification is common in health-check scripts.
+
+---
+
+# Restart Deployment
+
+```bash
+kubectl rollout restart deployment/payment
+```
+
+---
+
+# Verify Pod Status
+
+```bash
+kubectl get pods \
+-n production
+```
+
+Scripts often validate that all pods reach the **Running** state.
+
+---
+
+# Wait for Deployment
+
+```bash
+kubectl rollout status \
+deployment/payment
+```
+
+This ensures the deployment completes successfully.
+
+---
+
+# Collect Pod Logs
+
+```bash
+kubectl logs payment-abc123
+```
+
+Useful during automated troubleshooting.
+
+---
+
+# Health Check Script
+
+Example workflow:
+
+```text
+Check CPU
+
+↓
+
+Check Memory
+
+↓
+
+Check Disk
+
+↓
+
+Check Service
+
+↓
+
+Generate Report
+```
+
+Health-check scripts provide a quick overview of system status.
+
+---
+
+# Cron Automation
+
+Schedule recurring jobs.
+
+Example:
+
+```text
+0 2 * * * backup.sh
+```
+
+This executes `backup.sh` every day at 2:00 AM.
+
+Common Cron tasks:
+
+- Backups
+- Log Cleanup
+- Monitoring
+- Report Generation
+
+---
+
+# Deployment Automation
+
+A typical deployment script performs:
+
+```text
+Pull Source Code
+
+↓
+
+Build
+
+↓
+
+Run Tests
+
+↓
+
+Build Docker Image
+
+↓
+
+Push Image
+
+↓
+
+Update Kubernetes
+
+↓
+
+Verify Deployment
+```
+
+Each stage can be automated using shell scripts.
+
+---
+
+# CI/CD Example
+
+Pipeline workflow:
+
+```text
+GitHub
+
+↓
+
+Jenkins
+
+↓
+
+Shell Script
+
+↓
+
+Docker Build
+
+↓
+
+Push Image
+
+↓
+
+Update GitOps Repository
+
+↓
+
+ArgoCD
+
+↓
+
+Amazon EKS
+```
+
+Shell scripts orchestrate each stage of the pipeline.
+
+---
+
+# Enterprise Example
+
+A nightly maintenance script:
+
+```text
+Clean Logs
+
+↓
+
+Backup Database
+
+↓
+
+Restart Services
+
+↓
+
+Generate Report
+
+↓
+
+Send Email
+```
+
+This reduces manual operational effort.
+
+---
+
+# Error Handling Example
+
+Always validate command success.
+
+```bash
+docker build -t app:v1 .
+
+if [ $? -ne 0 ]
+then
+    echo "Docker build failed"
+    exit 1
+fi
+```
+
+Failing early prevents incorrect deployments.
+
+---
+
+# Logging Automation
+
+Example logging function:
+
+```bash
+log() {
+    echo "$(date '+%F %T') : $1" >> automation.log
+}
+
+log "Backup Completed"
+```
+
+Centralized logging simplifies troubleshooting.
+
+---
+
+# Enterprise Best Practices
+
+- Keep scripts modular and reusable.
+- Validate prerequisites before execution.
+- Log every critical operation.
+- Use variables instead of hardcoded values.
+- Test automation in non-production environments.
+- Handle failures gracefully using exit codes.
+- Store automation scripts in version control.
+- Schedule recurring tasks using Cron.
+
+---
+
+# Common Mistakes
+
+- Hardcoding resource names.
+- Ignoring command failures.
+- Running scripts without validation.
+- Omitting logging.
+- Running destructive commands without confirmation.
+- Forgetting to clean temporary files.
+- Executing production scripts without testing.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. Why is shell scripting used for automation?
+2. How do you automate Linux administration tasks?
+3. How do you automate Docker commands?
+4. How do you automate Kubernetes operations?
+5. What is Cron?
+
+## Intermediate
+
+1. Explain a health-check automation script.
+2. How do you automate EC2 management using AWS CLI?
+3. Why should production scripts generate logs?
+4. How do shell scripts integrate with CI/CD pipelines?
+5. Explain deployment automation using shell scripts.
+
+## Advanced
+
+1. Design an enterprise automation framework using shell scripts to manage Linux servers, AWS infrastructure, Docker containers, and Kubernetes clusters while ensuring proper logging, error handling, and reporting.
+2. Explain how shell scripting integrates with Jenkins, GitHub Actions, ArgoCD, Docker, Terraform, and Kubernetes to automate enterprise deployments.
+3. A financial organization manages hundreds of Linux servers and Kubernetes clusters across multiple AWS regions. Design a shell scripting solution to automate health checks, backups, deployments, monitoring, and scheduled maintenance while ensuring reliability, scalability, and auditability.
+
+---
+
