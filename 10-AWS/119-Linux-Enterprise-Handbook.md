@@ -3030,3 +3030,612 @@ If total memory exceeds node capacity, Kubernetes may evict pods or Linux may in
 
 ---
 
+# Chapter 6 - Linux Disk Management, File Systems, LVM & Storage Administration
+
+Storage is one of the most critical components of every Linux server.
+
+Whether you are managing:
+
+- Kubernetes Worker Nodes
+- Docker Hosts
+- Jenkins Servers
+- Database Servers
+- Application Servers
+
+understanding Linux storage is essential for ensuring high availability, performance, and reliability.
+
+Many production incidents occur because of:
+
+- Disk Full
+- Incorrect Mount Points
+- File System Corruption
+- LVM Issues
+- Storage Failures
+- Inode Exhaustion
+
+---
+
+# Linux Storage Architecture
+
+A typical Linux storage stack looks like this:
+
+```text
+Application
+
+↓
+
+File System
+
+↓
+
+Logical Volume (LVM)
+
+↓
+
+Volume Group
+
+↓
+
+Physical Volume
+
+↓
+
+Disk
+
+↓
+
+Storage Controller
+```
+
+Each layer provides flexibility and simplifies storage management.
+
+---
+
+# Block Devices
+
+Linux represents storage devices as **block devices**.
+
+Common examples:
+
+```text
+/dev/sda
+
+/dev/sdb
+
+/dev/nvme0n1
+```
+
+These devices store data in fixed-size blocks.
+
+---
+
+# View Storage Devices
+
+Display block devices:
+
+```bash
+lsblk
+```
+
+Example output:
+
+```text
+NAME        SIZE TYPE MOUNTPOINT
+
+sda         100G disk
+
+├── sda1      1G part /boot
+
+├── sda2     50G part /
+
+└── sda3     49G part
+```
+
+This command provides a clear overview of disks and partitions.
+
+---
+
+# View Disk Information
+
+Display partition details:
+
+```bash
+fdisk -l
+```
+
+Useful for identifying:
+
+- Disk Size
+- Partition Table
+- Partition Types
+
+---
+
+# Partitions
+
+A disk can be divided into multiple partitions.
+
+Example:
+
+```text
+Disk
+
+↓
+
+Partition 1
+
+Partition 2
+
+Partition 3
+```
+
+Each partition can contain its own file system.
+
+---
+
+# File Systems
+
+A file system organizes data stored on a partition.
+
+Common Linux file systems:
+
+| File System | Description |
+|-------------|-------------|
+| ext4 | Most common Linux file system |
+| XFS | Enterprise-grade, default on RHEL |
+| Btrfs | Advanced snapshots and features |
+| FAT32 | Cross-platform compatibility |
+| NTFS | Windows compatibility |
+
+---
+
+# Check Mounted File Systems
+
+Display mounted file systems:
+
+```bash
+df -h
+```
+
+Example:
+
+```text
+Filesystem      Size Used Avail Use%
+
+/dev/sda2       50G  18G   30G   38%
+```
+
+The `-h` option shows sizes in a human-readable format.
+
+---
+
+# Disk Usage
+
+Check directory size:
+
+```bash
+du -sh /var/log
+```
+
+Display all directories:
+
+```bash
+du -h --max-depth=1
+```
+
+Useful for identifying large directories.
+
+---
+
+# Finding Large Files
+
+Locate files larger than 1 GB:
+
+```bash
+find / -type f -size +1G
+```
+
+This command is frequently used during disk space investigations.
+
+---
+
+# Mount Points
+
+A mount point is a directory where a file system is attached.
+
+Example:
+
+```text
+Disk
+
+↓
+
+Partition
+
+↓
+
+Mounted at
+
+↓
+
+/data
+```
+
+Applications access storage through mount points.
+
+---
+
+# View Mounted File Systems
+
+```bash
+mount
+```
+
+Or
+
+```bash
+findmnt
+```
+
+These commands display all active mounts.
+
+---
+
+# Mount a File System
+
+Example:
+
+```bash
+mount /dev/sdb1 /data
+```
+
+The storage becomes accessible through:
+
+```text
+/data
+```
+
+---
+
+# Unmount a File System
+
+Safely remove a mounted file system:
+
+```bash
+umount /data
+```
+
+Always ensure no application is using the mount before unmounting.
+
+---
+
+# Persistent Mounts
+
+Linux stores permanent mount configurations in:
+
+```text
+/etc/fstab
+```
+
+Example:
+
+```text
+UUID=xxxxx
+
+↓
+
+/
+
+UUID=yyyyy
+
+↓
+
+/data
+```
+
+The system mounts these file systems automatically during boot.
+
+---
+
+# UUID
+
+Every file system has a unique identifier called a UUID.
+
+View UUIDs:
+
+```bash
+blkid
+```
+
+Using UUIDs is preferred over device names because device names can change after reboot.
+
+---
+
+# Logical Volume Manager (LVM)
+
+LVM provides flexible storage management.
+
+Benefits include:
+
+- Online Expansion
+- Snapshot Support
+- Flexible Disk Allocation
+- Easier Storage Management
+
+Enterprise Linux servers commonly use LVM.
+
+---
+
+# LVM Architecture
+
+```text
+Disk
+
+↓
+
+Physical Volume (PV)
+
+↓
+
+Volume Group (VG)
+
+↓
+
+Logical Volume (LV)
+
+↓
+
+File System
+
+↓
+
+Mount Point
+```
+
+This abstraction simplifies storage expansion.
+
+---
+
+# Physical Volume (PV)
+
+A Physical Volume is the underlying storage device used by LVM.
+
+Example:
+
+```text
+/dev/sdb
+```
+
+Multiple physical volumes can be combined.
+
+---
+
+# Volume Group (VG)
+
+A Volume Group combines one or more physical volumes into a storage pool.
+
+```text
+PV1
+
+↓
+
+PV2
+
+↓
+
+Volume Group
+```
+
+Storage is allocated from the volume group.
+
+---
+
+# Logical Volume (LV)
+
+A Logical Volume is created from the Volume Group.
+
+Applications interact with Logical Volumes rather than physical disks.
+
+Example:
+
+```text
+Volume Group
+
+↓
+
+Logical Volume
+
+↓
+
+File System
+```
+
+---
+
+# LVM Benefits
+
+Compared to traditional partitions, LVM provides:
+
+- Flexible resizing
+- Better storage utilization
+- Simplified expansion
+- Snapshot capability
+
+It is widely used in enterprise environments.
+
+---
+
+# Swap Partition
+
+Swap can be configured as:
+
+- Dedicated Partition
+- Logical Volume
+- Swap File
+
+View swap usage:
+
+```bash
+swapon --show
+```
+
+---
+
+# File System Check
+
+Check a file system:
+
+```bash
+fsck /dev/sdb1
+```
+
+This command detects and repairs file system errors.
+
+Run `fsck` only on unmounted file systems unless using specialized recovery procedures.
+
+---
+
+# Inodes
+
+Every file consumes an inode.
+
+A disk may have:
+
+- Available storage
+- No available inodes
+
+Check inode usage:
+
+```bash
+df -i
+```
+
+Running out of inodes prevents new files from being created.
+
+---
+
+# Enterprise Example
+
+A Jenkins server stores:
+
+```text
+/var/lib/jenkins
+
+↓
+
+Workspaces
+
+↓
+
+Artifacts
+
+↓
+
+Logs
+```
+
+If disk usage reaches 100%, builds fail and Jenkins becomes unstable.
+
+---
+
+# Kubernetes Example
+
+On a Kubernetes worker node:
+
+```text
+/var/lib/kubelet
+
+↓
+
+Pods
+
+↓
+
+Volumes
+
+↓
+
+Persistent Storage
+```
+
+Storage issues may prevent pods from starting or mounting volumes.
+
+---
+
+# Storage Monitoring
+
+Regularly monitor:
+
+- Disk Utilization
+- Free Space
+- Inode Usage
+- Mount Status
+- I/O Performance
+
+Common commands:
+
+```bash
+df -h
+
+du -sh
+
+lsblk
+
+iostat
+
+findmnt
+```
+
+---
+
+# Enterprise Best Practices
+
+- Monitor disk usage continuously.
+- Use UUIDs in `/etc/fstab`.
+- Prefer LVM for enterprise servers.
+- Monitor inode utilization.
+- Separate application data from the root filesystem.
+- Regularly clean unnecessary log files.
+- Verify mounts after reboot.
+- Back up critical data before modifying partitions.
+
+---
+
+# Common Mistakes
+
+- Filling the root filesystem.
+- Editing `/etc/fstab` incorrectly.
+- Mounting the wrong partition.
+- Ignoring inode exhaustion.
+- Running `fsck` on mounted production filesystems.
+- Forgetting to back up before resizing storage.
+- Using device names instead of UUIDs.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a Linux file system?
+2. What is a partition?
+3. What is a mount point?
+4. What is LVM?
+5. What is the purpose of `/etc/fstab`?
+
+## Intermediate
+
+1. Explain the difference between a Physical Volume, Volume Group, and Logical Volume.
+2. Why is UUID preferred over device names?
+3. What is inode exhaustion?
+4. Difference between `df` and `du`.
+5. How do you investigate disk space issues?
+
+## Advanced
+
+1. Design a storage architecture for a production Kubernetes cluster using LVM, multiple file systems, and persistent storage while ensuring scalability and high availability.
+2. A Jenkins server suddenly stops building because the disk is full. Explain your step-by-step approach to identify large files, inode exhaustion, log growth, mount issues, and recovery procedures.
+3. Explain how Linux storage management, file systems, LVM, mount points, UUIDs, and monitoring contribute to reliable enterprise infrastructure.
+
+---
+
