@@ -2474,3 +2474,540 @@ Implement monitoring, alerts, resource limits, health probes, and deployment val
 
 ---
 
+# Chapter 5 - AWS Production Troubleshooting Scenarios (151–200)
+
+AWS provides the infrastructure that powers many enterprise applications.
+
+Production issues can occur in:
+
+- EC2
+- VPC
+- IAM
+- Load Balancers
+- Auto Scaling
+- EKS
+- Route53
+- S3
+- RDS
+- Security Groups
+
+This chapter covers **50 real-world AWS production troubleshooting scenarios** commonly encountered by DevOps Engineers.
+
+---
+
+# Scenario 151 - EC2 Instance Unreachable
+
+### Symptoms
+
+- SSH timeout.
+- Monitoring reports the instance as down.
+- Application unavailable.
+
+### Investigation
+
+- Check EC2 instance state.
+- Review Security Groups.
+- Verify Network ACLs.
+- Check system status checks.
+
+### Root Cause
+
+Instance stopped, crashed, or blocked by networking.
+
+### Resolution
+
+Restart instance or correct network configuration.
+
+### Prevention
+
+Enable CloudWatch alarms and Auto Recovery.
+
+---
+
+# Scenario 152 - EC2 Status Check Failed
+
+### Investigation
+
+Review:
+
+- System Status Check
+- Instance Status Check
+- Console Logs
+
+### Root Cause
+
+Hardware issue or operating system failure.
+
+### Resolution
+
+Reboot or recover the instance.
+
+---
+
+# Scenario 153 - SSH Access Denied
+
+### Investigation
+
+Verify:
+
+- Key Pair
+- Security Group
+- Network ACL
+- SSH Service
+
+### Root Cause
+
+Authentication or firewall issue.
+
+---
+
+# Scenario 154 - Security Group Blocking Traffic
+
+### Symptoms
+
+Application inaccessible.
+
+### Investigation
+
+Review inbound and outbound rules.
+
+### Resolution
+
+Allow required ports.
+
+---
+
+# Scenario 155 - Network ACL Blocking Traffic
+
+### Investigation
+
+Verify subnet ACL rules.
+
+### Root Cause
+
+Explicit deny or missing allow rule.
+
+---
+
+# Scenario 156 - Internet Gateway Missing
+
+### Symptoms
+
+Public instances cannot reach the internet.
+
+### Investigation
+
+Verify Internet Gateway attachment.
+
+---
+
+# Scenario 157 - NAT Gateway Failure
+
+### Symptoms
+
+Private instances lose outbound internet access.
+
+### Investigation
+
+Verify:
+
+- NAT Gateway
+- Route Tables
+- Elastic IP
+
+---
+
+# Scenario 158 - Route Table Misconfiguration
+
+### Investigation
+
+Review subnet associations.
+
+### Resolution
+
+Correct routing entries.
+
+---
+
+# Scenario 159 - VPC Peering Failure
+
+Verify:
+
+- Routes
+- CIDR overlap
+- Peering status
+
+---
+
+# Scenario 160 - DNS Resolution Failure
+
+Review:
+
+- Route53
+- VPC DNS Settings
+- Resolver Configuration
+
+---
+
+# Scenario 161 - Route53 Record Incorrect
+
+Verify:
+
+- Record Type
+- Alias Target
+- TTL
+
+---
+
+# Scenario 162 - Load Balancer Returns 503
+
+### Investigation
+
+Check:
+
+- Target Group
+- Health Checks
+- Backend Instances
+
+### Root Cause
+
+No healthy targets.
+
+---
+
+# Scenario 163 - Load Balancer Health Check Failure
+
+Review:
+
+- Health Check Path
+- Port
+- Application Status
+
+---
+
+# Scenario 164 - Auto Scaling Not Launching Instances
+
+Verify:
+
+- Launch Template
+- Scaling Policy
+- Capacity Limits
+
+---
+
+# Scenario 165 - Auto Scaling Not Terminating Instances
+
+Review cooldown periods and scaling policies.
+
+---
+
+# Scenario 166 - Launch Template Incorrect
+
+Verify:
+
+- AMI
+- Security Groups
+- IAM Role
+- User Data
+
+---
+
+# Scenario 167 - IAM Permission Denied
+
+### Symptoms
+
+AWS API returns **AccessDenied**.
+
+### Investigation
+
+Review IAM policies and roles.
+
+---
+
+# Scenario 168 - IAM Role Missing
+
+Verify EC2 instance profile attachment.
+
+---
+
+# Scenario 169 - STS AssumeRole Failure
+
+Review trust relationship and permissions.
+
+---
+
+# Scenario 170 - S3 Access Denied
+
+### Investigation
+
+Review:
+
+- Bucket Policy
+- IAM Policy
+- ACL
+- Encryption Settings
+
+---
+
+# Scenario 171 - S3 Upload Failure
+
+Verify:
+
+- Permissions
+- Storage Class
+- Object Ownership
+
+---
+
+# Scenario 172 - S3 Lifecycle Not Working
+
+Review lifecycle rules and prefixes.
+
+---
+
+# Scenario 173 - RDS Connection Failure
+
+### Investigation
+
+Verify:
+
+- Endpoint
+- Security Groups
+- Database Availability
+- Credentials
+
+---
+
+# Scenario 174 - RDS High CPU
+
+Review:
+
+- Slow Queries
+- Connections
+- Performance Insights
+
+---
+
+# Scenario 175 - RDS Storage Full
+
+Increase storage or remove unnecessary data.
+
+---
+
+# Scenario 176 - Read Replica Lag
+
+Monitor replication delay.
+
+Investigate write workload.
+
+---
+
+# Scenario 177 - Multi-AZ Failover
+
+Review failover events.
+
+Verify application reconnection.
+
+---
+
+# Scenario 178 - EBS Volume Full
+
+Review:
+
+```bash
+df -h
+```
+
+Extend volume if required.
+
+---
+
+# Scenario 179 - EBS Performance Degradation
+
+Monitor:
+
+- IOPS
+- Throughput
+- Queue Length
+
+---
+
+# Scenario 180 - Snapshot Failure
+
+Verify IAM permissions and storage status.
+
+---
+
+# Scenario 181 - EKS Worker Node Not Joining
+
+Review:
+
+- Bootstrap Logs
+- IAM Role
+- Security Groups
+
+---
+
+# Scenario 182 - EKS API Unreachable
+
+Verify cluster endpoint accessibility.
+
+---
+
+# Scenario 183 - CloudWatch Alarm Not Triggering
+
+Review:
+
+- Metric
+- Threshold
+- Evaluation Period
+
+---
+
+# Scenario 184 - CloudWatch Logs Missing
+
+Verify log agent configuration.
+
+---
+
+# Scenario 185 - Lambda Timeout
+
+Increase timeout or optimize function.
+
+---
+
+# Scenario 186 - Lambda Permission Failure
+
+Review execution role.
+
+---
+
+# Scenario 187 - API Gateway Returns 502
+
+Verify backend integration.
+
+---
+
+# Scenario 188 - ACM Certificate Validation Failure
+
+Review DNS validation records.
+
+---
+
+# Scenario 189 - ALB SSL Certificate Error
+
+Verify:
+
+- ACM Certificate
+- Listener Configuration
+
+---
+
+# Scenario 190 - Elastic IP Not Associated
+
+Review instance association.
+
+---
+
+# Scenario 191 - VPC Endpoint Failure
+
+Verify endpoint policy and routing.
+
+---
+
+# Scenario 192 - CloudFormation Stack Failure
+
+Review Events tab.
+
+Identify failed resource.
+
+---
+
+# Scenario 193 - AWS CLI Authentication Failure
+
+Verify:
+
+```bash
+aws configure
+
+aws sts get-caller-identity
+```
+
+---
+
+# Scenario 194 - AWS Service Quota Exceeded
+
+Review Service Quotas.
+
+Request limit increase if required.
+
+---
+
+# Scenario 195 - Cross-Region Replication Failure
+
+Verify replication configuration and permissions.
+
+---
+
+# Scenario 196 - KMS Key Access Denied
+
+Review key policy and IAM permissions.
+
+---
+
+# Scenario 197 - Secrets Manager Access Failure
+
+Verify IAM permissions and secret policy.
+
+---
+
+# Scenario 198 - Elastic Load Balancer High Latency
+
+Review:
+
+- Backend Health
+- Target Response Time
+- Network Performance
+
+---
+
+# Scenario 199 - Unexpected AWS Cost Increase
+
+Investigate:
+
+- Running Instances
+- Storage
+- Data Transfer
+- Idle Resources
+
+Implement cost optimization.
+
+---
+
+# Scenario 200 - Random AWS Production Failure
+
+### Investigation
+
+Review:
+
+- CloudWatch Metrics
+- AWS Health Dashboard
+- Recent Deployments
+- IAM Changes
+- Networking
+- Infrastructure Changes
+
+### Root Cause
+
+Usually infrastructure configuration, resource limits, deployment changes, or networking.
+
+### Resolution
+
+Follow a structured investigation process.
+
+### Prevention
+
+Implement monitoring, Infrastructure as Code, automated validation, and continuous operational reviews.
+
+---
+
