@@ -2209,3 +2209,675 @@ Efficient loops improve script performance.
 
 ---
 
+# Chapter 5 - Functions, Script Modularity & Error Handling
+
+As shell scripts grow larger, writing everything in a single file becomes difficult to maintain.
+
+Functions help organize scripts into reusable, manageable blocks of code.
+
+Enterprise shell scripts use functions extensively for:
+
+- Code Reusability
+- Readability
+- Error Handling
+- Logging
+- Deployment Automation
+- Monitoring
+- Backup Operations
+
+Functions are one of the most important concepts for writing production-ready shell scripts.
+
+---
+
+# What is a Function?
+
+A function is a named block of code that performs a specific task.
+
+Instead of writing the same commands repeatedly:
+
+```text
+Backup
+
+Backup
+
+Backup
+
+Backup
+```
+
+Create one function:
+
+```text
+backup()
+
+↓
+
+Call Whenever Required
+```
+
+This reduces code duplication.
+
+---
+
+# Why Use Functions?
+
+Without functions:
+
+```text
+Deploy App
+
+↓
+
+Restart Service
+
+↓
+
+Verify Service
+
+↓
+
+Repeat Same Code
+```
+
+With functions:
+
+```text
+deploy()
+
+↓
+
+restart()
+
+↓
+
+verify()
+```
+
+Each task is written once and reused throughout the script.
+
+---
+
+# Function Syntax
+
+Basic syntax:
+
+```bash
+function_name() {
+    commands
+}
+```
+
+Example:
+
+```bash
+hello() {
+    echo "Hello DevOps"
+}
+```
+
+Call the function:
+
+```bash
+hello
+```
+
+Output:
+
+```text
+Hello DevOps
+```
+
+---
+
+# Function with Parameters
+
+Functions can accept arguments.
+
+Example:
+
+```bash
+greet() {
+    echo "Welcome $1"
+}
+
+greet Surendra
+```
+
+Output:
+
+```text
+Welcome Surendra
+```
+
+---
+
+# Multiple Parameters
+
+```bash
+deploy() {
+    echo "Application : $1"
+    echo "Environment : $2"
+}
+
+deploy payment production
+```
+
+Output:
+
+```text
+Application : payment
+
+Environment : production
+```
+
+---
+
+# Returning Values
+
+Functions return an exit status.
+
+Example:
+
+```bash
+check_service() {
+
+    systemctl is-active nginx >/dev/null
+
+    return $?
+}
+```
+
+The calling script can evaluate the returned exit code.
+
+---
+
+# Capturing Output
+
+A function can also produce output.
+
+Example:
+
+```bash
+current_date() {
+
+    date
+}
+
+TODAY=$(current_date)
+
+echo $TODAY
+```
+
+Output:
+
+```text
+Mon Aug 18 10:00:00 IST 2026
+```
+
+---
+
+# Local Variables
+
+Variables declared inside functions should remain local.
+
+Example:
+
+```bash
+show_name() {
+
+    local NAME="DevOps"
+
+    echo $NAME
+}
+```
+
+Using `local` prevents accidental modification of variables outside the function.
+
+---
+
+# Global Variables
+
+Variables declared outside functions are global.
+
+Example:
+
+```bash
+ENV=production
+
+deploy() {
+
+    echo $ENV
+}
+```
+
+Global variables can be accessed by every function.
+
+---
+
+# Function Execution Flow
+
+```text
+Main Script
+
+↓
+
+Function Call
+
+↓
+
+Execute Function
+
+↓
+
+Return
+
+↓
+
+Continue Script
+```
+
+Functions always return control to the calling script.
+
+---
+
+# Organizing Enterprise Scripts
+
+Instead of writing one large script:
+
+```text
+500 Lines
+
+↓
+
+Hard to Maintain
+```
+
+Break it into functions.
+
+Example:
+
+```text
+validate()
+
+↓
+
+backup()
+
+↓
+
+deploy()
+
+↓
+
+verify()
+
+↓
+
+cleanup()
+```
+
+Each function performs one responsibility.
+
+---
+
+# Logging Function
+
+Example:
+
+```bash
+log() {
+
+    echo "$(date) : $1"
+}
+
+log "Deployment Started"
+```
+
+Output:
+
+```text
+Mon Aug 18 10:00:00 : Deployment Started
+```
+
+Centralized logging improves troubleshooting.
+
+---
+
+# Error Handling
+
+Always validate command execution.
+
+Example:
+
+```bash
+copy_file() {
+
+    cp app.conf /backup/
+
+    if [ $? -ne 0 ]
+    then
+        echo "Backup Failed"
+        exit 1
+    fi
+}
+```
+
+Ignoring failures can cause serious production issues.
+
+---
+
+# Exit Statement
+
+Terminate script execution.
+
+Example:
+
+```bash
+exit 0
+```
+
+Successful completion.
+
+Example:
+
+```bash
+exit 1
+```
+
+Failure.
+
+Exit codes help CI/CD tools determine script status.
+
+---
+
+# set Options
+
+Enable safer script execution.
+
+Stop on first error:
+
+```bash
+set -e
+```
+
+Treat unset variables as errors:
+
+```bash
+set -u
+```
+
+Display executed commands:
+
+```bash
+set -x
+```
+
+Combine options:
+
+```bash
+set -eux
+```
+
+These options are widely used in production scripts.
+
+---
+
+# Trap
+
+The `trap` command executes cleanup logic when a script exits.
+
+Example:
+
+```bash
+cleanup() {
+
+    echo "Cleaning temporary files..."
+}
+
+trap cleanup EXIT
+```
+
+Useful for:
+
+- Temporary File Cleanup
+- Log Collection
+- Unlocking Resources
+- Notification
+
+---
+
+# Modular Script Design
+
+Enterprise scripts are usually divided into sections.
+
+```text
+Variables
+
+↓
+
+Functions
+
+↓
+
+Validation
+
+↓
+
+Main Logic
+
+↓
+
+Cleanup
+```
+
+This structure improves readability and maintenance.
+
+---
+
+# Example Script Structure
+
+```text
+#!/bin/bash
+
+Variables
+
+↓
+
+Functions
+
+↓
+
+Input Validation
+
+↓
+
+Deployment
+
+↓
+
+Verification
+
+↓
+
+Cleanup
+```
+
+A consistent layout makes scripts easier to understand.
+
+---
+
+# Kubernetes Example
+
+Deployment workflow:
+
+```text
+Validate Namespace
+
+↓
+
+Build Image
+
+↓
+
+Update Manifest
+
+↓
+
+Deploy
+
+↓
+
+Verify Pods
+
+↓
+
+Success
+```
+
+Each step should be implemented as a separate function.
+
+---
+
+# AWS Example
+
+Infrastructure automation:
+
+```text
+Create EC2
+
+↓
+
+Attach Security Group
+
+↓
+
+Wait for Instance
+
+↓
+
+Configure Server
+
+↓
+
+Verify
+```
+
+Breaking each operation into a function simplifies maintenance.
+
+---
+
+# CI/CD Example
+
+Pipeline execution:
+
+```text
+Checkout Code
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Docker Build
+
+↓
+
+Push Image
+
+↓
+
+Deploy
+
+↓
+
+Verify
+```
+
+Each stage can be represented by an individual function.
+
+---
+
+# Enterprise Example
+
+Production deployment script:
+
+```text
+validate_environment()
+
+↓
+
+backup_database()
+
+↓
+
+deploy_application()
+
+↓
+
+verify_health()
+
+↓
+
+send_notification()
+```
+
+Each function performs one clearly defined task.
+
+---
+
+# Enterprise Best Practices
+
+- Write small, reusable functions.
+- Keep one responsibility per function.
+- Use meaningful function names.
+- Prefer local variables inside functions.
+- Validate command success after critical operations.
+- Use `set -euo pipefail` in production scripts.
+- Implement centralized logging.
+- Use `trap` for cleanup activities.
+
+---
+
+# Common Mistakes
+
+- Writing the entire script without functions.
+- Using global variables unnecessarily.
+- Ignoring command failures.
+- Not returning proper exit codes.
+- Forgetting cleanup operations.
+- Creating very large functions with multiple responsibilities.
+- Using unclear function names.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a function in shell scripting?
+2. Why are functions used?
+3. How do you pass parameters to a function?
+4. What is the difference between local and global variables?
+5. How do you call a function?
+
+## Intermediate
+
+1. How do functions improve script maintainability?
+2. Explain the purpose of `set -e`, `set -u`, and `set -x`.
+3. What is the `trap` command?
+4. How do functions return values?
+5. Why should production scripts use centralized logging?
+
+## Advanced
+
+1. Design a modular deployment script for Kubernetes using reusable functions for validation, deployment, verification, rollback, and notification.
+2. Explain how functions, error handling, exit codes, and logging work together to build reliable enterprise automation scripts.
+3. A CI/CD pipeline deploys applications across multiple Kubernetes clusters. Design a shell scripting framework using functions, local variables, `set -euo pipefail`, logging, and cleanup handlers to ensure reliable deployments and easy maintenance.
+
+---
+
