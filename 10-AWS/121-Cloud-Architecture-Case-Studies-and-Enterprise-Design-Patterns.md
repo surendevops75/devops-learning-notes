@@ -4136,3 +4136,658 @@ Each service operates independently.
 
 ---
 
+# Chapter 8 - Enterprise Security Architecture & Zero Trust Design Patterns
+
+Security is one of the most important aspects of cloud architecture.
+
+A highly available application that is not secure is still considered a failed architecture.
+
+Enterprise security is built on multiple layers including:
+
+- Identity
+- Network
+- Compute
+- Storage
+- Applications
+- Monitoring
+- Compliance
+
+Modern architectures follow the principle of **Zero Trust**, where every request must be verified regardless of its origin.
+
+---
+
+# Enterprise Security Architecture
+
+A typical security architecture.
+
+```text
+Users
+
+↓
+
+Identity Provider
+
+↓
+
+DNS
+
+↓
+
+Web Application Firewall
+
+↓
+
+Load Balancer
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Monitoring
+
+↓
+
+Security Operations
+```
+
+Security is implemented at every layer.
+
+---
+
+# Defense in Depth
+
+Enterprise security uses multiple protection layers.
+
+```text
+Identity
+
+↓
+
+Network
+
+↓
+
+Operating System
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Data
+```
+
+If one layer fails,
+
+another layer continues protecting the system.
+
+---
+
+# Zero Trust Architecture
+
+Zero Trust follows one principle:
+
+> Never Trust, Always Verify
+
+Every request must be:
+
+- Authenticated
+- Authorized
+- Encrypted
+- Logged
+
+Network location alone should never grant access.
+
+---
+
+# Identity and Access Management (IAM)
+
+Identity is the first security layer.
+
+IAM controls:
+
+- Users
+- Roles
+- Permissions
+- Policies
+- Authentication
+
+Proper IAM design minimizes unauthorized access.
+
+---
+
+# Least Privilege Principle
+
+Users and services should receive only the permissions they require.
+
+Poor Design
+
+```text
+Administrator Access
+
+↓
+
+Everyone
+```
+
+Enterprise Design
+
+```text
+Developer
+
+↓
+
+Read Access
+
+──────────
+
+CI/CD
+
+↓
+
+Deployment Access
+
+──────────
+
+Database
+
+↓
+
+Database Access Only
+```
+
+Least privilege reduces security risks.
+
+---
+
+# Role-Based Access Control (RBAC)
+
+Permissions are assigned through roles.
+
+```text
+User
+
+↓
+
+Role
+
+↓
+
+Permissions
+```
+
+Examples:
+
+- Developer
+- DevOps Engineer
+- Security Team
+- Database Administrator
+
+RBAC simplifies permission management.
+
+---
+
+# Multi-Factor Authentication (MFA)
+
+Authentication should require more than one factor.
+
+```text
+Password
+
++
+
+OTP
+
+↓
+
+Access Granted
+```
+
+MFA significantly reduces account compromise.
+
+---
+
+# Secrets Management
+
+Applications should never store secrets in source code.
+
+Poor Design
+
+```text
+Database Password
+
+↓
+
+Application Code
+```
+
+Enterprise Design
+
+```text
+Application
+
+↓
+
+Secrets Manager
+
+↓
+
+Database Password
+```
+
+Common secrets:
+
+- Database Passwords
+- API Keys
+- SSH Keys
+- Certificates
+- Tokens
+
+---
+
+# Encryption at Rest
+
+Stored data should always be encrypted.
+
+```text
+Application
+
+↓
+
+Encrypted Storage
+```
+
+Protects against unauthorized access to storage devices.
+
+---
+
+# Encryption in Transit
+
+All communication should use encrypted protocols.
+
+```text
+Client
+
+↓
+
+HTTPS
+
+↓
+
+Application
+```
+
+Examples:
+
+- HTTPS
+- TLS
+- SSH
+
+Encryption prevents data interception.
+
+---
+
+# Public Key Infrastructure (PKI)
+
+PKI manages digital certificates.
+
+```text
+Certificate Authority
+
+↓
+
+Certificate
+
+↓
+
+Application
+
+↓
+
+Encrypted Connection
+```
+
+PKI enables secure communication.
+
+---
+
+# Web Application Firewall (WAF)
+
+A WAF protects web applications from common attacks.
+
+```text
+Users
+
+↓
+
+WAF
+
+↓
+
+Application
+```
+
+Typical protections:
+
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Bot Traffic
+- Malicious Requests
+
+---
+
+# Network Segmentation
+
+Applications should be isolated.
+
+```text
+Public
+
+↓
+
+Private
+
+↓
+
+Database
+```
+
+Benefits:
+
+- Reduced Attack Surface
+- Better Isolation
+- Easier Compliance
+
+---
+
+# Bastion Host Pattern
+
+Administrative access should be controlled.
+
+```text
+Administrator
+
+↓
+
+Bastion Host
+
+↓
+
+Private Servers
+```
+
+Direct internet access to production servers should be avoided.
+
+---
+
+# Security Groups
+
+Security Groups control instance-level traffic.
+
+Example:
+
+```text
+Allow
+
+HTTPS
+
+SSH
+
+Application Ports
+```
+
+Only required ports should be opened.
+
+---
+
+# Audit Logging
+
+Every important action should be logged.
+
+Examples:
+
+- Login Attempts
+- IAM Changes
+- Infrastructure Changes
+- API Calls
+- Database Access
+
+Audit logs support compliance and incident investigations.
+
+---
+
+# Security Monitoring
+
+Security monitoring includes:
+
+- Authentication Failures
+- Network Anomalies
+- Privilege Escalation
+- Configuration Changes
+- Malware Detection
+
+Monitoring enables rapid detection of suspicious activity.
+
+---
+
+# Vulnerability Management
+
+Security requires continuous assessment.
+
+Workflow:
+
+```text
+Scan
+
+↓
+
+Identify
+
+↓
+
+Prioritize
+
+↓
+
+Patch
+
+↓
+
+Verify
+```
+
+Vulnerability management should be integrated into CI/CD pipelines.
+
+---
+
+# DevSecOps Pattern
+
+Security is integrated into the development lifecycle.
+
+```text
+Code
+
+↓
+
+Build
+
+↓
+
+SAST
+
+↓
+
+Container Scan
+
+↓
+
+Deploy
+
+↓
+
+Runtime Monitoring
+```
+
+Security checks occur before deployment.
+
+---
+
+# Compliance Pattern
+
+Enterprise environments often follow compliance standards.
+
+Examples:
+
+- ISO 27001
+- SOC 2
+- PCI DSS
+- HIPAA
+- GDPR
+
+Compliance requirements influence architectural decisions.
+
+---
+
+# Kubernetes Security Pattern
+
+```text
+Users
+
+↓
+
+Ingress
+
+↓
+
+Network Policies
+
+↓
+
+Pods
+
+↓
+
+Secrets
+
+↓
+
+Persistent Storage
+```
+
+Each layer enforces security controls.
+
+---
+
+# Enterprise Example
+
+Production banking platform.
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+AWS WAF
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+IAM
+
+↓
+
+Amazon RDS
+
+↓
+
+AWS Secrets Manager
+
+↓
+
+Cloud Monitoring
+```
+
+Every component contributes to overall security.
+
+---
+
+# Enterprise Best Practices
+
+- Implement Zero Trust principles.
+- Follow least privilege access.
+- Enable Multi-Factor Authentication.
+- Encrypt data at rest and in transit.
+- Store secrets securely.
+- Rotate credentials regularly.
+- Centralize audit logs.
+- Scan infrastructure continuously.
+- Integrate security into CI/CD pipelines.
+- Review IAM permissions regularly.
+
+---
+
+# Common Mistakes
+
+- Hardcoding credentials.
+- Granting excessive permissions.
+- Exposing databases publicly.
+- Disabling encryption.
+- Ignoring audit logs.
+- Sharing administrator accounts.
+- Opening unnecessary firewall ports.
+- Treating security as a post-deployment activity.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is Zero Trust?
+2. What is IAM?
+3. Explain the principle of least privilege.
+4. What is RBAC?
+5. Why is MFA important?
+
+---
+
+## Intermediate
+
+1. Difference between encryption at rest and encryption in transit.
+2. What is a Web Application Firewall?
+3. Explain secrets management.
+4. Why is network segmentation important?
+5. Explain DevSecOps.
+
+---
+
+## Advanced
+
+1. Design a Zero Trust security architecture for a Kubernetes-based financial platform using IAM, RBAC, Secrets Management, encryption, WAF, audit logging, and continuous monitoring.
+2. Explain how Defense in Depth, Zero Trust, least privilege, DevSecOps, encryption, and audit logging work together to protect enterprise cloud applications.
+3. A multinational bank is migrating mission-critical applications to AWS while meeting PCI DSS and ISO 27001 requirements. Design a secure cloud architecture covering identity management, network security, secrets management, encryption, compliance, and continuous security monitoring.
+
+---
+
