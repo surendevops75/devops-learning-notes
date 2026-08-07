@@ -1279,3 +1279,636 @@ Continuous monitoring and capacity planning.
 
 ---
 
+# Chapter 3 - Docker Production Troubleshooting Scenarios (51–100)
+
+Docker is the foundation of modern containerized applications.
+
+Most Kubernetes workloads, CI/CD pipelines, and microservices depend on Docker containers.
+
+This chapter covers **50 real-world Docker production troubleshooting scenarios**, including image issues, container failures, networking, storage, security, and performance.
+
+---
+
+# Scenario 51 - Container Exits Immediately
+
+### Symptoms
+
+- Container starts and exits within seconds.
+- `docker ps` shows no running container.
+
+### Investigation
+
+```bash
+docker ps -a
+
+docker logs <container-id>
+
+docker inspect <container-id>
+```
+
+### Root Cause
+
+The main application process exited.
+
+### Resolution
+
+Fix the application startup command or entrypoint.
+
+### Prevention
+
+Validate the Dockerfile and startup scripts before deployment.
+
+---
+
+# Scenario 52 - Container Keeps Restarting
+
+### Symptoms
+
+- Restart count continuously increases.
+- Service unavailable.
+
+### Investigation
+
+```bash
+docker ps
+
+docker inspect <container>
+
+docker logs <container>
+```
+
+### Root Cause
+
+Application crash or incorrect restart policy.
+
+### Resolution
+
+Fix the application or configuration.
+
+### Prevention
+
+Implement proper health checks and startup validation.
+
+---
+
+# Scenario 53 - Image Pull Failure
+
+### Symptoms
+
+```
+ImagePullBackOff
+
+pull access denied
+```
+
+### Investigation
+
+```bash
+docker pull image-name
+
+docker login
+```
+
+### Root Cause
+
+- Invalid image name
+- Authentication failure
+- Missing repository
+
+### Resolution
+
+Correct image reference and registry credentials.
+
+---
+
+# Scenario 54 - Docker Build Failure
+
+### Investigation
+
+```bash
+docker build .
+```
+
+Review:
+
+- Dockerfile
+- Build logs
+- Missing dependencies
+
+### Root Cause
+
+Invalid Dockerfile or build errors.
+
+---
+
+# Scenario 55 - Container Cannot Reach Internet
+
+### Investigation
+
+```bash
+docker exec -it container bash
+
+ping google.com
+
+curl google.com
+```
+
+### Root Cause
+
+Docker network misconfiguration.
+
+### Resolution
+
+Verify bridge network and DNS.
+
+---
+
+# Scenario 56 - DNS Resolution Failure Inside Container
+
+### Investigation
+
+```bash
+cat /etc/resolv.conf
+
+nslookup google.com
+```
+
+### Root Cause
+
+Incorrect Docker DNS configuration.
+
+---
+
+# Scenario 57 - Container Cannot Reach Database
+
+### Investigation
+
+- Verify database endpoint.
+- Test connectivity.
+- Check firewall.
+
+### Root Cause
+
+Network configuration or incorrect credentials.
+
+---
+
+# Scenario 58 - Port Mapping Incorrect
+
+### Investigation
+
+```bash
+docker ps
+
+docker port container
+```
+
+### Root Cause
+
+Incorrect port publishing.
+
+### Resolution
+
+Expose the correct ports.
+
+---
+
+# Scenario 59 - Volume Not Mounted
+
+### Investigation
+
+```bash
+docker inspect container
+```
+
+### Root Cause
+
+Incorrect bind mount configuration.
+
+---
+
+# Scenario 60 - Data Lost After Restart
+
+### Investigation
+
+Verify whether persistent volumes are configured.
+
+### Root Cause
+
+Container filesystem used instead of volumes.
+
+---
+
+# Scenario 61 - High Container CPU Usage
+
+### Investigation
+
+```bash
+docker stats
+```
+
+### Root Cause
+
+Application consuming excessive CPU.
+
+---
+
+# Scenario 62 - High Memory Usage
+
+### Investigation
+
+```bash
+docker stats
+```
+
+Review application memory behavior.
+
+---
+
+# Scenario 63 - Container OOMKilled
+
+### Investigation
+
+```bash
+docker inspect container
+```
+
+Review OOM events.
+
+### Resolution
+
+Increase memory limit or optimize the application.
+
+---
+
+# Scenario 64 - Disk Space Consumed by Images
+
+### Investigation
+
+```bash
+docker system df
+```
+
+### Resolution
+
+```bash
+docker image prune
+```
+
+---
+
+# Scenario 65 - Too Many Stopped Containers
+
+### Investigation
+
+```bash
+docker ps -a
+```
+
+### Resolution
+
+```bash
+docker container prune
+```
+
+---
+
+# Scenario 66 - Dangling Images
+
+### Investigation
+
+```bash
+docker images
+```
+
+### Resolution
+
+```bash
+docker image prune
+```
+
+---
+
+# Scenario 67 - Container Logs Too Large
+
+### Investigation
+
+```bash
+docker logs container
+```
+
+### Resolution
+
+Configure Docker log rotation.
+
+---
+
+# Scenario 68 - Docker Daemon Not Running
+
+### Investigation
+
+```bash
+systemctl status docker
+```
+
+### Resolution
+
+Restart Docker service.
+
+---
+
+# Scenario 69 - Docker Service Fails to Start
+
+Review:
+
+```bash
+journalctl -u docker
+```
+
+Check daemon configuration.
+
+---
+
+# Scenario 70 - Docker Socket Permission Denied
+
+### Investigation
+
+```bash
+ls -l /var/run/docker.sock
+```
+
+Verify user permissions.
+
+---
+
+# Scenario 71 - Invalid Dockerfile
+
+Review:
+
+- FROM
+- COPY
+- CMD
+- ENTRYPOINT
+
+---
+
+# Scenario 72 - COPY Command Failure
+
+Verify source path and build context.
+
+---
+
+# Scenario 73 - ENTRYPOINT Failure
+
+Inspect startup command.
+
+---
+
+# Scenario 74 - CMD Not Executed
+
+Review interaction between CMD and ENTRYPOINT.
+
+---
+
+# Scenario 75 - Environment Variables Missing
+
+### Investigation
+
+```bash
+docker inspect
+```
+
+Verify environment configuration.
+
+---
+
+# Scenario 76 - Secrets Exposed
+
+Review:
+
+- Dockerfile
+- Environment Variables
+- Image Layers
+
+---
+
+# Scenario 77 - Container Health Check Failing
+
+### Investigation
+
+```bash
+docker inspect
+```
+
+Review health status.
+
+---
+
+# Scenario 78 - Registry Authentication Failure
+
+Verify:
+
+```bash
+docker login
+```
+
+---
+
+# Scenario 79 - Private Registry Unreachable
+
+Check:
+
+- DNS
+- TLS
+- Firewall
+- Authentication
+
+---
+
+# Scenario 80 - Slow Docker Build
+
+Review:
+
+- Build Context
+- Layer Cache
+- Large Files
+
+---
+
+# Scenario 81 - Image Too Large
+
+Analyze:
+
+```bash
+docker history image
+```
+
+---
+
+# Scenario 82 - Build Cache Not Used
+
+Verify Dockerfile ordering.
+
+---
+
+# Scenario 83 - Network Conflict
+
+Review Docker bridge networks.
+
+---
+
+# Scenario 84 - Container Cannot Communicate with Another Container
+
+Verify:
+
+```bash
+docker network ls
+
+docker network inspect
+```
+
+---
+
+# Scenario 85 - Overlay Network Failure
+
+Review Docker Swarm networking.
+
+---
+
+# Scenario 86 - Container Time Incorrect
+
+Verify host time synchronization.
+
+---
+
+# Scenario 87 - Certificate Error
+
+Review:
+
+- Certificates
+- Expiration
+- Trust Store
+
+---
+
+# Scenario 88 - Docker Compose Failure
+
+Review:
+
+```bash
+docker compose config
+```
+
+---
+
+# Scenario 89 - Compose Service Dependency Failure
+
+Verify service startup order.
+
+---
+
+# Scenario 90 - BuildKit Failure
+
+Disable temporarily for testing.
+
+Review build configuration.
+
+---
+
+# Scenario 91 - Resource Limits Too Low
+
+Review:
+
+- CPU Limits
+- Memory Limits
+
+---
+
+# Scenario 92 - Image Vulnerabilities
+
+Scan image.
+
+Review outdated packages.
+
+---
+
+# Scenario 93 - Container Running as Root
+
+Review Dockerfile.
+
+Configure non-root user.
+
+---
+
+# Scenario 94 - File Permission Errors
+
+Verify mounted volume ownership.
+
+---
+
+# Scenario 95 - Slow Container Startup
+
+Review:
+
+- Initialization
+- Database Connection
+- External Dependencies
+
+---
+
+# Scenario 96 - Application Configuration Missing
+
+Verify mounted configuration files.
+
+---
+
+# Scenario 97 - Docker Engine Upgrade Failure
+
+Review:
+
+- Compatibility
+- Logs
+- Configuration
+
+---
+
+# Scenario 98 - Image Tag Mismatch
+
+Verify deployment references correct tag.
+
+---
+
+# Scenario 99 - Registry Rate Limiting
+
+Review registry usage.
+
+Implement authenticated pulls.
+
+---
+
+# Scenario 100 - Random Container Failures
+
+### Investigation
+
+Review:
+
+- Logs
+- Resource Usage
+- Restart History
+- Docker Events
+- Recent Deployments
+
+### Root Cause
+
+Usually application instability, infrastructure issues, or configuration drift.
+
+### Resolution
+
+Collect evidence before restarting containers.
+
+### Prevention
+
+Implement monitoring, health checks, resource limits, and deployment validation.
+
+---
+
