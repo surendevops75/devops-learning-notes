@@ -1619,3 +1619,605 @@ Every layer contributes to security and scalability.
 
 ---
 
+# Chapter 4 - Enterprise Compute Architecture & Application Design Patterns
+
+Compute is the execution layer of every cloud application.
+
+Whether applications run on:
+
+- Virtual Machines
+- Containers
+- Kubernetes
+- Serverless Platforms
+
+they all depend on compute resources.
+
+A well-designed compute architecture provides:
+
+- High Availability
+- Auto Scaling
+- Fault Tolerance
+- Performance
+- Cost Optimization
+- Security
+
+Enterprise applications are designed so compute resources can scale automatically while remaining highly available.
+
+---
+
+# Enterprise Compute Architecture
+
+A modern compute architecture follows this flow.
+
+```text
+Users
+
+↓
+
+DNS
+
+↓
+
+Load Balancer
+
+↓
+
+Compute Layer
+
+↓
+
+Application
+
+↓
+
+Database
+
+↓
+
+Storage
+```
+
+The compute layer processes application requests and communicates with backend services.
+
+---
+
+# Compute Options
+
+Cloud providers offer multiple compute models.
+
+| Compute Type | Example |
+|--------------|---------|
+| Virtual Machines | Amazon EC2 |
+| Containers | Docker |
+| Container Orchestration | Amazon EKS |
+| Serverless | AWS Lambda |
+| Platform Services | App Runner, ECS Fargate |
+
+Each option is suitable for different workloads.
+
+---
+
+# Virtual Machine Pattern
+
+Traditional applications often run on virtual machines.
+
+```text
+Load Balancer
+
+↓
+
+EC2-1
+
+EC2-2
+
+EC2-3
+
+↓
+
+Database
+```
+
+Advantages:
+
+- Full OS control
+- Legacy application support
+- Flexible configurations
+
+Disadvantages:
+
+- Manual patching
+- OS management
+- Higher operational overhead
+
+---
+
+# Container Pattern
+
+Containers package applications with their dependencies.
+
+```text
+Docker Image
+
+↓
+
+Container
+
+↓
+
+Application
+```
+
+Benefits:
+
+- Consistency
+- Faster deployments
+- Lightweight execution
+- Easy portability
+
+Containers are widely used for microservices.
+
+---
+
+# Kubernetes Pattern
+
+Enterprise Kubernetes architecture.
+
+```text
+Users
+
+↓
+
+Load Balancer
+
+↓
+
+Ingress
+
+↓
+
+Services
+
+↓
+
+Pods
+
+↓
+
+Worker Nodes
+```
+
+Kubernetes provides:
+
+- Scheduling
+- Self-Healing
+- Auto Scaling
+- Rolling Updates
+
+---
+
+# Stateless Compute Pattern
+
+Modern applications should remain stateless.
+
+```text
+Application
+
+↓
+
+Redis
+
+↓
+
+Database
+```
+
+Application instances can be replaced without losing user sessions.
+
+Benefits:
+
+- Easy scaling
+- Simplified deployments
+- Improved resilience
+
+---
+
+# Stateful Workloads
+
+Some workloads require persistent data.
+
+Examples:
+
+- Databases
+- Message Brokers
+- Elasticsearch
+- Kafka
+
+Stateful workloads require persistent storage and careful placement.
+
+---
+
+# Auto Scaling Pattern
+
+Applications should automatically scale according to demand.
+
+```text
+Low Traffic
+
+↓
+
+2 Instances
+
+────────────
+
+High Traffic
+
+↓
+
+10 Instances
+```
+
+Scaling policies are commonly based on:
+
+- CPU Utilization
+- Memory Usage
+- Request Count
+- Queue Length
+
+---
+
+# Self-Healing Pattern
+
+Cloud platforms automatically replace failed instances.
+
+```text
+Application Failure
+
+↓
+
+Health Check
+
+↓
+
+Replace Instance
+
+↓
+
+Application Restored
+```
+
+Users experience minimal disruption.
+
+---
+
+# Blue-Green Deployment
+
+Two identical environments exist.
+
+```text
+Blue
+
+(Current)
+
+↓
+
+Green
+
+(New Version)
+
+↓
+
+Switch Traffic
+```
+
+Benefits:
+
+- Zero Downtime
+- Easy Rollback
+- Safer Releases
+
+---
+
+# Canary Deployment
+
+Traffic is shifted gradually.
+
+```text
+Version 1
+
+95%
+
+──────────
+
+Version 2
+
+5%
+
+↓
+
+Monitor
+
+↓
+
+Increase Traffic
+```
+
+Benefits:
+
+- Lower deployment risk
+- Early issue detection
+- Controlled rollout
+
+---
+
+# Rolling Deployment
+
+Instances are updated gradually.
+
+```text
+Server 1
+
+↓
+
+Updated
+
+↓
+
+Server 2
+
+↓
+
+Updated
+
+↓
+
+Server 3
+
+↓
+
+Updated
+```
+
+Applications remain available during upgrades.
+
+---
+
+# Immutable Deployment
+
+Instead of updating servers,
+
+replace them.
+
+```text
+Old Server
+
+↓
+
+New Image
+
+↓
+
+New Server
+
+↓
+
+Terminate Old Server
+```
+
+Benefits:
+
+- Consistency
+- Easy rollback
+- Reduced configuration drift
+
+---
+
+# Microservices Pattern
+
+Enterprise applications are divided into independent services.
+
+```text
+Gateway
+
+↓
+
+User
+
+Order
+
+Payment
+
+Inventory
+
+Notification
+```
+
+Each service:
+
+- Deploys independently
+- Scales independently
+- Fails independently
+
+---
+
+# Sidecar Pattern
+
+A helper container runs alongside the main application.
+
+```text
+Pod
+
+├── Application
+
+└── Sidecar
+```
+
+Common sidecars:
+
+- Log Collectors
+- Service Mesh Proxies
+- Monitoring Agents
+
+---
+
+# Ambassador Pattern
+
+A proxy container manages outbound communication.
+
+```text
+Application
+
+↓
+
+Ambassador
+
+↓
+
+External Service
+```
+
+Benefits:
+
+- Centralized communication
+- Easier configuration
+- Improved security
+
+---
+
+# Adapter Pattern
+
+An adapter converts application output into another format.
+
+```text
+Application
+
+↓
+
+Adapter
+
+↓
+
+Monitoring System
+```
+
+Useful when integrating legacy applications.
+
+---
+
+# Serverless Pattern
+
+Applications execute only when events occur.
+
+```text
+Request
+
+↓
+
+Lambda
+
+↓
+
+Response
+```
+
+Advantages:
+
+- No server management
+- Automatic scaling
+- Pay-per-use pricing
+
+Best suited for event-driven workloads.
+
+---
+
+# Enterprise Compute Architecture
+
+```text
+Users
+
+↓
+
+Route53
+
+↓
+
+Application Load Balancer
+
+↓
+
+Amazon EKS
+
+↓
+
+Microservices
+
+↓
+
+Amazon RDS
+
+↓
+
+Amazon ElastiCache
+
+↓
+
+Amazon S3
+```
+
+Every compute component scales independently.
+
+---
+
+# Enterprise Best Practices
+
+- Design stateless applications whenever possible.
+- Use containers for microservices.
+- Enable Auto Scaling.
+- Use health checks for self-healing.
+- Prefer immutable deployments.
+- Choose the appropriate deployment strategy.
+- Separate compute from storage.
+- Monitor application performance continuously.
+- Automate deployments through CI/CD.
+- Right-size compute resources for cost optimization.
+
+---
+
+# Common Mistakes
+
+- Running stateful workloads without persistent storage.
+- Deploying applications without health checks.
+- Manual server configuration.
+- Ignoring Auto Scaling.
+- Using a single application instance.
+- Performing in-place production updates.
+- Overprovisioning compute resources.
+- Tight coupling between application components.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is cloud compute?
+2. Difference between virtual machines and containers.
+3. What is Kubernetes?
+4. What is Auto Scaling?
+5. What is a stateless application?
+
+## Intermediate
+
+1. Explain Blue-Green deployment.
+2. Explain Canary deployment.
+3. Difference between Rolling and Blue-Green deployments.
+4. What is immutable infrastructure?
+5. Explain the Sidecar pattern.
+
+## Advanced
+
+1. Design a production-ready compute architecture for a Kubernetes-based microservices application using Auto Scaling, self-healing, immutable deployments, and rolling updates.
+2. Explain how compute design patterns such as stateless architecture, Blue-Green deployments, Canary releases, Auto Scaling, Sidecars, and Kubernetes contribute to highly available enterprise platforms.
+3. A global e-commerce company expects traffic spikes during seasonal sales. Design a compute architecture that automatically scales, minimizes deployment risk, supports zero-downtime releases, and maintains high availability across multiple Availability Zones.
+
+---
+
