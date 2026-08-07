@@ -2486,3 +2486,547 @@ If `kubelet` stops, workloads cannot be scheduled.
 
 ---
 
+# Chapter 5 - Linux Memory Management, CPU Scheduling & Performance Monitoring
+
+Performance is one of the most critical aspects of Linux system administration.
+
+Whether you are running:
+
+- Kubernetes Worker Nodes
+- Docker Hosts
+- Jenkins Servers
+- Database Servers
+- Application Servers
+
+understanding how Linux manages CPU and memory is essential for maintaining a stable production environment.
+
+Most production incidents are caused by:
+
+- High CPU Utilization
+- Memory Exhaustion
+- Swap Usage
+- Load Spikes
+- Resource Contention
+- Memory Leaks
+
+---
+
+# Linux Resource Management
+
+Linux efficiently manages system resources through the kernel.
+
+The kernel is responsible for:
+
+- CPU Scheduling
+- Memory Allocation
+- Process Scheduling
+- Disk I/O
+- Network Resources
+
+```text
+Applications
+      │
+      ▼
+Linux Kernel
+      │
+      ▼
+CPU | Memory | Disk | Network
+```
+
+---
+
+# Physical Memory (RAM)
+
+RAM is the primary working memory used by running applications.
+
+Applications load into RAM for execution.
+
+Examples:
+
+- Java Applications
+- Nginx
+- Docker Containers
+- Kubernetes Pods
+- Databases
+
+More available RAM generally improves system performance.
+
+---
+
+# Virtual Memory
+
+Linux uses **Virtual Memory** to allow processes to operate independently of the actual physical memory available.
+
+Benefits include:
+
+- Process Isolation
+- Efficient Memory Allocation
+- Better Stability
+- Address Space Protection
+
+Each process believes it has its own dedicated memory space.
+
+---
+
+# Swap Memory
+
+Swap is disk space used as an extension of RAM.
+
+```text
+RAM Full
+
+↓
+
+Swap Space
+
+↓
+
+Disk
+```
+
+Swap helps prevent immediate application crashes but is much slower than RAM.
+
+Excessive swap usage usually indicates memory pressure.
+
+---
+
+# Check Memory Usage
+
+Display memory statistics:
+
+```bash
+free -h
+```
+
+Example output:
+
+```text
+              total   used   free   shared   buff/cache   available
+Mem:           16G     8G     3G       1G        5G          7G
+Swap:           4G     0G     4G
+```
+
+The `-h` option displays values in a human-readable format.
+
+---
+
+# Understanding Memory Output
+
+Important fields:
+
+| Field | Description |
+|--------|-------------|
+| Total | Total installed memory |
+| Used | Memory currently in use |
+| Free | Completely unused memory |
+| Buff/Cache | Memory used for caching |
+| Available | Memory available for new applications |
+
+Do not panic if **free memory is low**. Linux aggressively uses free memory for caching.
+
+---
+
+# Memory Cache
+
+Linux uses unused RAM as a filesystem cache.
+
+Benefits:
+
+- Faster file access
+- Improved application performance
+- Reduced disk I/O
+
+Cached memory is automatically released when applications require additional memory.
+
+---
+
+# CPU Scheduling
+
+The Linux kernel decides which process gets CPU time.
+
+```text
+Ready Queue
+
+↓
+
+CPU Scheduler
+
+↓
+
+CPU Core
+```
+
+The scheduler ensures fair CPU allocation among processes.
+
+---
+
+# CPU Cores
+
+Modern servers contain multiple CPU cores.
+
+Example:
+
+```text
+CPU
+
+↓
+
+Core 1
+
+Core 2
+
+Core 3
+
+Core 4
+```
+
+Linux distributes workloads across available cores.
+
+---
+
+# Check CPU Information
+
+View CPU details:
+
+```bash
+lscpu
+```
+
+Useful information includes:
+
+- CPU Architecture
+- Number of CPUs
+- Number of Cores
+- Threads per Core
+- CPU Model
+
+---
+
+# View System Uptime
+
+Display system uptime:
+
+```bash
+uptime
+```
+
+Example:
+
+```text
+10:20:45 up 25 days, 4 users, load average: 0.82, 0.90, 1.01
+```
+
+---
+
+# Understanding Load Average
+
+Linux reports three load averages.
+
+```text
+1 Minute
+
+5 Minutes
+
+15 Minutes
+```
+
+Interpretation depends on CPU count.
+
+Example:
+
+Server with 4 CPU cores
+
+| Load Average | Status |
+|--------------|---------|
+| 2 | Healthy |
+| 4 | Fully Utilized |
+| 8 | Overloaded |
+
+Always compare load average with the number of CPU cores.
+
+---
+
+# CPU Monitoring
+
+Real-time CPU monitoring:
+
+```bash
+top
+```
+
+or
+
+```bash
+htop
+```
+
+Useful metrics include:
+
+- CPU Utilization
+- Running Processes
+- Memory Usage
+- Load Average
+
+---
+
+# vmstat
+
+Display virtual memory statistics:
+
+```bash
+vmstat 2
+```
+
+Updates every two seconds.
+
+Useful metrics:
+
+- CPU Usage
+- Memory
+- Swap
+- Disk I/O
+- Context Switches
+
+---
+
+# iostat
+
+Monitor disk I/O performance:
+
+```bash
+iostat -x 2
+```
+
+Useful for identifying storage bottlenecks.
+
+Metrics include:
+
+- Read/Write Speed
+- Disk Utilization
+- Queue Length
+- I/O Wait
+
+---
+
+# sar
+
+The `sar` command provides historical performance statistics.
+
+Examples:
+
+```bash
+sar -u
+```
+
+CPU history.
+
+```bash
+sar -r
+```
+
+Memory history.
+
+```bash
+sar -n DEV
+```
+
+Network statistics.
+
+Very useful during production investigations.
+
+---
+
+# Load vs CPU Usage
+
+Load Average and CPU Usage are different.
+
+| CPU Usage | Load Average |
+|------------|--------------|
+| CPU currently busy | Processes waiting for CPU or I/O |
+| Percentage | Queue length |
+
+A server can have:
+
+- Low CPU usage
+- High Load Average
+
+if processes are waiting for disk or network operations.
+
+---
+
+# Out Of Memory (OOM)
+
+When Linux runs out of available memory,
+
+the **OOM Killer** terminates one or more processes.
+
+```text
+Memory Exhausted
+
+↓
+
+OOM Killer
+
+↓
+
+Terminate Process
+
+↓
+
+System Stabilized
+```
+
+OOM events are common causes of application outages.
+
+---
+
+# OOM Killer
+
+The OOM Killer selects a process based on several factors, including memory usage and priority.
+
+Typical victims:
+
+- Java Applications
+- Large Databases
+- Memory-intensive Services
+
+Investigate OOM events immediately.
+
+---
+
+# Check OOM Events
+
+View kernel messages:
+
+```bash
+dmesg | grep -i oom
+```
+
+or
+
+```bash
+journalctl -k
+```
+
+These commands help identify processes terminated by the OOM Killer.
+
+---
+
+# Memory Leak
+
+A memory leak occurs when an application continuously allocates memory without releasing it.
+
+Symptoms:
+
+- Increasing memory usage
+- Growing swap usage
+- OOM events
+- Slow application performance
+
+Memory leaks require application-level investigation.
+
+---
+
+# Enterprise Example
+
+A Jenkins server may experience increasing memory usage during multiple concurrent builds.
+
+```text
+Jenkins
+
+↓
+
+Java Process
+
+↓
+
+Memory Growth
+
+↓
+
+High RAM Usage
+
+↓
+
+OOM Risk
+```
+
+Continuous monitoring helps detect the issue before service interruption.
+
+---
+
+# Kubernetes Example
+
+A Kubernetes worker node runs multiple pods.
+
+```text
+Linux Worker Node
+
+↓
+
+Container Runtime
+
+↓
+
+Pods
+
+↓
+
+Memory Consumption
+```
+
+If total memory exceeds node capacity, Kubernetes may evict pods or Linux may invoke the OOM Killer.
+
+---
+
+# Enterprise Best Practices
+
+- Monitor CPU and memory continuously.
+- Compare load average with CPU core count.
+- Investigate increasing swap usage.
+- Review OOM events immediately.
+- Monitor application memory growth.
+- Use `top`, `htop`, `vmstat`, `iostat`, and `sar` regularly.
+- Allocate appropriate resources for applications.
+- Establish performance baselines for production systems.
+
+---
+
+# Common Mistakes
+
+- Assuming low free memory indicates a problem.
+- Ignoring swap usage.
+- Confusing CPU usage with load average.
+- Ignoring OOM Killer events.
+- Restarting applications without identifying memory leaks.
+- Monitoring only CPU while ignoring disk I/O.
+- Not establishing baseline performance metrics.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is virtual memory?
+2. What is swap memory?
+3. What is the difference between RAM and swap?
+4. What does the `free -h` command show?
+5. What is load average?
+
+## Intermediate
+
+1. Explain Linux CPU scheduling.
+2. What is the OOM Killer?
+3. Difference between CPU utilization and load average.
+4. Explain memory caching in Linux.
+5. How do you monitor CPU and memory usage in production?
+
+## Advanced
+
+1. A production Linux server suddenly becomes slow even though CPU utilization is only 30%. Explain how you would investigate load average, disk I/O, memory usage, swap, and process behavior to identify the root cause.
+2. A Kubernetes worker node begins terminating pods unexpectedly. Explain how you would investigate memory pressure, OOM Killer events, container resource consumption, and node performance.
+3. Design a performance monitoring strategy for enterprise Linux servers hosting Jenkins, Docker, Kubernetes, and database workloads, including CPU, memory, disk, and historical performance metrics.
+
+---
+
