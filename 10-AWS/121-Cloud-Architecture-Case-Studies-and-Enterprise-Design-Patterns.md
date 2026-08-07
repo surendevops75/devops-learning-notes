@@ -2221,3 +2221,570 @@ Every compute component scales independently.
 
 ---
 
+# Chapter 5 - Enterprise Storage Architecture & Data Management Design Patterns
+
+Storage is the foundation of every enterprise application.
+
+Applications generate and consume large amounts of data including:
+
+- Application Files
+- Databases
+- Logs
+- Images
+- Videos
+- Backups
+- Kubernetes Persistent Volumes
+- CI/CD Artifacts
+
+A well-designed storage architecture ensures:
+
+- High Availability
+- Durability
+- Scalability
+- Performance
+- Security
+- Disaster Recovery
+- Cost Optimization
+
+Enterprise systems treat storage as a critical architectural component.
+
+---
+
+# Enterprise Storage Architecture
+
+A modern storage architecture follows this pattern.
+
+```text
+Applications
+
+↓
+
+Block Storage
+
+↓
+
+Object Storage
+
+↓
+
+File Storage
+
+↓
+
+Backups
+
+↓
+
+Disaster Recovery
+```
+
+Different storage types serve different workloads.
+
+---
+
+# Types of Storage
+
+Cloud platforms provide three primary storage models.
+
+| Storage Type | Example | Best Use Case |
+|--------------|----------|---------------|
+| Block Storage | Amazon EBS | Virtual Machines, Databases |
+| Object Storage | Amazon S3 | Images, Logs, Backups |
+| File Storage | Amazon EFS | Shared File Systems |
+
+Choosing the correct storage type is critical for performance and cost optimization.
+
+---
+
+# Block Storage Pattern
+
+Block storage provides low-latency storage attached to compute resources.
+
+```text
+EC2
+
+↓
+
+EBS Volume
+
+↓
+
+Application
+```
+
+Common workloads:
+
+- Databases
+- Operating Systems
+- Kubernetes Worker Nodes
+- Virtual Machines
+
+---
+
+# Object Storage Pattern
+
+Object storage stores files as objects.
+
+```text
+Application
+
+↓
+
+Amazon S3
+
+↓
+
+Objects
+
+↓
+
+Buckets
+```
+
+Common workloads:
+
+- Images
+- Videos
+- Documents
+- Logs
+- Backups
+- Static Website Assets
+
+Object storage is highly durable and scalable.
+
+---
+
+# File Storage Pattern
+
+File storage provides shared access using standard file protocols.
+
+```text
+Multiple Servers
+
+↓
+
+Shared File System
+
+↓
+
+Amazon EFS
+```
+
+Common workloads:
+
+- Shared Application Data
+- User Home Directories
+- Content Management Systems
+- Shared Build Artifacts
+
+---
+
+# Storage Selection Matrix
+
+| Workload | Recommended Storage |
+|----------|---------------------|
+| Database | Block Storage |
+| Application Files | Object Storage |
+| Shared Files | File Storage |
+| Kubernetes Persistent Volumes | Block/File Storage |
+| Backup Archives | Object Storage |
+
+---
+
+# Persistent Storage Pattern
+
+Applications should separate compute from storage.
+
+Poor Design
+
+```text
+Application
+
+↓
+
+Local Disk
+```
+
+Server failure results in data loss.
+
+Enterprise Design
+
+```text
+Application
+
+↓
+
+Persistent Volume
+
+↓
+
+Storage
+```
+
+Compute can be replaced without losing data.
+
+---
+
+# Storage Lifecycle Pattern
+
+Not all data requires the same storage class.
+
+```text
+Frequently Accessed
+
+↓
+
+Standard Storage
+
+↓
+
+Infrequently Accessed
+
+↓
+
+Archive
+
+↓
+
+Deletion
+```
+
+Lifecycle policies automatically move data to lower-cost storage tiers.
+
+---
+
+# Backup Architecture
+
+Enterprise backup workflow.
+
+```text
+Application
+
+↓
+
+Snapshot
+
+↓
+
+Backup Storage
+
+↓
+
+Cross-Region Copy
+
+↓
+
+Recovery
+```
+
+Backups should always be stored separately from production resources.
+
+---
+
+# Snapshot Pattern
+
+Snapshots capture the state of storage at a specific point in time.
+
+```text
+Volume
+
+↓
+
+Snapshot
+
+↓
+
+Restore
+```
+
+Benefits:
+
+- Fast Recovery
+- Point-in-Time Restore
+- Disaster Recovery
+
+---
+
+# Replication Pattern
+
+Critical data should exist in multiple locations.
+
+```text
+Primary Storage
+
+↓
+
+Replication
+
+↓
+
+Secondary Storage
+```
+
+Replication improves availability and disaster recovery readiness.
+
+---
+
+# Data Durability
+
+Durability refers to the likelihood that stored data will remain intact over time.
+
+Enterprise systems achieve durability through:
+
+- Multiple Copies
+- Replication
+- Checksums
+- Redundant Storage Devices
+
+High durability protects against hardware failures.
+
+---
+
+# High Availability for Storage
+
+Storage should remain accessible during infrastructure failures.
+
+```text
+Application
+
+↓
+
+Storage Service
+
+↓
+
+Multiple Availability Zones
+```
+
+Users continue accessing data even during failures.
+
+---
+
+# Kubernetes Storage Pattern
+
+Persistent applications require persistent volumes.
+
+```text
+Pod
+
+↓
+
+Persistent Volume Claim
+
+↓
+
+Persistent Volume
+
+↓
+
+Storage Class
+```
+
+Pods can restart without losing data.
+
+---
+
+# Database Storage Pattern
+
+Enterprise databases separate compute from storage.
+
+```text
+Database Engine
+
+↓
+
+Block Storage
+
+↓
+
+Snapshots
+
+↓
+
+Replication
+```
+
+This architecture supports backups and high availability.
+
+---
+
+# Shared Storage Pattern
+
+Multiple application instances share the same files.
+
+```text
+App-1
+
+↓
+
+Shared File System
+
+↑
+
+App-2
+
+↑
+
+App-3
+```
+
+Useful for web servers and content management platforms.
+
+---
+
+# Data Archiving Pattern
+
+Older data should be archived.
+
+```text
+Production
+
+↓
+
+Archive Storage
+
+↓
+
+Long-Term Retention
+```
+
+Benefits:
+
+- Lower Cost
+- Compliance
+- Historical Data Preservation
+
+---
+
+# Encryption Pattern
+
+Data should be encrypted.
+
+Two levels:
+
+```text
+Encryption at Rest
+
+↓
+
+Stored Data
+
+────────────
+
+Encryption in Transit
+
+↓
+
+Network Traffic
+```
+
+Encryption protects sensitive information.
+
+---
+
+# Storage Monitoring
+
+Key metrics:
+
+- Capacity
+- IOPS
+- Throughput
+- Latency
+- Error Rate
+- Snapshot Status
+- Replication Health
+
+Continuous monitoring prevents storage-related outages.
+
+---
+
+# Enterprise Example
+
+Production microservices platform.
+
+```text
+Amazon EKS
+
+↓
+
+Persistent Volumes
+
+↓
+
+Amazon EBS
+
+↓
+
+Snapshots
+
+↓
+
+Amazon S3 Backup
+
+↓
+
+Cross-Region Replication
+```
+
+Storage remains durable and recoverable.
+
+---
+
+# Enterprise Best Practices
+
+- Choose the correct storage type for each workload.
+- Separate compute from storage.
+- Automate snapshots and backups.
+- Implement lifecycle policies.
+- Encrypt all sensitive data.
+- Monitor storage utilization continuously.
+- Replicate critical data across Availability Zones or regions.
+- Regularly test backup restoration procedures.
+- Use persistent storage for stateful workloads.
+- Archive unused data to reduce costs.
+
+---
+
+# Common Mistakes
+
+- Storing critical data only on local disks.
+- Running databases without backups.
+- Ignoring snapshot verification.
+- Using object storage for database workloads.
+- Not testing restore procedures.
+- Keeping all data in expensive storage tiers.
+- Running Kubernetes stateful workloads without persistent volumes.
+- Ignoring storage performance metrics.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What are the different types of cloud storage?
+2. What is block storage?
+3. What is object storage?
+4. What is file storage?
+5. What is a snapshot?
+
+---
+
+## Intermediate
+
+1. Difference between block, object, and file storage.
+2. Explain storage lifecycle policies.
+3. Why should compute and storage be separated?
+4. Explain Kubernetes Persistent Volumes.
+5. How does replication improve availability?
+
+---
+
+## Advanced
+
+1. Design a storage architecture for a Kubernetes-based enterprise platform that hosts databases, application files, logs, and backups while ensuring high availability, durability, encryption, and disaster recovery.
+2. Explain how storage design patterns such as persistent storage, snapshots, replication, lifecycle management, and encryption contribute to enterprise cloud reliability.
+3. A financial organization must store petabytes of customer data while meeting compliance requirements for durability, security, backup, and long-term retention. Design a cloud storage architecture that balances performance, resilience, and cost optimization.
+
+---
+
