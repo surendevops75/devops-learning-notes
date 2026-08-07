@@ -4641,3 +4641,550 @@ Implement end-to-end network monitoring, automated health checks, infrastructure
 
 ---
 
+# Chapter 9 - Database, Storage & Backup Production Troubleshooting Scenarios (351–400)
+
+Enterprise applications depend on reliable databases and storage systems.
+
+Even when the application is healthy, failures in storage or databases can cause:
+
+- Slow response times
+- Data corruption
+- Service outages
+- Backup failures
+- Disaster recovery issues
+
+This chapter covers **50 real-world production troubleshooting scenarios** involving databases, storage, persistence, backups, and disaster recovery.
+
+---
+
+# Scenario 351 - Database Connection Refused
+
+### Symptoms
+
+- Application cannot connect to database.
+- Connection timeout.
+
+### Investigation
+
+Verify:
+
+- Database status
+- Network connectivity
+- Security Groups
+- Database endpoint
+
+### Root Cause
+
+Database unavailable or network blocked.
+
+### Resolution
+
+Restore database connectivity.
+
+### Prevention
+
+Enable database health monitoring.
+
+---
+
+# Scenario 352 - Authentication Failure
+
+### Investigation
+
+Verify:
+
+- Username
+- Password
+- Secrets
+- IAM authentication
+
+### Root Cause
+
+Invalid credentials.
+
+---
+
+# Scenario 353 - Database Endpoint Changed
+
+Review application configuration.
+
+Update endpoint.
+
+---
+
+# Scenario 354 - Database High CPU Usage
+
+### Investigation
+
+Review:
+
+- Running Queries
+- Slow Query Log
+- Active Connections
+
+### Root Cause
+
+Expensive queries or excessive workload.
+
+---
+
+# Scenario 355 - Slow Database Queries
+
+### Investigation
+
+Use:
+
+```sql
+EXPLAIN
+```
+
+Review indexes.
+
+Optimize queries.
+
+---
+
+# Scenario 356 - Database Deadlock
+
+### Symptoms
+
+Transactions waiting indefinitely.
+
+### Investigation
+
+Review database deadlock logs.
+
+### Resolution
+
+Optimize transaction order.
+
+---
+
+# Scenario 357 - Connection Pool Exhausted
+
+Review:
+
+- Maximum connections
+- Connection leaks
+- Idle connections
+
+---
+
+# Scenario 358 - Too Many Database Connections
+
+Monitor active sessions.
+
+Optimize connection pooling.
+
+---
+
+# Scenario 359 - Database Replication Lag
+
+### Investigation
+
+Review replication delay.
+
+### Root Cause
+
+Heavy write workload or network latency.
+
+---
+
+# Scenario 360 - Replica Not Synchronizing
+
+Verify replication status.
+
+Review replication logs.
+
+---
+
+# Scenario 361 - Database Storage Full
+
+### Symptoms
+
+Writes fail.
+
+### Investigation
+
+Check storage utilization.
+
+### Resolution
+
+Increase storage or archive old data.
+
+---
+
+# Scenario 362 - Database Backup Failure
+
+Verify:
+
+- Backup job
+- Storage
+- Permissions
+
+---
+
+# Scenario 363 - Backup Storage Full
+
+Clean old backups or expand storage.
+
+---
+
+# Scenario 364 - Restore Failure
+
+Review backup integrity.
+
+Verify backup version compatibility.
+
+---
+
+# Scenario 365 - Corrupted Backup
+
+Always validate backups after creation.
+
+Restore from previous valid backup.
+
+---
+
+# Scenario 366 - Point-in-Time Recovery Failure
+
+Verify:
+
+- Transaction logs
+- Backup chain
+
+---
+
+# Scenario 367 - Read Replica Unavailable
+
+Review:
+
+- Replica health
+- Network
+- Storage
+
+---
+
+# Scenario 368 - Database Failover Failure
+
+Review automatic failover configuration.
+
+Verify application reconnect logic.
+
+---
+
+# Scenario 369 - High Disk I/O
+
+Monitor:
+
+- IOPS
+- Queue Depth
+- Latency
+
+---
+
+# Scenario 370 - Storage Latency High
+
+Investigate:
+
+- Storage performance
+- Cloud storage metrics
+- Workload spikes
+
+---
+
+# Scenario 371 - Persistent Volume Full
+
+### Investigation
+
+```bash
+df -h
+```
+
+Increase storage or clean unnecessary files.
+
+---
+
+# Scenario 372 - Persistent Volume Claim Pending
+
+Review:
+
+```bash
+kubectl describe pvc
+```
+
+Verify StorageClass.
+
+---
+
+# Scenario 373 - Volume Mount Failure
+
+Review Pod events.
+
+Verify volume configuration.
+
+---
+
+# Scenario 374 - File System Read-Only
+
+Review filesystem errors.
+
+Check storage health.
+
+---
+
+# Scenario 375 - Snapshot Creation Failure
+
+Verify:
+
+- Storage permissions
+- Snapshot limits
+
+---
+
+# Scenario 376 - Snapshot Restore Failure
+
+Validate snapshot integrity.
+
+Review restore process.
+
+---
+
+# Scenario 377 - Storage Class Misconfiguration
+
+Review StorageClass parameters.
+
+---
+
+# Scenario 378 - Shared File System Unavailable
+
+Verify:
+
+- NFS/EFS availability
+- Mount targets
+- Network
+
+---
+
+# Scenario 379 - File Locking Issues
+
+Investigate concurrent access.
+
+Review application locking behavior.
+
+---
+
+# Scenario 380 - Object Storage Access Denied
+
+Verify:
+
+- IAM permissions
+- Bucket policy
+- Access keys
+
+---
+
+# Scenario 381 - Object Upload Failure
+
+Review:
+
+- Bucket
+- Network
+- Permissions
+
+---
+
+# Scenario 382 - Object Download Failure
+
+Verify object existence and access rights.
+
+---
+
+# Scenario 383 - Lifecycle Policy Not Working
+
+Review lifecycle configuration.
+
+Verify object tags and prefixes.
+
+---
+
+# Scenario 384 - Cross-Region Replication Failure
+
+Verify:
+
+- Replication rules
+- IAM permissions
+- Destination storage
+
+---
+
+# Scenario 385 - Archive Retrieval Delay
+
+Verify storage class.
+
+Inform users about archive retrieval times.
+
+---
+
+# Scenario 386 - Encryption Key Access Failure
+
+Review:
+
+- KMS permissions
+- Key status
+- IAM policies
+
+---
+
+# Scenario 387 - Storage Encryption Failure
+
+Verify encryption configuration.
+
+---
+
+# Scenario 388 - Storage Performance Drops After Migration
+
+Compare:
+
+- Storage type
+- IOPS
+- Throughput
+- Latency
+
+---
+
+# Scenario 389 - Database Migration Failure
+
+Review migration logs.
+
+Validate schema compatibility.
+
+---
+
+# Scenario 390 - Schema Update Failure
+
+Review migration scripts.
+
+Rollback if required.
+
+---
+
+# Scenario 391 - Data Corruption Detected
+
+Restore verified backup.
+
+Perform integrity validation.
+
+---
+
+# Scenario 392 - Duplicate Records
+
+Review application logic.
+
+Check transaction retries.
+
+---
+
+# Scenario 393 - Missing Records
+
+Review:
+
+- Replication
+- Transactions
+- Backup
+- Application Logs
+
+---
+
+# Scenario 394 - Database Lock Contention
+
+Investigate long-running transactions.
+
+Optimize locking strategy.
+
+---
+
+# Scenario 395 - Backup Schedule Not Running
+
+Verify scheduler configuration.
+
+Review cron or automation logs.
+
+---
+
+# Scenario 396 - Disaster Recovery Test Failure
+
+Review:
+
+- Recovery documentation
+- Backup validity
+- Failover procedures
+
+---
+
+# Scenario 397 - Recovery Takes Too Long
+
+Review:
+
+- Recovery Time Objective (RTO)
+- Backup strategy
+- Storage performance
+
+Optimize recovery procedures.
+
+---
+
+# Scenario 398 - Unexpected Storage Cost Increase
+
+Investigate:
+
+- Snapshots
+- Backups
+- Object Storage
+- Old Volumes
+
+Apply lifecycle policies.
+
+---
+
+# Scenario 399 - Database Performance Degrades After Deployment
+
+Compare:
+
+- Application Version
+- Database Queries
+- Indexes
+- Configuration Changes
+
+Rollback if necessary.
+
+---
+
+# Scenario 400 - Random Database & Storage Production Failure
+
+### Investigation
+
+Review:
+
+- Database Logs
+- Storage Metrics
+- Backup Status
+- Replication
+- Connection Pool
+- Query Performance
+- Recent Changes
+
+### Root Cause
+
+Usually caused by resource exhaustion, storage latency, replication issues, query inefficiencies, backup failures, or configuration changes.
+
+### Resolution
+
+Follow a structured troubleshooting process, verify data integrity before making changes, and restore from backups only when necessary.
+
+### Prevention
+
+Implement continuous monitoring, automated backups, regular restore testing, storage capacity planning, query optimization, replication health monitoring, and disaster recovery drills.
+
+---
+
