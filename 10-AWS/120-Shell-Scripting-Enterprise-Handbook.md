@@ -547,3 +547,604 @@ This script can run automatically through Cron or a CI/CD pipeline.
 
 ---
 
+# Chapter 2 - Variables, User Input, Data Types & Operators
+
+Variables are the foundation of every shell script.
+
+Almost every automation script uses variables to store:
+
+- File Names
+- User Names
+- Server Names
+- IP Addresses
+- Environment Names
+- Database Names
+- AWS Resources
+
+Without variables, scripts become difficult to maintain and reuse.
+
+---
+
+# What is a Variable?
+
+A variable stores a value that can be used throughout a script.
+
+Instead of writing the same value repeatedly:
+
+```text
+Production
+
+Production
+
+Production
+```
+
+Store it once:
+
+```bash
+ENV=Production
+```
+
+Now the script can reference the variable whenever needed.
+
+---
+
+# Declaring Variables
+
+Variables are assigned using the following syntax:
+
+```bash
+NAME="Surendra"
+
+AGE=28
+
+CITY="Hyderabad"
+```
+
+**Note:** There should be **no spaces** around the `=` operator.
+
+Correct:
+
+```bash
+NAME="DevOps"
+```
+
+Incorrect:
+
+```bash
+NAME = "DevOps"
+```
+
+---
+
+# Accessing Variables
+
+Use the `$` symbol to access a variable.
+
+Example:
+
+```bash
+NAME="DevOps"
+
+echo $NAME
+```
+
+Output:
+
+```text
+DevOps
+```
+
+Variables can be reused throughout the script.
+
+---
+
+# Using Curly Braces
+
+Variables can also be referenced using curly braces.
+
+Example:
+
+```bash
+echo ${NAME}
+```
+
+This is useful when combining variables with text.
+
+Example:
+
+```bash
+PROJECT="payment"
+
+echo "${PROJECT}_service"
+```
+
+Output:
+
+```text
+payment_service
+```
+
+---
+
+# Variable Naming Rules
+
+Variable names should:
+
+- Start with a letter or underscore
+- Contain letters, numbers, and underscores
+- Avoid spaces
+- Be descriptive
+
+Examples:
+
+Correct:
+
+```bash
+SERVER_NAME
+
+APP_VERSION
+
+DB_HOST
+```
+
+Incorrect:
+
+```bash
+2SERVER
+
+SERVER-NAME
+
+APP VERSION
+```
+
+---
+
+# Environment Variables
+
+Environment variables are available system-wide.
+
+View all environment variables:
+
+```bash
+printenv
+```
+
+or
+
+```bash
+env
+```
+
+Common environment variables include:
+
+```bash
+HOME
+
+PATH
+
+USER
+
+HOSTNAME
+
+SHELL
+
+PWD
+```
+
+---
+
+# Display Environment Variables
+
+Examples:
+
+```bash
+echo $HOME
+
+echo $USER
+
+echo $HOSTNAME
+
+echo $PATH
+```
+
+These variables are frequently used in automation scripts.
+
+---
+
+# Local Variables vs Environment Variables
+
+| Local Variable | Environment Variable |
+|----------------|----------------------|
+| Available only within the current shell | Available to child processes |
+| Created inside a script | Exported using `export` |
+| Temporary | Shared with subprocesses |
+
+---
+
+# Export Variables
+
+Make a variable available to child processes.
+
+Example:
+
+```bash
+export ENV=Production
+```
+
+Verify:
+
+```bash
+echo $ENV
+```
+
+---
+
+# Read User Input
+
+Accept user input during script execution.
+
+Example:
+
+```bash
+read NAME
+
+echo "Hello $NAME"
+```
+
+The script waits until the user enters a value.
+
+---
+
+# Prompt User Input
+
+Provide a prompt while reading input.
+
+```bash
+read -p "Enter your name: " NAME
+
+echo "Welcome $NAME"
+```
+
+This improves the user experience.
+
+---
+
+# Secure Input
+
+Hide sensitive input such as passwords.
+
+```bash
+read -s PASSWORD
+```
+
+Example:
+
+```bash
+read -sp "Enter Password: " PASSWORD
+```
+
+Characters are not displayed while typing.
+
+---
+
+# Command Substitution
+
+Store command output in a variable.
+
+Modern syntax:
+
+```bash
+DATE=$(date)
+```
+
+Older syntax:
+
+```bash
+DATE=`date`
+```
+
+The `$(...)` format is recommended.
+
+---
+
+# Practical Examples
+
+Store the hostname:
+
+```bash
+HOST=$(hostname)
+```
+
+Store the current directory:
+
+```bash
+DIR=$(pwd)
+```
+
+Store the current date:
+
+```bash
+TODAY=$(date)
+```
+
+Command substitution is widely used in automation.
+
+---
+
+# Special Shell Variables
+
+Shell provides predefined variables.
+
+| Variable | Description |
+|----------|-------------|
+| `$0` | Script name |
+| `$1` | First argument |
+| `$2` | Second argument |
+| `$#` | Number of arguments |
+| `$@` | All arguments |
+| `$*` | All arguments as one string |
+| `$$` | Current process ID |
+| `$?` | Exit status of previous command |
+
+---
+
+# Positional Parameters
+
+Example:
+
+```bash
+./deploy.sh production v1.2
+```
+
+Inside the script:
+
+```bash
+echo $1
+```
+
+Output:
+
+```text
+production
+```
+
+```bash
+echo $2
+```
+
+Output:
+
+```text
+v1.2
+```
+
+---
+
+# Arithmetic Operations
+
+Use double parentheses for arithmetic.
+
+Example:
+
+```bash
+A=10
+
+B=20
+
+TOTAL=$((A+B))
+
+echo $TOTAL
+```
+
+Output:
+
+```text
+30
+```
+
+---
+
+# Common Arithmetic Operators
+
+| Operator | Description |
+|----------|-------------|
+| `+` | Addition |
+| `-` | Subtraction |
+| `*` | Multiplication |
+| `/` | Division |
+| `%` | Modulus |
+
+---
+
+# String Operations
+
+Example:
+
+```bash
+FIRST="Dev"
+
+SECOND="Ops"
+
+echo "$FIRST$SECOND"
+```
+
+Output:
+
+```text
+DevOps
+```
+
+Determine string length:
+
+```bash
+echo ${#FIRST}
+```
+
+---
+
+# Read-Only Variables
+
+Prevent variables from being modified.
+
+Example:
+
+```bash
+readonly ENV=Production
+```
+
+Attempting to change the value results in an error.
+
+---
+
+# Unset Variables
+
+Remove a variable.
+
+Example:
+
+```bash
+unset ENV
+```
+
+The variable no longer exists.
+
+---
+
+# Quoting
+
+Shell supports three types of quoting.
+
+### Double Quotes
+
+Variables are expanded.
+
+```bash
+NAME="DevOps"
+
+echo "$NAME"
+```
+
+Output:
+
+```text
+DevOps
+```
+
+---
+
+### Single Quotes
+
+Variables are not expanded.
+
+```bash
+echo '$NAME'
+```
+
+Output:
+
+```text
+$NAME
+```
+
+---
+
+### Backslash
+
+Escapes special characters.
+
+Example:
+
+```bash
+echo \$HOME
+```
+
+Output:
+
+```text
+$HOME
+```
+
+---
+
+# Enterprise Example
+
+Deployment script:
+
+```bash
+APP="payment"
+
+VERSION="1.4.2"
+
+NAMESPACE="production"
+
+echo "Deploying $APP version $VERSION to $NAMESPACE"
+```
+
+Using variables makes scripts reusable across environments.
+
+---
+
+# Kubernetes Example
+
+```bash
+NAMESPACE=production
+
+kubectl get pods -n $NAMESPACE
+```
+
+The same script can be used for development, staging, and production by changing only the namespace variable.
+
+---
+
+# Enterprise Best Practices
+
+- Use meaningful variable names.
+- Store repeated values in variables.
+- Prefer environment variables for configurable settings.
+- Use `$(...)` instead of backticks for command substitution.
+- Quote variables to avoid unexpected behavior.
+- Use `readonly` for constants.
+- Avoid hardcoding environment-specific values.
+- Validate user input before using it.
+
+---
+
+# Common Mistakes
+
+- Adding spaces around `=`.
+- Using unclear variable names.
+- Forgetting the `$` while accessing variables.
+- Hardcoding server names or credentials.
+- Ignoring quotation marks around variables containing spaces.
+- Using backticks instead of `$(...)`.
+- Not checking user input before processing.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a variable in shell scripting?
+2. How do you declare and access variables?
+3. What is the difference between local and environment variables?
+4. What does the `read` command do?
+5. What is command substitution?
+
+## Intermediate
+
+1. Explain the purpose of `export`.
+2. Difference between `$@` and `$*`.
+3. Explain positional parameters.
+4. What is the difference between single and double quotes?
+5. How do you perform arithmetic operations in Bash?
+
+## Advanced
+
+1. Design a reusable deployment script using variables, environment variables, user input, and command substitution for deploying applications across development, staging, and production environments.
+2. Explain how variables and command substitution improve maintainability and reusability in enterprise automation scripts.
+3. A CI/CD pipeline deploys applications to multiple Kubernetes namespaces. Design a shell scripting strategy using variables, environment variables, script arguments, and secure user input to support multiple environments while avoiding hardcoded configuration.
+
+---
+
