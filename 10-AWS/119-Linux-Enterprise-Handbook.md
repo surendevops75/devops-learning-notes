@@ -4811,3 +4811,561 @@ Package management simplifies cluster setup.
 
 ---
 
+# Chapter 9 - Linux Logging, Monitoring & System Troubleshooting
+
+Logging is one of the most important aspects of Linux system administration.
+
+Every application, service, and kernel component generates logs that help administrators:
+
+- Monitor System Health
+- Troubleshoot Failures
+- Audit User Activities
+- Detect Security Incidents
+- Analyze Performance Problems
+
+A DevOps Engineer spends a significant amount of time analyzing logs during production incidents.
+
+---
+
+# Why Logs are Important
+
+Logs answer critical questions such as:
+
+- What happened?
+- When did it happen?
+- Which service failed?
+- Why did it fail?
+- Who made the change?
+
+Without logs, troubleshooting production issues becomes extremely difficult.
+
+---
+
+# Linux Logging Architecture
+
+```text
+Applications
+
+↓
+
+System Services
+
+↓
+
+Kernel
+
+↓
+
+systemd-journald
+
+↓
+
+Log Files
+
+↓
+
+Monitoring Tools
+```
+
+Logs provide visibility into the operating system and running applications.
+
+---
+
+# Types of Logs
+
+Linux generates different types of logs.
+
+| Log Type | Purpose |
+|----------|---------|
+| System Logs | Operating system events |
+| Kernel Logs | Kernel messages |
+| Authentication Logs | User login events |
+| Service Logs | Application and service logs |
+| Security Logs | Security-related events |
+| Audit Logs | User activity tracking |
+
+---
+
+# Log Storage Locations
+
+Most Linux logs are stored under:
+
+```text
+/var/log
+```
+
+Common log files include:
+
+| File | Description |
+|------|-------------|
+| `/var/log/messages` | General system messages (RHEL) |
+| `/var/log/syslog` | General system log (Ubuntu) |
+| `/var/log/secure` | Authentication logs (RHEL) |
+| `/var/log/auth.log` | Authentication logs (Ubuntu) |
+| `/var/log/boot.log` | Boot process logs |
+| `/var/log/dmesg` | Kernel boot messages |
+
+---
+
+# View Log Files
+
+Display an entire log file:
+
+```bash
+cat /var/log/messages
+```
+
+View large logs:
+
+```bash
+less /var/log/messages
+```
+
+Display the last few lines:
+
+```bash
+tail /var/log/messages
+```
+
+Follow logs continuously:
+
+```bash
+tail -f /var/log/messages
+```
+
+`tail -f` is one of the most frequently used commands during production troubleshooting.
+
+---
+
+# journalctl
+
+Modern Linux distributions using **systemd** store logs in the system journal.
+
+Display all logs:
+
+```bash
+journalctl
+```
+
+Display today's logs:
+
+```bash
+journalctl --since today
+```
+
+Follow logs in real time:
+
+```bash
+journalctl -f
+```
+
+---
+
+# View Service Logs
+
+Display logs for a specific service:
+
+```bash
+journalctl -u nginx
+```
+
+Example:
+
+```bash
+journalctl -u docker
+
+journalctl -u kubelet
+
+journalctl -u jenkins
+```
+
+This is extremely useful when diagnosing service failures.
+
+---
+
+# View Boot Logs
+
+Display logs from the current boot:
+
+```bash
+journalctl -b
+```
+
+Display logs from the previous boot:
+
+```bash
+journalctl -b -1
+```
+
+Useful after unexpected server reboots.
+
+---
+
+# View Kernel Logs
+
+Display kernel messages:
+
+```bash
+dmesg
+```
+
+Common uses:
+
+- Hardware Detection
+- Driver Issues
+- Disk Errors
+- OOM Killer Events
+
+---
+
+# Search Logs
+
+Search for specific keywords:
+
+```bash
+grep "error" /var/log/messages
+```
+
+Ignore case:
+
+```bash
+grep -i "failed" /var/log/messages
+```
+
+Searching logs quickly reduces troubleshooting time.
+
+---
+
+# Authentication Logs
+
+Authentication logs record:
+
+- User Login
+- SSH Access
+- Failed Login Attempts
+- sudo Commands
+
+Example:
+
+```text
+User Login
+
+↓
+
+Authentication
+
+↓
+
+Log Entry
+```
+
+These logs are critical for security investigations.
+
+---
+
+# Log Rotation
+
+Logs continuously grow over time.
+
+Linux uses **logrotate** to:
+
+- Rotate Old Logs
+- Compress Logs
+- Delete Old Files
+- Prevent Disk Exhaustion
+
+Without log rotation, log files can consume all available disk space.
+
+---
+
+# logrotate Configuration
+
+Global configuration:
+
+```text
+/etc/logrotate.conf
+```
+
+Application-specific configuration:
+
+```text
+/etc/logrotate.d/
+```
+
+Each application can have its own rotation policy.
+
+---
+
+# Monitoring Disk Usage
+
+Check available disk space:
+
+```bash
+df -h
+```
+
+Check log directory size:
+
+```bash
+du -sh /var/log
+```
+
+Large log files are a common cause of disk space issues.
+
+---
+
+# System Monitoring Commands
+
+Useful commands for monitoring:
+
+```bash
+top
+
+htop
+
+vmstat
+
+iostat
+
+free -h
+
+uptime
+```
+
+These commands provide real-time insight into system health.
+
+---
+
+# Monitoring Running Services
+
+Check service status:
+
+```bash
+systemctl status nginx
+```
+
+View failed services:
+
+```bash
+systemctl --failed
+```
+
+Regular service monitoring helps prevent outages.
+
+---
+
+# Enterprise Monitoring Stack
+
+A typical enterprise monitoring solution includes:
+
+```text
+Linux Servers
+
+↓
+
+Prometheus
+
+↓
+
+Grafana
+
+↓
+
+Alert Manager
+
+↓
+
+Operations Team
+```
+
+Logs and metrics work together to provide complete observability.
+
+---
+
+# Enterprise Logging Stack
+
+Centralized logging architecture:
+
+```text
+Linux Servers
+
+↓
+
+Filebeat
+
+↓
+
+Logstash
+
+↓
+
+Elasticsearch
+
+↓
+
+Kibana
+```
+
+Centralized logging enables searching logs from thousands of servers.
+
+---
+
+# Common Troubleshooting Workflow
+
+Follow a structured approach:
+
+```text
+Alert
+
+↓
+
+Check Service Status
+
+↓
+
+Review Logs
+
+↓
+
+Check CPU
+
+↓
+
+Check Memory
+
+↓
+
+Check Disk
+
+↓
+
+Identify Root Cause
+
+↓
+
+Fix
+
+↓
+
+Validate
+```
+
+A systematic workflow prevents unnecessary changes during incidents.
+
+---
+
+# Enterprise Example
+
+A Jenkins build suddenly fails.
+
+Investigation:
+
+```text
+Check Jenkins Service
+
+↓
+
+Review journalctl Logs
+
+↓
+
+Verify Disk Space
+
+↓
+
+Check Java Process
+
+↓
+
+Review Build Logs
+
+↓
+
+Resolve Issue
+```
+
+---
+
+# Kubernetes Example
+
+A Kubernetes node becomes **NotReady**.
+
+Investigation:
+
+```text
+Check kubelet Service
+
+↓
+
+Review journalctl Logs
+
+↓
+
+Check Network
+
+↓
+
+Check Disk
+
+↓
+
+Check Memory
+
+↓
+
+Restore Node
+```
+
+---
+
+# Enterprise Best Practices
+
+- Centralize logs using ELK or similar platforms.
+- Configure log rotation for all applications.
+- Monitor disk usage regularly.
+- Review authentication logs periodically.
+- Use `journalctl` for systemd-based services.
+- Collect metrics and logs together for better troubleshooting.
+- Set up alerts for critical services.
+- Retain logs according to organizational policies.
+
+---
+
+# Common Mistakes
+
+- Ignoring log rotation until disks become full.
+- Deleting log files without investigation.
+- Restarting services before reviewing logs.
+- Monitoring only application logs while ignoring system logs.
+- Forgetting to monitor authentication logs.
+- Not centralizing logs in large environments.
+- Ignoring recurring warnings that later become critical failures.
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. Why are Linux logs important?
+2. Where are Linux logs stored?
+3. What is `journalctl`?
+4. What is `dmesg` used for?
+5. What is log rotation?
+
+## Intermediate
+
+1. Explain the difference between `journalctl` and traditional log files.
+2. How do you troubleshoot a failed Linux service?
+3. Why is centralized logging important?
+4. How do you investigate authentication failures?
+5. Explain the purpose of `logrotate`.
+
+## Advanced
+
+1. Design an enterprise logging and monitoring architecture for Linux servers running Kubernetes, Jenkins, Docker, and databases using Prometheus, Grafana, and the ELK Stack.
+2. A production application becomes unavailable after deployment. Explain your step-by-step troubleshooting process using service status, `journalctl`, kernel logs, system logs, resource monitoring, and centralized logging.
+3. A financial organization operates thousands of Linux servers across multiple AWS regions. Design a centralized logging, monitoring, alerting, and log retention strategy that supports high availability, security auditing, and compliance.
+
+---
+
