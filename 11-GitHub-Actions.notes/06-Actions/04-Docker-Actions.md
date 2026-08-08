@@ -1,0 +1,2131 @@
+# Docker Actions
+
+Docker Actions are GitHub Actions that run inside a Docker container.
+
+They package the Action's runtime and dependencies into a container, making the Action environment more predictable.
+
+Conceptually:
+
+```text
+GitHub Actions Runner
+        |
+        ↓
+Docker Action
+        |
+        ↓
+Docker Container
+        |
+        ├── Action Code
+        ├── Dependencies
+        └── Runtime
+```
+
+---
+
+# Why Docker Actions?
+
+A Docker Action is useful when the Action requires a specific runtime or dependencies that you do not want to install directly on the runner.
+
+For example:
+
+```text
+Runner
+   |
+   └── Docker Container
+         |
+         ├── Python
+         ├── Libraries
+         └── Custom Tool
+```
+
+The container packages the execution environment.
+
+---
+
+# Docker Action vs Composite Action
+
+### Composite Action
+
+Runs steps directly on the runner:
+
+```text
+Runner
+ |
+ ├── Shell Commands
+ └── Other Actions
+```
+
+### Docker Action
+
+Runs the Action inside a container:
+
+```text
+Runner
+ |
+ └── Container
+       |
+       └── Action
+```
+
+---
+
+# Docker Action vs JavaScript Action
+
+### Docker Action
+
+```text
+Action
+   |
+   ↓
+Docker Container
+   |
+   ↓
+Application
+```
+
+### JavaScript Action
+
+```text
+Action
+   |
+   ↓
+Node.js Runtime
+   |
+   ↓
+JavaScript
+```
+
+JavaScript Actions are covered in:
+
+```text
+05-JavaScript-Actions.md
+```
+
+---
+
+# Basic Docker Action Structure
+
+Example:
+
+```text
+.github/
+└── actions/
+    └── hello-docker/
+        ├── action.yml
+        ├── Dockerfile
+        └── entrypoint.sh
+```
+
+The important files are:
+
+```text
+action.yml
+Dockerfile
+Application / Entrypoint
+```
+
+---
+
+# `action.yml`
+
+A Docker Action can be defined using:
+
+```yaml
+name: Hello Docker
+
+description: Example Docker-based Action
+
+runs:
+  using: docker
+  image: Dockerfile
+```
+
+The key section is:
+
+```yaml
+runs:
+  using: docker
+```
+
+---
+
+# Dockerfile
+
+Example:
+
+```dockerfile
+FROM alpine:3.20
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+```
+
+The Dockerfile defines the runtime environment.
+
+---
+
+# Entrypoint
+
+Example:
+
+```bash
+#!/bin/sh
+
+echo "Hello from Docker Action"
+```
+
+The container starts the entrypoint when the Action executes.
+
+---
+
+# Complete Example
+
+Directory:
+
+```text
+.github/actions/hello-docker/
+├── action.yml
+├── Dockerfile
+└── entrypoint.sh
+```
+
+`action.yml`:
+
+```yaml
+name: Hello Docker
+
+description: Simple Docker Action
+
+runs:
+  using: docker
+  image: Dockerfile
+```
+
+`Dockerfile`:
+
+```dockerfile
+FROM alpine:3.20
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+```
+
+`entrypoint.sh`:
+
+```bash
+#!/bin/sh
+
+echo "Hello from Docker Action"
+```
+
+---
+
+# Calling the Docker Action
+
+Workflow:
+
+```yaml
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Hello Docker
+        uses: ./.github/actions/hello-docker
+```
+
+Flow:
+
+```text
+Workflow
+   |
+   ↓
+Docker Action
+   |
+   ↓
+Dockerfile
+   |
+   ↓
+Container
+   |
+   ↓
+Entrypoint
+```
+
+---
+
+# Docker Action Inputs
+
+Docker Actions can define inputs.
+
+Example:
+
+```yaml
+name: Docker Greeting
+
+inputs:
+
+  name:
+    description: Name to greet
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
+```
+
+Workflow:
+
+```yaml
+- name: Greeting
+  uses: ./.github/actions/greeting
+  with:
+    name: Surendra
+```
+
+The input can be consumed by the Action.
+
+---
+
+# Passing Inputs to the Container
+
+Docker Actions commonly expose inputs through environment variables.
+
+For an input:
+
+```yaml
+inputs:
+  name:
+    description: Name
+    required: true
+```
+
+GitHub makes Action inputs available through the Action environment.
+
+The entrypoint can access the appropriate environment variable.
+
+Example:
+
+```bash
+#!/bin/sh
+
+echo "Hello ${INPUT_NAME}"
+```
+
+The exact environment naming convention should be verified against the GitHub Actions documentation when implementing an Action.
+
+---
+
+# Docker Action with Multiple Inputs
+
+Example:
+
+```yaml
+name: Deployment Action
+
+inputs:
+
+  environment:
+    description: Target environment
+    required: true
+
+  version:
+    description: Application version
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
+```
+
+Workflow:
+
+```yaml
+- name: Deploy
+  uses: ./.github/actions/deploy
+  with:
+    environment: production
+    version: ${{ github.sha }}
+```
+
+---
+
+# Input Validation
+
+Inputs should be validated.
+
+Example:
+
+```bash
+#!/bin/sh
+
+set -eu
+
+case "$INPUT_ENVIRONMENT" in
+  dev|qa|uat|production)
+    echo "Valid environment"
+    ;;
+  *)
+    echo "Invalid environment: $INPUT_ENVIRONMENT"
+    exit 1
+    ;;
+esac
+```
+
+This prevents unsupported values from reaching deployment logic.
+
+---
+
+# Docker Action Outputs
+
+Docker Actions can expose outputs.
+
+The Action can write output values to the GitHub Actions output mechanism.
+
+Conceptually:
+
+```text
+Docker Action
+     |
+     ↓
+Output
+     |
+     ↓
+Workflow
+```
+
+Example:
+
+```text
+image-tag
+```
+
+can be generated by the Action and consumed by a later step.
+
+---
+
+# Docker Action Output Example
+
+Entrypoint:
+
+```bash
+#!/bin/sh
+
+set -eu
+
+IMAGE_TAG="${GITHUB_SHA}"
+
+echo "image-tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+```
+
+Workflow:
+
+```yaml
+- name: Build Image
+  id: build
+  uses: ./.github/actions/docker-build
+
+- name: Display Image Tag
+  run: |
+    echo "${{ steps.build.outputs.image-tag }}"
+```
+
+---
+
+# Docker Action Environment
+
+The container receives the relevant GitHub Actions execution context and environment configured for the step.
+
+Common useful values include:
+
+```text
+GITHUB_REPOSITORY
+GITHUB_SHA
+GITHUB_REF
+GITHUB_WORKSPACE
+GITHUB_ACTOR
+```
+
+Example:
+
+```bash
+echo "Repository: $GITHUB_REPOSITORY"
+echo "Commit: $GITHUB_SHA"
+```
+
+---
+
+# Workspace
+
+GitHub Actions provides a workspace for the checked-out repository.
+
+A Docker Action can operate on repository files through the workspace.
+
+Example:
+
+```bash
+cd "$GITHUB_WORKSPACE"
+
+ls -la
+```
+
+This allows the containerized Action to process the source code.
+
+---
+
+# Checkout Before Docker Action
+
+If the Action needs repository files:
+
+```yaml
+steps:
+
+  - name: Checkout
+    uses: actions/checkout@v4
+
+  - name: Run Docker Action
+    uses: ./.github/actions/my-action
+```
+
+Without checkout, the expected repository content may not be available in the workspace.
+
+---
+
+# Docker Action and GitHub-Hosted Runners
+
+Example:
+
+```text
+GitHub-Hosted Runner
+        |
+        ↓
+Docker Action
+        |
+        ↓
+Container
+```
+
+This is a common use case.
+
+---
+
+# Docker Action and Self-Hosted Runners
+
+Docker Actions can also run on compatible self-hosted runners.
+
+Architecture:
+
+```text
+Self-Hosted Runner
+        |
+        ↓
+Docker Engine / Supported Container Runtime
+        |
+        ↓
+Docker Action
+```
+
+The runner environment must support the requirements of the Docker Action.
+
+---
+
+# Docker Availability
+
+A Docker-based Action depends on the runner environment supporting the required container execution model.
+
+For self-hosted runners, verify:
+
+```text
+Container runtime
+Permissions
+OS support
+Network
+Storage
+Security configuration
+```
+
+Do not assume every self-hosted runner can execute every Docker-based Action.
+
+---
+
+# Docker Action Runtime
+
+A Docker Action runs inside its container, but the overall workflow still executes under GitHub Actions.
+
+Conceptually:
+
+```text
+GitHub Workflow
+       |
+       ↓
+Runner
+       |
+       ↓
+Docker Action Container
+       |
+       ↓
+Action Code
+```
+
+---
+
+# Docker Image Selection
+
+A Docker Action can reference a Dockerfile:
+
+```yaml
+runs:
+  using: docker
+  image: Dockerfile
+```
+
+The Dockerfile defines the Action's runtime.
+
+---
+
+# Base Image
+
+Example:
+
+```dockerfile
+FROM alpine:3.20
+```
+
+or:
+
+```dockerfile
+FROM python:3.12-slim
+```
+
+or another appropriate base image.
+
+Choose a maintained and trusted base image.
+
+---
+
+# Base Image Security
+
+The base image is part of the Action supply chain.
+
+Example:
+
+```text
+Docker Action
+      |
+      ↓
+Base Image
+      |
+      ↓
+Dependencies
+      |
+      ↓
+Action Code
+```
+
+A vulnerable base image can introduce security issues.
+
+---
+
+# Secure Dockerfile
+
+Prefer:
+
+```text
+Small Base Image
+Pinned / Controlled Dependencies
+Non-Root Where Practical
+No Secrets in Image
+Minimal Packages
+Regular Updates
+Security Scanning
+```
+
+---
+
+# Avoid Secrets in Dockerfile
+
+Never do:
+
+```dockerfile
+ENV AWS_SECRET_ACCESS_KEY=...
+```
+
+or:
+
+```dockerfile
+COPY secrets.txt /app/
+```
+
+Secrets should not be baked into the image.
+
+---
+
+# Docker Action and Secrets
+
+Secrets should be supplied at workflow execution time when necessary.
+
+Example:
+
+```yaml
+env:
+  API_TOKEN: ${{ secrets.API_TOKEN }}
+```
+
+The Action should consume the secret without logging it.
+
+---
+
+# Never Print Secrets
+
+Bad:
+
+```bash
+echo "$API_TOKEN"
+```
+
+Better:
+
+```bash
+./deploy.sh
+```
+
+where the tool reads the secret securely from its environment or supported credential mechanism.
+
+---
+
+# OIDC with Docker Actions
+
+For cloud authentication, prefer short-lived credentials where supported.
+
+Conceptually:
+
+```text
+GitHub Workflow
+       |
+       ↓
+OIDC
+       |
+       ↓
+Cloud IAM
+       |
+       ↓
+Temporary Credentials
+       |
+       ↓
+Docker Action
+```
+
+This is generally preferable to storing long-lived cloud access keys.
+
+---
+
+# Docker Action for Security Scanning
+
+A Docker Action can package a security scanner.
+
+Conceptually:
+
+```text
+Repository
+    |
+    ↓
+Docker Security Action
+    |
+    ↓
+Scanner Container
+    |
+    ↓
+Results
+```
+
+Example use cases:
+
+```text
+Filesystem Scan
+Container Scan
+IaC Scan
+Dependency Scan
+```
+
+---
+
+# Docker Action for Terraform
+
+A custom Docker Action could package Terraform-related tooling.
+
+Example:
+
+```text
+Terraform Docker Action
+        |
+        ├── Terraform
+        ├── Required utilities
+        └── Validation logic
+```
+
+Workflow:
+
+```yaml
+- name: Terraform Validation
+  uses: ./.github/actions/terraform
+```
+
+---
+
+# Docker Action for Helm
+
+A Docker Action could package:
+
+```text
+Helm
+kubectl
+Validation scripts
+```
+
+Example:
+
+```text
+Docker Action
+     |
+     ├── helm lint
+     ├── helm template
+     └── validation
+```
+
+---
+
+# Docker Action for Kubernetes
+
+A Docker Action could package:
+
+```text
+kubectl
+helm
+custom deployment scripts
+```
+
+However, keep deployment permissions minimal.
+
+---
+
+# Docker Action for AWS
+
+A custom Docker Action could package:
+
+```text
+AWS CLI
+Custom scripts
+Deployment logic
+```
+
+But AWS authentication should preferably use short-lived credentials such as OIDC where supported.
+
+---
+
+# Docker Action for ECR
+
+Conceptual workflow:
+
+```text
+Checkout
+   |
+   ↓
+Build
+   |
+   ↓
+Scan
+   |
+   ↓
+AWS Authentication
+   |
+   ↓
+ECR Login
+   |
+   ↓
+Push
+```
+
+A Docker Action can encapsulate part of this process.
+
+---
+
+# Docker Action for DevSecOps
+
+A Docker-based security Action can standardize:
+
+```text
+Tool Version
+Configuration
+Scan Command
+Severity Threshold
+Exit Codes
+Output Format
+```
+
+For example:
+
+```text
+Trivy Container
+      |
+      ↓
+Scan
+      |
+      ↓
+HIGH / CRITICAL
+      |
+      ↓
+Fail / Continue
+```
+
+The failure policy should be explicit.
+
+---
+
+# Docker Action and Microservices
+
+For multiple microservices:
+
+```text
+user
+catalogue
+cart
+orders
+payment
+inventory
+notification
+```
+
+each service may need the same:
+
+```text
+Build
+Test
+Scan
+Docker Build
+```
+
+A Docker Action can standardize specialized tooling.
+
+---
+
+# Docker Action vs Composite Action for Microservices
+
+Composite:
+
+```text
+Runner
+ |
+ ├── Setup
+ ├── Build
+ └── Scan
+```
+
+Docker:
+
+```text
+Runner
+ |
+ └── Docker Action
+       |
+       ├── Tooling
+       ├── Dependencies
+       └── Logic
+```
+
+Use Docker Actions when packaging the execution environment itself provides value.
+
+---
+
+# Docker Action Image Build
+
+A Docker Action is itself built from its Dockerfile.
+
+Conceptually:
+
+```text
+Dockerfile
+    |
+    ↓
+Action Image
+    |
+    ↓
+Workflow
+    |
+    ↓
+Runner
+```
+
+The image is used to execute the Action.
+
+---
+
+# Image Build Optimization
+
+Keep Docker Action images small.
+
+Example:
+
+```dockerfile
+FROM python:3.12-slim
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY action.py .
+
+ENTRYPOINT ["python", "/action.py"]
+```
+
+Avoid unnecessary packages.
+
+---
+
+# Multi-Stage Builds
+
+Multi-stage Docker builds can reduce final image size.
+
+Conceptually:
+
+```text
+Build Stage
+    |
+    ↓
+Compiled / Prepared Output
+    |
+    ↓
+Runtime Stage
+```
+
+Use when the Action's runtime supports the chosen design.
+
+---
+
+# Docker Layer Caching
+
+Docker images are built in layers.
+
+Example:
+
+```text
+FROM
+ ↓
+Install Dependencies
+ ↓
+Copy Source
+ ↓
+Run Build
+```
+
+Order stable layers carefully.
+
+---
+
+# Reproducibility
+
+Docker Actions can improve reproducibility because the runtime is packaged.
+
+Conceptually:
+
+```text
+Action
+  |
+  ↓
+Known Image
+  |
+  ↓
+Known Dependencies
+  |
+  ↓
+Predictable Runtime
+```
+
+However, reproducibility still depends on how the image and dependencies are versioned.
+
+---
+
+# Pin Base Image
+
+Instead of:
+
+```dockerfile
+FROM python:latest
+```
+
+prefer a controlled version:
+
+```dockerfile
+FROM python:3.12-slim
+```
+
+For stronger reproducibility, organizations may pin image digests.
+
+---
+
+# Image Digest
+
+Conceptually:
+
+```text
+Image Tag
+   |
+   ↓
+Mutable Reference
+
+Image Digest
+   |
+   ↓
+Specific Image Content
+```
+
+Production supply-chain policies may require digest pinning for critical images.
+
+---
+
+# Docker Action Supply Chain
+
+The chain is:
+
+```text
+Dockerfile
+    |
+    ↓
+Base Image
+    |
+    ↓
+OS Packages
+    |
+    ↓
+Language Dependencies
+    |
+    ↓
+Action Code
+    |
+    ↓
+Workflow
+```
+
+All layers should be considered during security review.
+
+---
+
+# Scan Docker Action Images
+
+A production organization can scan the Action image.
+
+Conceptually:
+
+```text
+Docker Action Image
+        |
+        ↓
+Trivy / Security Scanner
+        |
+        ↓
+Vulnerabilities
+        |
+        ↓
+Policy
+```
+
+Possible policy:
+
+```text
+Critical → Fail
+High     → Review / Fail
+Medium   → Track
+Low      → Track
+```
+
+The exact threshold should be defined by the organization.
+
+---
+
+# Docker Action CI Pipeline
+
+A custom Docker Action should have its own CI pipeline.
+
+```text
+Code
+ |
+ ↓
+Build Image
+ |
+ ↓
+Unit Tests
+ |
+ ↓
+Security Scan
+ |
+ ↓
+Integration Test
+ |
+ ↓
+Publish / Release
+```
+
+---
+
+# Action Repository Pipeline
+
+Example:
+
+```text
+Pull Request
+    |
+    ↓
+Lint
+    |
+    ↓
+Build Docker Image
+    |
+    ↓
+Trivy Scan
+    |
+    ↓
+Tests
+    |
+    ↓
+Merge
+    |
+    ↓
+Release
+```
+
+---
+
+# Versioning Docker Actions
+
+Use versions for released Docker Actions.
+
+Example:
+
+```yaml
+uses: company/docker-build-action@v1
+```
+
+A breaking version:
+
+```yaml
+uses: company/docker-build-action@v2
+```
+
+This allows consumers to upgrade intentionally.
+
+---
+
+# Docker Action Releases
+
+Example:
+
+```text
+v1.0.0
+v1.1.0
+v1.1.1
+v2.0.0
+```
+
+Use semantic versioning when appropriate:
+
+```text
+MAJOR
+MINOR
+PATCH
+```
+
+---
+
+# Breaking Changes
+
+Example:
+
+```text
+v1
+Input:
+image-name
+```
+
+Version 2 changes the required input:
+
+```text
+image
+```
+
+This may break consumers.
+
+Release:
+
+```text
+v2
+```
+
+instead of silently changing v1 behavior.
+
+---
+
+# Docker Action Documentation
+
+Document:
+
+```text
+Purpose
+Inputs
+Outputs
+Requirements
+Supported Runners
+Permissions
+Secrets
+Examples
+Version
+Security
+Failure Behavior
+```
+
+---
+
+# Docker Action Testing
+
+Test:
+
+```text
+Valid Inputs
+Invalid Inputs
+Missing Inputs
+Output Generation
+Failure Cases
+Runner Compatibility
+Network Failure
+Authentication Failure
+Security Scanning
+```
+
+---
+
+# Local Testing
+
+Docker Actions can be tested locally using suitable development tooling and container execution.
+
+Example concept:
+
+```text
+Dockerfile
+   |
+   ↓
+Build
+   |
+   ↓
+Run Container
+   |
+   ↓
+Validate Entrypoint
+```
+
+Then test through GitHub Actions before production adoption.
+
+---
+
+# Docker Action Error Handling
+
+Example:
+
+```bash
+#!/bin/sh
+
+set -eu
+
+if [ -z "${INPUT_ENVIRONMENT:-}" ]; then
+  echo "environment input is required"
+  exit 1
+fi
+```
+
+Use:
+
+```text
+set -e
+```
+
+or:
+
+```text
+set -eu
+```
+
+where appropriate for shell scripts.
+
+---
+
+# Docker Action Logging
+
+Good:
+
+```bash
+echo "Starting Docker image scan..."
+```
+
+Bad:
+
+```bash
+echo "$SECRET"
+```
+
+Logs should be useful without exposing sensitive data.
+
+---
+
+# Docker Action Exit Codes
+
+A scanner can return:
+
+```text
+0 → Success
+1 → Policy failure
+```
+
+The workflow receives the result.
+
+Example:
+
+```text
+Scanner
+   |
+   ↓
+Critical vulnerability
+   |
+   ↓
+Exit 1
+   |
+   ↓
+Action fails
+   |
+   ↓
+Workflow fails
+```
+
+---
+
+# Continue on Error
+
+Avoid hiding important failures.
+
+Bad:
+
+```yaml
+- name: Security Scan
+  continue-on-error: true
+```
+
+if the scan is supposed to block the release.
+
+Use exceptions only when intentionally governed.
+
+---
+
+# Docker Action and Production Deployment
+
+A Docker Action can package deployment tooling:
+
+```text
+Helm
+kubectl
+AWS CLI
+Custom Scripts
+```
+
+But production access should still be controlled.
+
+Architecture:
+
+```text
+Workflow
+   |
+   ↓
+Protected Environment
+   |
+   ↓
+Production Runner
+   |
+   ↓
+Docker Action
+   |
+   ↓
+AWS / EKS
+```
+
+---
+
+# Docker Action with Helm
+
+Example concept:
+
+```text
+Docker Action
+ |
+ ├── Helm
+ ├── kubectl
+ └── Deployment Script
+```
+
+Workflow:
+
+```yaml
+- name: Deploy
+  uses: company/helm-deploy-action@v1
+  with:
+    environment: production
+    version: ${{ github.sha }}
+```
+
+---
+
+# GitOps Alternative
+
+If using ArgoCD:
+
+```text
+Build
+ |
+ ↓
+ECR
+ |
+ ↓
+Git Manifest
+ |
+ ↓
+ArgoCD
+ |
+ ↓
+EKS
+```
+
+In this design, a deployment Docker Action may only update Git rather than directly accessing the cluster.
+
+This can reduce runner privileges.
+
+---
+
+# Docker Action and Self-Hosted Runner Security
+
+Self-hosted runners can have access to internal infrastructure.
+
+A Docker Action executing on the runner should therefore be considered trusted code.
+
+Use:
+
+```text
+Runner Groups
+Labels
+Least Privilege
+Network Controls
+Ephemeral Runners
+Action Review
+```
+
+---
+
+# Docker Action and ARC
+
+Architecture:
+
+```text
+GitHub Workflow
+       |
+       ↓
+ARC Runner Pod
+       |
+       ↓
+Docker Action
+       |
+       ↓
+Container
+```
+
+Be aware that containerized Actions inside Kubernetes runners can introduce additional container/runtime requirements.
+
+---
+
+# Nested Container Considerations
+
+If a Docker Action itself needs Docker functionality:
+
+```text
+Runner
+   |
+   ↓
+Docker Action
+   |
+   ↓
+Docker
+```
+
+This can create additional complexity.
+
+Possible approaches include:
+
+```text
+Docker socket access
+Docker-in-Docker
+BuildKit
+Alternative image builders
+```
+
+Choose the approach based on security and workload requirements.
+
+---
+
+# Docker Socket Risk
+
+Mounting:
+
+```text
+/var/run/docker.sock
+```
+
+can provide significant control over the host's Docker daemon.
+
+This should not be treated as a harmless configuration.
+
+Consider:
+
+```text
+Security
+Isolation
+Privilege
+Alternative build mechanisms
+```
+
+before using it.
+
+---
+
+# Docker-in-Docker Risk
+
+Docker-in-Docker can require privileged configurations depending on implementation.
+
+This can increase the attack surface.
+
+Use a build architecture that minimizes unnecessary privilege.
+
+---
+
+# Production Security Model
+
+```text
+Workflow
+   |
+   ↓
+Approved Action
+   |
+   ↓
+Trusted Runner
+   |
+   ↓
+Container
+   |
+   ↓
+Least-Privilege Credentials
+   |
+   ↓
+Required Infrastructure
+```
+
+Avoid:
+
+```text
+Action
+   |
+   ↓
+Root
+   |
+   ↓
+Cluster Admin
+   |
+   ↓
+Everything
+```
+
+---
+
+# Docker Action and Permissions
+
+Actions operate within the permissions of the workflow.
+
+Example:
+
+```yaml
+permissions:
+  contents: read
+```
+
+If cloud OIDC is needed:
+
+```yaml
+permissions:
+  contents: read
+  id-token: write
+```
+
+Grant only what is required.
+
+---
+
+# Docker Action and Environment Protection
+
+Example:
+
+```yaml
+jobs:
+
+  deploy:
+
+    environment:
+      name: production
+
+    permissions:
+      contents: read
+      id-token: write
+
+    runs-on:
+      - self-hosted
+      - linux
+      - production
+
+    steps:
+
+      - name: Deploy
+        uses: company/deploy-action@v1
+```
+
+The production environment can provide additional protection depending on configuration.
+
+---
+
+# Docker Action Governance
+
+Enterprise teams should maintain:
+
+```text
+Approved Docker Actions
+Approved Base Images
+Image Scanning
+Version Policy
+Security Review
+Ownership
+Update Process
+```
+
+---
+
+# Docker Action Supply Chain Governance
+
+```text
+Base Image
+    |
+    ↓
+Dependencies
+    |
+    ↓
+Dockerfile
+    |
+    ↓
+Action Image
+    |
+    ↓
+Security Scan
+    |
+    ↓
+Release
+    |
+    ↓
+Workflow
+```
+
+Every stage should be controlled.
+
+---
+
+# Production Docker Action Checklist
+
+```text
+☐ Trusted base image
+☐ Minimal image
+☐ Versioned image
+☐ No secrets baked into image
+☐ Security scanning
+☐ Dependency review
+☐ Non-root where practical
+☐ Clear inputs
+☐ Validated inputs
+☐ Secure outputs
+☐ Good error handling
+☐ Controlled permissions
+☐ Versioned releases
+☐ Automated tests
+☐ Documentation
+☐ Ownership
+```
+
+---
+
+# Common Mistakes
+
+### 1. Using `latest`
+
+```dockerfile
+FROM python:latest
+```
+
+This reduces reproducibility.
+
+---
+
+### 2. Baking secrets into the image
+
+Never do this.
+
+---
+
+### 3. Using a huge base image
+
+This increases:
+
+```text
+Pull Time
+Attack Surface
+Storage
+```
+
+---
+
+### 4. Running everything as root
+
+Avoid unnecessary privileges.
+
+---
+
+### 5. Giving Docker Actions excessive cloud permissions
+
+Use least privilege.
+
+---
+
+### 6. Ignoring the base image
+
+The base image is part of the supply chain.
+
+---
+
+### 7. Not scanning Action images
+
+Security scanning should be part of the Action's lifecycle.
+
+---
+
+### 8. Using privileged Docker configurations without understanding the risk
+
+Especially:
+
+```text
+Docker socket
+Privileged containers
+Docker-in-Docker
+```
+
+---
+
+### 9. Creating an Action image with unnecessary tools
+
+Keep it focused.
+
+---
+
+### 10. No versioning
+
+Use controlled releases.
+
+---
+
+# Production Example: Docker Build Action
+
+Conceptual structure:
+
+```text
+company/docker-build-action
+ |
+ ├── action.yml
+ ├── Dockerfile
+ ├── entrypoint.sh
+ ├── tests/
+ └── README.md
+```
+
+Workflow:
+
+```text
+Application Repository
+       |
+       ↓
+GitHub Workflow
+       |
+       ↓
+Docker Build Action
+       |
+       ↓
+Docker Image
+       |
+       ↓
+Trivy Scan
+       |
+       ↓
+ECR
+```
+
+---
+
+# Production Example: Security Action
+
+```text
+Application
+    |
+    ↓
+Security Docker Action
+    |
+    ├── Scanner
+    ├── Policy
+    └── Reporting
+    |
+    ↓
+Result
+```
+
+Example policy:
+
+```text
+Critical → Block
+High     → Block / Review
+Medium   → Track
+Low      → Track
+```
+
+---
+
+# Production Example: GitOps Action
+
+```text
+Application Build
+      |
+      ↓
+Docker Image
+      |
+      ↓
+ECR
+      |
+      ↓
+GitOps Docker Action
+      |
+      ├── Update image tag
+      ├── Commit
+      └── Push
+      |
+      ↓
+ArgoCD
+      |
+      ↓
+EKS
+```
+
+This can be preferable to giving the Action direct cluster-admin access.
+
+---
+
+# Docker Actions vs Composite Actions
+
+| Feature | Composite Action | Docker Action |
+|---|---|---|
+| Execution | Runner environment | Container |
+| Runtime isolation | Lower | Higher runtime packaging |
+| Can use `run` | Yes | Entrypoint/container model |
+| Can use other Actions | Yes | No direct step composition inside container |
+| Custom dependencies | Runner/setup dependent | Packaged in image |
+| Startup | Generally lightweight | Container startup/image overhead |
+| Portability | Depends on runner | Containerized runtime |
+| Best use | Repeated workflow steps | Custom runtime/tooling |
+
+---
+
+# Docker Actions vs JavaScript Actions
+
+| Feature | Docker Action | JavaScript Action |
+|---|---|---|
+| Runtime | Container | Node.js |
+| Dependencies | Image | Node packages |
+| Startup | Container overhead | Usually faster |
+| Isolation | Containerized | Runner Node runtime |
+| OS support | Docker-supported environments | Broad |
+| Best use | Custom runtime | Fast reusable logic |
+
+---
+
+# When to Use Docker Actions
+
+Good candidates:
+
+```text
+Specialized tooling
+Custom runtime
+Complex dependencies
+Security scanner
+Custom deployment tooling
+Python application
+Go application
+CLI-heavy tooling
+```
+
+---
+
+# When Not to Use Docker Actions
+
+Avoid when:
+
+```text
+A simple shell command is enough
+A Composite Action is simpler
+Startup overhead matters significantly
+The runner already provides the required environment
+The Action requires a runtime that is better handled by a JavaScript Action
+```
+
+Choose the simplest suitable Action type.
+
+---
+
+# Key Takeaways
+
+```text
+Docker Action
+=
+GitHub Action executed inside a Docker container
+```
+
+Basic definition:
+
+```yaml
+runs:
+  using: docker
+  image: Dockerfile
+```
+
+Structure:
+
+```text
+action.yml
+Dockerfile
+entrypoint
+```
+
+Benefits:
+
+```text
+Packaged Runtime
+Controlled Dependencies
+Portable Execution Environment
+```
+
+Risks:
+
+```text
+Image Supply Chain
+Container Privileges
+Secrets
+Runner Security
+Docker Socket
+Nested Containers
+```
+
+For production:
+
+```text
+Trusted Image
++
+Minimal Permissions
++
+Security Scanning
++
+Version Control
++
+Least Privilege
++
+Testing
+```
+
+The key principle is:
+
+```text
+Use Docker Actions when packaging the execution environment
+provides real value; do not add container complexity without a reason.
+```
+
+---
+
+# Interview Questions
+
+## Basic
+
+1. What is a Docker Action?
+2. How is a Docker Action different from a Composite Action?
+3. How is a Docker Action different from a JavaScript Action?
+4. What files are typically required for a Docker Action?
+5. What does `runs.using: docker` mean?
+6. What is the purpose of `Dockerfile` in a Docker Action?
+7. What is an entrypoint?
+8. How do you call a local Docker Action?
+
+## Intermediate
+
+9. How do you pass inputs to a Docker Action?
+10. How do Docker Actions access the GitHub workspace?
+11. How do you generate outputs from a Docker Action?
+12. How would you create a Docker Action for Terraform validation?
+13. How would you create a Docker Action for security scanning?
+14. How would you design a Docker Action for Docker image builds?
+15. What are the benefits of packaging dependencies inside a Docker Action?
+16. What are the disadvantages of Docker Actions?
+17. How would you test a Docker Action?
+18. How would you version a Docker Action?
+
+## Advanced / Production
+
+19. Design a production Docker Action for building and scanning microservice container images.
+20. How would you secure the Dockerfile and base image of a Docker Action?
+21. Why should you avoid `FROM ...:latest`?
+22. How would you scan a Docker Action image for vulnerabilities?
+23. How would you prevent secrets from being baked into a Docker Action image?
+24. What are the security risks of Docker socket access?
+25. What are the risks of Docker-in-Docker?
+26. How would you securely build Docker images from a Docker-based GitHub Action?
+27. How would you combine Docker Actions with GitHub OIDC and AWS ECR?
+28. How would you use a Docker Action in a GitOps workflow with ECR, ArgoCD, and EKS?
+29. How would you secure Docker Actions running on self-hosted runners?
+30. How would you secure Docker Actions running on ARC-managed runners?
+31. How would you design a Docker Action CI pipeline that builds, scans, tests, and releases the Action itself?
+32. How would you handle a critical vulnerability in the base image used by your Docker Action?
+33. How would you reduce the startup time of a Docker Action?
+34. How would you minimize the permissions available to a Docker Action?
+35. A Docker Action works on GitHub-hosted runners but fails on a self-hosted runner. How would you troubleshoot it?
+36. A Docker Action requires Docker access inside an ARC runner pod. How would you design this securely?
+37. Compare Docker Actions, Composite Actions, and JavaScript Actions for a production DevSecOps platform.
+38. How would you design an enterprise governance model for Docker Actions?
+39. What would you do if a Docker Action used by 200 repositories was compromised?
+40. When would you choose a Docker Action over a Composite Action or JavaScript Action?
