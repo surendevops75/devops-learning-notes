@@ -1,2192 +1,20 @@
-# QA Deployment
-
-QA Deployment is the process of deploying an application to the Quality Assurance environment so that testers and QA engineers can validate application functionality, integration, security, performance, and overall release quality before the application moves to higher environments.
-
-A typical enterprise deployment flow is:
-
-    Developer
-        |
-        ↓
-    Git
-        |
-        ↓
-    CI Pipeline
-        |
-        +-- Build
-        +-- Unit Tests
-        +-- Code Quality
-        +-- Security Scan
-        |
-        ↓
-    Artifact / Container Image
-        |
-        ↓
-    QA Environment
-        |
-        ↓
-    QA Validation
-        |
-        ↓
-    Approval
-        |
-        ↓
-    SIT / UAT / Production
-
----
-
-# Purpose of QA Deployment
-
-The main purpose of QA deployment is to validate whether a new application version works correctly in an environment that is separate from development.
-
-QA deployment helps identify:
-
-    Functional Defects
-    Integration Issues
-    Configuration Issues
-    Database Issues
-    API Issues
-    Deployment Issues
-    Security Issues
-    Performance Issues
-    Environment-Specific Problems
-
-The goal is:
-
-    Build
-      |
-      ↓
-    Deploy
-      |
-      ↓
-    Test
-      |
-      ↓
-    Fix
-      |
-      ↓
-    Retest
-      |
-      ↓
-    Approve
-
----
-
-# QA Environment
-
-A QA environment is an environment used by QA engineers and testers to validate application releases.
-
-Typical components include:
-
-    Application Servers
-    Kubernetes Cluster
-    Databases
-    Load Balancers
-    Message Queues
-    Caches
-    External Integrations
-    Monitoring
-    Logging
-
-Example:
-
-    QA Environment
-
-    ALB
-      |
-      ↓
-    Kubernetes
-      |
-      +-- User Service
-      +-- Product Service
-      +-- Cart Service
-      +-- Order Service
-      +-- Payment Service
-      +-- Inventory Service
-      +-- Notification Service
-      |
-      ↓
-    Database
-      |
-      +-- PostgreSQL
-      +-- MongoDB
-      |
-      ↓
-    RabbitMQ / Other Dependencies
-
----
-
-# QA vs Development
-
-Development environment:
-
-    Developer Focus
-        |
-        ↓
-    Code Development
-        |
-        ↓
-    Debugging
-        |
-        ↓
-    Rapid Changes
-
-QA environment:
-
-    Tester Focus
-        |
-        ↓
-    Release Validation
-        |
-        ↓
-    Functional Testing
-        |
-        ↓
-    Integration Testing
-        |
-        ↓
-    Defect Identification
-
-The QA environment should be more stable than the development environment.
-
----
-
-# QA vs Production
-
-QA:
-
-    Testing
-    Validation
-    Defect Detection
-    Test Data
-    Frequent Deployments
-
-Production:
-
-    Real Users
-    Real Business Traffic
-    High Availability
-    Production Data
-    Strict Change Controls
-
-Therefore:
-
-    QA
-      |
-      ↓
-    Validate Release
-      |
-      ↓
-    Approval
-      |
-      ↓
-    Production
-
----
-
-# QA Deployment Lifecycle
-
-    Code Commit
-        |
-        ↓
-    Pull Request
-        |
-        ↓
-    Code Review
-        |
-        ↓
-    CI Pipeline
-        |
-        +-- Build
-        +-- Unit Test
-        +-- SonarQube
-        +-- Trivy
-        |
-        ↓
-    Artifact
-        |
-        ↓
-    QA Deployment
-        |
-        ↓
-    Health Checks
-        |
-        ↓
-    Smoke Tests
-        |
-        ↓
-    QA Testing
-        |
-        ↓
-    Defect / Pass
-        |
-        ↓
-    Approval
-
----
-
-# QA Deployment Process
-
-A typical QA deployment process is:
-
-    1. Developer Completes Code
-
-    2. Code Is Committed
-
-    3. Pull Request Is Created
-
-    4. Code Review Is Completed
-
-    5. CI Pipeline Runs
-
-    6. Application Is Built
-
-    7. Tests Are Executed
-
-    8. Security Scans Are Executed
-
-    9. Artifact Is Published
-
-    10. QA Deployment Starts
-
-    11. Application Is Deployed
-
-    12. Health Checks Run
-
-    13. Smoke Tests Run
-
-    14. QA Testing Starts
-
-    15. Defects Are Reported
-
-    16. Fixes Are Developed
-
-    17. Application Is Redeployed
-
-    18. Regression Testing Runs
-
-    19. QA Approval Is Given
-
----
-
-# Source Code to QA
-
-The basic flow is:
-
-    Developer
-        |
-        ↓
-    Git Repository
-        |
-        ↓
-    CI Pipeline
-        |
-        ↓
-    Build
-        |
-        ↓
-    Test
-        |
-        ↓
-    Security Scan
-        |
-        ↓
-    Artifact
-        |
-        ↓
-    QA Environment
-
-This creates a controlled path from source code to QA.
-
----
-
-# Build Artifact
-
-The application should be packaged into a deployable artifact.
-
-Examples:
-
-    JAR
-    WAR
-    Docker Image
-    Node.js Package
-    Python Package
-
-For containerized applications:
-
-    Source Code
-        |
-        ↓
-    Docker Build
-        |
-        ↓
-    Docker Image
-        |
-        ↓
-    Container Registry
-        |
-        ↓
-    QA Deployment
-
----
-
-# Container Image in QA
-
-For Kubernetes-based applications:
-
-    Developer
-        |
-        ↓
-    GitHub
-        |
-        ↓
-    CI
-        |
-        ↓
-    Docker Build
-        |
-        ↓
-    ECR
-        |
-        ↓
-    QA EKS
-        |
-        ↓
-    Kubernetes Deployment
-
-The exact image version should be traceable to the source commit.
-
----
-
-# Image Tagging
-
-Example:
-
-    payment:1.4.7
-
-or:
-
-    payment:qa-1.4.7
-
-or:
-
-    payment:<commit-sha>
-
-The tag should clearly identify the version being tested.
-
-Immutable image references are preferred for reliable deployments.
-
----
-
-# Commit SHA Traceability
-
-A good QA deployment should provide traceability:
-
-    Git Commit
-        |
-        ↓
-    CI Build
-        |
-        ↓
-    Image
-        |
-        ↓
-    QA Deployment
-        |
-        ↓
-    Test Results
-
-Example:
-
-    Commit:
-    abc123
-
-    Image:
-    payment:abc123
-
-    QA:
-    payment deployment using abc123
-
-This makes troubleshooting easier.
-
----
-
-# Environment Configuration
-
-QA requires environment-specific configuration.
-
-Examples:
-
-    Database URL
-    API URLs
-    Service URLs
-    Environment Variables
-    ConfigMaps
-    Secrets
-    Feature Flags
-
-Example:
-
-    Application
-        |
-        ↓
-    QA Configuration
-        |
-        +-- QA Database
-        +-- QA API
-        +-- QA RabbitMQ
-        +-- QA Secrets
-
-The same application artifact can often be promoted across environments while environment-specific configuration changes.
-
----
-
-# Configuration Separation
-
-Avoid mixing:
-
-    Development Configuration
-
-with:
-
-    QA Configuration
-
-and:
-
-    Production Configuration
-
-Example:
-
-    Development
-        |
-        ↓
-    dev.example.internal
-
-    QA
-        |
-        ↓
-    qa.example.internal
-
-    Production
-        |
-        ↓
-    api.example.com
-
-Environment-specific configuration should be managed separately.
-
----
-
-# Secrets in QA
-
-QA applications may require:
-
-    Database Credentials
-    API Tokens
-    Authentication Secrets
-    TLS Certificates
-    Service Credentials
-
-Secrets should be stored securely.
-
-Do not:
-
-    Hardcode Secrets
-    Commit Secrets to Git
-    Print Secrets in CI Logs
-
-Use appropriate secret-management mechanisms.
-
----
-
-# QA Database
-
-QA may use a dedicated database.
-
-Example:
-
-    QA Application
-        |
-        ↓
-    QA Database
-
-This prevents QA testing from affecting production data.
-
-Typical QA database tasks include:
-
-    Schema Validation
-    Migration Testing
-    Data Validation
-    CRUD Testing
-    Integration Testing
-
----
-
-# Database Migration in QA
-
-If a release contains database changes:
-
-    Application Release
-        |
-        ↓
-    Database Migration
-        |
-        ↓
-    QA Validation
-        |
-        ↓
-    Application Testing
-
-Verify:
-
-    Migration Successful
-    Schema Correct
-    Application Compatible
-    Existing Data Accessible
-    New Functionality Works
-
----
-
-# QA Test Data
-
-QA may require controlled test data.
-
-Examples:
-
-    Test Users
-    Test Products
-    Test Orders
-    Test Payments
-    Test Inventory
-
-Test data should be:
-
-    Controlled
-    Repeatable
-    Appropriate For Testing
-    Non-Production Sensitive Data
-
----
-
-# QA Deployment Strategies
-
-Common strategies include:
-
-    Direct Deployment
-    Rolling Deployment
-    Blue-Green Deployment
-    Canary Deployment
-
-The selected strategy depends on:
-
-    Application
-    Environment
-    Risk
-    Infrastructure
-    Testing Requirements
-
----
-
-# Direct QA Deployment
-
-Simple flow:
-
-    Build
-      |
-      ↓
-    Artifact
-      |
-      ↓
-    QA
-      |
-      ↓
-    Test
-
-This is common for development and QA environments where rapid iteration is required.
-
----
-
-# Rolling QA Deployment
-
-Flow:
-
-    Old Pods
-        |
-        ↓
-    New Pod
-        |
-        ↓
-    Health Check
-        |
-        ↓
-    Ready
-        |
-        ↓
-    Replace Old Pod
-        |
-        ↓
-    Next Pod
-
-This helps validate the same deployment mechanism used in higher environments.
-
----
-
-# Blue-Green QA Deployment
-
-Two environments:
-
-    Blue = Current
-    Green = New
-
-Flow:
-
-    Green
-      |
-      ↓
-    Deploy
-      |
-      ↓
-    Validate
-      |
-      ↓
-    Switch Traffic
-
-This can be useful for testing deployment behavior before production.
-
----
-
-# QA Deployment Using Kubernetes
-
-Typical architecture:
-
-    GitHub
-      |
-      ↓
-    CI/CD
-      |
-      ↓
-    ECR
-      |
-      ↓
-    EKS QA
-      |
-      ↓
-    Kubernetes Deployment
-      |
-      ↓
-    Service
-      |
-      ↓
-    ALB
-      |
-      ↓
-    QA Users
-
----
-
-# Kubernetes Deployment
-
-A Deployment manages the desired application state.
-
-Example:
-
-    apiVersion: apps/v1
-    kind: Deployment
-
-    metadata:
-      name: payment
-
-    spec:
-      replicas: 2
-
-      selector:
-        matchLabels:
-          app: payment
-
-      template:
-        metadata:
-          labels:
-            app: payment
-
-        spec:
-          containers:
-            - name: payment
-              image: payment:qa-1.4.7
-
----
-
-# Apply Deployment
-
-Command:
-
-    kubectl apply -f deployment.yaml
-
-Then check:
-
-    kubectl get deployment
-
-Then:
-
-    kubectl get pods
-
-Then:
-
-    kubectl rollout status deployment/payment
-
----
-
-# Verify Rollout
-
-Command:
-
-    kubectl rollout status deployment/payment
-
-Expected:
-
-    deployment "payment" successfully rolled out
-
-If rollout fails:
-
-    Stop QA Validation
-        |
-        ↓
-    Investigate
-        |
-        ↓
-    Fix
-        |
-        ↓
-    Redeploy
-
----
-
-# QA Health Checks
-
-After deployment, verify:
-
-    Startup Probe
-    Readiness Probe
-    Liveness Probe
-
-Expected:
-
-    Pods Running
-    Pods Ready
-    Health Checks Passing
-
-Commands:
-
-    kubectl get pods
-
-    kubectl describe pod <pod-name>
-
----
-
-# QA Smoke Test
-
-Immediately after deployment, run a smoke test.
-
-Example:
-
-    Application URL
-        |
-        ↓
-    GET /health
-        |
-        ↓
-    HTTP 200
-        |
-        ↓
-    Login
-        |
-        ↓
-    Critical API
-        |
-        ↓
-    Smoke Test Pass
-
-If smoke testing fails:
-
-    Stop QA Testing
-        |
-        ↓
-    Investigate Deployment
-        |
-        ↓
-    Fix / Redeploy
-
----
-
-# QA Functional Testing
-
-Functional testing verifies that application requirements work correctly.
-
-Examples:
-
-    User Registration
-    Login
-    Product Search
-    Add To Cart
-    Order Creation
-    Payment
-    Inventory
-    Notification
-
-The exact tests depend on application requirements.
-
----
-
-# QA Integration Testing
-
-Integration testing verifies communication between components.
-
-Example:
-
-    User Service
-        |
-        ↓
-    Database
-
-    Order Service
-        |
-        ↓
-    Payment Service
-
-    Payment Service
-        |
-        ↓
-    RabbitMQ
-
-    Notification Service
-        |
-        ↓
-    External Provider
-
----
-
-# QA Regression Testing
-
-Regression testing verifies that existing functionality still works after new changes.
-
-Flow:
-
-    New Feature
-        |
-        ↓
-    Deployment
-        |
-        ↓
-    New Feature Test
-        |
-        ↓
-    Existing Feature Tests
-        |
-        ↓
-    Regression Result
-
-A new change should not unexpectedly break existing functionality.
-
----
-
-# QA API Testing
-
-API validation can include:
-
-    HTTP Method
-    URL
-    Request
-    Response
-    Status Code
-    Headers
-    Authentication
-    Authorization
-    Response Time
-
-Example:
-
-    POST /orders
-
-Expected:
-
-    HTTP 201
-
-Then:
-
-    GET /orders/<id>
-
-Expected:
-
-    HTTP 200
-
----
-
-# QA UI Testing
-
-For applications with a user interface, QA may validate:
-
-    Login
-    Navigation
-    Forms
-    Buttons
-    Search
-    Validation Messages
-    Browser Compatibility
-    Responsive Behavior
-
----
-
-# QA Performance Testing
-
-Depending on the release, QA may validate:
-
-    Response Time
-    Throughput
-    Concurrent Users
-    CPU
-    Memory
-    Database Performance
-
-Example:
-
-    Request Rate
-        |
-        ↓
-    Application
-        |
-        ↓
-    Measure Latency
-        |
-        ↓
-    Analyze Performance
-
----
-
-# QA Security Testing
-
-Security validation may include:
-
-    Authentication
-    Authorization
-    Input Validation
-    Dependency Vulnerabilities
-    Container Vulnerabilities
-    Secret Exposure
-    TLS
-    Access Control
-
-DevSecOps tools may include:
-
-    SonarQube
-    Trivy
-    Veracode
-
----
-
-# SonarQube in QA Pipeline
-
-SonarQube is normally used during CI before deployment.
-
-Flow:
-
-    Code
-      |
-      ↓
-    SonarQube
-      |
-      ↓
-    Quality Gate
-      |
-      +------ Fail ------→ Stop
-      |
-      +------ Pass
-              |
-              ↓
-            Build
-              |
-              ↓
-            QA
-
----
-
-# Trivy in QA Pipeline
-
-Trivy can scan container images.
-
-Flow:
-
-    Docker Build
-        |
-        ↓
-    Trivy Scan
-        |
-        ↓
-    Vulnerability Result
-        |
-        +------ Fail ------→ Stop
-        |
-        +------ Pass
-                |
-                ↓
-              ECR
-                |
-                ↓
-              QA
-
----
-
-# QA Deployment Approval
-
-Some organizations require approval before deploying to QA.
-
-Flow:
-
-    Build
-      |
-      ↓
-    Test
-      |
-      ↓
-    Security
-      |
-      ↓
-    Approval
-      |
-      ↓
-    QA Deployment
-
-Approval requirements depend on organizational processes.
-
----
-
-# Automated QA Deployment
-
-A CI/CD pipeline can automatically deploy successful builds to QA.
-
-Example:
-
-    Code Push
-        |
-        ↓
-    GitHub Actions
-        |
-        +-- Build
-        +-- Unit Test
-        +-- SonarQube
-        +-- Trivy
-        |
-        ↓
-    Publish Image
-        |
-        ↓
-    Deploy QA
-        |
-        ↓
-    Health Check
-        |
-        ↓
-    Smoke Test
-        |
-        ↓
-    QA Testing
-
----
-
-# GitHub Actions QA Deployment
-
-A conceptual workflow:
-
-    name: QA Deployment
-
-    on:
-      push:
-        branches:
-          - develop
-
-    jobs:
-
-      build:
-        runs-on: ubuntu-latest
-
-        steps:
-          - Checkout Code
-          - Build Application
-          - Run Tests
-          - Build Docker Image
-          - Scan Image
-          - Push Image
-
-      deploy-qa:
-        needs: build
-        runs-on: ubuntu-latest
-
-        steps:
-          - Deploy To QA
-          - Wait For Rollout
-          - Run Health Check
-          - Run Smoke Test
-
----
-
-# QA Deployment Gates
-
-A deployment gate determines whether the pipeline can continue.
-
-Example:
-
-    Build
-      |
-      ↓
-    Unit Test
-      |
-      ↓
-    Security Scan
-      |
-      ↓
-    Deploy QA
-      |
-      ↓
-    Health Check
-      |
-      ↓
-    Smoke Test
-      |
-      +------ Fail ------→ Stop
-      |
-      +------ Pass
-              |
-              ↓
-           QA Testing
-
----
-
-# Quality Gate
-
-A quality gate can check:
-
-    Test Results
-    Code Quality
-    Security
-    Coverage
-    Vulnerabilities
-
-If the required criteria are not met:
-
-    Quality Gate Failed
-        |
-        ↓
-    Stop Pipeline
-
----
-
-# QA Deployment Gate
-
-After deployment:
-
-    Health Check
-        |
-        ↓
-    Smoke Test
-        |
-        ↓
-    QA Validation
-        |
-        +------ Failed ------→ Reject
-        |
-        +------ Passed ------→ Approve
-
-This creates controlled progression to higher environments.
-
----
-
-# QA Defect Lifecycle
-
-When QA identifies a problem:
-
-    Test
-      |
-      ↓
-    Defect Found
-      |
-      ↓
-    Defect Reported
-      |
-      ↓
-    Developer Investigation
-      |
-      ↓
-    Fix
-      |
-      ↓
-    New Build
-      |
-      ↓
-    QA Redeployment
-      |
-      ↓
-    Retest
-      |
-      ↓
-    Regression Testing
-      |
-      ↓
-    Close Defect
-
----
-
-# Defect Severity
-
-Defects may be classified according to organizational standards.
-
-Typical categories:
-
-    Critical
-    High
-    Medium
-    Low
-
-Example:
-
-    Critical
-        |
-        ↓
-    Application Cannot Be Used
-
-    High
-        |
-        ↓
-    Major Feature Broken
-
-    Medium
-        |
-        ↓
-    Important Functionality Affected
-
-    Low
-        |
-        ↓
-    Minor Issue
-
-Exact severity definitions vary by organization.
-
----
-
-# QA Rejection
-
-A release may be rejected when:
-
-    Critical Defects Exist
-    Smoke Tests Fail
-    Major Functionality Fails
-    Integration Tests Fail
-    Security Requirements Fail
-    Performance Is Unacceptable
-
-Flow:
-
-    QA Testing
-        |
-        ↓
-    Failure
-        |
-        ↓
-    Reject Release
-        |
-        ↓
-    Developer Fix
-        |
-        ↓
-    Redeploy QA
-
----
-
-# QA Approval
-
-A release may be approved when:
-
-    Functional Tests Pass
-    Integration Tests Pass
-    Regression Tests Pass
-    Security Validation Passes
-    Performance Is Acceptable
-    Critical Defects Are Resolved
-
-Then:
-
-    QA Approval
-        |
-        ↓
-    SIT / UAT
-        |
-        ↓
-    Production
-
----
-
-# QA Environment Variables
-
-Example:
-
-    ENVIRONMENT=qa
-
-    DATABASE_HOST=qa-db
-
-    API_URL=https://qa-api.example.internal
-
-    LOG_LEVEL=INFO
-
-These values should be managed through appropriate configuration mechanisms.
-
----
-
-# ConfigMap in QA
-
-Example:
-
-    apiVersion: v1
-    kind: ConfigMap
-
-    metadata:
-      name: payment-config
-
-    data:
-      ENVIRONMENT: "qa"
-      LOG_LEVEL: "INFO"
-
-Application:
-
-    Pod
-      |
-      ↓
-    ConfigMap
-      |
-      ↓
-    Environment Variables
-
----
-
-# Secret in QA
-
-Example concept:
-
-    apiVersion: v1
-    kind: Secret
-
-    metadata:
-      name: payment-secret
-
-    stringData:
-      DATABASE_USERNAME: "qa-user"
-      DATABASE_PASSWORD: "<managed-secret>"
-
-Secrets should be protected and should never be exposed in logs or source control.
-
----
-
-# Namespace-Based QA
-
-A Kubernetes cluster may use a dedicated namespace.
-
-Example:
-
-    kubectl create namespace qa
-
-Deploy:
-
-    kubectl apply -f deployment.yaml -n qa
-
-Check:
-
-    kubectl get pods -n qa
-
-This provides logical separation for QA resources.
-
----
-
-# Environment Separation
-
-Example:
-
-    EKS Cluster
-        |
-        +-- namespace: dev
-        |
-        +-- namespace: qa
-        |
-        +-- namespace: sit
-        |
-        +-- namespace: uat
-        |
-        └-- namespace: prod
-
-Some organizations use separate clusters or accounts instead.
-
-The architecture depends on security and organizational requirements.
-
----
-
-# QA Deployment Using Helm
-
-Helm can manage Kubernetes application deployments.
-
-Example:
-
-    helm upgrade --install payment ./payment-chart \
-      --namespace qa \
-      --create-namespace \
-      --set image.tag=qa-1.4.7
-
-Then verify:
-
-    kubectl get pods -n qa
-
-and:
-
-    kubectl rollout status deployment/payment -n qa
-
----
-
-# Helm Values for QA
-
-Example:
-
-    values-qa.yaml
-
-    environment: qa
-
-    image:
-      repository: payment
-      tag: qa-1.4.7
-
-    replicas: 2
-
-    resources:
-      requests:
-        cpu: 250m
-        memory: 256Mi
-
-The QA values file can contain environment-specific configuration.
-
----
-
-# QA Deployment Using ArgoCD
-
-GitOps flow:
-
-    Developer
-        |
-        ↓
-    Git
-        |
-        ↓
-    Manifest / Helm Values
-        |
-        ↓
-    ArgoCD
-        |
-        ↓
-    QA EKS
-        |
-        ↓
-    Application
-
-ArgoCD continuously reconciles the desired state from Git with the QA Kubernetes environment.
-
----
-
-# ArgoCD QA Flow
-
-    Git Repository
-        |
-        ↓
-    QA Manifest Updated
-        |
-        ↓
-    ArgoCD Detects Change
-        |
-        ↓
-    Sync
-        |
-        ↓
-    QA EKS
-        |
-        ↓
-    Kubernetes Resources
-        |
-        ↓
-    Health Validation
-
----
-
-# QA GitOps Promotion
-
-A common GitOps approach is:
-
-    Application Repository
-        |
-        ↓
-    CI Builds Image
-        |
-        ↓
-    ECR
-        |
-        ↓
-    Update QA Manifest
-        |
-        ↓
-    ArgoCD
-        |
-        ↓
-    QA
-
-After QA approval:
-
-    Update SIT Manifest
-        |
-        ↓
-    ArgoCD
-        |
-        ↓
-    SIT
-
----
-
-# QA Manifest Example
-
-Conceptually:
-
-    environments/
-    └── qa/
-        ├── deployment.yaml
-        ├── service.yaml
-        ├── ingress.yaml
-        └── values.yaml
-
-Environment configuration remains separated from application source code.
-
----
-
-# QA Deployment Monitoring
-
-After deployment, monitor:
-
-    Pod Status
-    Restart Count
-    CPU
-    Memory
-    HTTP Requests
-    HTTP Errors
-    Latency
-    Application Logs
-
-Tools:
-
-    Prometheus
-    Grafana
-    ELK
-
----
-
-# Prometheus QA Validation
-
-Prometheus can provide metrics such as:
-
-    Request Rate
-    Error Rate
-    Latency
-    CPU
-    Memory
-    Pod Availability
-
-Example:
-
-    QA Deployment
-        |
-        ↓
-    Metrics
-        |
-        ↓
-    Prometheus
-        |
-        ↓
-    Grafana
-
----
-
-# Grafana QA Dashboard
-
-Useful dashboard panels:
-
-    Pod Status
-    Pod Restarts
-    Request Rate
-    HTTP 4xx
-    HTTP 5xx
-    Latency
-    CPU
-    Memory
-
-This provides quick visibility into the health of the QA release.
-
----
-
-# ELK QA Validation
-
-ELK can be used to inspect:
-
-    Application Errors
-    Exceptions
-    API Requests
-    Authentication Failures
-    Database Errors
-    Dependency Failures
-
-Flow:
-
-    QA Application
-        |
-        ↓
-    Logs
-        |
-        ↓
-    ELK
-        |
-        ↓
-    QA Investigation
-
----
-
-# QA Deployment Rollback
-
-If a QA deployment fails:
-
-    New Version
-        |
-        ↓
-    QA Validation
-        |
-        ↓
-    Failure
-        |
-        ↓
-    Rollback
-        |
-        ↓
-    Previous Version
-        |
-        ↓
-    Validate Again
-
-Kubernetes command:
-
-    kubectl rollout undo deployment/payment -n qa
-
-Then:
-
-    kubectl rollout status deployment/payment -n qa
-
----
-
-# Helm Rollback
-
-If Helm is used:
-
-    helm history payment -n qa
-
-Then:
-
-    helm rollback payment <revision> -n qa
-
-Validate:
-
-    kubectl get pods -n qa
-
-and:
-
-    kubectl rollout status deployment/payment -n qa
-
----
-
-# ArgoCD Rollback
-
-In GitOps, rollback is commonly performed by reverting the Git change to the previously known-good configuration.
-
-Flow:
-
-    Bad Change
-        |
-        ↓
-    Git
-        |
-        ↓
-    Revert
-        |
-        ↓
-    ArgoCD
-        |
-        ↓
-    QA
-        |
-        ↓
-    Previous Version
-
-The exact rollback procedure depends on the organization's GitOps process.
-
----
-
-# QA Deployment and Change Management
-
-Enterprise environments may require:
-
-    Change Request
-    Release Ticket
-    Approval
-    Deployment Record
-    Test Evidence
-    QA Approval
-
-A typical process:
-
-    Change Request
-        |
-        ↓
-    Approval
-        |
-        ↓
-    Deployment
-        |
-        ↓
-    Testing
-        |
-        ↓
-    Evidence
-        |
-        ↓
-    Approval
-
----
-
-# QA Deployment Evidence
-
-Useful evidence includes:
-
-    Build Number
-    Git Commit
-    Image Tag
-    Deployment Time
-    Test Results
-    Smoke Test Results
-    Security Scan Results
-    QA Test Results
-    Defect Status
-    Approval
-
-This helps with auditing and release traceability.
-
----
-
-# QA Deployment Version Tracking
-
-Track:
-
-    Application Version
-    Build Number
-    Git Commit
-    Docker Image
-    Deployment Time
-    Environment
-
-Example:
-
-    Application:
-    Payment
-
-    Version:
-    1.4.7
-
-    Commit:
-    abc123
-
-    Environment:
-    QA
-
-    Deployment:
-    2026-08-09
-
----
-
-# QA Deployment Notifications
-
-CI/CD systems may notify teams about:
-
-    Deployment Started
-    Deployment Successful
-    Deployment Failed
-    Smoke Test Failed
-    QA Approval
-    Rollback
-
-Possible communication channels depend on organizational tooling.
-
----
-
-# QA Deployment Failure Handling
-
-If deployment fails:
-
-    Detect Failure
-        |
-        ↓
-    Stop Pipeline
-        |
-        ↓
-    Collect Logs
-        |
-        ↓
-    Identify Root Cause
-        |
-        ↓
-    Fix
-        |
-        ↓
-    Rebuild
-        |
-        ↓
-    Redeploy
-        |
-        ↓
-    Retest
-
-Do not blindly retry without understanding the failure.
-
----
-
-# Common QA Deployment Failures
-
-## ImagePullBackOff
-
-Possible causes:
-
-    Wrong Image
-    Wrong Tag
-    Registry Authentication
-    Image Does Not Exist
-
-Check:
-
-    kubectl describe pod <pod-name> -n qa
-
----
-
-# Common QA Deployment Failures
-
-## CrashLoopBackOff
-
-Possible causes:
-
-    Application Crash
-    Configuration Error
-    Missing Secret
-    Database Failure
-    Incorrect Command
-    Resource Issue
-
-Check:
-
-    kubectl logs <pod-name> -n qa
-
-and:
-
-    kubectl logs <pod-name> -n qa --previous
-
----
-
-# Common QA Deployment Failures
-
-## Readiness Probe Failure
-
-Possible causes:
-
-    Wrong Endpoint
-    Wrong Port
-    Application Not Ready
-    Dependency Failure
-    Timeout
-
-Check:
-
-    kubectl describe pod <pod-name> -n qa
-
----
-
-# Common QA Deployment Failures
-
-## No Service Endpoints
-
-Possible causes:
-
-    Wrong Selector
-    Pods Not Ready
-    Wrong Labels
-
-Check:
-
-    kubectl get svc -n qa
-
-and:
-
-    kubectl get endpoints -n qa
-
----
-
-# Common QA Deployment Failures
-
-## ALB Unhealthy
-
-Possible causes:
-
-    Wrong Health Path
-    Wrong Port
-    Application Error
-    Security Configuration
-    Ingress Configuration
-
-Validate the complete request path:
-
-    ALB
-      |
-      ↓
-    Ingress
-      |
-      ↓
-    Service
-      |
-      ↓
-    Pod
-
----
-
-# Common QA Deployment Failures
-
-## Database Connection Failure
-
-Possible causes:
-
-    Wrong Host
-    Wrong Port
-    Wrong Credentials
-    Network Issue
-    Database Unavailable
-    Security Rules
-
-Check:
-
-    Application Logs
-    Configuration
-    Secrets
-    Network Connectivity
-
----
-
-# Common QA Deployment Failures
-
-## Configuration Error
-
-Example:
-
-    ENVIRONMENT=production
-
-inside:
-
-    QA
-
-or:
-
-    DATABASE_URL points to production
-
-This can create serious risks.
-
-Always verify environment-specific configuration before testing.
-
----
-
-# QA Deployment Security
-
-Important controls:
-
-    Environment Separation
-    Least Privilege
-    Secret Management
-    Secure CI/CD Credentials
-    Network Restrictions
-    TLS
-    Image Scanning
-    Code Scanning
-    Access Control
-
-QA should never become a path to production data exposure.
-
----
-
-# QA Deployment Best Practices
-
-- Use versioned artifacts
-- Use immutable image tags or digests
-- Keep QA configuration separate
-- Never commit secrets
-- Automate deployment
-- Automate smoke tests
-- Validate health checks
-- Validate Service endpoints
-- Validate ALB health
-- Monitor application metrics
-- Review application logs
-- Maintain deployment traceability
-- Keep test data controlled
-- Use rollback procedures
-- Record test evidence
-- Require appropriate approvals
-- Keep QA environment stable
-- Use the same deployment mechanism where possible as higher environments
-
----
-
-# QA Deployment Anti-Patterns
-
-## Manual Copying of Artifacts
-
-Bad:
-
-    Developer Laptop
-        |
-        ↓
-    Manually Copy JAR
-        |
-        ↓
-    QA Server
-
-Problems:
-
-    No Traceability
-    Human Error
-    Inconsistent Deployment
-
-Better:
-
-    Git
-        |
-        ↓
-    CI/CD
-        |
-        ↓
-    Artifact
-        |
-        ↓
-    QA
-
----
-
-# QA Deployment Anti-Pattern
-
-## Using Latest Tag
-
-Bad:
-
-    image: payment:latest
-
-The tag can change unexpectedly.
-
-Better:
-
-    image: payment:1.4.7
-
-or an immutable image digest.
-
----
-
-# QA Deployment Anti-Pattern
-
-## Production Data in QA
-
-Avoid using sensitive production data in QA unless there is a formally controlled and approved process.
-
-Prefer:
-
-    Synthetic Data
-    Masked Data
-    Sanitized Data
-
----
-
-# QA Deployment Anti-Pattern
-
-## Skipping Smoke Tests
-
-Bad:
-
-    Deploy
-      |
-      ↓
-    Immediately Declare Success
-
-Better:
-
-    Deploy
-      |
-      ↓
-    Health Check
-      |
-      ↓
-    Smoke Test
-      |
-      ↓
-    Validate
-
----
-
-# QA Deployment Anti-Pattern
-
-## Ignoring Failed Tests
-
-If QA tests fail:
-
-    Do Not Ignore
-    Do Not Hide
-    Do Not Bypass
-
-Instead:
-
-    Report
-      |
-      ↓
-    Investigate
-      |
-      ↓
-    Fix
-      |
-      ↓
-    Retest
-
----
-
-# QA Deployment Anti-Pattern
-
-## Different Deployment Process From Production
-
-If QA uses:
-
-    Manual Deployment
-
-and Production uses:
-
-    Automated CI/CD
-
-then production-specific deployment issues may not be discovered in QA.
-
-Prefer similar deployment mechanisms across environments when practical.
-
----
-
-# QA Deployment and Enterprise Promotion
-
-Typical flow:
+# UAT Deployment
+
+UAT (User Acceptance Testing) Deployment is the process of deploying an application into the User Acceptance Testing environment so that business users, product owners, and authorized stakeholders can validate whether the application meets business requirements and is ready for production.
+
+UAT focuses primarily on:
+
+    Business Requirements
+        +
+    User Workflows
+        +
+    Business Rules
+        +
+    End-to-End Functionality
+        +
+    Production Readiness
+
+A typical enterprise flow is:
 
     Development
         |
@@ -2202,410 +30,1940 @@ Typical flow:
         ↓
     Production
 
-Each environment provides a different validation stage.
+---
+
+# Purpose of UAT
+
+The main purpose of UAT is to confirm that the application satisfies business requirements.
+
+UAT answers:
+
+    "Does the application solve the business problem correctly?"
+
+UAT validates:
+
+    Business Requirements
+    User Workflows
+    Business Rules
+    Functional Behavior
+    End-to-End Processes
+    Reports
+    Notifications
+    Integrations
+    Data Accuracy
+    Production Readiness
 
 ---
 
-# QA Promotion Criteria
+# QA vs SIT vs UAT
 
-Before moving from QA:
+QA focuses on:
 
-    Build Successful
-    Security Scans Passed
-    Deployment Successful
-    Pods Healthy
-    Smoke Tests Passed
-    Functional Tests Passed
-    Integration Tests Passed
-    Regression Tests Passed
-    Critical Defects Resolved
-    QA Approval Received
+    Application Functionality
+    Defect Detection
+    Regression Testing
 
-Then:
+SIT focuses on:
+
+    System Integration
+    Service Communication
+    Database Integration
+    External Integrations
+    End-to-End Technical Workflows
+
+UAT focuses on:
+
+    Business Requirements
+    User Acceptance
+    Business Workflows
+    Business Rules
+    Real-World Usage
+
+Example:
 
     QA
       |
       ↓
+    Does the feature work?
+
     SIT
+      |
+      ↓
+    Do all systems work together?
+
+    UAT
+      |
+      ↓
+    Does the complete business process work correctly?
 
 ---
 
-# QA Deployment End-to-End Flow
+# UAT Environment
 
-    Developer
-        |
-        ↓
-    Feature Branch
-        |
-        ↓
-    Pull Request
-        |
-        ↓
-    Code Review
-        |
-        ↓
-    Merge
-        |
-        ↓
-    CI Pipeline
-        |
-        +-- Build
-        +-- Unit Test
-        +-- SonarQube
-        +-- Trivy
-        |
-        ↓
-    Docker Image
-        |
-        ↓
-    ECR
-        |
-        ↓
-    QA Deployment
-        |
-        ↓
+A typical UAT environment may contain:
+
+    Load Balancer
+    Kubernetes
+    Application Services
+    Databases
+    Message Queues
+    Cache
+    External Integrations
+    Authentication
+    Monitoring
+    Logging
+
+Example:
+
+    ALB
+      |
+      ↓
     EKS
+      |
+      +-- User
+      +-- Product
+      +-- Cart
+      +-- Order
+      +-- Payment
+      +-- Inventory
+      +-- Notification
+      |
+      +-- Database
+      +-- RabbitMQ
+      +-- Cache
+      |
+      ↓
+    External Systems
+
+---
+
+# UAT Deployment Lifecycle
+
+    Development
         |
         ↓
-    Health Checks
+    CI
         |
         ↓
-    Smoke Tests
-        |
-        ↓
-    Functional Testing
-        |
-        ↓
-    Integration Testing
-        |
-        ↓
-    Regression Testing
+    QA
         |
         ↓
     QA Approval
         |
         ↓
     SIT
+        |
+        ↓
+    SIT Approval
+        |
+        ↓
+    UAT Deployment
+        |
+        ↓
+    UAT Validation
+        |
+        ↓
+    Business Acceptance
+        |
+        ↓
+    Production
 
 ---
 
-# Real-World QA Deployment Example
+# UAT Deployment Process
 
-Suppose the application version is:
+A typical UAT process is:
+
+    1. SIT Validation Completed
+
+    2. SIT Approval Received
+
+    3. Release Version Identified
+
+    4. UAT Configuration Prepared
+
+    5. UAT Database Prepared
+
+    6. Required Test Data Prepared
+
+    7. Application Deployed
+
+    8. Kubernetes Rollout Validated
+
+    9. Health Checks Executed
+
+    10. Smoke Tests Executed
+
+    11. Business Users Begin Testing
+
+    12. Business Workflows Validated
+
+    13. Defects Reported
+
+    14. Fixes Developed
+
+    15. Application Redeployed
+
+    16. Retesting Performed
+
+    17. UAT Approval Received
+
+    18. Production Deployment Prepared
+
+---
+
+# UAT Deployment Architecture
+
+    GitHub
+        |
+        ↓
+    CI/CD
+        |
+        ↓
+    Container Registry
+        |
+        ↓
+    UAT EKS
+        |
+        +-- User Service
+        +-- Product Service
+        +-- Cart Service
+        +-- Order Service
+        +-- Payment Service
+        +-- Inventory Service
+        +-- Notification Service
+        |
+        +-- Database
+        +-- RabbitMQ
+        +-- Cache
+        |
+        ↓
+    External Systems
+        |
+        ↓
+    Business Users
+
+---
+
+# Build Once and Promote
+
+A strong enterprise deployment strategy is:
+
+    Build Once
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT
+        |
+        ↓
+    Production
+
+Example:
 
     payment:1.4.7
 
-Process:
+QA:
 
-    Developer
+    payment:1.4.7
+
+SIT:
+
+    payment:1.4.7
+
+UAT:
+
+    payment:1.4.7
+
+Production:
+
+    payment:1.4.7
+
+The application artifact remains consistent while environment-specific configuration changes.
+
+---
+
+# Why Artifact Promotion Matters
+
+Building the application separately for every environment can produce differences.
+
+Bad:
+
+    Build → QA
+    Build → SIT
+    Build → UAT
+    Build → Production
+
+Better:
+
+    Build
+      |
+      ↓
+    Artifact
+      |
+      +------→ QA
+      |
+      +------→ SIT
+      |
+      +------→ UAT
+      |
+      └------→ Production
+
+Benefits:
+
+    Consistency
+    Traceability
+    Reduced Risk
+    Reproducibility
+    Better Release Control
+
+---
+
+# UAT Configuration
+
+UAT requires environment-specific configuration.
+
+Examples:
+
+    Database URL
+    API URLs
+    Service URLs
+    Environment Variables
+    Secrets
+    Feature Flags
+    Message Queue
+    External Integrations
+
+Example:
+
+    ENVIRONMENT=uat
+
+    DATABASE_HOST=uat-db
+
+    PAYMENT_API=uat-payment
+
+    ORDER_API=uat-order
+
+---
+
+# Configuration Separation
+
+Keep environments separated:
+
+    QA
+      |
+      ↓
+    qa-db
+
+    SIT
+      |
+      ↓
+    sit-db
+
+    UAT
+      |
+      ↓
+    uat-db
+
+    Production
+      |
+      ↓
+    prod-db
+
+Do not accidentally point UAT applications to production systems.
+
+---
+
+# UAT Secrets
+
+UAT may require:
+
+    Database Credentials
+    API Credentials
+    Authentication Secrets
+    TLS Certificates
+    Service Credentials
+
+Secrets must be securely managed.
+
+Never:
+
+    Commit Secrets
+    Hardcode Secrets
+    Print Secrets
+    Share Production Credentials
+
+---
+
+# UAT Database
+
+UAT normally uses a dedicated database.
+
+Example:
+
+    UAT Application
         |
         ↓
-    Commit
+    UAT Database
+
+The database should contain appropriate data for business validation.
+
+---
+
+# UAT Test Data
+
+UAT requires realistic but controlled test data.
+
+Examples:
+
+    Customers
+    Products
+    Orders
+    Payments
+    Inventory
+    Accounts
+
+The data should support realistic business scenarios.
+
+---
+
+# Production Data in UAT
+
+Avoid uncontrolled production data in UAT.
+
+Prefer:
+
+    Synthetic Data
+    Masked Data
+    Sanitized Data
+
+If production-derived data is required, it should follow organizational security and privacy controls.
+
+---
+
+# Business Requirements
+
+UAT should validate requirements such as:
+
+    User Registration
+    Login
+    Product Management
+    Order Processing
+    Payment
+    Inventory
+    Notifications
+    Reports
+    Approvals
+    Business Rules
+
+Each requirement should have corresponding acceptance criteria.
+
+---
+
+# Acceptance Criteria
+
+Acceptance criteria define what must be true for a feature to be accepted.
+
+Example:
+
+    Requirement:
+    User should be able to create an order.
+
+    Acceptance Criteria:
+
+    User Can Login
         |
         ↓
-    GitHub Actions
+    Select Product
         |
         ↓
-    Maven Build
+    Add Product
         |
         ↓
-    Unit Tests
+    Submit Order
         |
         ↓
-    SonarQube
+    Payment Successful
         |
         ↓
-    Trivy
+    Order Created
         |
         ↓
-    Docker Image
+    Confirmation Sent
+
+---
+
+# UAT Test Scenario
+
+A UAT scenario represents a real business workflow.
+
+Example:
+
+    Customer Places Order
+
+    Login
+      |
+      ↓
+    Search Product
+      |
+      ↓
+    Add To Cart
+      |
+      ↓
+    Checkout
+      |
+      ↓
+    Payment
+      |
+      ↓
+    Order Confirmation
+
+Business users validate whether the complete process meets expectations.
+
+---
+
+# UAT Functional Validation
+
+UAT validates functionality from a business perspective.
+
+Example:
+
+    Requirement:
+    Customer should receive an order confirmation.
+
+UAT validates:
+
+    Order Created
         |
         ↓
-    ECR
+    Payment Successful
         |
         ↓
-    QA EKS
+    Notification Triggered
         |
         ↓
-    Helm / Kubernetes
+    Customer Receives Confirmation
+
+---
+
+# UAT End-to-End Testing
+
+A complete workflow may be:
+
+    User
+      |
+      ↓
+    Login
+      |
+      ↓
+    Product
+      |
+      ↓
+    Cart
+      |
+      ↓
+    Order
+      |
+      ↓
+    Payment
+      |
+      ↓
+    Inventory
+      |
+      ↓
+    Notification
+      |
+      ↓
+    Customer
+
+The workflow should reflect real business behavior.
+
+---
+
+# UAT Business Rules
+
+UAT validates business rules.
+
+Examples:
+
+    Discount Rules
+    Payment Rules
+    Order Limits
+    Approval Rules
+    Inventory Rules
+    User Permissions
+    Tax Rules
+    Notification Rules
+
+Example:
+
+    Order Value > Required Threshold
         |
         ↓
-    Pods
+    Manager Approval Required
+
+UAT validates that the business rule behaves correctly.
+
+---
+
+# UAT User Roles
+
+Different business roles may perform different tests.
+
+Examples:
+
+    Customer
+    Manager
+    Administrator
+    Finance User
+    Operations User
+
+Each role may have different permissions and workflows.
+
+---
+
+# UAT Authorization Testing
+
+Example:
+
+    Customer
         |
         ↓
-    Readiness
+    Customer Functions
+        |
+        ↓
+    Allowed
+
+But:
+
+    Customer
+        |
+        ↓
+    Admin Function
+        |
+        ↓
+    Access Denied
+
+UAT can validate whether the application supports expected business roles.
+
+---
+
+# UAT Authentication Testing
+
+Validate:
+
+    Login
+    Logout
+    Password
+    Session
+    MFA
+    Token
+    Authentication Errors
+
+Example:
+
+    User
+      |
+      ↓
+    Login
+      |
+      ↓
+    Authentication
+      |
+      ↓
+    Dashboard
+
+---
+
+# UAT API Validation
+
+Although UAT is business-focused, API behavior may support business validation.
+
+Example:
+
+    Business Action
+        |
+        ↓
+    API
+        |
+        ↓
+    Application
+        |
+        ↓
+    Database
+
+Validate that the expected business result is produced.
+
+---
+
+# UAT Database Validation
+
+Validate business data.
+
+Example:
+
+    Order Created
+        |
+        ↓
+    Database
+        |
+        ↓
+    Order Record
+        |
+        ↓
+    Expected Status
+
+Check:
+
+    Data Accuracy
+    Status
+    Amount
+    User
+    Timestamp
+    Relationships
+
+---
+
+# UAT Reports
+
+If the application generates reports, validate:
+
+    Data Accuracy
+    Filters
+    Calculations
+    Dates
+    Totals
+    Export
+    Permissions
+
+Example:
+
+    Orders
+      |
+      ↓
+    Report
+      |
+      ↓
+    Total Orders
+      |
+      ↓
+    Validate Against Expected Result
+
+---
+
+# UAT Notifications
+
+Validate:
+
+    Email
+    SMS
+    Application Notification
+    Event Notification
+
+Example:
+
+    Order Created
+        |
+        ↓
+    Payment Successful
+        |
+        ↓
+    Notification
+        |
+        ↓
+    Customer
+
+---
+
+# UAT External Integrations
+
+Business workflows may depend on:
+
+    Payment Gateway
+    Email Provider
+    Authentication Provider
+    External APIs
+    ERP
+    CRM
+
+Validate that the complete business workflow works correctly.
+
+---
+
+# UAT Mock vs Real Systems
+
+UAT may use:
+
+    Sandbox Systems
+    Controlled External APIs
+    Mock Services
+
+Example:
+
+    UAT
+      |
+      ↓
+    Payment Sandbox
+
+rather than:
+
+    UAT
+      |
+      ↓
+    Production Payment Gateway
+
+The exact approach depends on business and security requirements.
+
+---
+
+# UAT Smoke Testing
+
+After deployment:
+
+    Deployment
+        |
+        ↓
+    Health Check
         |
         ↓
     Smoke Test
         |
         ↓
-    QA Functional Testing
-        |
-        ↓
-    QA Approval
+    Business Validation
+
+Basic checks:
+
+    Application Accessible
+    Pods Ready
+    Service Available
+    Login Works
+    Critical API Works
 
 ---
 
-# Real-World QA Failure Example
+# UAT Health Checks
 
-Deployment:
+Verify:
 
-    payment:1.4.7
-
-Kubernetes:
-
-    Deployment = Successful
-    Pods = Running
-
-But:
-
-    Smoke Test = Failed
-    Payment API = HTTP 500
-
-Action:
-
-    Stop Promotion
-        |
-        ↓
-    Check Logs
-        |
-        ↓
-    Check Database
-        |
-        ↓
-    Check Configuration
-        |
-        ↓
-    Identify Root Cause
-        |
-        ↓
-    Fix
-        |
-        ↓
-    Build 1.4.8
-        |
-        ↓
-    Deploy QA
-        |
-        ↓
-    Retest
-
----
-
-# Real-World QA Approval Example
-
-Release:
-
-    payment:1.4.7
-
-Results:
-
-    Build = Pass
-    Unit Tests = Pass
-    SonarQube = Pass
-    Trivy = Pass
-    Deployment = Pass
-    Health Checks = Pass
-    Smoke Tests = Pass
-    Functional Tests = Pass
-    Integration Tests = Pass
-    Regression = Pass
-    Critical Defects = 0
-
-Result:
-
-    QA Approved
-
-Next:
-
-    QA
-      |
-      ↓
-    SIT
-
----
-
-# QA Deployment Interview Questions
-
-## Basic
-
-1. What is a QA environment?
-
-2. Why do we deploy applications to QA?
-
-3. What is the purpose of QA deployment?
-
-4. What is the difference between Development and QA?
-
-5. What is the difference between QA and Production?
-
-6. What happens after a successful CI build?
-
-7. What checks do you perform after QA deployment?
-
-8. What is a smoke test?
-
-9. What is regression testing?
-
-10. What is QA approval?
-
----
-
-# QA Deployment Interview Questions
-
-## Intermediate
-
-11. How do you deploy an application to QA?
-
-12. How do you deploy a Dockerized application to QA?
-
-13. How do you deploy an application to EKS QA?
-
-14. How do you verify a Kubernetes deployment?
-
-15. How do you validate Pods after deployment?
-
-16. How do you validate a Service?
-
-17. How do you validate an ALB?
-
-18. How do you troubleshoot a failed QA deployment?
-
-19. How do you rollback a Kubernetes deployment?
-
-20. How do you manage QA-specific configuration?
-
-21. How do you manage QA secrets?
-
-22. How do you validate database migrations in QA?
-
----
-
-# QA Deployment Interview Questions
-
-## Advanced
-
-23. How would you design an enterprise QA deployment pipeline?
-
-24. How would you implement automated smoke testing?
-
-25. How would you integrate QA deployment with GitHub Actions?
-
-26. How would you implement GitOps-based QA deployment using ArgoCD?
-
-27. How would you promote an image from QA to higher environments?
-
-28. How would you prevent production configuration from being used in QA?
-
-29. How would you implement rollback after failed QA validation?
-
-30. How would you maintain traceability from Git commit to QA deployment?
-
-31. How would you design QA validation for a microservices application?
-
-32. How would you handle database migrations during QA deployment?
-
-33. How would you ensure QA and production deployment processes are consistent?
-
-34. How would you handle a release that passes technical checks but fails business validation?
-
----
-
-# Scenario-Based Interview Question
-
-## QA Deployment Succeeds but Pods Are Not Ready
-
-Check:
-
-    kubectl get pods -n qa
-
-Then:
-
-    kubectl describe pod <pod-name> -n qa
-
-Check:
-
+    Startup Probe
     Readiness Probe
-    Application Logs
-    Configuration
-    Dependencies
-    Service
+    Liveness Probe
 
-Do not proceed with QA testing until the deployment is healthy.
+Commands:
 
----
+    kubectl get pods -n uat
 
-# Scenario-Based Interview Question
+    kubectl describe pod <pod-name> -n uat
 
-## QA Deployment Produces 503
+Expected:
 
-Check:
-
-    Pods
-    Readiness
-    Service
-    Endpoints
-    Ingress
-    ALB
-    Health Endpoint
-
-Request path:
-
-    User
-      |
-      ↓
-    ALB
-      |
-      ↓
-    Ingress
-      |
-      ↓
-    Service
-      |
-      ↓
-    Pod
-
-Find the exact layer where the request fails.
+    Pods Running
+    Pods Ready
+    No Unexpected Restarts
 
 ---
 
-# Scenario-Based Interview Question
+# UAT Rollout Validation
 
-## QA Smoke Test Fails
+Command:
 
-Process:
+    kubectl rollout status deployment/payment -n uat
 
-    Smoke Test Failure
+Expected:
+
+    deployment "payment" successfully rolled out
+
+If rollout fails:
+
+    Stop UAT Testing
         |
         ↓
-    Check Application Logs
+    Investigate
         |
         ↓
-    Check Configuration
-        |
-        ↓
-    Check Dependencies
-        |
-        ↓
-    Check Database
-        |
-        ↓
-    Identify Root Cause
-        |
-        ↓
-    Fix
+    Fix / Rollback
         |
         ↓
     Redeploy
+
+---
+
+# UAT Service Validation
+
+Command:
+
+    kubectl get svc -n uat
+
+Then:
+
+    kubectl get endpoints -n uat
+
+Verify:
+
+    Service Exists
+    Correct Port
+    Correct TargetPort
+    Correct Selector
+    Healthy Endpoints
+
+---
+
+# UAT Ingress Validation
+
+Check:
+
+    kubectl get ingress -n uat
+
+Validate:
+
+    Host
+    Path
+    Backend
+    TLS
+    Service
+    Port
+
+Request flow:
+
+    Business User
         |
         ↓
+    ALB
+        |
+        ↓
+    Ingress
+        |
+        ↓
+    Service
+        |
+        ↓
+    Pod
+
+---
+
+# UAT ALB Validation
+
+For AWS ALB-based applications, validate:
+
+    Listener
+    Target Group
+    Target Health
+    Health Check
+    Routing
+    TLS
+
+Expected:
+
+    Targets Healthy
+
+---
+
+# UAT DNS Validation
+
+Verify:
+
+    UAT DNS
+        |
+        ↓
+    ALB
+        |
+        ↓
+    Application
+
+Check:
+
+    DNS Resolution
+    Hostname
+    Load Balancer
+    TLS
+    Response
+
+---
+
+# UAT TLS Validation
+
+Verify:
+
+    HTTPS
+    Certificate
+    Domain
+    TLS Configuration
+
+Example:
+
+    curl -I https://uat.example.internal
+
+Validate:
+
+    HTTP Status
+    Redirect
+    Certificate
+    Headers
+
+---
+
+# UAT Deployment Using Kubernetes
+
+Example:
+
+    kubectl apply -f deployment.yaml -n uat
+
+Then:
+
+    kubectl get pods -n uat
+
+Then:
+
+    kubectl rollout status deployment/payment -n uat
+
+Then:
+
+    Run Smoke Tests
+
+---
+
+# UAT Deployment Using Helm
+
+Example:
+
+    helm upgrade --install payment ./payment-chart \
+      --namespace uat \
+      --create-namespace \
+      --set image.tag=1.4.7
+
+Then:
+
+    kubectl get pods -n uat
+
+And:
+
+    kubectl rollout status deployment/payment -n uat
+
+---
+
+# UAT Helm Values
+
+Example:
+
+    values-uat.yaml
+
+    environment: uat
+
+    image:
+      repository: payment
+      tag: 1.4.7
+
+    replicas: 2
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+UAT values should remain separate from other environments.
+
+---
+
+# UAT Deployment Using ArgoCD
+
+GitOps flow:
+
+    Git
+      |
+      ↓
+    UAT Manifest
+      |
+      ↓
+    ArgoCD
+      |
+      ↓
+    UAT EKS
+      |
+      ↓
+    Kubernetes
+      |
+      ↓
+    Business Validation
+
+ArgoCD manages the desired UAT state from Git.
+
+---
+
+# ArgoCD UAT Validation
+
+Check:
+
+    Sync Status
+    Application Health
+    Deployment
+    Pods
+    Services
+    Ingress
+
+Expected:
+
+    Synced
+        +
+    Healthy
+
+If:
+
+    OutOfSync
+    Degraded
+
+investigate before business testing continues.
+
+---
+
+# UAT GitOps Promotion
+
+Typical flow:
+
+    SIT Approval
+        |
+        ↓
+    Update UAT Manifest
+        |
+        ↓
+    Git Commit
+        |
+        ↓
+    ArgoCD
+        |
+        ↓
+    UAT
+        |
+        ↓
+    Business Testing
+        |
+        ↓
+    UAT Approval
+
+---
+
+# UAT Deployment Approval
+
+UAT deployment may require approval from:
+
+    Release Manager
+    Product Owner
+    QA Lead
+    Business Owner
+    Authorized Stakeholder
+
+The exact approval process depends on the organization.
+
+---
+
+# UAT Approval vs Deployment Approval
+
+These are different concepts.
+
+Deployment approval:
+
+    "Can we deploy this version to UAT?"
+
+UAT approval:
+
+    "Does the business accept this version?"
+
+Flow:
+
+    Deployment Approval
+        |
+        ↓
+    UAT Deployment
+        |
+        ↓
+    Business Testing
+        |
+        ↓
+    UAT Approval
+
+---
+
+# UAT Defect Lifecycle
+
+    Business Testing
+        |
+        ↓
+    Defect Found
+        |
+        ↓
+    Defect Reported
+        |
+        ↓
+    Developer Investigation
+        |
+        ↓
+    Fix
+        |
+        ↓
+    CI
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT
+        |
+        ↓
+    Retest
+        |
+        ↓
+    Regression
+        |
+        ↓
+    Close
+
+---
+
+# UAT Defect Categories
+
+Typical categories:
+
+    Functional Defect
+    Business Rule Defect
+    Integration Defect
+    Configuration Defect
+    Data Defect
+    UI Defect
+    Performance Defect
+    Security Defect
+
+Correct classification helps identify ownership.
+
+---
+
+# UAT Defect Severity
+
+Organizations may classify defects as:
+
+    Critical
+    High
+    Medium
+    Low
+
+Example:
+
+    Critical
+        |
+        ↓
+    Core Business Process Cannot Complete
+
+    High
+        |
+        ↓
+    Major Business Function Broken
+
+    Medium
+        |
+        ↓
+    Important Function Affected
+
+    Low
+        |
+        ↓
+    Minor Issue
+
+Definitions vary by organization.
+
+---
+
+# UAT Rejection
+
+A release may be rejected when:
+
+    Critical Business Workflow Fails
+    Major Business Rule Fails
+    Important Integration Fails
+    Critical Defects Exist
+    Data Is Incorrect
+    Business Requirements Are Not Met
+
+Flow:
+
+    UAT
+      |
+      ↓
+    Failure
+      |
+      ↓
+    Reject
+      |
+      ↓
+    Fix
+      |
+      ↓
+    Redeploy
+      |
+      ↓
     Retest
 
 ---
 
-# Scenario-Based Interview Question
+# UAT Approval Criteria
 
-## QA Deployment Uses Wrong Image
+A release may be approved when:
+
+    Business Requirements Met
+    Critical Workflows Pass
+    Business Rules Pass
+    Integration Passes
+    Data Is Correct
+    Critical Defects Resolved
+    Regression Passes
+    Stakeholders Approve
+
+Then:
+
+    UAT
+      |
+      ↓
+    Production
+
+---
+
+# Business Sign-Off
+
+Business sign-off indicates that authorized stakeholders accept the release for production.
+
+Typical flow:
+
+    UAT Testing
+        |
+        ↓
+    Results
+        |
+        ↓
+    Defect Review
+        |
+        ↓
+    Business Approval
+        |
+        ↓
+    Sign-Off
+        |
+        ↓
+    Production Planning
+
+---
+
+# UAT Evidence
+
+Maintain:
+
+    Application Version
+    Git Commit
+    Image Tag
+    Test Cases
+    Test Results
+    Defects
+    Defect Resolution
+    Screenshots
+    Reports
+    Approval
+    Sign-Off
+
+This creates release traceability.
+
+---
+
+# UAT Version Tracking
+
+Example:
+
+    Application:
+    Payment
+
+    Version:
+    1.4.7
+
+    Git Commit:
+    abc123
+
+    Image:
+    payment:1.4.7
+
+    Environment:
+    UAT
+
+    Result:
+    Accepted
+
+---
+
+# UAT Change Management
+
+Enterprise organizations may require:
+
+    Change Request
+    Release Ticket
+    Approval
+    Deployment Record
+    Test Evidence
+    Business Sign-Off
+
+Typical process:
+
+    Change Request
+        |
+        ↓
+    Approval
+        |
+        ↓
+    UAT Deployment
+        |
+        ↓
+    Business Testing
+        |
+        ↓
+    Evidence
+        |
+        ↓
+    Sign-Off
+
+---
+
+# UAT Deployment Window
+
+UAT deployments may be scheduled according to organizational processes.
+
+Example:
+
+    Deployment Window
+        |
+        ↓
+    UAT Deployment
+        |
+        ↓
+    Business Testing
+        |
+        ↓
+    Sign-Off
+
+The exact timing depends on business availability.
+
+---
+
+# UAT Notifications
+
+Teams may receive notifications for:
+
+    Deployment Started
+    Deployment Successful
+    Deployment Failed
+    Smoke Test Failed
+    UAT Testing Started
+    UAT Testing Completed
+    UAT Rejected
+    UAT Approved
+    Production Approved
+
+---
+
+# UAT Monitoring
+
+Monitor:
+
+    Request Rate
+    Error Rate
+    Latency
+    CPU
+    Memory
+    Pod Restarts
+    Database
+    Message Queues
+
+Tools:
+
+    Prometheus
+    Grafana
+    ELK
+
+---
+
+# Prometheus UAT Validation
+
+Prometheus can monitor:
+
+    Application Metrics
+    Kubernetes Metrics
+    HTTP Requests
+    HTTP Errors
+    Resource Usage
+
+Flow:
+
+    UAT Application
+        |
+        ↓
+    Metrics
+        |
+        ↓
+    Prometheus
+        |
+        ↓
+    Grafana
+
+---
+
+# Grafana UAT Dashboard
+
+Useful panels:
+
+    Pod Status
+    CPU
+    Memory
+    Request Rate
+    HTTP 4xx
+    HTTP 5xx
+    Latency
+    Restart Count
+
+Monitoring supports technical validation while business users perform UAT.
+
+---
+
+# ELK UAT Validation
+
+ELK can help investigate:
+
+    Application Errors
+    Exceptions
+    Authentication Failures
+    Database Errors
+    Integration Errors
+    API Failures
+
+Flow:
+
+    UAT Application
+        |
+        ↓
+    Logs
+        |
+        ↓
+    ELK
+        |
+        ↓
+    Investigation
+
+---
+
+# UAT Security Validation
+
+Validate:
+
+    Authentication
+    Authorization
+    TLS
+    Secret Management
+    Access Control
+    Vulnerability Status
+    Sensitive Data Handling
+
+Security requirements should be satisfied before production.
+
+---
+
+# UAT Performance Validation
+
+Depending on requirements, validate:
+
+    Response Time
+    User Experience
+    Resource Usage
+    API Latency
+    Database Performance
+
+Example:
+
+    Business User
+        |
+        ↓
+    Application
+        |
+        ↓
+    API
+        |
+        ↓
+    Database
+
+Measure whether the user workflow performs acceptably.
+
+---
+
+# UAT Accessibility
+
+Where required, business validation may include:
+
+    Navigation
+    Forms
+    Keyboard Usage
+    Screen Reader Compatibility
+    Error Messages
+    Visual Accessibility
+
+The exact requirements depend on the application and organization.
+
+---
+
+# UAT Browser Validation
+
+For web applications, UAT may include:
+
+    Chrome
+    Edge
+    Firefox
+    Mobile Browser
+
+Validate critical workflows across supported browsers.
+
+---
+
+# UAT Mobile Validation
+
+If mobile access is supported:
+
+    Login
+        |
+        ↓
+    Application
+        |
+        ↓
+    Business Workflow
+
+Validate:
+
+    UI
+    Authentication
+    APIs
+    Performance
+    Notifications
+
+---
+
+# UAT Rollback
+
+If a deployment itself is unstable:
+
+    New Version
+        |
+        ↓
+    UAT Validation
+        |
+        ↓
+    Failure
+        |
+        ↓
+    Rollback
+        |
+        ↓
+    Previous Version
+        |
+        ↓
+    Validate
+
+Kubernetes:
+
+    kubectl rollout undo deployment/payment -n uat
+
+Then:
+
+    kubectl rollout status deployment/payment -n uat
+
+---
+
+# Helm Rollback
+
+Check history:
+
+    helm history payment -n uat
+
+Rollback:
+
+    helm rollback payment <revision> -n uat
+
+Then validate:
+
+    kubectl get pods -n uat
+
+    Run Smoke Tests
+
+---
+
+# GitOps Rollback
+
+With GitOps:
+
+    Bad UAT Change
+        |
+        ↓
+    Git
+        |
+        ↓
+    Revert
+        |
+        ↓
+    ArgoCD
+        |
+        ↓
+    UAT
+        |
+        ↓
+    Previous Version
+        |
+        ↓
+    Validate
+
+---
+
+# UAT Fix and Redeployment
+
+If a defect is found:
+
+    Business User
+        |
+        ↓
+    Defect
+        |
+        ↓
+    Developer Fix
+        |
+        ↓
+    CI
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT
+        |
+        ↓
+    Retest
+
+Do not bypass required validation stages simply to move a release forward.
+
+---
+
+# UAT Regression Testing
+
+After a defect is fixed:
+
+    Fixed Scenario
+        +
+    Critical Business Scenarios
+        +
+    Integration Tests
+        +
+    Existing Functionality
+        |
+        ↓
+    Regression Result
+
+This ensures the fix did not introduce new problems.
+
+---
+
+# UAT and Production Readiness
+
+UAT is an important input into production readiness.
+
+Before production:
+
+    QA Passed
+        |
+        ↓
+    SIT Passed
+        |
+        ↓
+    UAT Passed
+        |
+        ↓
+    Business Sign-Off
+        |
+        ↓
+    Production Planning
+
+---
+
+# Production Readiness Checks
+
+Before production, validate:
+
+    UAT Approved
+    Critical Defects Resolved
+    Production Artifact Identified
+    Configuration Prepared
+    Database Migration Prepared
+    Rollback Plan Prepared
+    Monitoring Ready
+    Alerts Ready
+    Deployment Plan Ready
+    Change Approval Complete
+
+---
+
+# UAT Deployment and Release Management
+
+Typical enterprise process:
+
+    Release
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT
+        |
+        ↓
+    Business Sign-Off
+        |
+        ↓
+    Change Approval
+        |
+        ↓
+    Production
+
+UAT provides business confidence before the production release.
+
+---
+
+# UAT Deployment and Separation of Duties
+
+Different teams may have different responsibilities.
+
+Example:
+
+    Developer
+        |
+        ↓
+    Builds Application
+
+    DevOps
+        |
+        ↓
+    Deploys Application
+
+    QA
+        |
+        ↓
+    Performs Testing
+
+    Business User
+        |
+        ↓
+    Accepts Application
+
+This separation reduces risk and improves governance.
+
+---
+
+# UAT Deployment and Auditability
+
+Maintain records of:
+
+    Who Deployed
+    What Version
+    Which Environment
+    When Deployed
+    Test Results
+    Defects
+    Who Approved
+    When Approved
+
+This is useful for enterprise audit and compliance requirements.
+
+---
+
+# UAT Deployment Failure Handling
+
+If deployment fails:
+
+    Detect
+      |
+      ↓
+    Stop Pipeline
+      |
+      ↓
+    Collect Logs
+      |
+      ↓
+    Investigate
+      |
+      ↓
+    Fix
+      |
+      ↓
+    Redeploy
+      |
+      ↓
+    Smoke Test
+      |
+      ↓
+    UAT
+
+If the application deploys successfully but business testing fails:
+
+    Business Failure
+        |
+        ↓
+    Defect
+        |
+        ↓
+    Fix
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT Retest
+
+---
+
+# Common UAT Deployment Failure
+
+## Wrong Environment Configuration
+
+Example:
+
+    UAT Application
+        |
+        ↓
+    Production API
+
+This can cause serious security and data risks.
+
+Check:
+
+    Environment Variables
+    ConfigMaps
+    Secrets
+    Helm Values
+    External Endpoints
+
+---
+
+# Common UAT Deployment Failure
+
+## Wrong Artifact
 
 Expected:
 
@@ -2615,85 +1973,315 @@ Actual:
 
     payment:1.4.6
 
-Check:
-
-    CI Build
-    ECR
-    Deployment Manifest
-    Helm Values
-    ArgoCD
-    Pod Image
-
 Trace:
 
     Git
-        |
-        ↓
+      |
+      ↓
     CI
-        |
-        ↓
+      |
+      ↓
     ECR
-        |
-        ↓
-    Manifest
-        |
-        ↓
+      |
+      ↓
+    UAT Manifest
+      |
+      ↓
     ArgoCD
-        |
-        ↓
+      |
+      ↓
     EKS
 
 ---
 
-# Scenario-Based Interview Question
+# Common UAT Deployment Failure
 
-## QA Tests Pass but Production Deployment Later Fails
+## Pods Healthy but Business Workflow Fails
 
-Possible reason:
+Example:
 
-    Environment Differences
+    Pods = Healthy
+    Health = 200
 
-Examples:
+But:
 
-    Different Configuration
-    Different Secrets
-    Different Database
-    Different Network
-    Different IAM
-    Different Infrastructure
-    Different Traffic
+    Order Creation = Failed
 
-Solution:
+Check:
 
-    Keep deployment mechanisms consistent
-    Keep environment configuration controlled
-    Validate production-specific differences
-    Use infrastructure as code
-    Use automated deployment
+    Business Logic
+    Database
+    Payment
+    Inventory
+    Notification
+    External APIs
+
+Technical health does not guarantee business acceptance.
 
 ---
 
-# QA Deployment Checklist
+# Common UAT Deployment Failure
 
-    Code Reviewed
+## Business User Cannot Access Application
+
+Check:
+
+    DNS
+    ALB
+    Ingress
+    Authentication
+    Authorization
+    Network
+    User Account
+
+Request path:
+
+    Business User
         |
         ↓
-    CI Passed
+    DNS
         |
         ↓
-    Unit Tests Passed
+    ALB
         |
         ↓
-    SonarQube Passed
+    Ingress
         |
         ↓
-    Trivy Passed
+    Service
         |
         ↓
-    Artifact Published
+    Pod
+
+---
+
+# Common UAT Deployment Failure
+
+## External Integration Fails
+
+Example:
+
+    UAT
+      |
+      ↓
+    Payment Sandbox
+      |
+      X
+    Failure
+
+Check:
+
+    Endpoint
+    Credentials
+    Network
+    TLS
+    Request
+    Response
+    Sandbox Availability
+
+---
+
+# Common UAT Deployment Failure
+
+## Test Data Is Incorrect
+
+Example:
+
+    Expected Order
         |
         ↓
-    QA Deployment Started
+    Missing Product
+        |
+        ↓
+    Test Fails
+
+Check:
+
+    Test Data
+    Database
+    Seed Scripts
+    Data Preparation
+    Data Dependencies
+
+---
+
+# UAT Deployment Best Practices
+
+- Promote tested artifacts
+- Build once and promote
+- Keep UAT configuration separate
+- Never commit secrets
+- Use controlled test data
+- Protect production data
+- Validate Kubernetes health
+- Run smoke tests
+- Validate business workflows
+- Validate business rules
+- Validate integrations
+- Monitor logs
+- Monitor metrics
+- Maintain deployment traceability
+- Maintain test evidence
+- Use controlled approvals
+- Maintain rollback procedures
+- Keep UAT and production deployment mechanisms consistent where practical
+- Require business sign-off before production
+
+---
+
+# UAT Deployment Anti-Patterns
+
+## Skipping Business Validation
+
+Bad:
+
+    SIT Passed
+        |
+        ↓
+    Immediately Deploy Production
+
+Better:
+
+    SIT
+      |
+      ↓
+    UAT
+      |
+      ↓
+    Business Validation
+      |
+      ↓
+    Sign-Off
+      |
+      ↓
+    Production
+
+---
+
+# UAT Deployment Anti-Pattern
+
+## Treating UAT as Another QA Environment
+
+UAT should not only repeat technical QA tests.
+
+UAT should focus on:
+
+    Business Workflows
+    Business Rules
+    User Experience
+    Business Requirements
+    Acceptance Criteria
+
+---
+
+# UAT Deployment Anti-Pattern
+
+## Using Production Data Without Controls
+
+Avoid uncontrolled production data.
+
+Prefer:
+
+    Synthetic Data
+    Masked Data
+    Sanitized Data
+
+---
+
+# UAT Deployment Anti-Pattern
+
+## Manual Artifact Modification
+
+Avoid:
+
+    Build
+      |
+      ↓
+    Download
+      |
+      ↓
+    Modify
+      |
+      ↓
+    Deploy
+
+Better:
+
+    Versioned Artifact
+        |
+        ↓
+    Controlled Promotion
+
+---
+
+# UAT Deployment Anti-Pattern
+
+## Bypassing SIT
+
+Avoid:
+
+    QA
+      |
+      ↓
+    UAT
+
+unless the organization's process explicitly permits it.
+
+Typical enterprise flow:
+
+    QA
+      |
+      ↓
+    SIT
+      |
+      ↓
+    UAT
+
+---
+
+# UAT Deployment Anti-Pattern
+
+## Ignoring Business Defects
+
+A technically healthy application can still fail UAT.
+
+Example:
+
+    Pods = Healthy
+    APIs = Healthy
+    Database = Healthy
+
+But:
+
+    Business Rule = Incorrect
+
+Result:
+
+    UAT Failed
+
+---
+
+# UAT Deployment Checklist
+
+    SIT Approval
+        |
+        ↓
+    Artifact Verified
+        |
+        ↓
+    UAT Configuration Verified
+        |
+        ↓
+    UAT Secrets Verified
+        |
+        ↓
+    UAT Database Ready
+        |
+        ↓
+    Test Data Ready
+        |
+        ↓
+    UAT Deployment
         |
         ↓
     Rollout Successful
@@ -2714,26 +2302,434 @@ Solution:
     Smoke Tests Passed
         |
         ↓
-    Functional Tests Passed
+    Business Workflows Tested
         |
         ↓
-    Integration Tests Passed
+    Business Rules Validated
         |
         ↓
-    Regression Passed
+    Integrations Validated
+        |
+        ↓
+    Reports Validated
+        |
+        ↓
+    Notifications Validated
         |
         ↓
     Critical Defects Resolved
         |
         ↓
-    QA Approval
+    UAT Sign-Off
         |
         ↓
-    Promote To SIT
+    Production Readiness
+        |
+        ↓
+    Production
 
 ---
 
-# QA Deployment Best-Practice Architecture
+# Real-World UAT Example
+
+Suppose version:
+
+    payment:1.4.7
+
+has passed QA and SIT.
+
+UAT process:
+
+    SIT Approval
+        |
+        ↓
+    Deploy 1.4.7
+        |
+        ↓
+    EKS
+        |
+        ↓
+    Health Check
+        |
+        ↓
+    Smoke Test
+        |
+        ↓
+    Business User Login
+        |
+        ↓
+    Create Order
+        |
+        ↓
+    Payment
+        |
+        ↓
+    Inventory
+        |
+        ↓
+    Notification
+        |
+        ↓
+    Business Validation
+        |
+        ↓
+    UAT Sign-Off
+
+---
+
+# Real-World UAT Failure
+
+Version:
+
+    payment:1.4.7
+
+Technical validation:
+
+    Deployment = Successful
+    Pods = Healthy
+    Health Check = Pass
+    Smoke Test = Pass
+
+Business validation:
+
+    Payment Discount Rule = Incorrect
+
+Result:
+
+    UAT = Failed
+
+Action:
+
+    Report Defect
+        |
+        ↓
+    Developer Fix
+        |
+        ↓
+    CI
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT Retest
+
+---
+
+# Real-World UAT Integration Failure
+
+Business workflow:
+
+    Customer
+      |
+      ↓
+    Order
+      |
+      ↓
+    Payment
+      |
+      ↓
+    Inventory
+      |
+      X
+    Notification
+
+All Pods are healthy.
+
+But:
+
+    Notification Is Not Sent
+
+Result:
+
+    UAT Failed
+
+because the complete business workflow does not meet the requirement.
+
+---
+
+# Real-World UAT Data Failure
+
+Business user tests:
+
+    Create Order
+
+Result:
+
+    Incorrect Total Amount
+
+Check:
+
+    Product Price
+    Discount
+    Tax
+    Database
+    Business Rules
+
+If the calculation is incorrect:
+
+    UAT Failed
+
+---
+
+# Real-World UAT Approval
+
+Release:
+
+    payment:1.4.7
+
+Results:
+
+    SIT = Pass
+    Deployment = Pass
+    Smoke Test = Pass
+    Business Workflows = Pass
+    Business Rules = Pass
+    Integration = Pass
+    Critical Defects = 0
+    Regression = Pass
+
+Result:
+
+    Business Sign-Off
+
+Next:
+
+    Production Deployment
+
+---
+
+# UAT Interview Questions
+
+## Basic
+
+1. What is UAT?
+
+2. What is the purpose of UAT?
+
+3. What is the difference between QA and UAT?
+
+4. What is the difference between SIT and UAT?
+
+5. Who performs UAT?
+
+6. What is business acceptance?
+
+7. What is a business workflow?
+
+8. What is an acceptance criterion?
+
+9. What is UAT sign-off?
+
+10. What happens after UAT approval?
+
+---
+
+# UAT Interview Questions
+
+## Intermediate
+
+11. How do you deploy an application to UAT?
+
+12. How do you validate a Kubernetes deployment in UAT?
+
+13. How do you manage UAT configuration?
+
+14. How do you manage UAT secrets?
+
+15. How do you manage UAT test data?
+
+16. How do you perform UAT smoke testing?
+
+17. How do you troubleshoot a failed UAT deployment?
+
+18. How do you rollback a UAT deployment?
+
+19. How do you validate business workflows?
+
+20. How do you validate external integrations in UAT?
+
+---
+
+# UAT Interview Questions
+
+## Advanced
+
+21. How would you design an enterprise UAT deployment pipeline?
+
+22. How would you promote the same artifact from SIT to UAT?
+
+23. How would you implement UAT deployment using GitHub Actions?
+
+24. How would you implement UAT deployment using ArgoCD?
+
+25. How would you manage environment-specific configuration?
+
+26. How would you prevent UAT from accessing production systems?
+
+27. How would you handle a business defect discovered during UAT?
+
+28. How would you design UAT approval gates?
+
+29. How would you maintain traceability from Git commit to UAT sign-off?
+
+30. How would you handle a release that passes technical tests but fails UAT?
+
+31. How would you implement UAT rollback?
+
+32. How would you prepare an application for production after UAT approval?
+
+---
+
+# Scenario-Based Interview Question
+
+## Pods Are Healthy but UAT Fails
+
+Do not immediately blame Kubernetes.
+
+Check:
+
+    Business Rules
+    Application Logic
+    Database Data
+    Integration
+    Configuration
+    External Systems
+
+Technical health:
+
+    Healthy
+
+Business health:
+
+    Failed
+
+Therefore:
+
+    UAT = Failed
+
+---
+
+# Scenario-Based Interview Question
+
+## UAT User Cannot Access Application
+
+Check:
+
+    DNS
+    ALB
+    Ingress
+    Authentication
+    Authorization
+    User Account
+    Network
+
+Trace:
+
+    User
+      |
+      ↓
+    DNS
+      |
+      ↓
+    ALB
+      |
+      ↓
+    Ingress
+      |
+      ↓
+    Service
+      |
+      ↓
+    Pod
+
+---
+
+# Scenario-Based Interview Question
+
+## UAT Uses Wrong Database
+
+Check:
+
+    Environment Variables
+    ConfigMap
+    Secret
+    Helm Values
+    ArgoCD Manifest
+
+Expected:
+
+    UAT
+      |
+      ↓
+    UAT Database
+
+Never:
+
+    UAT
+      |
+      ↓
+    Production Database
+
+---
+
+# Scenario-Based Interview Question
+
+## UAT Business Rule Fails
+
+Example:
+
+    Expected Discount = 10%
+
+Actual:
+
+    Discount = 5%
+
+Action:
+
+    Report Defect
+        |
+        ↓
+    Developer Investigation
+        |
+        ↓
+    Fix
+        |
+        ↓
+    QA
+        |
+        ↓
+    SIT
+        |
+        ↓
+    UAT Retest
+
+---
+
+# Scenario-Based Interview Question
+
+## UAT Passes but Production Is Not Ready
+
+Possible missing items:
+
+    Change Approval
+    Production Configuration
+    Database Migration Plan
+    Monitoring
+    Alerts
+    Rollback Plan
+    Deployment Window
+    Production Access
+    Security Approval
+
+UAT approval is important but may not be the only production-readiness requirement.
+
+---
+
+# Complete Enterprise UAT Flow
 
     Developer
         |
@@ -2750,18 +2746,33 @@ Solution:
     GitHub Actions
         |
         +-- Build
-        +-- Unit Test
+        +-- Unit Tests
         +-- SonarQube
         +-- Trivy
+        |
+        ↓
+    Container Image
         |
         ↓
     ECR
         |
         ↓
-    ArgoCD
+    QA
         |
         ↓
-    EKS QA
+    QA Approval
+        |
+        ↓
+    SIT
+        |
+        ↓
+    SIT Approval
+        |
+        ↓
+    UAT
+        |
+        ↓
+    EKS
         |
         +-- Deployment
         +-- Service
@@ -2775,7 +2786,15 @@ Solution:
         |
         +-- Health Checks
         +-- Smoke Tests
-        +-- Functional Tests
+        |
+        ↓
+    Business Users
+        |
+        +-- Business Workflows
+        +-- Business Rules
+        +-- Reports
+        +-- Notifications
+        +-- Integrations
         |
         ↓
     Prometheus
@@ -2787,100 +2806,139 @@ Solution:
     ELK
         |
         ↓
-    QA Approval
+    UAT Sign-Off
         |
         ↓
-    SIT
+    Production
 
 ---
 
-# Final Mental Model
+# Final UAT Mental Model
 
-Remember the QA deployment flow:
+Remember:
 
-    CODE
+    QA
       |
       ↓
-    BUILD
-      |
-      ↓
-    TEST
-      |
-      ↓
-    SECURITY
-      |
-      ↓
-    ARTIFACT
-      |
-      ↓
-    DEPLOY QA
-      |
-      ↓
-    HEALTH CHECK
-      |
-      ↓
-    SMOKE TEST
-      |
-      ↓
-    FUNCTIONAL TEST
-      |
-      ↓
-    INTEGRATION TEST
-      |
-      ↓
-    REGRESSION TEST
-      |
-      ↓
-    QA APPROVAL
-      |
-      ↓
-    PROMOTE
+    Does the application work?
 
-The key principle is:
+    SIT
+      |
+      ↓
+    Do all systems work together?
 
-    Build Once
+    UAT
+      |
+      ↓
+    Does the solution satisfy the business?
+
+The UAT flow is:
+
+    SIT Approval
         |
         ↓
-    Deploy Consistently
+    Deploy
         |
         ↓
-    Validate Thoroughly
+    Verify
         |
         ↓
-    Approve
+    Smoke Test
         |
         ↓
-    Promote
+    Business Workflow
+        |
+        ↓
+    Business Rules
+        |
+        ↓
+    Integration
+        |
+        ↓
+    Data Validation
+        |
+        ↓
+    User Acceptance
+        |
+        ↓
+    Sign-Off
+        |
+        ↓
+    Production
 
-A strong QA deployment process provides:
+---
 
-    Faster Feedback
-        +
-    Controlled Releases
-        +
-    Better Defect Detection
-        +
-    Deployment Traceability
-        +
-    Reliable Environment Promotion
-        +
-    Reduced Production Risk
+# Final Concept
 
-The ultimate goal is:
+UAT is the final major business validation stage before production.
 
-    Code
+The complete principle is:
+
+    Deploy
+        |
+        ↓
+    Verify
+        |
+        ↓
+    Test
+        |
+        ↓
+    Validate Business Requirements
+        |
+        ↓
+    Fix
+        |
+        ↓
+    Retest
+        |
+        ↓
+    Business Approval
+        |
+        ↓
+    Sign-Off
+        |
+        ↓
+    Production
+
+A successful UAT means:
+
+    Application Deployed
+        +
+    Kubernetes Healthy
+        +
+    Smoke Tests Passing
+        +
+    Business Workflows Passing
+        +
+    Business Rules Correct
+        +
+    Data Correct
+        +
+    Integrations Working
+        +
+    Critical Defects Resolved
+        +
+    Regression Passing
+        +
+    Business Sign-Off
+
+Therefore:
+
+    Successful UAT
+        =
+    Technical Validation
+        +
+    Business Validation
+        +
+    Integration Validation
+        +
+    User Acceptance
+        +
+    Stakeholder Approval
+
+The next enterprise stage is:
+
+    UAT
       |
       ↓
-    Quality
-      |
-      ↓
-    Security
-      |
-      ↓
-    QA Validation
-      |
-      ↓
-    Confidence
-      |
-      ↓
-    Safe Promotion
+    Production Deployment
