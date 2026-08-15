@@ -1,4 +1,4 @@
-# 01 - Best Practices
+# Best Practices
 
 > Production Monitoring, Observability & Logging Best Practices — Design Principles, Metrics, Prometheus, Grafana, ELK, Kubernetes/EKS, Applications, Alerting, SLI/SLO, Reliability, Security, Scalability, High Availability, Incident Response, Cost Awareness, Troubleshooting and DevOps/DevSecOps Interview Preparation
 
