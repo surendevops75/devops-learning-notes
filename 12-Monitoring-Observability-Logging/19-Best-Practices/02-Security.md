@@ -1,4 +1,4 @@
-# 02 - Security
+# Security
 
 > Production Observability Security — Securing Prometheus, Grafana, ELK, Kubernetes/EKS, Metrics, Logs, Alerting, Dashboards, Credentials, Network Access, RBAC, TLS, Secrets, Auditability, Data Protection, Incident Response and DevSecOps Best Practices
 
