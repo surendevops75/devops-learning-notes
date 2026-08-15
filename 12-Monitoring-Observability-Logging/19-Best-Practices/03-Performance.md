@@ -1,4 +1,4 @@
-# 03 - Performance
+# Performance
 
 > Production Monitoring & Observability Performance — Prometheus, Grafana, ELK, Kubernetes/EKS, Metrics, Logs, Queries, Dashboards, Alerting, Storage, Network, Applications, Capacity Planning, Troubleshooting, Optimization and DevOps/DevSecOps Interview Preparation
 
