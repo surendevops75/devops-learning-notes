@@ -1,4 +1,4 @@
-# 05 - Disaster Recovery
+# Disaster Recovery
 
 > Production Observability Disaster Recovery — Backup, Recovery, High Availability, Multi-AZ, Multi-Region, EKS, Prometheus, Grafana, ELK, Terraform, GitOps, Troubleshooting and Interview Preparation
 

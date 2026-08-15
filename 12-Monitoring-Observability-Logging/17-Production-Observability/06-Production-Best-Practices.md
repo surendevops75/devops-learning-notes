@@ -1,4 +1,4 @@
-# 06 - Production Best Practices
+# Production Best Practices
 
 > Production Observability Best Practices — Architecture, Reliability, Security, Performance, Cost Optimization, Scalability, High Availability, Kubernetes/EKS, Prometheus, Grafana, ELK, Alerting, Troubleshooting and Interview Preparation
 
