@@ -1,4 +1,4 @@
-# 04 - Cost Optimization
+# Cost Optimization
 
 > Production Monitoring & Observability Cost Optimization — Prometheus, Grafana, ELK, Kubernetes/EKS, Metrics, Logs, Storage, Network, Retention, Query Optimization, Capacity Planning, FinOps, Troubleshooting and DevOps/DevSecOps Interview Preparation
 
