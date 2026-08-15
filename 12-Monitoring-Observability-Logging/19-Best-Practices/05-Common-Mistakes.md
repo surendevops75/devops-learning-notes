@@ -1,4 +1,4 @@
-# 05 - Common Mistakes
+# Common Mistakes
 
 > Production Monitoring & Observability Common Mistakes — Prometheus, Grafana, ELK, Kubernetes/EKS, Metrics, Logs, Alerting, Dashboards, Storage, Security, Performance, Cost, Troubleshooting and DevOps/DevSecOps Interview Preparation
 
