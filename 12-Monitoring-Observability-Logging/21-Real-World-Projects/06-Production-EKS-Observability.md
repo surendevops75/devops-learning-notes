@@ -1,5 +1,4 @@
-# 21 - Real-World Projects
-# 06 - Production-EKS-Observability
+# Production-EKS-Observability
 
 > Production-grade observability architecture for a large Amazon EKS environment running critical microservices across multiple Availability Zones.
 >
