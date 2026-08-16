@@ -1,5 +1,4 @@
-# 21 - Real-World Projects
-# 07 - End-to-End-Enterprise-Observability
+# End-to-End-Enterprise-Observability
 
 > Enterprise-grade end-to-end observability architecture that combines AWS, EKS, Kubernetes, microservices, Prometheus, Grafana, ELK, OpenTelemetry, Jaeger, SLI/SLO/SLA, alerting, incident response, security, HA, DR, GitOps, governance and cost optimization.
 
