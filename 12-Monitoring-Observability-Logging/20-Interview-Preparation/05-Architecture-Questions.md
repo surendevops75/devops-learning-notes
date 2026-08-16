@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 05 - Architecture Questions
+# Architecture Questions
 
 > Monitoring, Observability & Logging — Architecture Interview Preparation
 >
