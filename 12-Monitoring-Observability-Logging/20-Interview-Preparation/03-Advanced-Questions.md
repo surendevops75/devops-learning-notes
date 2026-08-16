@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 03 - Advanced Questions
+# Advanced Questions
 
 > Monitoring, Observability & Logging — Advanced DevOps / Senior DevOps Interview Preparation
 >

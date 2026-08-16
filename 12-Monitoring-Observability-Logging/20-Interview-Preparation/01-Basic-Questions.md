@@ -1,4 +1,5 @@
-# 20 - Interview Preparation
+# Interview Preparation
+
 # 01 - Basic Questions
 
 > Monitoring, Observability & Logging — Basic DevOps Interview Preparation

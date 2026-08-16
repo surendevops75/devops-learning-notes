@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 04 - Scenario-Based
+# Scenario-Based
 
 > Monitoring, Observability & Logging — Scenario-Based DevOps Interview Preparation
 >

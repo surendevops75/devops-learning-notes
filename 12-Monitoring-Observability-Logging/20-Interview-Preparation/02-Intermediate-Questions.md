@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 02 - Intermediate Questions
+# Intermediate Questions
 
 > Monitoring, Observability & Logging — Intermediate DevOps Interview Preparation
 >
