@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 08 - Mock Interview
+# Mock Interview
 
 > Monitoring, Observability & Logging — Complete DevOps / DevSecOps Mock Interview
 >
