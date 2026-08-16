@@ -1,5 +1,4 @@
-# 21 - Real-World Projects
-# 04 - Full-Stack Observability
+# Full-Stack Observability
 
 > Production-grade end-to-end observability architecture for AWS EKS microservices combining Prometheus, Grafana, ELK, OpenTelemetry and Jaeger.
 >
