@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 06 - Troubleshooting Scenarios
+# Troubleshooting Scenarios
 
 > Monitoring, Observability & Logging — Production Troubleshooting Interview Preparation
 >
