@@ -1,5 +1,4 @@
-# 20 - Interview Preparation
-# 07 - Production Incident Scenarios
+# Production Incident Scenarios
 
 > Monitoring, Observability & Logging — Production Incident Interview Preparation
 >
