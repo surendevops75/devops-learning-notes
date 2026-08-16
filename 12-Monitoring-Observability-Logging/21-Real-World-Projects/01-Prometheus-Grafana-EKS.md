@@ -1,5 +1,4 @@
-# 21 - Real-World Projects
-# 01 - Prometheus + Grafana + EKS
+# Prometheus + Grafana + EKS
 
 > Production-style project for monitoring an AWS EKS microservices platform using Prometheus and Grafana.
 >
