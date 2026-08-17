@@ -1,4 +1,4 @@
-# 07-System-Health-Checks
+# System-Health-Checks
 
 ## Python for Linux DevOps
 
