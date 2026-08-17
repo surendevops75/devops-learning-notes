@@ -1,6 +1,4 @@
-# 22-Python-for-DevOps
-# 01-Python-Fundamentals
-# 07-Data-Structures
+# Data-Structures
 
 > Data structures are the foundation of DevOps automation. AWS responses, Kubernetes objects, JSON/YAML configuration, CI/CD metadata, logs, metrics, inventories, deployment state, and incident evidence are all represented as structured data. The goal is not only to know Python syntax, but to choose the right structure, process data safely, and scale the automation.
 
