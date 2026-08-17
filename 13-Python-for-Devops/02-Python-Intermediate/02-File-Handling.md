@@ -1,4 +1,4 @@
-# 02-File-Handling
+# File-Handling
 
 ## 1. Overview
 
@@ -3488,34 +3488,3 @@ The key principle:
 > **Treat files as production resources. Validate before modifying, stream large data, avoid unsafe path handling, protect sensitive content, use atomic updates for critical configuration, and make destructive operations safe through dry-runs, retention policies, and verification.**
 
 ---
-
-# 171. Next File
-
-```text
-03-OS-and-Sys-Modules.md
-```
-
-The next file will cover:
-
-```text
-os
-sys
-environment variables
-processes
-PIDs
-exit codes
-command execution
-subprocess
-filesystem operations
-Linux integration
-signals
-system information
-CPU/memory/disk checks
-network checks
-service management
-DevOps automation scripts
-CI/CD integration
-production troubleshooting
-interview questions
-scenario-based questions
-```
