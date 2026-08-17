@@ -1,6 +1,6 @@
-# 22 - Python for DevOps
-01 - Python Fundamentals
-01 - Python Introduction
+# Python Fundamentals
+
+## Python Introduction
 
 Python is a high-level, general-purpose programming language widely used in DevOps for automation, infrastructure operations, cloud APIs, Kubernetes, CI/CD, monitoring, testing, reporting and operational tooling.
 
