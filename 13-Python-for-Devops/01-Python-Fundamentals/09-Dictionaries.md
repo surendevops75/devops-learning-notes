@@ -3971,24 +3971,3 @@ The key lesson:
 > **Use dictionaries when the identity of data matters. Use lists for ordered collections, tuples for fixed collections, and sets for uniqueness and comparison. In production DevOps automation, choose the data structure based on the operation you need to perform—not simply on the type of data you received.**
 
 ---
-
-# 199. Next File
-
-```text
-10-Exception-Handling.md
-```
-
-After the Fundamentals section is complete, the numbering continues with:
-
-```text
-11-Modules-and-Packages.md
-12-File-Handling.md
-13-OS-and-System-Administration.md
-...
-```
-
-The previously generated `10-Modules-and-Packages.md` should therefore be treated as:
-
-```text
-11-Modules-and-Packages.md
-```
