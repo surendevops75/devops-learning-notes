@@ -1,6 +1,4 @@
-# 22-Python-for-DevOps
-# 01-Python-Fundamentals
-# 09-Exception-Handling
+# Exception-Handling
 
 > Exception handling is critical in DevOps automation because production scripts interact with systems that fail: APIs time out, AWS calls are throttled, files disappear, Kubernetes resources change, commands return non-zero exit codes, credentials expire, and deployments can partially succeed.
 >
