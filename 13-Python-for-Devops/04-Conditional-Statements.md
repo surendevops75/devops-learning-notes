@@ -1,6 +1,4 @@
-# 22-Python-for-DevOps
-# 01-Python-Fundamentals
-# 04-Conditional-Statements
+# Conditional-Statements
 
 > Deep conditional-logic notes for DevOps engineers. Focus: reliable decision-making, validation, CI/CD gates, AWS/Kubernetes automation, monitoring checks, production safety, troubleshooting, interview questions, and practical exercises.
 
@@ -2827,52 +2825,4 @@ Safe action
 Observable result
 +
 Testable behavior
-```
-
----
-
-# 132. Next File
-
-```text
-22-Python-for-DevOps/
-└── 01-Python-Fundamentals/
-    ├── 01-Python-Introduction.md
-    ├── 02-Variables-and-Data-Types.md
-    ├── 03-Operators.md
-    └── 04-Conditional-Statements.md
-```
-
-Next topic:
-
-```text
-05-Loops.md
-```
-
-Planned depth:
-
-```text
-for loops
-while loops
-range()
-enumerate()
-zip()
-break
-continue
-pass
-nested loops
-looping through AWS resources
-looping through Kubernetes resources
-API pagination
-retry loops
-polling
-timeouts
-batch processing
-resource inventory
-log processing
-production automation
-common mistakes
-troubleshooting
-interview questions
-scenario-based questions
-practical exercises
 ```
