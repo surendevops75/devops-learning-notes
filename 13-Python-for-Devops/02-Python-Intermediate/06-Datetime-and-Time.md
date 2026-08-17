@@ -1,4 +1,4 @@
-# 06-Datetime-and-Time
+# Datetime-and-Time
 
 ## DevOps Focus
 
