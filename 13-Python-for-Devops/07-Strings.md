@@ -1,4 +1,4 @@
-# 07-Strings
+# Strings
 
 ## 1. What Is a String?
 
@@ -3640,38 +3640,3 @@ The key lesson is:
 > **Strings are everywhere in DevOps, but production automation should not remain string-based longer than necessary. Convert raw text into validated, structured data at system boundaries.**
 
 ---
-
-# 194. Next File
-
-```text
-08-Lists-Tuples-Sets.md
-```
-
-Next topic will cover:
-
-```text
-lists
-tuples
-sets
-mutability
-indexing
-slicing
-list methods
-tuple unpacking
-set operations
-comprehensions
-nested collections
-sorting
-filtering
-deduplication
-AWS resource collections
-Kubernetes resource collections
-CI/CD data processing
-log/resource filtering
-performance
-common mistakes
-production automation patterns
-interview questions
-scenario-based troubleshooting
-practical DevOps exercises
-```
