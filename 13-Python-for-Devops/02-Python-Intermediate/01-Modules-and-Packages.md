@@ -1,4 +1,4 @@
-# 01-Modules-and-Packages
+# Modules-and-Packages
 
 ## 1. Overview
 
@@ -2497,38 +2497,3 @@ The objective is not to write one-off scripts.
 The objective is to build **reliable, reusable, testable automation** that can be executed manually, from Jenkins/GitLab/GitHub Actions, through scheduled jobs, or as part of production operational workflows.
 
 ---
-
-# 109. Next File
-
-```text
-02-File-Handling.md
-```
-
-The next file will cover:
-
-```text
-open()
-read()
-write()
-append()
-with
-pathlib
-file permissions
-large files
-streaming
-log files
-CSV/JSON/YAML files
-configuration files
-temporary files
-backup scripts
-cleanup scripts
-file validation
-production error handling
-Linux automation
-DevOps scripts
-CI/CD integration
-troubleshooting
-interview questions
-scenario-based questions
-practical exercises
-```
