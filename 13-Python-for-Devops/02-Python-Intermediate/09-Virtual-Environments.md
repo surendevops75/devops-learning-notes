@@ -5336,27 +5336,3 @@ production automation
 ```
 
 ---
-
-## 253. Next Python Section
-
-The next planned section should move beyond basic/intermediate Python into more practical DevOps automation.
-
-Recommended structure:
-
-```text
-03-Python-Advanced/
-├── 01-OOP-for-DevOps.md
-├── 02-Decorators.md
-├── 03-Generators-and-Iterators.md
-├── 04-Context-Managers.md
-├── 05-Advanced-Functions.md
-├── 06-Concurrency-and-Threading.md
-├── 07-Asyncio.md
-├── 08-Subprocess-and-System-Automation.md
-├── 09-API-Automation.md
-└── 10-Python-Testing-for-DevOps.md
-```
-
-The advanced section should continue the same principle:
-
-> **Do not reduce the practical content just because a topic is smaller. Expand large topics and keep smaller topics focused, while maintaining enough real-world DevOps examples, scripts, troubleshooting, production practices, and interview preparation.**
