@@ -1,4 +1,4 @@
-# 04-Service-Management
+# Service-Management
 
 ## Python for Linux DevOps
 
