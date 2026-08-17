@@ -1,6 +1,4 @@
-# 22-Python-for-DevOps
-# 01-Python-Fundamentals
-# 05-Loops
+# Loops
 
 > Deep loop notes for DevOps engineers. Focus: automation, AWS/Kubernetes inventory, API pagination, polling, retries, batch processing, log processing, CI/CD, monitoring, production safety, troubleshooting, interview questions, and practical exercises.
 
@@ -5797,53 +5795,3 @@ Make actions idempotent
   v
 Test termination and boundaries
 ```
-
----
-
-# 272. Next File
-
-```text
-22-Python-for-DevOps/
-└── 01-Python-Fundamentals/
-    ├── 01-Python-Introduction.md
-    ├── 02-Variables-and-Data-Types.md
-    ├── 03-Operators.md
-    ├── 04-Conditional-Statements.md
-    └── 05-Loops.md
-```
-
-Next topic:
-
-```text
-06-Functions.md
-```
-
-Planned depth:
-
-```text
-Function fundamentals
-Parameters and arguments
-Return values
-Default arguments
-Keyword arguments
-*args and **kwargs
-Scope
-Local/global/nonlocal
-Lambda functions
-Higher-order functions
-Decorators
-Type hints
-Docstrings
-Reusable DevOps utilities
-AWS automation functions
-Kubernetes functions
-Error handling
-Retry wrappers
-Logging decorators
-Testing functions
-Production design
-Common mistakes
-Troubleshooting
-Interview questions
-Scenario-based questions
-Practical exercises
