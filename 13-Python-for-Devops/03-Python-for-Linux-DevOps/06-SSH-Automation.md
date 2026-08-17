@@ -1,4 +1,4 @@
-# 06-SSH-Automation
+# SSH-Automation
 
 ## Python for Linux DevOps
 
