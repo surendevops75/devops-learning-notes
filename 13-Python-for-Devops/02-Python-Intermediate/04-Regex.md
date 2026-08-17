@@ -1,4 +1,4 @@
-# 04-Regex
+# Regex
 
 ## 1. Overview
 
@@ -4615,40 +4615,3 @@ The strongest DevOps engineers know when to use regex and, equally importantly, 
 ```
 
 ---
-
-# 215. Next File
-
-```text
-05-JSON-YAML-CSV.md
-```
-
-The next file will cover:
-
-```text
-JSON
-JSON parsing
-JSON generation
-nested JSON
-JSON validation
-JSON APIs
-YAML
-safe YAML parsing
-Kubernetes manifests
-Helm values
-Terraform-related data
-CSV
-CSV reports
-DictReader
-DictWriter
-CI/CD reports
-security scan reports
-AWS/Kubernetes automation
-configuration transformation
-JSON/YAML/CSV conversion
-production automation
-error handling
-security
-real DevOps scripts
-interview questions
-scenario-based questions
-```
