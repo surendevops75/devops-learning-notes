@@ -1,4 +1,4 @@
-# 05-JSON-YAML-CSV
+# JSON-YAML-CSV
 
 ## DevOps Focus
 
@@ -866,9 +866,3 @@ CSV  -> inventories, reports, tabular exports
 ```
 
 Python connects them to real DevOps workflows.
-
-## Next File
-
-`06-Datetime-and-Time.md`
-
-The next topic will cover datetime, timezone-aware timestamps, UTC, IST, ISO 8601, Unix epoch, log timestamps, CI/CD timing, timeouts, retry/backoff, expiry checks, deployment duration, incident timelines, SLA/SLO calculations, and production DevOps scripts.
