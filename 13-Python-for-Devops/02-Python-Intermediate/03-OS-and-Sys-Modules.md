@@ -1,4 +1,4 @@
-# 03-OS-and-Sys-Modules
+# OS-and-Sys-Modules
 
 ## 1. Overview
 
@@ -4424,44 +4424,3 @@ external tools
 This gives Python the ability to act as an **automation layer around Linux, AWS, Kubernetes, Terraform, Docker, and CI/CD**.
 
 ---
-
-# 199. Next File
-
-```text
-04-Regex.md
-```
-
-The next file will cover regex deeply for DevOps, including:
-
-```text
-regex fundamentals
-patterns
-character classes
-quantifiers
-groups
-capture groups
-named groups
-search
-match
-findall
-finditer
-substitution
-validation
-IP addresses
-URLs
-ports
-timestamps
-log parsing
-Kubernetes logs
-CI/CD logs
-Terraform output
-AWS output
-security reports
-large-file processing
-production regex practices
-performance
-common mistakes
-DevOps scripts
-interview questions
-scenario-based troubleshooting
-```
