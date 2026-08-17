@@ -1,4 +1,4 @@
-# 09-Dictionaries
+# Dictionaries
 
 ## 1. Overview
 
