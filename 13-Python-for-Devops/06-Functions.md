@@ -1,6 +1,4 @@
-# 22-Python-for-DevOps
-# 01-Python-Fundamentals
-# 06-Functions
+# Functions
 
 > Functions are one of the most important Python concepts for DevOps automation. Good functions turn repeated operational logic into reusable, testable, observable, and safe building blocks.
 
@@ -6005,52 +6003,3 @@ Example:
 That is the level of answer expected from a DevOps engineer rather than only knowing Python syntax.
 
 ---
-
-# 260. Next File
-
-```text
-22-Python-for-DevOps/
-└── 01-Python-Fundamentals/
-    ├── 01-Python-Introduction.md
-    ├── 02-Variables-and-Data-Types.md
-    ├── 03-Operators.md
-    ├── 04-Conditional-Statements.md
-    ├── 05-Loops.md
-    └── 06-Functions.md
-```
-
-Next topic:
-
-```text
-07-Data-Structures.md
-```
-
-Planned coverage:
-
-```text
-Lists
-Tuples
-Sets
-Dictionaries
-Nested data structures
-JSON/YAML structures
-AWS response structures
-Kubernetes objects
-Data transformation
-Filtering
-Sorting
-Searching
-Grouping
-Deduplication
-Comprehensions
-DevOps inventory processing
-Configuration processing
-API response handling
-Performance
-Memory considerations
-Production patterns
-Troubleshooting
-Interview questions
-Scenario-based questions
-Practical exercises
-```
