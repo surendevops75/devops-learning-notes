@@ -1,4 +1,4 @@
-# 01-Linux-Automation
+# Linux-Automation
 
 ## Python for Linux DevOps
 
