@@ -1,4 +1,4 @@
-# 07 — CI/CD Automation with Python
+# CI/CD Automation with Python
 
 ## 1. Overview
 
