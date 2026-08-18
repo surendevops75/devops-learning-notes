@@ -1,4 +1,4 @@
-# 05 — GitHub Actions Automation with Python
+# GitHub Actions Automation with Python
 
 ## 1. Overview
 
