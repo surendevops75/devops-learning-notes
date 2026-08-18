@@ -1,4 +1,4 @@
-# 07-EKS-Automation
+# EKS-Automation
 
 ## Python for AWS DevOps — EKS Cluster Discovery, Node Groups, Kubernetes Integration, Add-ons, IAM, Networking, Scaling, Health Checks & Production Automation
 
