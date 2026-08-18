@@ -1,4 +1,4 @@
-# 03-Deployment-Automation
+# Deployment-Automation
 
 ## Python Kubernetes Deployment Automation — Inspection, Rollout Verification, Scaling, Image Audits, Rollout Status, Failure Detection, Safe Operations & DevOps Interview Preparation
 
