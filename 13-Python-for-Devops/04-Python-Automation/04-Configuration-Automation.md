@@ -1,4 +1,4 @@
-# 04-Configuration-Automation
+# Configuration-Automation
 
 ## Python Automation — Configuration Management
 
