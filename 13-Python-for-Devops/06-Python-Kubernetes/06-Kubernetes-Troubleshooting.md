@@ -1,4 +1,4 @@
-# 06 — Kubernetes Troubleshooting with Python
+# Kubernetes Troubleshooting with Python
 
 ## 1. Overview
 
