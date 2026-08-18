@@ -1,4 +1,4 @@
-# 05-Backup-Automation
+# Backup-Automation
 
 ## Python Automation — Backup and Restore
 
