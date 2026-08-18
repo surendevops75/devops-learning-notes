@@ -1,4 +1,4 @@
-# 02 — Docker Automation with Python
+# Docker Automation with Python
 
 ## 1. Overview
 
