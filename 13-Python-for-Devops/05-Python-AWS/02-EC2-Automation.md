@@ -1,4 +1,4 @@
-# 02-EC2-Automation
+# EC2-Automation
 
 ## Python for AWS DevOps — EC2 Discovery, Operations, Tagging, Scheduling, Auditing & Production Automation
 
