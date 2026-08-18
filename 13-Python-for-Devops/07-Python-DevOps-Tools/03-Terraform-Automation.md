@@ -1,4 +1,4 @@
-# 03 — Terraform Automation with Python
+# Terraform Automation with Python
 
 ## 1. Overview
 
