@@ -1,4 +1,4 @@
-# 08-Lambda-Automation
+# Lambda-Automation
 
 ## Python for AWS DevOps — Lambda Discovery, Versions, Aliases, IAM, Environment Configuration, Layers, Concurrency, Event Sources, Deployment, Monitoring & Production Automation
 
