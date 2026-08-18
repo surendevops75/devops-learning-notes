@@ -1,4 +1,4 @@
-# 05-VPC-Automation
+# VPC-Automation
 
 ## Python for AWS DevOps — VPC Discovery, Subnets, Route Tables, Security Groups, Gateways, Endpoints & Production Network Automation
 
