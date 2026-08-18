@@ -1,4 +1,4 @@
-# 02-Command-Automation
+# Command-Automation
 
 ## Python Command Automation for DevOps
 
