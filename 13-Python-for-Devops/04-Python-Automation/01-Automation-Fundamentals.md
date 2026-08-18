@@ -1,4 +1,4 @@
-# 01-Automation-Fundamentals
+# Automation-Fundamentals
 
 ## Python Automation for DevOps
 
