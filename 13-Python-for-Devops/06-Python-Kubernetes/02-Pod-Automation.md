@@ -1,4 +1,4 @@
-# 02-Pod-Automation
+# Pod-Automation
 
 ## Python Kubernetes Pod Automation — Listing, Inspection, Health Checks, Logs, Troubleshooting, Safe Operations & DevOps Interview Preparation
 
