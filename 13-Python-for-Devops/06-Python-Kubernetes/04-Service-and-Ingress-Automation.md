@@ -1,4 +1,4 @@
-# 04 — Service and Ingress Automation with Python
+# Service and Ingress Automation with Python
 
 ## 1. Overview
 
