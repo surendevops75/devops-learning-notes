@@ -1,4 +1,4 @@
-# 03-S3-Automation
+# S3-Automation
 
 ## Python for AWS DevOps — S3 Buckets, Objects, Backups, Security, Lifecycle, Auditing & Production Automation
 
