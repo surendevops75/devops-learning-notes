@@ -1,4 +1,4 @@
-# 07-Notification-Automation
+# Notification-Automation
 
 ## Python Automation — Alerts, Notifications, Incident Communication & DevOps Operations
 
