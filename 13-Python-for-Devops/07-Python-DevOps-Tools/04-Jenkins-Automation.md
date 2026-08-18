@@ -1,4 +1,4 @@
-# 04 — Jenkins Automation with Python
+# Jenkins Automation with Python
 
 ## 1. Overview
 
