@@ -1,4 +1,4 @@
-# 03-File-and-Directory-Automation
+# File-and-Directory-Automation
 
 ## Python Automation — Files and Directories
 
