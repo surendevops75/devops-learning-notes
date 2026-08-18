@@ -1,4 +1,4 @@
-# 06 — ArgoCD Automation with Python
+# ArgoCD Automation with Python
 
 ## 1. Overview
 
