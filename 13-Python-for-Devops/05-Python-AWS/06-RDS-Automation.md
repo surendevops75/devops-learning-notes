@@ -1,4 +1,4 @@
-# 06-RDS-Automation
+# RDS-Automation
 
 ## Python for AWS DevOps — RDS Inventory, Database Health, Snapshots, Backups, Subnet Groups, Security, Monitoring & Production Automation
 
