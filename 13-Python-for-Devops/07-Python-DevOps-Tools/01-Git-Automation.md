@@ -1,4 +1,4 @@
-# 01 — Git Automation with Python
+# Git Automation with Python
 
 ## 1. Overview
 
