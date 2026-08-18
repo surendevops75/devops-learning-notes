@@ -1,4 +1,4 @@
-# 09-AWS-Automation-Projects
+# AWS-Automation-Projects
 
 ## Python for AWS DevOps — Production-Style Automation Projects
 
