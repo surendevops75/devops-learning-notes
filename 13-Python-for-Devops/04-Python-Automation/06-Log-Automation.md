@@ -1,4 +1,4 @@
-# 06-Log-Automation
+# Log-Automation
 
 ## Python Automation — Logs, Parsing, Rotation, Analysis & DevOps Operations
 
