@@ -1,4 +1,4 @@
-# 05 — ConfigMap and Secret Automation with Python
+# ConfigMap and Secret Automation with Python
 
 ## 1. Overview
 
