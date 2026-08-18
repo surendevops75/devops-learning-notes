@@ -1,4 +1,4 @@
-# 01-Boto3-Fundamentals
+# Boto3-Fundamentals
 
 ## Python for AWS DevOps — Boto3, AWS APIs, Authentication, Automation & Production Practices
 
