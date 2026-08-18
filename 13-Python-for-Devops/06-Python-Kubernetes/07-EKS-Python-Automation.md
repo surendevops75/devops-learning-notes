@@ -1,4 +1,4 @@
-# 07 — EKS Python Automation
+# EKS Python Automation
 
 ## 1. Overview
 
