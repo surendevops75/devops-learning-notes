@@ -1,4 +1,4 @@
-# 01-Kubernetes-Python-Client
+# Kubernetes-Python-Client
 
 ## Python for Kubernetes — Client Fundamentals, Authentication, API Objects, Discovery, CRUD, Watches, RBAC, Error Handling, Production Automation & DevOps Interview Preparation
 
