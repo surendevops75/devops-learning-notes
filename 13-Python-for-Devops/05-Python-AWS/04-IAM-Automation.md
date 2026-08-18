@@ -1,4 +1,4 @@
-# 04-IAM-Automation
+# IAM-Automation
 
 ## Python for AWS DevOps — IAM Roles, Policies, Access Audits, AssumeRole, Least Privilege & Production Automation
 
