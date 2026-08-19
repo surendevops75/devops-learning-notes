@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 02 — Intermediate Questions
+# Intermediate Questions
 
 > Intermediate Python interview preparation focused on practical engineering, API automation, AWS/Kubernetes integration, CI/CD, concurrency, reliability, security, and production troubleshooting.
 
