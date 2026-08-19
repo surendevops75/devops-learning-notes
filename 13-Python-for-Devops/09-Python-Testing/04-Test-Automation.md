@@ -1,4 +1,4 @@
-# 04 — Test Automation
+# Test Automation
 
 ## 1. Overview
 
