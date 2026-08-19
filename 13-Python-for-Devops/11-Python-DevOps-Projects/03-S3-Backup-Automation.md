@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 03 — S3 Backup Automation
+# S3 Backup Automation
 
 > Production-oriented Python/boto3 project for secure S3 backup, integrity verification, retention, restore testing, observability, and disaster-recovery workflows.
 
