@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 06 — CI/CD Automation
+# CI/CD Automation
 
 > Production-oriented Python CI/CD orchestration for Jenkins, GitHub Actions, Docker, registries, DevSecOps gates, GitOps, ArgoCD, and EKS deployment verification.
 
