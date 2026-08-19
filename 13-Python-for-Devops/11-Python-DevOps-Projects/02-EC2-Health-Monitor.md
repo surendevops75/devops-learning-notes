@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 02 — EC2 Health Monitor
+# EC2 Health Monitor
 
 > Production-oriented Python project for EC2 infrastructure health monitoring, observability, alerting, and controlled DevOps operations.
 
