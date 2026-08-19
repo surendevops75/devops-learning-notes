@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 05 — Kubernetes Cleanup Automation
+# Kubernetes Cleanup Automation
 
 > Production-oriented Python Kubernetes cleanup automation for EKS with policy-driven discovery, dry-run safety, controlled deletion, auditability, observability, and production troubleshooting.
 
