@@ -1,4 +1,4 @@
-# 05 — Python API Error Handling for DevOps Engineers
+# Python API Error Handling for DevOps Engineers
 
 ## 1. Overview
 
