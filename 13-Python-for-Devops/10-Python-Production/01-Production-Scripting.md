@@ -1,5 +1,4 @@
-# 10-Python-Production
-# 01 — Production Scripting
+# Production Scripting
 
 ## 1. Introduction
 
