@@ -1,5 +1,4 @@
-# 10-Python-Production
-# 06 — Concurrency
+# Concurrency
 
 ## 1. Introduction
 
