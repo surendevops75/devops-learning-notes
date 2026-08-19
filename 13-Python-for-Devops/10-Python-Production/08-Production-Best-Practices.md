@@ -1,5 +1,4 @@
-# 10-Python-Production
-# 08 — Production Best Practices
+# Production Best Practices
 
 ## 1. Introduction
 
