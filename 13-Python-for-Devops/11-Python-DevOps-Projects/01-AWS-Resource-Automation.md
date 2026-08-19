@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 01 — AWS Resource Automation
+# AWS Resource Automation
 
 ## 1. Project Overview
 
