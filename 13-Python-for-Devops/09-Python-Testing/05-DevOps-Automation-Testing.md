@@ -1,4 +1,4 @@
-# 05 — DevOps Automation Testing
+# DevOps Automation Testing
 
 ## 1. Overview
 
