@@ -1,4 +1,4 @@
-# 06 — Python DevOps API Projects
+# Python DevOps API Projects
 
 ## 1. Overview
 
