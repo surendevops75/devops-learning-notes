@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 07 — Production Scenarios
+# Production Scenarios
 
 > Senior-level production scenarios for Python DevOps/DevSecOps interviews. Focus: real incidents, safe automation, AWS/EKS/Kubernetes, CI/CD, GitOps, Terraform, security, observability, concurrency, recovery, and operational decision-making.
 
