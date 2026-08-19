@@ -1,5 +1,4 @@
-# 10-Python-Production
-# 07 — Configuration Management
+# Configuration Management
 
 ## 1. Introduction
 
