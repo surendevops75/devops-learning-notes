@@ -1,5 +1,4 @@
-# 10-Python-Production
-02 — Error Handling and Retry
+# Error Handling and Retry
 
 Production DevOps automation must distinguish between transient failures, permanent failures, and unknown outcomes.
 
