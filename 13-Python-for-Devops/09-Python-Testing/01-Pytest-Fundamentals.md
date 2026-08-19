@@ -1,4 +1,4 @@
-# 01 — Pytest Fundamentals
+# Pytest Fundamentals
 
 ## 1. Overview
 
