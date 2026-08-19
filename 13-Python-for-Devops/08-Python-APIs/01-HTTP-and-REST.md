@@ -1,4 +1,4 @@
-# 01 — HTTP and REST for DevOps Engineers
+# HTTP and REST for DevOps Engineers
 
 ## 1. Overview
 
