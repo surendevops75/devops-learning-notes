@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 08 — End-to-End DevOps Automation
+# End-to-End DevOps Automation
 
 > Complete production-oriented Python DevOps automation integrating CI/CD, DevSecOps, Terraform, AWS, Docker, ECR/Artifactory, GitOps, ArgoCD, EKS, ALB, observability, health verification, approvals, and rollback.
 
