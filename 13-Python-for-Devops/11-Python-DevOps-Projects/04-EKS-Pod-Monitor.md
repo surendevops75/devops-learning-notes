@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 04 — EKS Pod Monitor
+# EKS Pod Monitor
 
 > Production-oriented Python Kubernetes monitoring project for EKS pod health, workload correlation, troubleshooting, observability, alerting, and DevOps integration.
 
