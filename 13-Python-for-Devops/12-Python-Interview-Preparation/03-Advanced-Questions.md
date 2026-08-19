@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 03 — Advanced Questions
+# Advanced Questions
 
 > Advanced Python interview preparation for DevOps/DevSecOps Engineer roles. Focus: Python internals, architecture, concurrency, performance, security, distributed-system behavior, AWS/Kubernetes automation, CI/CD, GitOps, reliability, and senior-level design.
 
