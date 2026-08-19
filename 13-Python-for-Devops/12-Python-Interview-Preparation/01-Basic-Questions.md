@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 01 — Basic Questions
+# Basic Questions
 
 > Python fundamentals for DevOps Engineer interviews, with practical examples and production-oriented follow-ups.
 
