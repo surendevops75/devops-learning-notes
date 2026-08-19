@@ -1,4 +1,4 @@
-# 02 — Python Requests Library for DevOps Engineers
+# Python Requests Library for DevOps Engineers
 
 ## 1. Overview
 
