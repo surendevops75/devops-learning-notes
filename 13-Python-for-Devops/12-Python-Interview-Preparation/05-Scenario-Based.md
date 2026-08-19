@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 05 — Scenario-Based
+# Scenario-Based
 
 > Scenario-based Python interview preparation for DevOps/DevSecOps roles. These scenarios emphasize production diagnosis, AWS/EKS/Kubernetes, CI/CD, GitOps, security, observability, reliability, and safe automation.
 
