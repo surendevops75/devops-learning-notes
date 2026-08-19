@@ -1,4 +1,4 @@
-# 04 — Python API Authentication for DevOps Engineers
+# Python API Authentication for DevOps Engineers
 
 ## 1. Overview
 
