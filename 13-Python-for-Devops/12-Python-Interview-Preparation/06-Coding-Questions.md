@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 06 — Coding Questions
+# Coding Questions
 
 > Python coding preparation for DevOps/DevSecOps interviews. Starts with core coding patterns and progresses into AWS, Kubernetes, CI/CD, GitOps, Terraform, security, observability, concurrency, testing, and production-grade automation.
 
