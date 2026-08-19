@@ -1,5 +1,4 @@
-# 11-Python-DevOps-Projects
-# 07 — Infrastructure Health Checker
+# Infrastructure Health Checker
 
 > Production-oriented Python infrastructure health checker for AWS, EKS, Kubernetes, networking, storage, CI/CD dependencies, and observability systems.
 
