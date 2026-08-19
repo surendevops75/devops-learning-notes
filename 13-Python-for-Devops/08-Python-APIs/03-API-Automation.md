@@ -1,4 +1,4 @@
-# 03 — Python API Automation for DevOps
+# Python API Automation for DevOps
 
 ## 1. Overview
 
