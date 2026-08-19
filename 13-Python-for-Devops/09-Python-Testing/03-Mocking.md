@@ -1,4 +1,4 @@
-# 03 — Mocking
+# Mocking
 
 ## 1. Overview
 
