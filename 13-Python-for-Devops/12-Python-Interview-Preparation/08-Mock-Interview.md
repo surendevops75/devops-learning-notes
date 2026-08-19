@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 08 — Mock Interview
+# Mock Interview
 
 > Final Python interview preparation file. Use this as an interactive practice set for DevOps/DevSecOps interviews, especially AWS, EKS/Kubernetes, Terraform, Jenkins, GitHub Actions, ArgoCD, security, monitoring, and production automation.
 
