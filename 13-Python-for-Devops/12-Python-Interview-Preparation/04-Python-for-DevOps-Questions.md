@@ -1,5 +1,4 @@
-# 12-Python-Interview-Preparation
-# 04 — Python for DevOps Questions
+# Python for DevOps Questions
 
 > Production-oriented Python interview preparation for DevOps/DevSecOps roles. Focuses on AWS, EKS, Kubernetes, Terraform, Jenkins, GitHub Actions, ArgoCD, Docker/ECR, JFrog Artifactory, SonarQube, Trivy, Veracode, Prometheus, Grafana, and ELK.
 
