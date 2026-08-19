@@ -1,4 +1,4 @@
-# 02 — Unit Testing
+# Unit Testing
 
 ## 1. Overview
 
