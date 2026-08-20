@@ -1,4 +1,4 @@
-# 13-GitLab — 09 GitLab Docker and Container Registry
+# GitLab Docker and Container Registry
 
 > Production-oriented guide to Docker builds in GitLab CI/CD, GitLab Container Registry, AWS ECR integration, image tagging, immutable digests, authentication, multi-stage builds, caching, security scanning, image promotion, Kubernetes/EKS deployment, GitOps, troubleshooting, and senior DevOps interview scenarios.
 
