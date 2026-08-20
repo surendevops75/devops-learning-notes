@@ -1,4 +1,4 @@
-# 13-GitLab — 21 GitLab Production Troubleshooting
+# GitLab Production Troubleshooting
 
 > Production-oriented troubleshooting playbook for GitLab, GitLab CI/CD, runners, APIs, repositories, artifacts, container registry, AWS, Kubernetes/EKS, ArgoCD, Prometheus, Grafana and ELK. The focus is systematic diagnosis, evidence collection, safe mitigation, root-cause analysis, recovery and senior DevOps interview scenarios.
 
