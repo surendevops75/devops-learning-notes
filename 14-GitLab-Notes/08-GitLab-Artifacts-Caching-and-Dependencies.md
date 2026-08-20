@@ -1,4 +1,4 @@
-# 13-GitLab — 08 GitLab Artifacts, Caching and Dependencies
+# GitLab Artifacts, Caching and Dependencies
 
 > Production-oriented guide to GitLab CI/CD artifacts, cache, job dependencies, `needs`, reports, package flow, retention, security, performance, troubleshooting, and practical DevOps patterns with Docker, Terraform, AWS/ECR, Kubernetes/EKS, and GitOps.
 
