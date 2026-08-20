@@ -1,4 +1,4 @@
-# 13-GitLab — 15 GitLab Security
+# GitLab Security
 
 > Production-oriented GitLab security guide covering identity, authentication, authorization, repository protection, branch and merge-request controls, CI/CD security, runners, variables, tokens, OIDC, supply-chain security, artifacts, registries, webhooks, APIs, auditability, compliance, incident response, and senior DevOps/DevSecOps interview scenarios.
 
