@@ -1,4 +1,4 @@
-# 13-GitLab — 01 GitLab Fundamentals
+# GitLab Fundamentals
 
 > Production-oriented GitLab notes for DevOps/DevSecOps engineers. This file establishes the foundation for GitLab repositories, Merge Requests, CI/CD, Runners, security, AWS/EKS, Terraform, ArgoCD/GitOps, troubleshooting, and production architecture.
 
