@@ -1,4 +1,4 @@
-# 13-GitLab — 02 GitLab Repository and Git Workflow
+# GitLab Repository and Git Workflow
 
 > Production-focused notes on GitLab repositories and the Git workflow used by DevOps/DevSecOps teams. Covers repository structure, remotes, commits, branching, tags, rebasing, merge strategies, release workflows, GitOps repositories, troubleshooting, security, production practices, and interview scenarios.
 
