@@ -1,4 +1,4 @@
-# 13-GitLab — 17 GitLab Multi-Environment Deployments
+# GitLab Multi-Environment Deployments
 
 > Production-oriented guide to designing Dev, QA, Stage, UAT and Production environments with GitLab CI/CD, AWS, Terraform, ECR, Kubernetes/EKS, Helm, ArgoCD and GitOps. Covers environment isolation, promotion, configuration, secrets, approvals, deployment strategies, drift, rollback, database migrations, observability, security and senior DevOps interview scenarios.
 
