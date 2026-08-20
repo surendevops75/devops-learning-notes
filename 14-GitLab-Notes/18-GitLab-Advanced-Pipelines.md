@@ -1,4 +1,4 @@
-# 13-GitLab — 18 GitLab Advanced Pipelines
+# GitLab Advanced Pipelines
 
 > Production-oriented guide to advanced GitLab pipeline engineering: reusable architecture, DAG execution, dynamic pipelines, parent-child and multi-project orchestration, monorepos, microservices, conditional execution, parallelism, matrix jobs, pipeline components, deployment serialization, artifact flow, release orchestration, security controls, performance engineering, failure recovery, and senior DevOps interview scenarios.
 
