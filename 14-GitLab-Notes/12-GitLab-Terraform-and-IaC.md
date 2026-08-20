@@ -1,4 +1,4 @@
-# 13-GitLab — 12 GitLab Terraform and IaC
+# GitLab Terraform and IaC
 
 > Production-oriented guide to running Terraform with GitLab CI/CD, including repository structure, modules, remote state, planning, approvals, OIDC authentication, AWS infrastructure, EKS, ECR, networking, security, drift, imports, state recovery, concurrency, policy checks, reusable pipelines, multi-environment architecture, troubleshooting, and senior DevOps interview scenarios.
 
