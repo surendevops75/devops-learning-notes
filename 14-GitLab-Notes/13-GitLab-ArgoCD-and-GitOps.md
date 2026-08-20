@@ -1,4 +1,4 @@
-# 13-GitLab — 13 GitLab ArgoCD and GitOps
+# GitLab ArgoCD and GitOps
 
 > Production-oriented guide to integrating GitLab CI/CD with ArgoCD and Kubernetes GitOps, including repository architecture, application manifests, Helm, Kustomize, sync policies, drift detection, promotion, rollback, secrets, RBAC, multi-environment delivery, EKS, security, troubleshooting, observability, disaster recovery, and senior DevOps interview scenarios.
 
