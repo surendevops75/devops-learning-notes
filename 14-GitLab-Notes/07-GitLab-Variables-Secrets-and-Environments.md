@@ -1,4 +1,4 @@
-# 13-GitLab — 07 GitLab Variables, Secrets and Environments
+# GitLab Variables, Secrets and Environments
 
 > Production-focused guide to GitLab CI/CD variables, protected variables, masked secrets, environment-scoped configuration, AWS credentials, OIDC, ECR, EKS, Terraform, ArgoCD, secret rotation, security boundaries, troubleshooting, and senior DevOps interview scenarios.
 
