@@ -1,4 +1,4 @@
-# 13-GitLab — 22 GitLab Production Architecture
+# GitLab Production Architecture
 
 > Production-grade architecture guide for designing GitLab as an enterprise DevOps platform. Covers GitLab deployment models, high availability, load balancing, databases, Redis, object storage, runners, CI/CD, container registry, AWS, EKS, Terraform, ArgoCD/GitOps, Prometheus, Grafana, ELK, security boundaries, disaster recovery, scaling, capacity planning, failure domains and senior DevOps interview scenarios.
 
