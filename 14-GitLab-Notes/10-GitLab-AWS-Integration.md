@@ -1,4 +1,4 @@
-# 13-GitLab — 10 GitLab AWS Integration
+# GitLab AWS Integration
 
 > Production-oriented guide to integrating GitLab CI/CD with AWS services, IAM, OIDC, STS, EC2, VPC, S3, ECR, EKS, RDS, Route 53, ALB, Terraform, CloudFormation, secrets, multi-account architecture, security, troubleshooting, and senior DevOps interview scenarios.
 
