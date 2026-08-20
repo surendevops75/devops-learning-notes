@@ -1,4 +1,4 @@
-# 13-GitLab — 04 GitLab CI/CD Fundamentals
+# GitLab CI/CD Fundamentals
 
 > Production-oriented fundamentals for GitLab CI/CD. This file builds the mental model required before advanced `.gitlab-ci.yml` configuration, runners, variables, artifacts, Docker, AWS, EKS, Terraform, ArgoCD, DevSecOps, and production pipeline design.
 
