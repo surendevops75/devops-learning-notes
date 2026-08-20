@@ -1,4 +1,4 @@
-# 13-GitLab — 16 GitLab Advanced CI/CD
+# GitLab Advanced CI/CD
 
 > Production-oriented guide to advanced GitLab CI/CD design, including DAG pipelines, `needs`, rules, workflow control, reusable templates, child and multi-project pipelines, dynamic pipelines, matrix jobs, parallelism, artifacts, caching, environments, deployment strategies, GitOps integration, security gates, performance optimization, release orchestration, failure recovery, and senior DevOps interview scenarios.
 
