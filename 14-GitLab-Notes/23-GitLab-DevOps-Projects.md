@@ -1,4 +1,4 @@
-# 13-GitLab — 23 GitLab DevOps Projects
+# GitLab DevOps Projects
 
 > Production-oriented hands-on project guide for building DevOps and DevSecOps projects with GitLab. Projects progress from foundational CI/CD automation to AWS, Terraform, Docker, EKS, ArgoCD, security, observability, release automation and a complete production-grade microservices platform.
 
