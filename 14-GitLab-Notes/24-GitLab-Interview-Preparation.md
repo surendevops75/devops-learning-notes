@@ -1,4 +1,4 @@
-# 13-GitLab — 24 GitLab Interview Preparation
+# GitLab Interview Preparation
 
 > Final interview-preparation guide for GitLab and GitLab-based DevOps/DevSecOps roles. Covers fundamentals, CI/CD, runners, security, AWS, Terraform, Docker, EKS, Helm, ArgoCD/GitOps, monitoring, troubleshooting, production architecture, scenario-based questions, project discussions, coding/automation questions and senior-level interview answers.
 
