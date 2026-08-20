@@ -1,4 +1,4 @@
-# 13-GitLab — 14 GitLab DevSecOps
+# GitLab DevSecOps
 
 > Production-oriented guide to integrating security into GitLab CI/CD, covering SAST, SCA, secret detection, container scanning, IaC security, DAST, SonarQube, Trivy, Veracode, dependency management, image security, Kubernetes/EKS security, Terraform security, security gates, vulnerability triage, remediation, compliance, SBOM, provenance, production incident response, and senior DevSecOps interview scenarios.
 
