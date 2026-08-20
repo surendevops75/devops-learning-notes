@@ -1,4 +1,4 @@
-# 13-GitLab — 11 GitLab Kubernetes and EKS
+# GitLab Kubernetes and EKS
 
 > Production-oriented guide to GitLab CI/CD with Kubernetes and Amazon EKS, covering authentication, namespaces, deployments, services, ingress, ALB, Helm, GitOps, ArgoCD, RBAC, secrets, ConfigMaps, probes, autoscaling, resource management, rollout strategies, troubleshooting, security, observability, and senior DevOps interview scenarios.
 
