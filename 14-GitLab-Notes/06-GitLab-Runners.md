@@ -1,4 +1,4 @@
-# 13-GitLab — 06 GitLab Runners
+# GitLab Runners
 
 > Production-oriented notes on GitLab Runner architecture, installation, registration, executors, Docker and Kubernetes runners, runner tags, protected runners, autoscaling, security, AWS/EKS integration, troubleshooting, performance, observability, and senior DevOps interview scenarios.
 
