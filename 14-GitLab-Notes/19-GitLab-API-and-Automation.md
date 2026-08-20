@@ -1,4 +1,4 @@
-# 13-GitLab — 19 GitLab API and Automation
+# GitLab API and Automation
 
 > Production-oriented guide to automating GitLab with REST APIs, GraphQL concepts, CI/CD job tokens, personal/project/group access tokens, OAuth and OIDC, webhooks, pipeline triggers, repository automation, merge requests, releases, environments, variables, runners, audit workflows, Python automation, Bash automation, AWS/EKS integration, GitOps automation, security controls, rate limits, error handling, and senior DevOps interview scenarios.
 
