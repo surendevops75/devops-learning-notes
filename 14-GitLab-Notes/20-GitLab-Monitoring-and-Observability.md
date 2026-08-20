@@ -1,4 +1,4 @@
-# 13-GitLab — 20 GitLab Monitoring and Observability
+# GitLab Monitoring and Observability
 
 > Production-oriented guide to monitoring GitLab itself and the complete CI/CD platform: GitLab application health, runners, pipelines, jobs, APIs, webhooks, repositories, artifacts, registries, Kubernetes/EKS deployments, ArgoCD, Prometheus, Grafana, ELK, logs, metrics, alerting, SLOs, capacity planning, troubleshooting and senior DevOps interview scenarios.
 
