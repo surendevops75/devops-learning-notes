@@ -1,4 +1,4 @@
-# 13-GitLab — 03 GitLab Branches and Merge Requests
+# GitLab Branches and Merge Requests
 
 > Production-focused notes for branch strategy, Merge Requests, approvals, protected branches, review controls, CI rules, security gates, release workflows, GitOps, troubleshooting, and senior DevOps interview scenarios.
 
