@@ -1,4 +1,4 @@
-# 13-GitLab — 05 GitLab CI/CD Configuration
+# GitLab CI/CD Configuration
 
 > Production-oriented guide to writing, structuring, validating, securing, and optimizing `.gitlab-ci.yml`. This file moves from CI/CD fundamentals into practical configuration patterns used with Jenkins/GitHub Actions-style workflows, Docker, AWS/ECR, Terraform, Kubernetes/EKS, ArgoCD, SonarQube, Trivy, Veracode, and production deployments.
 
