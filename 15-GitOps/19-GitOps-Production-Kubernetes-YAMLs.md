@@ -1,5 +1,3 @@
-# 19-GitOps-Production-Kubernetes-YAMLs.md
-
 # GitOps Production Kubernetes YAMLs
 
 ## 1. Purpose
