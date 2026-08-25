@@ -1,5 +1,3 @@
-# 18-GitOps-Observability.md
-
 # GitOps Observability
 
 ## 1. Purpose

@@ -1,5 +1,3 @@
-# ArgoCD-Advanced-Features.md
-
 # Argo CD Advanced Features
 
 ## 1. Purpose

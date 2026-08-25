@@ -1,4 +1,4 @@
-# GitOps-Secrets-Management.md
+# GitOps-Secrets-Management
 
 ## 1. Purpose
 

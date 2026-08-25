@@ -1,5 +1,3 @@
-# GitOps-Progressive-Delivery.md
-
 # GitOps Progressive Delivery
 
 ## 1. Purpose
