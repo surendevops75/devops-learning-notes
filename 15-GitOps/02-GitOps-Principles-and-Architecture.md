@@ -1,4 +1,4 @@
-# 02-GitOps-Principles-and-Architecture
+# GitOps-Principles-and-Architecture
 
 ## 1. Purpose
 
@@ -3449,41 +3449,3 @@ The most important architectural principles are:
 25. Production GitOps is an operating model, not simply a collection of YAML files.
 
 ---
-
-# 117. What Comes Next
-
-The next file is:
-
-```text
-03-GitOps-with-Kubernetes.md
-```
-
-It will connect these architectural principles directly to Kubernetes and EKS.
-
-It will cover:
-
-- Kubernetes declarative model
-- Kubernetes API interaction
-- Controllers
-- Reconciliation inside Kubernetes
-- GitOps + Kubernetes control loops
-- Namespaces
-- Deployments
-- Services
-- ConfigMaps
-- Secrets
-- Ingress and AWS ALB
-- HPA
-- Resource requests/limits
-- Probes
-- Security contexts
-- Helm/Kustomize relationship
-- GitOps repository-to-Kubernetes workflow
-- Production EKS deployment flow
-- Resource ownership
-- Kubernetes drift
-- Practical commands
-- Production YAML examples
-- Troubleshooting
-- RoboShop implementation
-- Interview scenarios
