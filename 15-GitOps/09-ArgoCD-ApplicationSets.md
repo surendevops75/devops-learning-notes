@@ -1,4 +1,4 @@
-# 09-ArgoCD-ApplicationSets
+# ArgoCD-ApplicationSets
 
 ## 1. Purpose
 
@@ -4249,38 +4249,3 @@ EKS
 ```
 
 ---
-
-# 175. Next File
-
-```text
-10-ArgoCD-Multi-Cluster-Management.md
-```
-
-The next file will go deeper into centralized Argo CD as a multi-cluster GitOps control plane, including:
-
-- Argo CD management cluster
-- Target EKS clusters
-- Cluster registration
-- Cluster credentials
-- EKS authentication
-- AWS IAM and Kubernetes RBAC boundaries
-- Dev/QA/Prod clusters
-- Multiple production clusters
-- Multi-region EKS
-- Multi-account AWS
-- Cluster generator
-- Cluster labels
-- ApplicationSet multi-cluster patterns
-- Centralized vs decentralized Argo CD
-- Hub-and-spoke architecture
-- Failure scenarios
-- Cluster onboarding
-- Cluster removal
-- Security boundaries
-- HA considerations
-- Disaster recovery
-- Production YAMLs
-- RoboShop multi-cluster deployment
-- Operational commands
-- Troubleshooting
-- Interview scenarios
