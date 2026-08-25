@@ -1,4 +1,4 @@
-# 11-ArgoCD-AWS-EKS-and-Multi-Account
+# ArgoCD-AWS-EKS-and-Multi-Account
 
 ## 1. Purpose
 
@@ -4347,35 +4347,3 @@ Terraform
 This is a practical production-grade AWS GitOps architecture.
 
 ---
-
-# 184. Next File
-
-```text
-12-GitOps-Multi-Environment-Strategy.md
-```
-
-The next file will focus specifically on environment strategy:
-
-- Dev/QA/Prod architecture
-- Environment isolation
-- Branching vs directory strategy
-- Repository-per-environment vs monorepo
-- Helm values
-- Kustomize overlays
-- Image promotion
-- Immutable tags/digests
-- Promotion workflows
-- Production approvals
-- Environment-specific secrets
-- Configuration drift
-- Environment parity
-- GitOps release management
-- RoboShop promotion from Dev -> QA -> Prod
-- Multi-cluster environment mapping
-- Production YAMLs
-- CI + GitOps workflows
-- Rollback strategy
-- Disaster recovery
-- Security
-- Troubleshooting
-- Interview scenarios
