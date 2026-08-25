@@ -1,4 +1,4 @@
-# 08-ArgoCD-Helm-and-Kustomize
+# ArgoCD-Helm-and-Kustomize
 
 ## 1. Purpose
 
@@ -4470,38 +4470,3 @@ Compare + Sync + Reconcile
 21. The simplest configuration model that meets the requirement is usually the best production model.
 
 ---
-
-# 190. Next File
-
-```text
-09-ArgoCD-ApplicationSets.md
-```
-
-The next file will deeply cover ApplicationSets:
-
-- Why ApplicationSet exists
-- Application vs ApplicationSet
-- ApplicationSet controller
-- List generator
-- Git generator
-- Directory generator
-- Cluster generator
-- Matrix generator
-- Merge generator
-- Pull Request generator
-- SCM generators
-- Templates
-- Dynamic application names
-- Dynamic namespaces
-- Dynamic clusters
-- Dynamic Helm values
-- Dev/QA/Prod list-generator example
-- Multi-cluster EKS deployment
-- Cluster labels
-- Centralized Argo CD
-- ApplicationSet security
-- Production repository structures
-- Production YAMLs
-- RoboShop ApplicationSets
-- Troubleshooting generated Applications
-- Interview questions
