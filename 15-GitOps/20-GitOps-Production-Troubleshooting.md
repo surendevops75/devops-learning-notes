@@ -1,5 +1,3 @@
-# 20-GitOps-Production-Troubleshooting.md
-
 # GitOps Production Troubleshooting
 
 ## 1. Purpose
