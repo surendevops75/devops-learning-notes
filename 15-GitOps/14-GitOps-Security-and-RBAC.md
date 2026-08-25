@@ -1,4 +1,4 @@
-# 14-GitOps-Security-and-RBAC
+# GitOps-Security-and-RBAC
 
 ## 1. Purpose
 
@@ -5846,53 +5846,3 @@ Operations
 ```
 
 ---
-
-# 318. Next File
-
-```text
-15-GitOps-Secrets-Management.md
-```
-
-The next file will go deeply into secrets management rather than treating it as only a subsection of security.
-
-It will cover:
-
-- Secret management architecture
-- Why plaintext secrets are dangerous
-- Kubernetes Secrets
-- Base64 vs encryption
-- Encryption at rest
-- AWS Secrets Manager
-- AWS KMS
-- External Secrets Operator
-- SecretStore
-- ClusterSecretStore
-- ExternalSecret
-- IRSA
-- EKS Pod Identity
-- Secret rotation
-- Secret refresh
-- Secret versioning
-- Multi-environment secret isolation
-- Multi-account secret architecture
-- Multi-cluster secret architecture
-- Helm and secrets
-- Kustomize and secrets
-- Sealed Secrets
-- SOPS concepts
-- Git encryption approaches
-- Secret injection patterns
-- Application consumption
-- Database credentials
-- API tokens
-- TLS certificates
-- ALB/ACM considerations
-- GitHub/Jenkins credentials
-- Argo CD repository credentials
-- Secret backup and disaster recovery
-- Secret leakage response
-- Production YAMLs
-- RoboShop secret architecture
-- Troubleshooting
-- Security best practices
-- Interview questions and scenarios
