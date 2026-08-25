@@ -1,4 +1,4 @@
-# 04-ArgoCD-Architecture-and-Components
+# ArgoCD-Architecture-and-Components
 
 ## 1. Purpose
 
@@ -4484,40 +4484,3 @@ Application Generation
 For production AWS/EKS environments, Argo CD can operate as a centralized GitOps control plane managing multiple clusters and accounts, provided cluster access, RBAC, repository permissions, project boundaries, and failure domains are carefully designed.
 
 ---
-
-# 176. Next File
-
-The next file is:
-
-```text
-05-ArgoCD-Installation-and-Configuration.md
-```
-
-It will move from architecture into hands-on implementation:
-
-- EKS prerequisites
-- Argo CD installation
-- Namespace
-- Installation methods
-- Helm installation
-- Manifest installation
-- Production configuration
-- Server exposure
-- ALB Ingress
-- TLS
-- CLI setup
-- Initial admin access
-- Repository configuration
-- Private Git repositories
-- Cluster registration
-- EKS authentication
-- RBAC
-- Projects
-- Production hardening
-- Resource sizing
-- HA configuration
-- Verification commands
-- Upgrade considerations
-- Installation troubleshooting
-- Production installation runbook
-- Interview questions
