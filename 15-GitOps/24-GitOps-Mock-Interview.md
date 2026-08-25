@@ -1,5 +1,3 @@
-# 24-GitOps-Mock-Interview.md
-
 # GitOps with Argo CD — Final Mock Interview
 
 ## How to Use This Mock Interview
