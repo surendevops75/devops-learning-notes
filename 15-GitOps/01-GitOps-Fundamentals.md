@@ -1,22 +1,10 @@
-# 01-GitOps-Fundamentals
+# GitOps-Fundamentals
 
 ## 1. Purpose of This File
 
 This file establishes the foundation for the entire **GitOps with Argo CD** section.
 
 The goal is not simply to define GitOps. The goal is to understand the operating model deeply enough to design, implement, troubleshoot, secure, and explain a production GitOps platform running on Kubernetes and AWS EKS.
-
-The concepts introduced here will be used throughout the remaining files:
-
-```text
-14-GitOps/
-├── 01-GitOps-Fundamentals.md              <- Current file
-├── 02-GitOps-Principles-and-Architecture.md
-├── 03-GitOps-with-Kubernetes.md
-├── 04-ArgoCD-Architecture-and-Components.md
-├── ...
-└── 23-GitOps-Interview-Preparation.md
-```
 
 The production environment used throughout these notes will be based on:
 
@@ -4668,11 +4656,3 @@ GitOps
   |
   +--> Production operations
 ```
-
-The next file can now move from the fundamentals into the deeper architectural model:
-
-```text
-02-GitOps-Principles-and-Architecture.md
-```
-
-That file should explain the GitOps control plane, reconciliation architecture, trust boundaries, repository architectures, environment architectures, failure domains, single-cluster architecture, multi-cluster architecture, and enterprise production design decisions in greater depth.
