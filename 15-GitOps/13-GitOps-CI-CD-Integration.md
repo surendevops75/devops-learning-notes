@@ -1,4 +1,4 @@
-# 13-GitOps-CI-CD-Integration
+# GitOps-CI-CD-Integration
 
 ## 1. Purpose
 
@@ -6927,50 +6927,3 @@ multi-region/account design
 > In my DevOps architecture, CI and CD are separated. Jenkins or GitHub Actions handles source checkout, build, testing, SonarQube, Trivy, Veracode, Docker image creation and publishing to ECR. The pipeline does not directly deploy to EKS. Instead, it updates the GitOps repository with the immutable image tag or digest. For DEV this can be an automated GitOps update, while QA and PROD use controlled promotion PRs and approvals. Argo CD watches the GitOps repository, compares desired state with the live EKS cluster and reconciles the application. This gives us pull-based deployment, drift detection, auditability, rollback and reduced CI-to-cluster credentials. In the RoboShop platform, the same image is promoted from DEV to QA to PROD, while environment-specific configuration is maintained separately in Helm values or Kustomize overlays. Terraform remains responsible for AWS/EKS infrastructure, while Argo CD manages Kubernetes application resources.
 
 ---
-
-# 326. Next File
-
-```text
-14-GitOps-Security-and-RBAC.md
-```
-
-The next file will go deeply into GitOps and Argo CD security:
-
-- GitOps security model
-- Argo CD RBAC
-- AppProject security boundaries
-- SSO
-- OIDC
-- LDAP concepts
-- Local users
-- Groups
-- Roles
-- Policies
-- Least privilege
-- Repository credentials
-- Private repositories
-- SSH vs HTTPS
-- GitHub Apps
-- Secrets
-- AWS IAM
-- EKS access
-- IRSA
-- EKS Pod Identity
-- Kubernetes RBAC
-- ServiceAccounts
-- Cluster credentials
-- Multi-cluster security
-- Multi-account security
-- Network controls
-- TLS
-- Webhook security
-- Admission policies
-- Image signing
-- Supply-chain security
-- Audit
-- Production hardening
-- Security YAMLs
-- RoboShop security architecture
-- Real production attack scenarios
-- Security troubleshooting
-- Interview questions and scenarios
