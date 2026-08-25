@@ -1,4 +1,4 @@
-# 05-ArgoCD-Installation-and-Configuration
+# ArgoCD-Installation-and-Configuration
 
 ## 1. Purpose
 
@@ -3778,51 +3778,3 @@ Before declaring Argo CD production-ready:
 15. A production Argo CD platform must have monitoring, alerting, upgrade, and disaster-recovery procedures.
 
 ---
-
-# 149. Next File
-
-The next file is:
-
-```text
-06-ArgoCD-Applications-and-Projects.md
-```
-
-It will go deeply into:
-
-- Argo CD Application CRD
-- Every important Application field
-- `apiVersion`
-- `kind`
-- `metadata`
-- `spec`
-- `project`
-- `source`
-- `repoURL`
-- `targetRevision`
-- `path`
-- Helm
-- `releaseName`
-- `valueFiles`
-- `values`
-- Kustomize
-- Directory sources
-- Destination
-- `server`
-- `namespace`
-- Sync policy
-- Automated sync
-- Prune
-- Self-heal
-- Sync options
-- Retry
-- AppProject
-- Source restrictions
-- Destination restrictions
-- Resource whitelists/blacklists
-- Application ownership
-- Finalizers
-- Production Application YAMLs
-- Production Project YAMLs
-- RoboShop Helm Applications
-- Interview scenarios
-- Troubleshooting
