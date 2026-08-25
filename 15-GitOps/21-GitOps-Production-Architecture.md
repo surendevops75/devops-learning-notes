@@ -1,5 +1,3 @@
-# 21-GitOps-Production-Architecture.md
-
 # GitOps Production Architecture
 
 ## 1. Purpose
