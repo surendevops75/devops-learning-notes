@@ -1,4 +1,4 @@
-# 12-GitOps-Multi-Environment-Strategy
+# GitOps-Multi-Environment-Strategy
 
 ## 1. Purpose
 
@@ -4454,41 +4454,3 @@ and by whom
 the application is deployed.
 
 ---
-
-# 206. Next File
-
-```text
-13-GitOps-CI-CD-Integration.md
-```
-
-The next file will go deeply into CI + GitOps integration:
-
-- CI vs CD responsibilities
-- Jenkins + Argo CD
-- GitHub Actions + Argo CD
-- GitOps repository update patterns
-- Image tag automation
-- Image digest automation
-- Promotion PRs
-- Webhooks
-- Argo CD refresh
-- CI security boundaries
-- Build/test/security stages
-- SonarQube
-- Trivy
-- Veracode
-- ECR
-- Helm release updates
-- GitOps commit strategy
-- Production approvals
-- Webhook vs polling
-- Failure handling
-- Rollback
-- RoboShop end-to-end CI/CD + GitOps
-- Production pipeline YAMLs
-- Jenkinsfile examples
-- GitHub Actions workflows
-- Argo CD Application/ApplicationSet integration
-- Troubleshooting
-- Security
-- Interview scenarios
