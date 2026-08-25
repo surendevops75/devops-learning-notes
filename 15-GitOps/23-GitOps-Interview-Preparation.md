@@ -1,5 +1,3 @@
-# 23-GitOps-Interview-Preparation.md
-
 # GitOps with Argo CD — Interview Preparation
 
 ## 1. Purpose
