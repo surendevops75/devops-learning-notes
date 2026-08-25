@@ -1,4 +1,4 @@
-# 16-ArgoCD-Advanced-Features.md
+# ArgoCD-Advanced-Features.md
 
 # Argo CD Advanced Features
 
@@ -4111,35 +4111,3 @@ EKS
 ```
 
 Advanced Argo CD features should be selected based on the application's lifecycle, not copied as a universal configuration.
-
-The next file is:
-
-```text
-17-GitOps-Progressive-Delivery.md
-```
-
-It will cover progressive delivery deeply, including:
-
-- Blue/Green
-- Canary
-- Argo Rollouts
-- Rollout strategies
-- Traffic management
-- AWS ALB integration
-- AnalysisTemplates
-- Prometheus-based analysis
-- Automated promotion
-- Rollback
-- Abort
-- Experiments
-- Stable/canary services
-- Ingress traffic shifting
-- Header/cookie-based routing concepts
-- Progressive delivery with Argo CD
-- GitOps promotion workflows
-- DEV/QA/PROD strategies
-- RoboShop canary deployment
-- Production YAMLs
-- Failure scenarios
-- Troubleshooting
-- Interview questions
