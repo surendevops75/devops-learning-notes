@@ -1,4 +1,4 @@
-# 10-ArgoCD-Multi-Cluster-Management
+# ArgoCD-Multi-Cluster-Management
 
 ## 1. Purpose
 
@@ -3590,35 +3590,3 @@ Kubernetes
 This separation is the foundation of a production-grade multi-cluster GitOps platform.
 
 ---
-
-# 161. Next File
-
-```text
-11-ArgoCD-AWS-EKS-and-Multi-Account.md
-```
-
-The next file will specialize further in AWS/EKS, including:
-
-- EKS architecture for Argo CD
-- AWS account boundaries
-- EKS access modes
-- IAM roles
-- IRSA
-- EKS Pod Identity concepts
-- Kubernetes RBAC
-- Private EKS API
-- VPC networking
-- Transit Gateway
-- Cross-account access
-- Multi-region architecture
-- ECR integration
-- AWS Load Balancer Controller
-- ALB Ingress
-- Terraform + Argo CD boundaries
-- Production AWS diagrams
-- Multi-account RoboShop architecture
-- Security
-- Disaster recovery
-- Operational troubleshooting
-- Production YAMLs
-- Interview scenarios
