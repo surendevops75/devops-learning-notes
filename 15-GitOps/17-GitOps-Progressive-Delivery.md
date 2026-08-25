@@ -1,4 +1,4 @@
-# 17-GitOps-Progressive-Delivery.md
+# GitOps-Progressive-Delivery.md
 
 # GitOps Progressive Delivery
 
