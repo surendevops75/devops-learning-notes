@@ -1,4 +1,4 @@
-# 15-GitOps-Secrets-Management.md
+# GitOps-Secrets-Management.md
 
 ## 1. Purpose
 
@@ -4196,55 +4196,3 @@ Operations
 ```
 
 ---
-
-# 232. Next File
-
-```text
-16-ArgoCD-Advanced-Features.md
-```
-
-The next file will cover advanced Argo CD behavior in depth, including:
-
-- Sync options
-- Prune behavior
-- Self-heal
-- Replace
-- Force
-- Server-Side Apply
-- ApplyOutOfSyncOnly
-- CreateNamespace
-- PruneLast
-- PrunePropagationPolicy
-- RespectIgnoreDifferences
-- Retry policies
-- Sync waves
-- Hooks
-- PreSync
-- Sync
-- PostSync
-- SyncFail
-- Skip
-- Hook deletion policies
-- Resource health
-- Custom health checks
-- Resource tracking
-- Ignore differences
-- Revision history
-- Rollback
-- Refresh
-- Hard refresh
-- Webhooks
-- Notifications
-- Argo CD CLI advanced operations
-- Application actions
-- Resource overrides
-- Custom plugins
-- CMP concepts
-- Repo-server security
-- ApplicationSet advanced patterns
-- Progressive synchronization
-- Selective sync
-- Production examples
-- Advanced troubleshooting
-- RoboShop advanced deployment patterns
-- Advanced interview scenarios
