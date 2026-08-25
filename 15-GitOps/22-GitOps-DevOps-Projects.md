@@ -1,5 +1,3 @@
-# 22-GitOps-DevOps-Projects.md
-
 # GitOps DevOps Projects — Production Implementation Guide
 
 ## 1. Purpose
