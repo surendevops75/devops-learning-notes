@@ -1,4 +1,4 @@
-# 03-GitOps-with-Kubernetes
+# GitOps-with-Kubernetes
 
 ## 1. Purpose
 
@@ -4415,42 +4415,3 @@ A concise senior-level explanation is:
 > Kubernetes is a natural platform for GitOps because it uses declarative resources and controller-based reconciliation. In our EKS architecture, CI builds and validates the RoboShop application and pushes an immutable image to ECR. The desired Kubernetes configuration is stored in a GitOps repository. Argo CD reads that configuration, renders Helm or Kustomize when required, compares the desired resources with the live resources in EKS through the Kubernetes API, and synchronizes differences. Kubernetes controllers then reconcile Deployments, Services, HPAs, and other resources into runtime state. For external traffic, Argo CD manages the Kubernetes Ingress and the AWS Load Balancer Controller reconciles that into an ALB. This creates layered control loops where GitOps manages Kubernetes desired state and Kubernetes/cloud controllers manage runtime state.
 
 ---
-
-# 149. Next File
-
-The next file is:
-
-```text
-04-ArgoCD-Architecture-and-Components.md
-```
-
-This is where the notes move deeply into Argo CD itself.
-
-The next file will cover:
-
-- What Argo CD is
-- Argo CD architecture
-- Argo CD control plane
-- API Server
-- Application Controller
-- Repo Server
-- Redis
-- ApplicationSet Controller
-- Dex/SSO concepts
-- Notifications
-- Argo CD CLI
-- Argo CD UI
-- Repository interaction
-- Kubernetes interaction
-- Resource tracking
-- Reconciliation flow
-- Internal communication
-- Component responsibilities
-- High availability
-- Scaling
-- Security boundaries
-- Failure scenarios
-- Production architecture
-- EKS deployment model
-- Component troubleshooting
-- Interview questions
