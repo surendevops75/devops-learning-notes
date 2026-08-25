@@ -1,4 +1,4 @@
-# 06-ArgoCD-Applications-and-Projects
+# ArgoCD-Applications-and-Projects
 
 ## 1. Purpose
 
@@ -3966,66 +3966,3 @@ WHO + FROM WHERE + WHERE ALLOWED + WHAT ALLOWED
 20. Strong GitOps design minimizes deployment blast radius.
 
 ---
-
-# 167. Next File
-
-```text
-07-ArgoCD-Sync-Reconciliation-and-Drift.md
-```
-
-The next file will go deeply into the Argo CD control loop:
-
-```text
-Git desired state
-       |
-       v
-Repository refresh
-       |
-       v
-Manifest generation
-       |
-       v
-Comparison
-       |
-       v
-Sync
-       |
-       v
-Kubernetes
-       |
-       v
-Health assessment
-       |
-       v
-Drift detection
-       |
-       v
-Self-healing
-```
-
-It will cover:
-
-- Refresh
-- Reconciliation
-- Desired vs live state
-- OutOfSync
-- Synced
-- Health
-- Drift
-- Self-heal
-- Prune
-- Automated sync
-- Manual sync
-- Sync phases
-- Sync waves
-- Hooks
-- Retry
-- Sync options
-- Ignore differences
-- Resource tracking
-- Shared resources
-- Failure scenarios
-- Production troubleshooting
-- RoboShop reconciliation examples
-- Detailed commands
-- Interview scenarios
