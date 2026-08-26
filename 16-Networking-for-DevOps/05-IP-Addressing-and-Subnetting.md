@@ -1,7 +1,3 @@
-# 16-Networking-for-DevOps
-
-# 05-IP-Addressing-and-Subnetting.md
-
 # IP Addressing and Subnetting
 
 ## Purpose
@@ -4721,52 +4717,3 @@ ALB
 ```
 
 ------------------------------------------------------------------------
-
-# 191. Next Topic
-
-Next:
-
-``` text
-06-TCP-UDP-and-Ports.md
-```
-
-It will deeply cover:
-
-``` text
-TCP
-UDP
-ports
-sockets
-connection establishment
-three-way handshake
-four-way termination
-sequence numbers
-ACKs
-retransmission
-flow control
-congestion control
-TIME_WAIT
-CLOSE_WAIT
-ephemeral ports
-LISTEN
-SYN-SENT
-SYN-RECV
-ESTABLISHED
-FIN-WAIT
-RST
-TCP troubleshooting
-UDP behavior
-DNS
-HTTP/HTTPS
-ALB/NLB
-Kubernetes Services
-EKS networking
-netstat/ss
-nc
-tcpdump
-production incidents
-RoboShop traffic flows
-interview questions
-```
-
-# End of 05-IP-Addressing-and-Subnetting.md
