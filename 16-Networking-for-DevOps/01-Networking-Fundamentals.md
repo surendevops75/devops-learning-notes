@@ -1,6 +1,4 @@
-# 16-Networking-for-DevOps
-
-# 01-Networking-Fundamentals.md
+# Networking-Fundamentals.md
 
 ## Purpose
 
@@ -2468,62 +2466,3 @@ Before considering a production network ready:
 ```
 
 ------------------------------------------------------------------------
-
-# 92. What Comes Next
-
-This file establishes the fundamentals.
-
-The Networking section continues with:
-
-``` text
-01 Networking Fundamentals                 ← CURRENT
-02 OSI and TCP/IP Models
-03 MAC, IP and Network Interfaces
-04 IPv4 and IPv6
-05 IP Addressing and Subnetting
-06 CIDR and Subnet Calculations
-07 TCP, UDP and Ports
-08 TCP Three-Way Handshake
-09 DNS Fundamentals
-10 DNS Records and Resolution
-11 HTTP, HTTPS and TLS
-12 Routing and Route Tables
-13 ARP and ICMP
-14 NAT and PAT
-15 Firewalls and Network Security
-16 Proxy and Reverse Proxy
-17 Load Balancing
-18 Nginx
-19 AWS VPC Networking
-20 AWS Subnets and Routing
-21 Security Groups and NACLs
-22 Internet and NAT Gateways
-23 ALB and NLB
-24 Route 53 and DNS
-25 Kubernetes Networking
-26 Kubernetes Service Networking
-27 Kubernetes Ingress
-28 NetworkPolicies
-29 EKS Networking
-30 AWS VPC CNI
-31 EKS ALB Networking
-32 Pod-to-Pod Networking
-33 Service-to-Service Networking
-34 External Traffic to EKS
-35 Network Debugging Commands
-36 DNS Troubleshooting
-37 HTTP Troubleshooting
-38 TCP Connectivity Troubleshooting
-39 Kubernetes Network Troubleshooting
-40 EKS Network Troubleshooting
-41 Production Network Architecture
-42 Network Security Best Practices
-43 Production Scenarios
-44 Networking Projects
-45 Networking Interview Preparation
-```
-
-The later files will build on this foundation and will not simply repeat
-it.
-
-# End of 01-Networking-Fundamentals.md
