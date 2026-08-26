@@ -1,7 +1,3 @@
-# 16-Networking-for-DevOps
-
-# 02-OSI-and-TCP-IP-Models.md
-
 # OSI and TCP/IP Models
 
 ## Purpose
@@ -2682,35 +2678,3 @@ Use the networking model to isolate the layer before changing production
 systems.
 
 ------------------------------------------------------------------------
-
-# 107. Next Topic
-
-The next file is:
-
-``` text
-03-MAC-IP-and-Network-Interfaces.md
-```
-
-It will go deeper into:
-
-``` text
-MAC addresses
-NICs
-Ethernet
-ARP
-Neighbor tables
-IP interfaces
-Linux interface configuration
-virtual interfaces
-veth pairs
-bridges
-cloud ENIs
-EKS networking interfaces
-Docker interfaces
-container networking
-interface troubleshooting
-production scenarios
-interview questions
-```
-
-# End of 02-OSI-and-TCP-IP-Models.md
