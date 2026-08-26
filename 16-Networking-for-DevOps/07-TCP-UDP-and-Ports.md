@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 07-TCP-UDP-and-Ports
+# TCP-UDP-and-Ports
 
 ## 1. Purpose
 
@@ -3644,40 +3643,3 @@ Application
 When something breaks, find the first layer where reality differs from the expected flow.
 
 ---
-
-## 189. Next File
-
-The next planned file is:
-
-```text
-08-TCP-Three-Way-Handshake.md
-```
-
-That file will go much deeper into:
-
-```text
-SYN
-sequence numbers
-ISN
-SYN-ACK
-ACK
-TCP state transitions
-SYN backlog
-SYN cookies
-connection establishment
-connection termination
-RST
-retransmissions
-packet captures
-Wireshark
-tcpdump
-network latency
-handshake failures
-SYN floods
-production incidents
-Linux troubleshooting
-AWS/EKS scenarios
-interview questions
-```
-
-# End of 07-TCP-UDP-and-Ports.md
