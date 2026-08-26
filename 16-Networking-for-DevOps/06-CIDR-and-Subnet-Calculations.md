@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 06-CIDR-and-Subnet-Calculations
+# CIDR-and-Subnet-Calculations
 
 ## 1. Purpose
 
@@ -3465,21 +3464,3 @@ PLAN IP SPACE BEFORE DEPLOYING THE INFRASTRUCTURE.
 ```
 
 ---
-
-## 157. Next File
-
-The next file in the planned Networking sequence is:
-
-```text
-07-TCP-UDP-and-Ports.md
-```
-
-It will cover TCP/UDP and ports as a dedicated topic, while the following file will go deeply into:
-
-```text
-08-TCP-Three-Way-Handshake.md
-```
-
-This keeps the planned structure intact.
-
-# End of 06-CIDR-and-Subnet-Calculations.md
