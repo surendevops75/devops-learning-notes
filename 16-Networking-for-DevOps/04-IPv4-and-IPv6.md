@@ -1,7 +1,3 @@
-# 16-Networking-for-DevOps
-
-# 04-IPv4-and-IPv6.md
-
 # IPv4 and IPv6
 
 ## Purpose
@@ -3268,35 +3264,3 @@ Ingress/Load Balancer
 ```
 
 ------------------------------------------------------------------------
-
-# 142. What Comes Next
-
-The next file is:
-
-``` text
-05-IP-Addressing-and-Subnetting.md
-```
-
-It will go deeper into practical address calculations:
-
-``` text
-binary mathematics
-subnet masks
-CIDR calculations
-network address
-broadcast address
-host ranges
-subnet division
-VLSM
-route summarization
-supernetting
-AWS subnet sizing
-EKS subnet planning
-IP capacity calculations
-overlap detection
-production CIDR design
-hands-on subnet exercises
-interview questions
-```
-
-# End of 04-IPv4-and-IPv6.md
