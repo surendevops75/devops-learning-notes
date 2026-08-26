@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 10-DNS-Records-and-Resolution
+# DNS-Records-and-Resolution
 
 ## 1. Purpose
 
@@ -4013,51 +4012,3 @@ application
 ```
 
 ---
-
-## 245. Next File
-
-The next planned file is:
-
-```text
-11-HTTP-HTTPS-and-TLS.md
-```
-
-It will cover:
-
-```text
-HTTP architecture
-HTTP/1.0
-HTTP/1.1
-HTTP/2
-HTTP/3
-methods
-status codes
-headers
-cookies
-sessions
-keep-alive
-connection reuse
-chunked transfer
-compression
-proxies
-reverse proxies
-TLS
-certificates
-CA
-certificate chain
-SNI
-ALPN
-mTLS
-TLS handshake
-cipher suites
-HTTPS troubleshooting
-ALB
-Nginx
-Kubernetes Ingress
-EKS
-production incidents
-RoboShop
-interview questions
-```
-
-# End of 10-DNS-Records-and-Resolution.md
