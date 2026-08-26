@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 08-TCP-Three-Way-Handshake
+# TCP-Three-Way-Handshake
 
 ## 1. Purpose
 
@@ -3523,38 +3522,3 @@ When an application cannot connect:
 This is the transport-layer mindset expected from a production DevOps engineer.
 
 ---
-
-## 195. Next File
-
-The next planned file is:
-
-```text
-09-DNS-Fundamentals.md
-```
-
-It will cover:
-
-```text
-DNS architecture
-namespaces
-recursive vs authoritative DNS
-root servers
-TLD servers
-authoritative servers
-recursive resolvers
-caching
-TTL
-stub resolvers
-/etc/resolv.conf
-CoreDNS
-Kubernetes DNS
-Route 53
-private hosted zones
-DNS failure modes
-DNS troubleshooting
-EKS DNS architecture
-RoboShop service discovery
-production DNS incidents
-```
-
-# End of 08-TCP-Three-Way-Handshake.md
