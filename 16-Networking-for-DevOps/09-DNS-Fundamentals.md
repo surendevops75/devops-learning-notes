@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 09-DNS-Fundamentals
+# DNS-Fundamentals
 
 ## 1. Purpose
 
@@ -4324,49 +4323,3 @@ TLS → HTTP
 This layered approach prevents incorrect root-cause assumptions.
 
 ---
-
-## 238. Next File
-
-The next planned file is:
-
-```text
-10-DNS-Records-and-Resolution.md
-```
-
-It will go deeper into:
-
-```text
-A
-AAAA
-CNAME
-MX
-NS
-SOA
-TXT
-PTR
-SRV
-CAA
-DNS query process
-recursive resolution
-iterative resolution
-authoritative resolution
-DNS caching
-TTL
-negative caching
-DNSSEC
-Route 53 records
-alias records
-weighted routing
-latency routing
-failover
-geolocation
-DNS troubleshooting
-Kubernetes DNS
-CoreDNS
-EKS DNS
-production DNS architectures
-RoboShop DNS
-interview questions
-```
-
-# End of 09-DNS-Fundamentals.md
