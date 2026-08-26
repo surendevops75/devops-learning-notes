@@ -1,7 +1,3 @@
-# 16-Networking-for-DevOps
-
-# 03-MAC-IP-and-Network-Interfaces.md
-
 # MAC Addresses, IP Addresses and Network Interfaces
 
 ## Purpose
@@ -2595,41 +2591,3 @@ Understanding this chain is essential for Linux, AWS, Docker, Kubernetes
 and EKS troubleshooting.
 
 ------------------------------------------------------------------------
-
-# 113. Next Topic
-
-Next:
-
-``` text
-04-IPv4-and-IPv6.md
-```
-
-It will go deeply into:
-
-``` text
-IPv4 structure
-binary representation
-network/host portions
-subnet masks
-CIDR
-private/public addressing
-loopback
-link-local
-APIPA
-IPv6 structure
-IPv6 address types
-global unicast
-link-local
-multicast
-unique local addresses
-IPv6 routing
-dual stack
-AWS IPv6
-EKS IPv6
-Docker IPv6
-address troubleshooting
-production design
-interview preparation
-```
-
-# End of 03-MAC-IP-and-Network-Interfaces.md
