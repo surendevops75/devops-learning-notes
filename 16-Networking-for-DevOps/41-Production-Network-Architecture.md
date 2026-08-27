@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 41-Production-Network-Architecture
+# Production-Network-Architecture
 
 ## 1. Purpose
 
@@ -3527,4 +3526,4 @@ mitigation
 30. Keep architecture as simple as requirements allow.
 ```
 
-# End of 41-Production-Network-Architecture.md
+---
