@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 33-Service-to-Service-Networking
+# Service-to-Service-Networking
 
 ## 1. Purpose
 
@@ -5057,47 +5056,3 @@ DNS alias
 ```
 
 ---
-
-## 454. Next File
-
-The next planned file is:
-
-```text
-34-External-Traffic-to-EKS.md
-```
-
-It will cover:
-
-```text
-Internet
-Route 53
-CloudFront
-WAF
-ALB
-NLB
-Ingress
-AWS Load Balancer Controller
-public/private subnets
-security groups
-NACLs
-NAT
-IGW
-TLS/ACM
-DNS
-client-to-EKS traffic flow
-external-to-Service flow
-external-to-Pod flow
-health checks
-target types
-IP vs instance mode
-Kubernetes Ingress
-production YAMLs
-RoboShop architecture
-production troubleshooting
-security
-observability
-failure scenarios
-and interview preparation
-```
-
-# End of 33-Service-to-Service-Networking.md
