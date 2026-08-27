@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 43-Networking-Production-Scenarios
+# Networking-Production-Scenarios
 
 ## 1. Purpose
 
@@ -4779,4 +4778,4 @@ PERMANENT FIX
 PREVENTION
 ```
 
-# End of 43-Networking-Production-Scenarios.md
+---
