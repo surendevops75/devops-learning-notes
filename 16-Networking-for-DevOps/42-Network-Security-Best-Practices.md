@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 42-Network-Security-Best-Practices
+# Network-Security-Best-Practices
 
 ## 1. Purpose
 
@@ -3161,4 +3160,4 @@ and apply the narrowest safe mitigation.
 30. Treat network security as continuous engineering.
 ```
 
-# End of 42-Network-Security-Best-Practices.md
+---
