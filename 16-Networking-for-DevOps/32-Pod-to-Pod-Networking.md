@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 32-Pod-to-Pod-Networking
+# Pod-to-Pod-Networking
 
 ## 1. Purpose
 
@@ -5487,40 +5486,3 @@ Destination Pod
 ```
 
 ---
-
-## 476. Next File
-
-The next planned file is:
-
-```text
-33-Service-to-Service-Networking.md
-```
-
-It will deeply cover:
-
-```text
-Kubernetes Services
-ClusterIP
-NodePort
-LoadBalancer
-headless Services
-EndpointSlices
-kube-proxy
-service discovery
-DNS
-iptables/IPVS/eBPF concepts
-service-to-service traffic
-cross-namespace communication
-NetworkPolicy
-service mesh
-internal ALB/NLB
-AWS service dependencies
-production YAMLs
-RoboShop
-GitOps
-troubleshooting
-failure scenarios
-and interview preparation
-```
-
-# End of 32-Pod-to-Pod-Networking.md
