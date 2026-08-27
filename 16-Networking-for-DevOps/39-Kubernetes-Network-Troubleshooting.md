@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 39-Kubernetes-Network-Troubleshooting
+# Kubernetes-Network-Troubleshooting
 
 ## 1. Purpose
 
@@ -5485,4 +5484,4 @@ aws ec2 describe-network-interfaces --network-interface-ids <eni>
 30. Fix the exact failing layer instead of making broad network changes.
 ```
 
-# End of 39-Kubernetes-Network-Troubleshooting.md
+---
