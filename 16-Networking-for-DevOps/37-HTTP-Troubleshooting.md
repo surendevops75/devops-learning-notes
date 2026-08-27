@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 37-HTTP-Troubleshooting
+# HTTP-Troubleshooting
 
 ## 1. Purpose
 
@@ -4557,4 +4556,4 @@ Database/External Dependency
 
 without treating every failure as an "application issue."
 
-# End of 37-HTTP-Troubleshooting.md
+---
