@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 25-Kubernetes-Networking
+# Kubernetes-Networking
 
 ## 1. Purpose
 
@@ -4114,37 +4113,3 @@ Application
 Never assume "Kubernetes networking is broken" before isolating the layer.
 
 ---
-
-## 314. Next File
-
-The next planned file is:
-
-```text
-26-Kubernetes-Service-Networking.md
-```
-
-It will go deeper into:
-
-```text
-ClusterIP
-NodePort
-LoadBalancer
-ExternalName
-Service selectors
-EndpointSlices
-kube-proxy
-iptables
-IPVS
-service routing
-session affinity
-internal load balancing
-AWS NLB integration
-service troubleshooting
-production service patterns
-RoboShop service architecture
-commands
-production YAMLs
-interview preparation
-```
-
-# End of 25-Kubernetes-Networking.md
