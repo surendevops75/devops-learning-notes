@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 22-AWS-Internet-and-NAT-Gateways
+# AWS-Internet-and-NAT-Gateways
 
 ## 1. Purpose
 
@@ -3161,44 +3160,3 @@ Prod VPC ┘
 ```
 
 ---
-
-## 244. Next File
-
-The next planned file is:
-
-```text
-23-AWS-ALB-and-NLB.md
-```
-
-It will cover:
-
-```text
-ALB architecture
-NLB architecture
-L4 vs L7
-listeners
-target groups
-health checks
-TLS termination
-ACM
-host/path routing
-ALB annotations
-AWS Load Balancer Controller
-EKS Ingress
-Service LoadBalancer
-internal/external load balancers
-target types
-IP vs instance mode
-cross-zone behavior
-security groups
-NACLs
-WAF
-Route 53
-production HA
-Terraform
-RoboShop
-troubleshooting
-interview preparation
-```
-
-# End of 22-AWS-Internet-and-NAT-Gateways.md
