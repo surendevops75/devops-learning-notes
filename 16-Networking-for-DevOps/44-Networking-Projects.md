@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 44-Networking-Projects
+# Networking-Projects
 
 ## 1. Purpose
 
@@ -2511,4 +2510,4 @@ operable
 
 network architecture.
 
-# End of 44-Networking-Projects.md
+---
