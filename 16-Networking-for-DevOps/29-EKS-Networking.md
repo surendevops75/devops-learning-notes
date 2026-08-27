@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 29-EKS-Networking
+# EKS-Networking
 
 ## 1. Purpose
 
@@ -4811,45 +4810,3 @@ Every layer must have enough headroom.
 ```
 
 ---
-
-## 375. Next File
-
-The next planned file is:
-
-```text
-30-EKS-AWS-VPC-CNI.md
-```
-
-It will go deeper into:
-
-```text
-AWS VPC CNI architecture
-aws-node
-ipamd
-ENI allocation
-secondary IP mode
-prefix delegation
-warm IP/ENI targets
-Pod density calculations
-instance ENI limits
-custom networking
-ENIConfig
-Pod subnets
-security groups for Pods
-network policy implementation
-CNI configuration
-CNI metrics
-CNI logs
-IP exhaustion
-ENI exhaustion
-subnet exhaustion
-large-cluster scaling
-production tuning
-EKS upgrades
-RoboShop
-production configurations
-troubleshooting
-and interview preparation
-```
-
-# End of 29-EKS-Networking.md
