@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 19-AWS-VPC-Networking
+# AWS-VPC-Networking
 
 ## 1. Purpose
 
@@ -4018,37 +4017,3 @@ Private Route Table
 ```
 
 ---
-
-## 297. Next File
-
-The next planned file is:
-
-```text
-20-AWS-Subnets-and-Routing.md
-```
-
-It will go deeper into:
-
-```text
-subnet design
-public/private/database subnet tiers
-route-table association
-route propagation
-longest-prefix matching
-IGW
-NAT
-Transit Gateway
-VPC peering
-VPC endpoints
-EKS subnet design
-AWS Load Balancer subnet selection
-multi-AZ routing
-multi-account routing
-hybrid routing
-Terraform implementation
-production scenarios
-troubleshooting
-interview preparation
-```
-
-# End of 19-AWS-VPC-Networking.md
