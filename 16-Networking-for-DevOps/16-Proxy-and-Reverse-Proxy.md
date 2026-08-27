@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 16-Proxy-and-Reverse-Proxy
+# Proxy-and-Reverse-Proxy
 
 ## 1. Purpose
 
@@ -3428,40 +3427,3 @@ Response
 ```
 
 ---
-
-## 236. Next File
-
-The next planned file is:
-
-```text
-17-Load-Balancing.md
-```
-
-It will cover:
-
-```text
-load-balancing fundamentals
-L4 vs L7
-algorithms
-health checks
-ALB
-NLB
-ELB architecture
-target groups
-listeners
-routing
-sticky sessions
-cross-zone load balancing
-TLS
-AWS Load Balancer Controller
-Kubernetes Services
-Ingress
-EKS production architecture
-high availability
-failure scenarios
-RoboShop
-troubleshooting
-interview preparation
-```
-
-# End of 16-Proxy-and-Reverse-Proxy.md
