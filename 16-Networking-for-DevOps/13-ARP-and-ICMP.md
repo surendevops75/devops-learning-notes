@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 13-ARP-and-ICMP
+# ARP-and-ICMP
 
 ## 1. Purpose
 
@@ -3152,42 +3151,3 @@ Application
 When troubleshooting production connectivity, move layer by layer instead of guessing.
 
 ---
-
-## 200. Next File
-
-The next planned file is:
-
-```text
-14-NAT-and-PAT.md
-```
-
-It will cover:
-
-```text
-NAT fundamentals
-SNAT
-DNAT
-PAT
-static NAT
-dynamic NAT
-source/destination translation
-private/public addressing
-Linux NAT
-iptables/nftables concepts
-AWS NAT Gateway
-Internet Gateway
-NAT instances
-Kubernetes/EKS egress
-Load Balancers and NAT
-hairpin/NAT loopback
-port exhaustion
-ephemeral ports
-multi-AZ NAT architecture
-security
-troubleshooting
-RoboShop scenarios
-production architecture
-interview preparation
-```
-
-# End of 13-ARP-and-ICMP.md
