@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 34-External-Traffic-to-EKS
+# External-Traffic-to-EKS
 
 ## 1. Purpose
 
@@ -5304,5 +5303,3 @@ GitOps
 The most important production skill is not memorizing commands. It is being able to identify **which networking layer is failing, prove it with evidence, and make the smallest safe change**.
 
 ---
-
-# End of 34-External-Traffic-to-EKS.md
