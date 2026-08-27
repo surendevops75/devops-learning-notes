@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 26-Kubernetes-Service-Networking
+# Kubernetes-Service-Networking
 
 ## 1. Purpose
 
@@ -4239,44 +4238,3 @@ Application
 ```
 
 ---
-
-## 339. Next File
-
-The next planned file is:
-
-```text
-27-Kubernetes-Ingress-Networking.md
-```
-
-It will cover:
-
-```text
-Ingress fundamentals
-Ingress API
-IngressClass
-Ingress controllers
-AWS Load Balancer Controller
-ALB architecture
-host-based routing
-path-based routing
-TLS
-ACM
-HTTPS redirects
-annotations
-target-type IP/instance
-health checks
-ALB groups
-internal ALB
-internet-facing ALB
-WAF
-Route 53
-ExternalDNS
-multi-service routing
-canary/advanced routing concepts
-production Ingress YAMLs
-EKS troubleshooting
-RoboShop
-interview preparation
-```
-
-# End of 26-Kubernetes-Service-Networking.md
