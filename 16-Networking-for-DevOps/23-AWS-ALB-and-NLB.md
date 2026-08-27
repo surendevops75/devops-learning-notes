@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 23-AWS-ALB-and-NLB
+# AWS-ALB-and-NLB
 
 ## 1. Purpose
 
@@ -3684,50 +3683,3 @@ Application
 ```
 
 ---
-
-## 282. Next File
-
-The next planned file is:
-
-```text
-24-AWS-Route53-and-DNS.md
-```
-
-It will cover:
-
-```text
-Route 53 architecture
-DNS fundamentals
-hosted zones
-public/private hosted zones
-A/AAAA/CNAME/NS/SOA/MX/TXT
-Alias records
-routing policies
-simple
-weighted
-latency
-failover
-geolocation
-geoproximity
-IP-based routing
-health checks
-DNS failover
-private DNS
-Route 53 Resolver
-Resolver rules
-inbound/outbound endpoints
-EKS DNS
-CoreDNS
-split-horizon DNS
-ALB/NLB integration
-multi-account DNS
-multi-region architecture
-ACM validation
-external DNS
-production troubleshooting
-RoboShop
-Terraform
-interview preparation
-```
-
-# End of 23-AWS-ALB-and-NLB.md
