@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 28-Kubernetes-NetworkPolicies
+# Kubernetes-NetworkPolicies
 
 ## 1. Purpose
 
@@ -4196,45 +4195,3 @@ Application listener?
 ```
 
 ---
-
-## 318. Next File
-
-The next planned file is:
-
-```text
-29-EKS-Networking.md
-```
-
-It will deeply cover:
-
-```text
-EKS networking architecture
-AWS VPC CNI
-VPC and subnet design
-Pod IP allocation
-ENIs
-secondary IPs
-prefix delegation
-custom networking
-security groups for Pods
-private/public EKS endpoints
-DNS
-CoreDNS
-NAT
-VPC endpoints
-route tables
-multi-AZ networking
-EKS control-plane networking
-worker-node networking
-Pod-to-VPC traffic
-Service networking integration
-ALB/NLB integration
-NetworkPolicy integration
-production EKS network architecture
-troubleshooting
-production YAML/configuration
-RoboShop
-and interview preparation
-```
-
-# End of 28-Kubernetes-NetworkPolicies.md
