@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 27-Kubernetes-Ingress-Networking
+# Kubernetes-Ingress-Networking
 
 ## 1. Purpose
 
@@ -4421,36 +4420,3 @@ Application
 ```
 
 ---
-
-## 334. Next File
-
-The next planned file is:
-
-```text
-28-Kubernetes-NetworkPolicies.md
-```
-
-It will deeply cover:
-
-```text
-NetworkPolicy fundamentals
-Ingress rules
-Egress rules
-podSelector
-namespaceSelector
-ipBlock
-ports
-default deny
-DNS policies
-namespace isolation
-microservice segmentation
-AWS VPC CNI network policy
-security groups for Pods
-production zero-trust patterns
-RoboShop policies
-production YAMLs
-troubleshooting
-and interview preparation
-```
-
-# End of 27-Kubernetes-Ingress-Networking.md
