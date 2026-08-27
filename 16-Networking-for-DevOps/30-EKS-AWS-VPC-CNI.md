@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 30-EKS-AWS-VPC-CNI
+# EKS-AWS-VPC-CNI
 
 ## 1. Purpose
 
@@ -4052,50 +4051,3 @@ Subnet     Limits       AWS API
 ```
 
 ---
-
-## 340. Next File
-
-The next planned file is:
-
-```text
-31-EKS-ALB-Networking.md
-```
-
-It will deeply cover:
-
-```text
-AWS Load Balancer Controller
-ALB architecture
-IngressClass
-Ingress resources
-internet-facing ALB
-internal ALB
-IP target mode
-instance target mode
-TargetGroupBinding
-listeners
-listener rules
-host routing
-path routing
-TLS certificates
-ACM
-WAF
-security groups
-subnet discovery
-annotations
-health checks
-cross-zone behavior
-ALB access logs
-CloudWatch metrics
-Ingress to Pod traffic
-NetworkPolicy
-Security Groups for Pods
-production ALB architecture
-RoboShop
-troubleshooting
-production YAMLs
-GitOps/Argo CD
-and interview preparation
-```
-
-# End of 30-EKS-AWS-VPC-CNI.md
