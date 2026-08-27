@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 15-Firewalls-and-Network-Security
+# Firewalls-and-Network-Security
 
 ## 1. Purpose
 
@@ -4170,40 +4169,3 @@ Application Auth
 No single layer should be treated as the entire security architecture.
 
 ---
-
-## 265. Next File
-
-The next planned file is:
-
-```text
-16-Proxy-and-Reverse-Proxy.md
-```
-
-It will cover:
-
-```text
-proxy fundamentals
-forward proxy
-reverse proxy
-transparent proxy
-explicit proxy
-Nginx
-ALB
-Envoy
-Ingress
-TLS termination
-headers
-X-Forwarded-For
-proxy protocol
-load balancing
-caching
-authentication
-security
-Kubernetes/EKS
-RoboShop
-production architecture
-troubleshooting
-interview preparation
-```
-
-# End of 15-Firewalls-and-Network-Security.md
