@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 17-Load-Balancing
+# Load-Balancing
 
 ## 1. Purpose
 
@@ -3412,45 +3411,3 @@ Load Balancer
 ```
 
 ---
-
-## 238. Next File
-
-The next planned file is:
-
-```text
-18-Nginx.md
-```
-
-It will cover:
-
-```text
-Nginx architecture
-installation
-configuration
-server blocks
-locations
-upstreams
-reverse proxy
-load balancing
-TLS
-headers
-caching
-compression
-rate limiting
-security hardening
-systemd
-logs
-monitoring
-Nginx on EC2
-Nginx in Docker
-Nginx in Kubernetes
-Nginx Ingress Controller
-EKS
-ALB vs Nginx
-production architecture
-RoboShop
-troubleshooting
-interview preparation
-```
-
-# End of 17-Load-Balancing.md
