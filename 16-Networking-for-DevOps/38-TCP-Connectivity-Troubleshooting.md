@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 38-TCP-Connectivity-Troubleshooting
+# TCP-Connectivity-Troubleshooting
 
 ## 1. Purpose
 
@@ -4443,4 +4442,4 @@ aws elbv2 describe-target-health --target-group-arn <arn>
 30. State root cause in terms of the exact failed layer.
 ```
 
-# End of 38-TCP-Connectivity-Troubleshooting.md
+---
