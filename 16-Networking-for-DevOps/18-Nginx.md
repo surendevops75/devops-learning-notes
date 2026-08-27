@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 18-Nginx
+# Nginx
 
 ## 1. Purpose
 
@@ -3706,45 +3705,3 @@ with Nginx added only when there is a concrete requirement for it.
 ```
 
 ---
-
-## 262. Next File
-
-The next planned file is:
-
-```text
-19-AWS-VPC-Networking.md
-```
-
-It will cover:
-
-```text
-AWS VPC architecture
-CIDR
-subnets
-route tables
-internet gateway
-NAT gateway
-VPC endpoints
-security groups
-NACLs
-DNS
-DHCP options
-ENIs
-secondary IPs
-AWS networking for EKS
-public/private subnets
-multi-AZ architecture
-routing
-VPC peering
-Transit Gateway
-PrivateLink concepts
-VPC Flow Logs
-network security
-Terraform
-production architecture
-RoboShop
-troubleshooting
-interview preparation
-```
-
-# End of 18-Nginx.md
