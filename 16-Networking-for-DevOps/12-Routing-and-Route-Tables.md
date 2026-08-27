@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 12-Routing-and-Route-Tables
+# Routing-and-Route-Tables
 
 ## 1. Purpose
 
@@ -4046,37 +4045,3 @@ When a production application cannot connect:
 This layered approach prevents changing random infrastructure components without evidence.
 
 ---
-
-## 254. Next File
-
-The next planned file is:
-
-```text
-13-ARP-and-ICMP.md
-```
-
-It will cover:
-
-```text
-ARP
-ARP cache
-ARP request/reply
-gratuitous ARP
-proxy ARP
-IPv6 Neighbor Discovery
-ICMP
-ICMPv4/ICMPv6
-ping
-traceroute
-Destination Unreachable
-Time Exceeded
-PMTUD
-network diagnostics
-AWS/EKS behavior
-security considerations
-production troubleshooting
-RoboShop scenarios
-interview preparation
-```
-
-# End of 12-Routing-and-Route-Tables.md
