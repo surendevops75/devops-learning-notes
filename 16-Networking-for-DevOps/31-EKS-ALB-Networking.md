@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 31-EKS-ALB-Networking
+# EKS-ALB-Networking
 
 ## 1. Purpose
 
@@ -5190,42 +5189,3 @@ the corresponding AWS resources.
 ```
 
 ---
-
-## 436. Next File
-
-The next planned file is:
-
-```text
-32-Pod-to-Pod-Networking.md
-```
-
-It will deeply cover:
-
-```text
-Pod IP communication
-same-node networking
-cross-node networking
-VPC CNI packet flow
-Linux network namespaces
-veth pairs
-routing
-iptables
-ENIs
-prefix delegation
-NetworkPolicy
-security groups
-Pod-to-Pod traffic
-cross-AZ traffic
-DNS
-Service vs Pod IP
-packet troubleshooting
-tcpdump
-conntrack
-production architectures
-RoboShop traffic flows
-failure scenarios
-production YAMLs
-and interview preparation
-```
-
-# End of 31-EKS-ALB-Networking.md
