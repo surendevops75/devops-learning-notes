@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 11-HTTP-HTTPS-and-TLS
+# HTTP-HTTPS-and-TLS
 
 ## 1. Purpose
 
@@ -5075,45 +5074,3 @@ For a production HTTPS request:
 If you understand this chain, most HTTP/HTTPS production incidents become a structured troubleshooting problem rather than guesswork.
 
 ---
-
-## 303. Next File
-
-The next planned file is:
-
-```text
-12-Routing-and-Route-Tables.md
-```
-
-It will cover:
-
-```text
-routing fundamentals
-default routes
-static routing
-dynamic routing
-route tables
-longest prefix match
-next hop
-gateway
-ARP interaction
-Linux routing
-ip route
-ip rule
-policy routing
-AWS route tables
-VPC routing
-public/private subnet routing
-NAT routing
-IGW
-Transit Gateway
-VPC peering
-EKS routing
-Pod routing
-VPC CNI
-Network debugging
-production scenarios
-RoboShop
-interview questions
-```
-
-# End of 11-HTTP-HTTPS-and-TLS.md
