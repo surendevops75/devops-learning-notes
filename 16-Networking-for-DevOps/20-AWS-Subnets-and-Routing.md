@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 20-AWS-Subnets-and-Routing
+# AWS-Subnets-and-Routing
 
 ## 1. Purpose
 
@@ -3071,36 +3070,3 @@ Private Route Table
 ```
 
 ---
-
-## 246. Next File
-
-The next planned file is:
-
-```text
-21-AWS-Security-Groups-and-NACLs.md
-```
-
-It will cover:
-
-```text
-Security Groups
-NACLs
-stateful vs stateless behavior
-rule evaluation
-ephemeral ports
-SG references
-EKS security groups
-ALB/NLB security
-RDS security
-EKS security groups for Pods
-NetworkPolicy comparison
-AWS Firewall layers
-least privilege
-production patterns
-Terraform
-troubleshooting
-real-world scenarios
-interview preparation
-```
-
-# End of 20-AWS-Subnets-and-Routing.md
