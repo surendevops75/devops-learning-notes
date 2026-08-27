@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 40-EKS-Network-Troubleshooting
+# EKS-Network-Troubleshooting
 
 ## 1. Purpose
 
@@ -4256,4 +4255,4 @@ tcpdump -ni any host <ip> and tcp port <port>
 40. Validate the original failing path after every fix.
 ```
 
-# End of 40-EKS-Network-Troubleshooting.md
+---
