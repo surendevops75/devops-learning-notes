@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 21-AWS-Security-Groups-and-NACLs
+# AWS-Security-Groups-and-NACLs
 
 ## 1. Purpose
 
@@ -3247,37 +3246,3 @@ RDS
 ```
 
 ---
-
-## 245. Next File
-
-The next planned file is:
-
-```text
-22-AWS-Internet-and-NAT-Gateways.md
-```
-
-It will cover:
-
-```text
-Internet Gateway
-NAT Gateway
-NAT instances
-public/private routing
-NAT per AZ
-centralized egress
-IPv4/IPv6 egress
-Egress-Only Internet Gateway
-VPC endpoints
-NAT cost optimization
-EKS private-node Internet access
-ECR/S3/STS access
-AWS Network Firewall
-inspection routing
-Terraform
-production architecture
-troubleshooting
-RoboShop
-interview preparation
-```
-
-# End of 21-AWS-Security-Groups-and-NACLs.md
