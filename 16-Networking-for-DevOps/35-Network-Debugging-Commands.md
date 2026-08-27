@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 35-Network-Debugging-Commands
+# Network-Debugging-Commands
 
 ## 1. Purpose
 
@@ -5352,5 +5351,3 @@ Application healthy?
 ```
 
 ---
-
-# End of 35-Network-Debugging-Commands.md
