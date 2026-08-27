@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 36-DNS-Troubleshooting
+# DNS-Troubleshooting
 
 ## 1. Purpose
 
@@ -4636,5 +4635,3 @@ tcpdump -ni any port 53
 ```
 
 ---
-
-# End of 36-DNS-Troubleshooting.md
