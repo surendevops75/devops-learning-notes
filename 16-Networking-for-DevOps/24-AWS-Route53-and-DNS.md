@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 24-AWS-Route53-and-DNS
+# AWS-Route53-and-DNS
 
 ## 1. Purpose
 
@@ -3933,41 +3932,3 @@ Pod/application logs
 ```
 
 ---
-
-## 312. Next File
-
-The next planned file is:
-
-```text
-25-Kubernetes-Networking.md
-```
-
-It will cover:
-
-```text
-Kubernetes networking model
-Pod networking
-CNI
-network namespaces
-veth pairs
-node networking
-Pod CIDR
-Service CIDR
-ClusterIP
-kube-proxy
-iptables/IPVS concepts
-AWS VPC CNI
-Pod IP allocation
-routing
-DNS
-NetworkPolicy
-Ingress
-EKS networking architecture
-production troubleshooting
-RoboShop networking
-commands
-Terraform integration
-interview preparation
-```
-
-# End of 24-AWS-Route53-and-DNS.md
