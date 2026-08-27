@@ -1,5 +1,4 @@
-# 16-Networking-for-DevOps
-# 14-NAT-and-PAT
+# NAT-and-PAT
 
 ## 1. Purpose
 
@@ -3468,38 +3467,3 @@ Application
 NAT is one layer of the complete production connectivity path.
 
 ---
-
-## 234. Next File
-
-The next planned file is:
-
-```text
-15-Firewalls-and-Network-Security.md
-```
-
-It will cover:
-
-```text
-firewall fundamentals
-stateful vs stateless filtering
-host firewalls
-iptables
-nftables
-AWS Security Groups
-AWS NACLs
-AWS Network Firewall
-WAF
-network segmentation
-zero-trust concepts
-security layers
-Kubernetes NetworkPolicy
-EKS security
-ingress/egress control
-microservice security
-RoboShop security architecture
-production troubleshooting
-security scenarios
-interview preparation
-```
-
-# End of 14-NAT-and-PAT.md
