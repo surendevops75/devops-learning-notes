@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 18-Docker-Artifactory-Integration
+# Docker-Artifactory-Integration
 
 ## 1. Purpose
 
@@ -2163,5 +2162,3 @@ registries and improving build consistency and availability.
 ```
 
 ---
-
-# END OF 18-Docker-Artifactory-Integration.md
