@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 04-Local-Remote-and-Virtual-Repositories
+# Local-Remote-and-Virtual-Repositories
 
 ## 1. Purpose
 
@@ -2395,5 +2394,3 @@ GLOBAL
 ```
 
 ---
-
-# END OF 04-Local-Remote-and-Virtual-Repositories.md
