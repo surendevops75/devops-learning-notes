@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 14-Build-Info
+# Build-Info
 
 ## 1. Purpose
 
@@ -1728,5 +1727,3 @@ identity permissions and pipeline configuration.
 ```
 
 ---
-
-# END OF 14-Build-Info.md
