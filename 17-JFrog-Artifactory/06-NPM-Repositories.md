@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 06-NPM-Repositories
+# NPM-Repositories
 
 ## 1. Purpose
 
@@ -2509,5 +2508,3 @@ dependency scanning and immutable production releases.
 ```
 
 ---
-
-# END OF 06-NPM-Repositories.md
