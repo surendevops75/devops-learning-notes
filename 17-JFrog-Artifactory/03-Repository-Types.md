@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 03-Repository-Types
+# Repository-Types
 
 ## 1. Purpose
 
@@ -2621,5 +2620,3 @@ CONSUMERS
 ```
 
 ---
-
-# END OF 03-Repository-Types.md
