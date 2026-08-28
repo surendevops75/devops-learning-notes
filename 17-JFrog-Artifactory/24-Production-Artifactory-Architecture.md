@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 24-Production-Artifactory-Architecture
+# Production-Artifactory-Architecture
 
 ## 1. Purpose
 
@@ -2064,5 +2063,3 @@ What is peak concurrency?
 ```
 
 ---
-
-# END OF 24-Production-Artifactory-Architecture.md
