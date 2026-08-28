@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 21-Artifactory-Security
+# Artifactory-Security
 
 ## 1. Purpose
 
@@ -2129,5 +2128,3 @@ deployments, restore trusted artifacts and redeploy clean versions.
 ```
 
 ---
-
-# END OF 21-Artifactory-Security.md
