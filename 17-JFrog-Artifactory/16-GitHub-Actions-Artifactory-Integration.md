@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 16-GitHub-Actions-Artifactory-Integration
+# GitHub-Actions-Artifactory-Integration
 
 ## 1. Purpose
 
@@ -2383,5 +2382,3 @@ approvals.
 ```
 
 ---
-
-# END OF 16-GitHub-Actions-Artifactory-Integration.md
