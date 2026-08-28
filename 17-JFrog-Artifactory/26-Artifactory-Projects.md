@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 26-Artifactory-Projects
+# Artifactory-Projects
 
 ## 1. Purpose
 
@@ -2078,5 +2077,3 @@ service identities, apply retention policy and document the retirement.
 ```
 
 ---
-
-# END OF 26-Artifactory-Projects.md
