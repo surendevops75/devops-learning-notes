@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 01-Artifactory-Fundamentals
+# Artifactory-Fundamentals
 
 ## 1. Purpose
 
@@ -2250,5 +2249,3 @@ scaling.
 ```
 
 ---
-
-# END OF 01-Artifactory-Fundamentals.md
