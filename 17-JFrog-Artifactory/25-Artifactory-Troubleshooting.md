@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 25-Artifactory-Troubleshooting
+# Artifactory-Troubleshooting
 
 ## 1. Purpose
 
@@ -2110,5 +2109,3 @@ evidence, identify root cause and document preventive actions.
 ```
 
 ---
-
-# END OF 25-Artifactory-Troubleshooting.md
