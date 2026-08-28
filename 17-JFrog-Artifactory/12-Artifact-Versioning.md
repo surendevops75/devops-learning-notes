@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 12-Artifact-Versioning
+# Artifact-Versioning
 
 ## 1. Purpose
 
@@ -2150,5 +2149,3 @@ can be 4.2.1, the Docker image can be 4.2.1 and the Helm chart can be
 ```
 
 ---
-
-# END OF 12-Artifact-Versioning.md
