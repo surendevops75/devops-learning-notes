@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 07-PyPI-Repositories
+# PyPI-Repositories
 
 ## 1. Purpose
 
@@ -2394,5 +2393,3 @@ lifecycle policies.
 ```
 
 ---
-
-# END OF 07-PyPI-Repositories.md
