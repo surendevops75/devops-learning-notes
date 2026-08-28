@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 17-GitLab-Artifactory-Integration
+# GitLab-Artifactory-Integration
 
 ## 1. Purpose
 
@@ -2331,5 +2330,3 @@ permissions while common standards are managed centrally.
 ```
 
 ---
-
-# END OF 17-GitLab-Artifactory-Integration.md
