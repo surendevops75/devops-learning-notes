@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 15-Jenkins-Artifactory-Integration
+# Jenkins-Artifactory-Integration
 
 ## 1. Purpose
 
@@ -2022,5 +2021,3 @@ agent, assess affected deployments and rotate related credentials.
 ```
 
 ---
-
-# END OF 15-Jenkins-Artifactory-Integration.md
