@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 08-Docker-Repositories
+# Docker-Repositories
 
 ## 1. Purpose
 
@@ -2543,5 +2542,3 @@ rather than rebuilding it for each environment.
 ```
 
 ---
-
-# END OF 08-Docker-Repositories.md
