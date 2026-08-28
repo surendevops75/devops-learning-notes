@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 23-Backup-and-Disaster-Recovery
+# Backup-and-Disaster-Recovery
 
 ## 1. Purpose
 
@@ -1850,5 +1849,3 @@ from a known-good recovery point.
 ```
 
 ---
-
-# END OF 23-Backup-and-Disaster-Recovery.md
