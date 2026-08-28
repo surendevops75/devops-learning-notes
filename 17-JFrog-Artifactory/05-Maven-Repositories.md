@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 05-Maven-Repositories
+# Maven-Repositories
 
 ## 1. Purpose
 
@@ -2358,5 +2357,3 @@ RELIABILITY
 ```
 
 ---
-
-# END OF 05-Maven-Repositories.md
