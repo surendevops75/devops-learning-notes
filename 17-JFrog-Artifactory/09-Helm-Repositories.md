@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 09-Helm-Repositories
+# Helm-Repositories
 
 ## 1. Purpose
 
@@ -2418,5 +2417,3 @@ retention and provide HA, backup and DR.
 ```
 
 ---
-
-# END OF 09-Helm-Repositories.md
