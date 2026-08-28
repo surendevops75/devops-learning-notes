@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 02-Artifactory-Architecture
+# Artifactory-Architecture
 
 ## 1. Purpose
 
@@ -2665,5 +2664,3 @@ SECURITY
 ```
 
 ---
-
-# END OF 02-Artifactory-Architecture.md
