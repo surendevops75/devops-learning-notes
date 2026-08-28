@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 19-Kubernetes-Artifactory-Integration
+# Kubernetes-Artifactory-Integration
 
 ## 1. Purpose
 
@@ -2208,5 +2207,3 @@ repository. Argo CD reconciles that desired state into Kubernetes.
 ```
 
 ---
-
-# END OF 19-Kubernetes-Artifactory-Integration.md
