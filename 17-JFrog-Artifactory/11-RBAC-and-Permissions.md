@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 11-RBAC-and-Permissions
+# RBAC-and-Permissions
 
 ## 1. Purpose
 
@@ -2040,5 +2039,3 @@ mandatory post-incident review.
 ```
 
 ---
-
-# END OF 11-RBAC-and-Permissions.md
