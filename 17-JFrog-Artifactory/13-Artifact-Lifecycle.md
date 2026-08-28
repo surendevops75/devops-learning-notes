@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 13-Artifact-Lifecycle
+# Artifact-Lifecycle
 
 ## 1. Purpose
 
@@ -2141,5 +2140,3 @@ same application release and CI build.
 ```
 
 ---
-
-# END OF 13-Artifact-Lifecycle.md
