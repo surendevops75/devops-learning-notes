@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 20-ECR-vs-Artifactory
+# ECR-vs-Artifactory
 
 ## 1. Purpose
 
@@ -2080,5 +2079,3 @@ database, HA, backup and platform engineering operations.
 ```
 
 ---
-
-# END OF 20-ECR-vs-Artifactory.md
