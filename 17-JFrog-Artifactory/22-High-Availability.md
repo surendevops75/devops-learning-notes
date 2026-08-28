@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 22-High-Availability
+# High-Availability
 
 ## 1. Purpose
 
@@ -2186,5 +2185,3 @@ documented RTO/RPO and rollback procedures.
 ```
 
 ---
-
-# END OF 22-High-Availability.md
