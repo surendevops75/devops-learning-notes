@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 27-Artifactory-Interview-Preparation
+# Artifactory-Interview-Preparation
 
 ## 1. Purpose
 
@@ -1530,7 +1529,3 @@ Ownership, governance and scoped access.
 ```
 
 ---
-
-# END OF 27-Artifactory-Interview-Preparation.md
-
-# END OF 17-JFrog-Artifactory SECTION
