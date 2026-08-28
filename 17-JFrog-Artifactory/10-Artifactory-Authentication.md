@@ -1,5 +1,4 @@
-# 17-JFrog-Artifactory
-# 10-Artifactory-Authentication
+# Artifactory-Authentication
 
 ## 1. Purpose
 
@@ -2351,5 +2350,3 @@ automation, GitOps and runtime credentials.
 ```
 
 ---
-
-# END OF 10-Artifactory-Authentication.md
