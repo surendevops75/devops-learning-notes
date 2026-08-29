@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 17-Production-Build-Pipelines
+# Production-Build-Pipelines
 
 ## 1. Purpose
 
@@ -2303,5 +2302,4 @@ cache is only an optimization.
 159. Improve speed without weakening security.
 160. Design the pipeline so the secure path is the easiest path.
 ```
-
-# END OF 17-Production-Build-Pipelines.md
+---
