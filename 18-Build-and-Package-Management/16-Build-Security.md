@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 16-Build-Security
+# Build-Security
 
 ## 1. Purpose
 
@@ -2549,4 +2548,4 @@ an owner, risk justification, mitigation, approval and expiry date.
 160. Validate the exact security architecture used in production.
 ```
 
-# END OF 16-Build-Security.md
+---
