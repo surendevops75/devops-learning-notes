@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 08-Maven-Repository-Management
+# Maven-Repository-Management
 
 ## 1. Purpose
 
@@ -2557,5 +2556,3 @@ cold-cache behavior and monitor upstream/cache health separately.
 ```
 
 ---
-
-# END OF 08-Maven-Repository-Management.md
