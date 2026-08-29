@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 15-Artifact-Publishing
+# Artifact-Publishing
 
 ## 1. Purpose
 
@@ -2640,5 +2639,4 @@ artifact and preserve source-to-artifact-to-production traceability.
     promotion, deployment, rollback and audit architecture used in
     production.
 ```
-
-# END OF 15-Artifact-Publishing.md
+---
