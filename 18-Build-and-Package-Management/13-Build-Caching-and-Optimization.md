@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 13-Build-Caching-and-Optimization
+# Build-Caching-and-Optimization
 
 ## 1. Purpose
 
@@ -1602,5 +1601,4 @@ I perform warm-cache and cold-cache builds and compare expected outputs. The bui
 149. Keep release artifacts immutable.
 150. Validate exact CI, runner, cache, registry, build-tool, dependency, container and deployment behavior for the production architecture actually used.
 ```
-
-# END OF 13-Build-Caching-and-Optimization.md
+---
