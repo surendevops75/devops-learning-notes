@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 07-Maven-Multi-Module-Projects
+# Maven-Multi-Module-Projects
 
 ## 1. Purpose
 
@@ -2240,5 +2239,3 @@ only the intended artifacts while preserving dependency correctness.
 ```
 
 ---
-
-# END OF 07-Maven-Multi-Module-Projects.md
