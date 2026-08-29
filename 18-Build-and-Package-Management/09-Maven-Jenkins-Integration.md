@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 09-Maven-Jenkins-Integration
+# Maven-Jenkins-Integration
 
 ## 1. Purpose
 
@@ -2429,5 +2428,3 @@ permissions required for the operation.
 ```
 
 ---
-
-# END OF 09-Maven-Jenkins-Integration.md
