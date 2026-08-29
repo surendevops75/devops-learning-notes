@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 06-Maven-Dependencies-and-Plugins
+# Maven-Dependencies-and-Plugins
 
 ## 1. Purpose
 
@@ -2394,5 +2393,3 @@ production failure.
 ```
 
 ---
-
-# END OF 06-Maven-Dependencies-and-Plugins.md
