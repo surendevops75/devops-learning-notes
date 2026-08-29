@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 12-Python-Package-Management
+# Python-Package-Management
 
 ## 1. Purpose
 
@@ -2482,5 +2481,3 @@ previously tested.
 ```
 
 ---
-
-# END OF 12-Python-Package-Management.md
