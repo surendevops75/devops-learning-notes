@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 10-Maven-GitHub-Actions
+# Maven-GitHub-Actions
 
 ## 1. Purpose
 
@@ -2656,5 +2655,3 @@ support it. I would rotate existing credentials and audit their usage.
 ```
 
 ---
-
-# END OF 10-Maven-GitHub-Actions.md
