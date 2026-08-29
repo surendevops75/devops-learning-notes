@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 04-Maven-pom.xml
+# Maven-pom.xml
 
 ## 1. Purpose
 
@@ -2189,5 +2188,3 @@ that the failure is authentication versus authorization.
 ```
 
 ---
-
-# END OF 04-Maven-pom.xml.md
