@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 14-Versioning-and-Release-Management
+# Versioning-and-Release-Management
 
 
 # 01 Versioning Fundamentals
@@ -1404,4 +1403,4 @@ The strongest release system minimizes manual copying, minimizes
 mutable state, protects credentials, preserves evidence, and makes the
 safe path the easiest path.
 
-# END OF 14-Versioning-and-Release-Management.md
+---
