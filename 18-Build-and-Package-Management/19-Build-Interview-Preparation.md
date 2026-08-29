@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 19-Build-Interview-Preparation
+# Build-Interview-Preparation
 
 ## 1. Purpose
 
@@ -1856,4 +1855,4 @@ kubectl get deployment
 100. Design the entire delivery chain for safe recovery.
 ```
 
-# END OF 19-Build-Interview-Preparation.md
+---
