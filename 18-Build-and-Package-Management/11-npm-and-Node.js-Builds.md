@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 11-npm-and-Node.js-Builds
+# npm-and-Node.js-Builds
 
 ## 1. Purpose
 
@@ -2441,5 +2440,3 @@ known-good artifact.
 ```
 
 ---
-
-# END OF 11-npm-and-Node.js-Builds.md
