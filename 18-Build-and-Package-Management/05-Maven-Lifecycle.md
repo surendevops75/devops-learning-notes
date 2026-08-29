@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 05-Maven-Lifecycle
+# Maven-Lifecycle
 
 ## 1. Purpose
 
@@ -2174,5 +2173,3 @@ where it was inherited from.
 ```
 
 ---
-
-# END OF 05-Maven-Lifecycle.md
