@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 03-Maven-Fundamentals
+# Maven-Fundamentals
 
 ## 1. Purpose
 
@@ -2220,5 +2219,3 @@ than changing dependencies blindly.
 ```
 
 ---
-
-# END OF 03-Maven-Fundamentals.md
