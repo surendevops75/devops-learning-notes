@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 02-Dependency-Management
+# Dependency-Management
 
 ## 1. Purpose
 
@@ -2226,5 +2225,3 @@ compatibility issue before creating a new release.
 ```
 
 ---
-
-# END OF 02-Dependency-Management.md
