@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 18-Build-Troubleshooting
+# Build-Troubleshooting
 
 ## 1. Purpose
 
@@ -2391,5 +2390,4 @@ approved enterprise cache or mirror rather than bypassing governance.
 160. Design production builds so failures are observable, diagnosable,
      recoverable and preventable.
 ```
-
-# END OF 18-Build-Troubleshooting.md
+---
