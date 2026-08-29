@@ -1,5 +1,4 @@
-# 18-Build-and-Package-Management
-# 01-Build-Systems-Fundamentals
+# Build-Systems-Fundamentals
 
 ## 1. Purpose
 
@@ -2555,5 +2554,3 @@ validate the improvement.
 ```
 
 ---
-
-# END OF 01-Build-Systems-Fundamentals.md
