@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 02-Production-DevOps-Architecture
+# Production-DevOps-Architecture
 
 ## 1. Purpose
 
@@ -5910,3 +5909,5 @@ The common theme is uncontrolled coupling and untested assumptions.
      deliver frequently while maintaining security, reliability,
      observability, recoverability, operability, and controlled cost.
 ```
+
+---
