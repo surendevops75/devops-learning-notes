@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 01-System-Design-for-DevOps
+# System-Design-for-DevOps
 
 ## 1. Purpose
 
@@ -2366,5 +2365,4 @@ DR
      satisfies the required reliability, security, scalability,
      recoverability, operability, and business constraints.
 ```
-
-# END OF 01-System-Design-for-DevOps.md
+---
