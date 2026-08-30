@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 23-Cost-Optimization-Architecture
+# Cost-Optimization-Architecture
 
 ## 1. Purpose
 
@@ -3347,5 +3346,4 @@ The correct objective is value per unit of spend.
      resource has an owner, every significant cost has a reason, every
      optimization is measured, and reliability remains protected.
 ```
-
-# END OF 23-Cost-Optimization-Architecture.md
+---
