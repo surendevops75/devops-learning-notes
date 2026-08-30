@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 13-Backup-and-Restore-Architecture
+# Backup-and-Restore-Architecture
 
 ## 1. Purpose
 
@@ -2358,5 +2357,4 @@ Use:
 250. The final objective of backup architecture is not copies; it is trusted,
      secure, measurable and repeatable recovery of business capability.
 ```
-
-# END OF 13-Backup-and-Restore-Architecture.md
+---
