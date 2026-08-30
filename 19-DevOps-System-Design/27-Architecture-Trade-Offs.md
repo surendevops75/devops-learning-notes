@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 27-Architecture-Trade-Offs
+# Architecture-Trade-Offs
 
 ## How to Use These Notes
 
@@ -8984,4 +8983,4 @@ vendor dependency
 Then I choose based on weighted requirements rather than familiarity.
 ```
 
-# END OF 27-Architecture-Trade-Offs.md
+---
