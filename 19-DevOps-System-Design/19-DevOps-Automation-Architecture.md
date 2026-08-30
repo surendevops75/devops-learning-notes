@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 19-DevOps-Automation-Architecture
+# DevOps-Automation-Architecture
 
 ## 1. Purpose
 
@@ -3485,5 +3484,4 @@ Answer:
      routine work automatically while preserving human control over ambiguous,
      high-risk and irreversible production decisions.
 ```
-
-# END OF 19-DevOps-Automation-Architecture.md
+---
