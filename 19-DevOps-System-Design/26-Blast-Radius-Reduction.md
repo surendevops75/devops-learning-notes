@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 26-Blast-Radius-Reduction
+# Blast-Radius-Reduction
 
 ## 1. Purpose
 
@@ -2750,4 +2749,4 @@ forward-recovery plans.
      from becoming an uncontrolled production-wide event.
 ```
 
-# END OF 26-Blast-Radius-Reduction.md
+---
