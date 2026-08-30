@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 18-Internal-Developer-Platforms
+# Internal-Developer-Platforms
 
 ## 1. Purpose
 
@@ -3510,5 +3509,4 @@ Answer:
      preserves autonomy, and enables teams to ship and operate software
      confidently at organizational scale.
 ```
-
-# END OF 18-Internal-Developer-Platforms.md
+---
