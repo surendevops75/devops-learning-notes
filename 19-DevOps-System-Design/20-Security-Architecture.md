@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 20-Security-Architecture
+# Security-Architecture
 
 ## 1. Purpose
 
@@ -3499,5 +3498,4 @@ Answer:
      cloud infrastructure, Kubernetes workloads and production data while
      enabling engineering teams to deliver safely at scale.
 ```
-
-# END OF 20-Security-Architecture.md
+---
