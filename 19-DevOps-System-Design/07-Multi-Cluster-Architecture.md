@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 07-Multi-Cluster-Architecture
+# Multi-Cluster-Architecture
 
 ## 1. Purpose
 
@@ -2090,5 +2089,4 @@ minimal and explicit.
      enough to contain failures while still being standardized enough to
      operate as one platform.
 ```
-
-# END OF 07-Multi-Cluster-Architecture.md
+---
