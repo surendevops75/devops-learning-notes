@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 15-Canary-Deployment
+# Canary-Deployment
 
 ## 1. Purpose
 
@@ -3210,5 +3209,4 @@ Use:
 250. The ultimate goal of canary deployment is controlled exposure, early
      detection, measurable evidence, rapid rollback and minimal blast radius.
 ```
-
-# END OF 15-Canary-Deployment.md
+---
