@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 17-Platform-Engineering
+# Platform-Engineering
 
 ## 1. Purpose
 
@@ -3487,5 +3486,4 @@ Answer:
      preserving developer autonomy, operational excellence and controlled
      organizational standards.
 ```
-
-# END OF 17-Platform-Engineering.md
+---
