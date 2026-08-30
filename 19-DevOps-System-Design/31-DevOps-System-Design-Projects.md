@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 31-DevOps-System-Design-Projects
+# DevOps-System-Design-Projects
 
 ## Purpose
 
@@ -2055,4 +2054,4 @@ What is the SLO?
 If these questions have demonstrable answers, the project has moved from a
 tutorial into production-oriented engineering.
 
-# END OF 31-DevOps-System-Design-Projects.md
+---
