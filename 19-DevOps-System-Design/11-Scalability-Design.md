@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 11-Scalability-Design
+# Scalability-Design
 
 ## 1. Purpose
 
@@ -2870,5 +2869,4 @@ autoscaling enabled
      reliability and cost remain within explicitly defined bounds as demand
      increases and failure conditions occur.
 ```
-
-# END OF 11-Scalability-Design.md
+---
