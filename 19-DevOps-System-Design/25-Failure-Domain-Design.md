@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 25-Failure-Domain-Design
+# Failure-Domain-Design
 
 ## 1. Purpose
 
@@ -2786,5 +2785,4 @@ A failure domain is not considered resilient until recovery is tested.
      failure in one domain does not become an uncontrolled failure across the
      entire production system.
 ```
-
-# END OF 25-Failure-Domain-Design.md
+---
