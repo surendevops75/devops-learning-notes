@@ -1,3 +1,5 @@
+# EKS-Platform-Design
+
 # 1. Purpose
 
 This file is a senior-level production design guide for Amazon EKS platforms.
@@ -3701,3 +3703,5 @@ How do we prove recovery works?
 ```
 
 That is the standard for a production EKS platform design.
+
+---
