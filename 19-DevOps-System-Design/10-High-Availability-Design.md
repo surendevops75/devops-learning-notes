@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 10-High-Availability-Design
+# High-Availability-Design
 
 ## 1. Purpose
 
@@ -2396,5 +2395,4 @@ validate the design through failure testing.
      sufficient capacity, and preserved user-facing SLOs—not by diagrams or
      replica counts alone.
 ```
-
-# END OF 10-High-Availability-Design.md
+---
