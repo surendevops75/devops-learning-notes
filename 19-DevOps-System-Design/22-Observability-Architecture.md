@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 22-Observability-Architecture
+# Observability-Architecture
 
 ## 1. Purpose
 
@@ -4033,5 +4032,4 @@ Add SLOs, alerting, ownership, cost controls and multi-cluster aggregation.
      observability platform that makes production behavior understandable and
      supports reliable engineering decisions.
 ```
-
-# END OF 22-Observability-Architecture.md
+---
