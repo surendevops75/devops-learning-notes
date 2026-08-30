@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 08-Multi-Account-AWS-Architecture
+# Multi-Account-AWS-Architecture
 
 ## 1. Purpose
 
@@ -2329,5 +2328,4 @@ account lifecycle
      preserving enough standardization to operate the organization as
      one platform.
 ```
-
-# END OF 08-Multi-Account-AWS-Architecture.md
+---
