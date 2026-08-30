@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 21-Secrets-Architecture
+# Secrets-Architecture
 
 ## 1. Purpose
 
@@ -4379,5 +4378,4 @@ used.
      only the credentials they need, for only as long as they need them, through
      strongly authenticated identities and continuously auditable controls.
 ```
-
-# END OF 21-Secrets-Architecture.md
+---
