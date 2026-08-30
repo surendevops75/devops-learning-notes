@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 28-Architecture-Whiteboard-Exercises
+# Architecture-Whiteboard-Exercises
 
 ## Purpose
 
@@ -2643,4 +2642,4 @@ invoice.
 10. Trade-offs
 ```
 
-# END OF 28-Architecture-Whiteboard-Exercises.md
+---
