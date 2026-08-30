@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 05-Kubernetes-Platform-Design
+# Kubernetes-Platform-Design
 
 ## 1. Purpose
 
@@ -3453,5 +3452,4 @@ continuing the rollout.
      deliver safely while the platform remains secure, observable,
      scalable, recoverable and resilient under failure.
 ```
-
-# END OF 05-Kubernetes-Platform-Design.md
+---
