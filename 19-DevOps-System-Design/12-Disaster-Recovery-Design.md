@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 12-Disaster-Recovery-Design
+# Disaster-Recovery-Design
 
 ## 1. Purpose
 
@@ -2354,5 +2353,4 @@ Use:
      failure scenario, with known ownership, recoverable data, working
      infrastructure, validated dependencies and a proven failback path.
 ```
-
-# END OF 12-Disaster-Recovery-Design.md
+---
