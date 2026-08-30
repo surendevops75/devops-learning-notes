@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 09-Multi-Region-Architecture
+# Multi-Region-Architecture
 
 ## 1. Purpose
 
@@ -2072,5 +2071,4 @@ Avoid one global control dependency for every runtime operation.
      becomes a controlled recovery event rather than an uncontrolled
      business outage.
 ```
-
-# END OF 09-Multi-Region-Architecture.md
+---
