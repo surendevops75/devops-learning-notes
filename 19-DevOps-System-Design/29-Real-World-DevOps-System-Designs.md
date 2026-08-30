@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 29-Real-World-DevOps-System-Designs
+# Real-World-DevOps-System-Designs
 
 
 ## 1. Purpose
@@ -3629,7 +3628,4 @@ fits the budget
 +
 has explicit trade-offs
 ```
-
-# END OF 29-Real-World-DevOps-System-Designs.md
-
-
+---
