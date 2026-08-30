@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 14-Blue-Green-Deployment
+# Blue-Green-Deployment
 
 ## 1. Purpose
 
@@ -2605,5 +2604,4 @@ Use:
      controlled release, measurable validation, rapid and safe rollback,
      compatibility across stateful dependencies, and minimal customer impact.
 ```
-
-# END OF 14-Blue-Green-Deployment.md
+---
