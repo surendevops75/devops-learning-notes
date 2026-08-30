@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 32-System-Design-Interview-Preparation
+# System-Design-Interview-Preparation
 
 ## Purpose
 
@@ -2495,4 +2494,4 @@ The objective is to design a system whose behavior is understood, whose risks
 are explicit, whose failures are contained, whose recovery is tested and
 whose operational cost is justified.
 
-# END OF 32-System-Design-Interview-Preparation.md
+---
