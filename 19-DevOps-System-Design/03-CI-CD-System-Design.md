@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 03-CI-CD-System-Design
+# CI-CD-System-Design
 
 ## 1. Purpose
 
@@ -3667,5 +3666,4 @@ What happens when an entire cluster fails?
 How do we recover?
 How do we prove what happened?
 ```
-
-# END OF 03-CI-CD-System-Design.md
+---
