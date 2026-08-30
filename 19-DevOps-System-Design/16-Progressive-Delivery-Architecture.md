@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 16-Progressive-Delivery-Architecture
+# Progressive-Delivery-Architecture
 
 ## 1. Purpose
 
@@ -3710,5 +3709,4 @@ Answer in this order:
      controlling exposure, measuring real production behavior, limiting blast
      radius, and preserving a tested path back to a known-good state.
 ```
-
-# END OF 16-Progressive-Delivery-Architecture.md
+---
