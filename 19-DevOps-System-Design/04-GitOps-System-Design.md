@@ -1,5 +1,4 @@
-# 19-DevOps-System-Design
-# 04-GitOps-System-Design
+# GitOps-System-Design
 
 ## 1. Purpose
 
@@ -3806,5 +3805,4 @@ Multi-repo:
      controlled, auditable, recoverable and continuously reconciled
      production operating model.
 ```
-
-# END OF 04-GitOps-System-Design.md
+---
