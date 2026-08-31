@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 06-RabbitMQ-Exchanges
+# RabbitMQ-Exchanges
 
 ## Purpose
 
@@ -4371,11 +4369,4 @@ That is the production RabbitMQ exchange mindset.
 13 RabbitMQ Production Architecture
 ```
 
-The next chapter will go deeper into **RabbitMQ Routing**, including routing-key
-design, direct routing, topic pattern matching, wildcard behavior, binding
-strategies, routing graphs, routing failures, unroutable-message handling,
-alternate exchanges, exchange-to-exchange routing, event/command routing,
-multi-tenant routing, migration, testing, observability, production
-troubleshooting and senior-level system-design scenarios.
-
-# END OF 06-RabbitMQ-Exchanges.md
+---
