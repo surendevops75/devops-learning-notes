@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 18-Kafka-Consumer-Groups
+# Kafka-Consumer-Groups
 
 > Deep production engineering guide for Kafka consumer-group coordination, partition ownership, rebalancing, scaling, offsets, Kubernetes/EKS deployment, failure recovery and senior-level system design.
 
@@ -3860,5 +3858,4 @@ How will duplicate business effects be prevented?
 59. Test DR.
 60. Measure recovery instead of assuming it.
 ```
-
-# END OF 18-Kafka-Consumer-Groups.md
+---
