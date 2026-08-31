@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 11-RabbitMQ-High-Availability
+# RabbitMQ-High-Availability
 
 ## Production-Grade RabbitMQ High Availability
 
