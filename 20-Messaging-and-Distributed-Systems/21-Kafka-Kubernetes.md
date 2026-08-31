@@ -1,6 +1,4 @@
-# 21-Messaging-and-Distributed-Systems
-
-# 21-Kafka-Kubernetes
+# Kafka-Kubernetes
 
 > Production-focused notes for deploying, operating, scaling, securing, monitoring, upgrading and troubleshooting Apache Kafka on Kubernetes/EKS.
 
@@ -2713,4 +2711,4 @@ OPERATIONS
 98. Design for the failure you actually need to survive.
 99. A production Kafka deployment is successful only when recovery is tested, not merely when deployment succeeds.
 
-# END OF 21-Kafka-Kubernetes.md
+---
