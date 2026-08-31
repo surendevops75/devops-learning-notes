@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 04-RabbitMQ-Architecture
+# RabbitMQ-Architecture
 
 ## Purpose
 
@@ -4123,4 +4121,4 @@ configuration, failure scenarios, Kubernetes examples, operational commands,
 YAML/manifests where appropriate, troubleshooting procedures and interview
 reasoning.
 
-# END OF 04-RabbitMQ-Architecture.md
+---
