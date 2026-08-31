@@ -1,4 +1,4 @@
-# 25 — Ordering and Delivery Semantics
+# Ordering and Delivery Semantics
 
 ## 1. Purpose
 
