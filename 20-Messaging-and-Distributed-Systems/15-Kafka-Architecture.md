@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 15-Kafka-Architecture
+# Kafka-Architecture
 
 > Deep production architecture reference for AWS/EKS, Kubernetes, enterprise messaging and senior-level system design.
 
@@ -3519,5 +3517,4 @@ How is the decision tested?
 49. Measure recovery time.
 50. Design for the failure state, not just the healthy state.
 ```
-
-# END OF 15-Kafka-Architecture.md
+---
