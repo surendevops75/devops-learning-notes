@@ -1,4 +1,4 @@
-# 26 — Messaging Security
+# Messaging Security
 
 ## 1. Purpose
 
@@ -2745,3 +2745,5 @@ How is security preserved during DR?
 ```
 
 That is the foundation of **production-grade messaging security for Kafka and RabbitMQ in DevOps/Kubernetes environments**.
+
+---
