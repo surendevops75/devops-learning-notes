@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 05-RabbitMQ-Queues
+# RabbitMQ-Queues
 
 ## Purpose
 
@@ -5113,10 +5111,4 @@ Next:
 13 RabbitMQ Production Architecture
 ```
 
-The next chapter will focus deeply on **RabbitMQ Exchanges**, including direct,
-topic, fanout, headers, default exchange, alternate exchanges,
-exchange-to-exchange bindings, routing topology, binding patterns, wildcard
-behavior, routing failures, architecture patterns, security, troubleshooting,
-production design and senior-level interview scenarios.
-
-# END OF 05-RabbitMQ-Queues.md
+---
