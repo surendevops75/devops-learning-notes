@@ -1,5 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-# 01-Distributed-Systems-Fundamentals
+# Distributed-Systems-Fundamentals
 
 ## Purpose
 
@@ -2690,9 +2689,4 @@ Projects
         |
 Interview Preparation
 ```
-
-The next files will move from theory into concrete RabbitMQ architecture,
-configuration, Kubernetes deployment, production operations and failure
-handling.
-
-# END OF 01-Distributed-Systems-Fundamentals.md
+---
