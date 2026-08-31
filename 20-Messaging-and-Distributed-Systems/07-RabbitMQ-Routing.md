@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 07-RabbitMQ-Routing
+# RabbitMQ-Routing
 
 ## Purpose
 
@@ -3782,17 +3780,4 @@ That is the production RabbitMQ routing mindset.
 13 RabbitMQ Production Architecture
 ```
 
-Next:
-
-```text
-08-RabbitMQ-Consumers-and-Producers.md
-```
-
-That chapter will focus deeply on the producer/consumer side of the system:
-connection and channel lifecycle, publishing APIs, publisher confirms,
-mandatory publishing, retries, connection recovery, consumer lifecycle,
-prefetch, concurrency, graceful shutdown, backpressure, idempotency,
-performance tuning, Kubernetes deployment, production failure scenarios,
-observability, security and senior-level interview/system-design scenarios.
-
-# END OF 07-RabbitMQ-Routing.md
+---
