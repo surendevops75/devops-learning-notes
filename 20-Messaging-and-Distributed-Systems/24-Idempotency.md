@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 24-Idempotency
+# Idempotency
 
 > Production-oriented notes for DevOps and cloud engineers covering idempotency in distributed systems, Kafka, RabbitMQ, APIs, databases, Kubernetes workloads, event-driven architecture, retries, duplicate delivery, failure recovery, observability, testing, and senior-level interview scenarios.
 
@@ -4890,5 +4888,3 @@ The most important mindset is:
 > **Assume every important message or request can be delivered more than once, and design the business operation so that repetition is safe.**
 
 ---
-
-# END OF 24-Idempotency.md
