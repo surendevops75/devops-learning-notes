@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 23-Message-Retry-and-Dead-Lettering
+# Message-Retry-and-Dead-Lettering
 
 > Production-oriented notes on retry design, backoff, poison messages, dead-letter queues/topics, replay, failure isolation, Kafka and RabbitMQ implementation patterns, Kubernetes operations, observability, security, and incident troubleshooting.
 
@@ -3776,5 +3774,3 @@ The objective is to **recover transient failures without creating duplicates, ov
 100. The goal of retry is safe recovery, not repeated execution.
 
 ---
-
-# END OF 23-Message-Retry-and-Dead-Lettering.md
