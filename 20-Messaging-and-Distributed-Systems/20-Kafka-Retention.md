@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 20-Kafka-Retention
+# Kafka-Retention
 
 > Deep production-oriented guide to Kafka retention, segments, deletion, compaction, tombstones, storage sizing, disk pressure, replay, Kubernetes/EKS, DR, observability, troubleshooting, and senior-level design.
 
@@ -2052,4 +2050,5 @@ Treating retention as a universal number instead of a business, storage, recover
 96. Treat retention as a system-design decision.
 97. Design retention together with storage, replay, observability and DR.
 
-# END OF 20-Kafka-Retention.md
+
+---
