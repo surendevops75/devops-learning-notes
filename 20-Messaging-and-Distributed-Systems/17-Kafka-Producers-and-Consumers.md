@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 17-Kafka-Producers-and-Consumers
+# Kafka-Producers-and-Consumers
 
 ## Deep Production Guide
 
@@ -5589,3 +5587,4 @@ resources remain within limits
 operators can explain the behavior
 ```
 
+---
