@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 16-Kafka-Topics-and-Partitions
+# Kafka-Topics-and-Partitions
 
 > Deep production engineering guide to Kafka topic, partition, key, replication, retention, scaling and operational design.
 
@@ -3483,4 +3481,4 @@ What ordering guarantee is actually provided?
 50. Measure the architecture instead of assuming it works.
 ```
 
-# END OF 16-Kafka-Topics-and-Partitions.md
+---
