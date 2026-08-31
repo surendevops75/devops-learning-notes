@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 22-Event-Driven-Architecture
+# Event-Driven-Architecture
 
 > Deep, production-oriented notes covering event-driven architecture, Kafka/RabbitMQ patterns, reliability, consistency, retries, schemas, security, observability, Kubernetes, DR and senior-level design.
 
@@ -3387,4 +3385,5 @@ OPERATIONS
 99. Treat EDA as a system, not merely a Kafka producer and consumer.
 100. Production correctness matters more than message throughput alone.
 
-# END OF 22-Event-Driven-Architecture.md
+
+---
