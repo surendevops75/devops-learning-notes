@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 08-RabbitMQ-Consumers-and-Producers
+# RabbitMQ-Consumers-and-Producers
 
 ## Purpose
 
@@ -6370,42 +6368,3 @@ For any producer/consumer architecture:
 ```
 
 ---
-
-# 391. Section Progression
-
-```text
-04 RabbitMQ Architecture
-        |
-05 RabbitMQ Queues
-        |
-06 RabbitMQ Exchanges
-        |
-07 RabbitMQ Routing
-        |
-08 RabbitMQ Consumers and Producers
-        |
-09 RabbitMQ Acknowledgements
-        |
-10 RabbitMQ Retry and DLQ
-        |
-11 RabbitMQ High Availability
-        |
-12 RabbitMQ Kubernetes
-        |
-13 RabbitMQ Production Architecture
-```
-
-Next:
-
-```text
-09-RabbitMQ-Acknowledgements.md
-```
-
-The next chapter will go deeply into acknowledgement semantics, manual versus
-automatic acknowledgement, delivery tags, ACK/NACK/reject, multiple ACKs,
-requeue behavior, redelivery, acknowledgement timing, transaction boundaries,
-duplicate processing, failure windows, consumer crashes, prefetch interaction,
-retry/DLQ behavior, graceful shutdown, idempotency, observability, production
-failure scenarios and senior-level interview/system-design questions.
-
-# END OF 08-RabbitMQ-Consumers-and-Producers.md
