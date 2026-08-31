@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 02-Synchronous-vs-Asynchronous-Communication
+# Synchronous-vs-Asynchronous-Communication
 
 ## Purpose
 
@@ -3396,4 +3394,4 @@ data model
 operational controls
 ```
 
-# END OF 02-Synchronous-vs-Asynchronous-Communication.md
+---
