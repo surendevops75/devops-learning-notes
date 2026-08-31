@@ -1,5 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-# 14-Kafka-Fundamentals
+# Kafka-Fundamentals
 
 ## Production-Oriented Kafka Fundamentals
 
@@ -7362,3 +7361,4 @@ duplicates do not create unsafe business effects
 lag returns toward the defined SLO
 operators can execute the runbook
 ```
+---
