@@ -1,4 +1,4 @@
-# 27 — Messaging Troubleshooting
+# Messaging Troubleshooting
 
 ## 1. Purpose
 
@@ -3317,3 +3317,5 @@ Business result
 The first broken boundary is usually the best starting point for the root-cause investigation.
 
 That is the production troubleshooting mindset expected from a senior DevOps engineer.
+
+---
