@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 13-RabbitMQ-Production-Architecture
+# RabbitMQ-Production-Architecture
 
 ## Complete Enterprise Production Architecture
 
@@ -3825,4 +3823,4 @@ no unsafe duplicate business effect
 observability detects the issue
 operators can execute the runbook
 ```
-
+---
