@@ -1,4 +1,4 @@
-# 28 — Messaging Production Architecture
+# Messaging Production Architecture
 
 ## 1. Purpose
 
@@ -2634,3 +2634,5 @@ when components fail, traffic increases,
 deployments occur, dependencies degrade,
 and infrastructure changes."
 ```
+
+---
