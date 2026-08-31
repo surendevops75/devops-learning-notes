@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 03-Messaging-Fundamentals
+# Messaging-Fundamentals
 
 ## Purpose
 
@@ -3503,4 +3501,4 @@ Projects
 Interview Preparation
 ```
 
-# END OF 03-Messaging-Fundamentals.md
+---
