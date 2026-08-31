@@ -1,4 +1,4 @@
-# 30 — Messaging Projects
+# Messaging Projects
 
 ## 1. Purpose
 
@@ -1883,3 +1883,5 @@ safely and reliably in production?"
 ```
 
 That is the standard expected from a strong DevOps/SRE engineer.
+
+---
