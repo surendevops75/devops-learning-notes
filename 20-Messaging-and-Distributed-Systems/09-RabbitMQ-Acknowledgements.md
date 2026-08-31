@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 09-RabbitMQ-Acknowledgements
+# RabbitMQ-Acknowledgements
 
 ## Purpose
 
@@ -5128,43 +5126,3 @@ Your application must provide business correctness.
 ```
 
 ---
-
-# 310. Section Progression
-
-```text
-04 RabbitMQ Architecture
-        |
-05 RabbitMQ Queues
-        |
-06 RabbitMQ Exchanges
-        |
-07 RabbitMQ Routing
-        |
-08 RabbitMQ Consumers and Producers
-        |
-09 RabbitMQ Acknowledgements
-        |
-10 RabbitMQ Retry and DLQ
-        |
-11 RabbitMQ High Availability
-        |
-12 RabbitMQ Kubernetes
-        |
-13 RabbitMQ Production Architecture
-```
-
-Next:
-
-```text
-10-RabbitMQ-Retry-and-DLQ.md
-```
-
-The next chapter will go deeply into retry architecture and dead-letter
-handling: transient versus permanent failures, immediate requeue versus delayed
-retry, TTL-based retry patterns, dead-letter exchanges, retry queues, exponential
-backoff, jitter, retry budgets, poison messages, retry storms, DLQ design,
-retention, inspection, replay, idempotency, ordering, operational runbooks,
-Kubernetes production patterns, observability, capacity planning, failure
-scenarios and senior-level system-design interview questions.
-
-# END OF 09-RabbitMQ-Acknowledgements.md
