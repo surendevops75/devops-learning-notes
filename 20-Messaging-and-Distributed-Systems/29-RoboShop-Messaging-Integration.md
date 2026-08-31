@@ -1,4 +1,4 @@
-# 29 — RoboShop Messaging Integration
+# RoboShop Messaging Integration
 
 ## 1. Purpose
 
@@ -2340,3 +2340,5 @@ A strong answer is:
 > I would first identify which workflows need asynchronous processing and whether they are queue-oriented or event-streaming workloads. For worker-style processing I would use RabbitMQ, while Kafka would be appropriate for durable event streams, replay and multiple independent consumers. I would deploy the messaging layer with HA across failure domains, private networking, TLS, authentication and least-privilege authorization. Application consumers would implement bounded retries, backoff, DLQs, idempotency and graceful shutdown. For database-to-event consistency I would use an outbox pattern where required. On Kubernetes I would configure resource requests, topology spreading, disruption controls and secure secret delivery. I would monitor broker health, queue depth, consumer lag, latency, errors and DLQ growth using metrics, logs and traces. Finally, I would define RPO/RTO, backup and failover procedures and validate the architecture with failure and recovery testing.
 
 This demonstrates not just broker knowledge, but production DevOps thinking.
+
+---
