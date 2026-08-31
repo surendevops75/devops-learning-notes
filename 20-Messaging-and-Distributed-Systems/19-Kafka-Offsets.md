@@ -1,6 +1,4 @@
-# 20-Messaging-and-Distributed-Systems
-
-# 19-Kafka-Offsets
+# Kafka-Offsets
 
 > Deep production engineering guide to Kafka offsets, commit semantics, recovery, replay, idempotency, transactions, DR, Kubernetes operations and senior-level troubleshooting.
 
@@ -3585,5 +3583,4 @@ transactional integration pattern for cross-system correctness.
 69. Measure recovery instead of assuming it.
 70. Treat offsets as a core distributed-systems correctness mechanism.
 ```
-
-# END OF 19-Kafka-Offsets.md
+---
