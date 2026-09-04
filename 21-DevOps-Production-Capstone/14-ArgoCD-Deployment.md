@@ -1,4 +1,4 @@
-# 14 --- ArgoCD Deployment --- Production DevOps Capstone
+# ArgoCD Deployment
 
 > Deep production-oriented Argo CD deployment and operations guide for
 > AWS EKS, GitOps, Helm, GitLab, multi-environment and multi-cluster
@@ -2319,3 +2319,5 @@ instead of relying on documentation alone.
 3.  How is the configuration recovered?
 4.  How is a production change audited?
 5.  What is the safest troubleshooting path?
+
+---
