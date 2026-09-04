@@ -1,6 +1,6 @@
-# 30. Cost Optimization
+# Cost Optimization
 
-## 30.1 Purpose
+## 1 Purpose
 
 Cost optimization in a production DevOps environment is not simply about making AWS bills smaller.
 
@@ -42,7 +42,7 @@ Each layer can create unnecessary cost if it is not designed carefully.
 
 ---
 
-# 30.2 Cost Optimization Principles
+ # 2 Cost Optimization Principles
 
 Production cost optimization should follow these principles:
 
@@ -61,7 +61,7 @@ A cheap architecture that causes frequent outages is not cost optimized.
 
 ---
 
-# 30.3 Cost vs Reliability
+ # 3 Cost vs Reliability
 
 A common mistake is:
 
@@ -91,7 +91,7 @@ What is the minimum cost that still satisfies production requirements?
 
 ---
 
-# 30.4 Cost Optimization Lifecycle
+ # 4 Cost Optimization Lifecycle
 
 ```text
 Measure
@@ -122,7 +122,7 @@ Cost optimization is a continuous operational process.
 
 ---
 
-# 30.5 AWS Cost Categories
+ # 5 AWS Cost Categories
 
 For the capstone, major cost areas can include:
 
@@ -145,7 +145,7 @@ The exact bill depends on workload, region, traffic, retention and architecture.
 
 ---
 
-# 30.6 EKS Cost Model
+ # 6 EKS Cost Model
 
 EKS cost has multiple components.
 
@@ -173,7 +173,7 @@ The surrounding infrastructure often represents the larger portion.
 
 ---
 
-# 30.7 EKS Cluster Cost Optimization
+ # 7 EKS Cluster Cost Optimization
 
 Potential optimization areas:
 
@@ -191,7 +191,7 @@ Potential optimization areas:
 
 ---
 
-# 30.8 Node Right-Sizing
+ # 8 Node Right-Sizing
 
 Suppose a node has:
 
@@ -222,7 +222,7 @@ Metrics from Prometheus provide longer-term trends.
 
 ---
 
-# 30.9 Kubernetes Requests and Cost
+ # 9 Kubernetes Requests and Cost
 
 Requests influence scheduling and therefore cluster capacity.
 
@@ -254,7 +254,7 @@ AWS compute cost increases
 
 ---
 
-# 30.10 Do Not Under-Request
+ # 10 Do Not Under-Request
 
 Over-requesting wastes money.
 
@@ -280,7 +280,7 @@ based on observed production behavior.
 
 ---
 
-# 30.11 Resource Profiling
+ # 11 Resource Profiling
 
 Use:
 
@@ -314,7 +314,7 @@ sum by (pod) (
 
 ---
 
-# 30.12 HPA and Cost
+ # 12 HPA and Cost
 
 Horizontal Pod Autoscaling can reduce idle capacity.
 
@@ -362,7 +362,7 @@ spec:
 
 ---
 
-# 30.13 HPA Trade-Off
+ # 13 HPA Trade-Off
 
 More aggressive scale-down:
 
@@ -390,7 +390,7 @@ The correct values should come from workload behavior.
 
 ---
 
-# 30.14 Cluster Autoscaling
+ # 14 Cluster Autoscaling
 
 If pods require more capacity:
 
@@ -420,7 +420,7 @@ This reduces idle compute cost.
 
 ---
 
-# 30.15 Autoscaling Failure and Cost
+ # 15 Autoscaling Failure and Cost
 
 Bad autoscaling configuration can increase cost.
 
@@ -448,7 +448,7 @@ Cost controls must be combined with reliability and alerting.
 
 ---
 
-# 30.16 Spot Instances
+ # 16 Spot Instances
 
 AWS Spot capacity can provide substantial compute savings for workloads that tolerate interruption.
 
@@ -470,7 +470,7 @@ Do not place critical stateful production workloads on Spot without a validated 
 
 ---
 
-# 30.17 Mixed Node Groups
+ # 17 Mixed Node Groups
 
 A production EKS cluster can use:
 
@@ -494,7 +494,7 @@ Use taints/tolerations and node affinity to control placement.
 
 ---
 
-# 30.18 Spot Capacity Diversification
+ # 18 Spot Capacity Diversification
 
 Do not depend on one Spot instance type.
 
@@ -513,7 +513,7 @@ This increases the chance of obtaining capacity.
 
 ---
 
-# 30.19 Node Consolidation
+ # 19 Node Consolidation
 
 If many nodes have low utilization:
 
@@ -539,7 +539,7 @@ Cost optimization must not create an availability incident.
 
 ---
 
-# 30.20 Environment-Based Optimization
+ # 20 Environment-Based Optimization
 
 Production:
 
@@ -572,7 +572,7 @@ DEV → on demand
 
 ---
 
-# 30.21 Non-Production Scheduling
+ # 21 Non-Production Scheduling
 
 Non-production resources can often be stopped outside working hours.
 
@@ -594,7 +594,7 @@ Production resources should not be handled by the same simplistic schedule.
 
 ---
 
-# 30.22 Namespace Cost Allocation
+ # 22 Namespace Cost Allocation
 
 Use labels:
 
@@ -622,7 +622,7 @@ owner
 
 ---
 
-# 30.23 AWS Tagging Strategy
+ # 23 AWS Tagging Strategy
 
 Example:
 
@@ -646,7 +646,7 @@ Tags support:
 
 ---
 
-# 30.24 Terraform Tagging
+ # 24 Terraform Tagging
 
 Use common tags:
 
@@ -666,7 +666,7 @@ Apply consistently to supported resources.
 
 ---
 
-# 30.25 Cost Allocation
+ # 25 Cost Allocation
 
 A production organization should be able to answer:
 
@@ -683,7 +683,7 @@ Without attribution, optimization becomes guesswork.
 
 ---
 
-# 30.26 NAT Gateway Cost
+ # 26 NAT Gateway Cost
 
 NAT Gateway can become a significant cost component.
 
@@ -709,7 +709,7 @@ High-volume workloads can make this expensive.
 
 ---
 
-# 30.27 NAT Gateway Optimization
+ # 27 NAT Gateway Optimization
 
 Potential strategies:
 
@@ -723,7 +723,7 @@ Do not remove NAT simply to save money if private workload connectivity requires
 
 ---
 
-# 30.28 VPC Endpoints
+ # 28 VPC Endpoints
 
 AWS services such as ECR and S3 can use VPC endpoints where supported.
 
@@ -751,7 +751,7 @@ depending on architecture and endpoint costs.
 
 ---
 
-# 30.29 ECR Cost Optimization
+ # 29 ECR Cost Optimization
 
 ECR costs can grow because of unused images.
 
@@ -776,7 +776,7 @@ approved rollback versions
 
 ---
 
-# 30.30 ECR Lifecycle Policy Example
+ # 30 ECR Lifecycle Policy Example
 
 Conceptual example:
 
@@ -804,7 +804,7 @@ Validate lifecycle policies carefully before applying them.
 
 ---
 
-# 30.31 ECR Retention Trade-Off
+ # 31 ECR Retention Trade-Off
 
 Too much retention:
 
@@ -829,7 +829,7 @@ incident history
 
 ---
 
-# 30.32 ALB Cost
+ # 32 ALB Cost
 
 Application Load Balancers generate cost based on:
 
@@ -848,7 +848,7 @@ However, consolidating ALBs must not create:
 
 ---
 
-# 30.33 ALB Consolidation
+ # 33 ALB Consolidation
 
 Instead of:
 
@@ -880,7 +880,7 @@ But separate ALBs may still be justified for:
 
 ---
 
-# 30.34 Data Transfer Cost
+ # 34 Data Transfer Cost
 
 AWS data transfer can become expensive.
 
@@ -898,7 +898,7 @@ Review traffic paths before changing architecture.
 
 ---
 
-# 30.35 Cross-AZ Traffic
+ # 35 Cross-AZ Traffic
 
 Example:
 
@@ -927,7 +927,7 @@ avoid unnecessary cross-AZ traffic while preserving HA
 
 ---
 
-# 30.36 Kubernetes Service Types and Cost
+ # 36 Kubernetes Service Types and Cost
 
 LoadBalancer services can create cloud load balancers.
 
@@ -961,7 +961,7 @@ is generally more appropriate.
 
 ---
 
-# 30.37 ELK Cost
+ # 37 ELK Cost
 
 ELK can become one of the largest observability costs.
 
@@ -987,7 +987,7 @@ raw storage can quickly become several terabytes before replication, indexing an
 
 ---
 
-# 30.38 Log Volume Reduction
+ # 38 Log Volume Reduction
 
 Do not simply collect everything forever.
 
@@ -1012,7 +1012,7 @@ with controlled debug logging during incidents.
 
 ---
 
-# 30.39 ELK Retention
+ # 39 ELK Retention
 
 Example policy:
 
@@ -1036,7 +1036,7 @@ Exact values depend on:
 
 ---
 
-# 30.40 Log Sampling
+ # 40 Log Sampling
 
 For extremely high-volume workloads, sampling may reduce cost.
 
@@ -1057,7 +1057,7 @@ Never sample away:
 
 ---
 
-# 30.41 Prometheus Cost
+ # 41 Prometheus Cost
 
 Prometheus cost depends on:
 
@@ -1088,7 +1088,7 @@ millions of time series
 
 ---
 
-# 30.42 Prometheus Cardinality
+ # 42 Prometheus Cardinality
 
 Example:
 
@@ -1119,7 +1119,7 @@ Use bounded dimensions.
 
 ---
 
-# 30.43 Scrape Interval
+ # 43 Scrape Interval
 
 If a metric does not require one-second resolution:
 
@@ -1142,7 +1142,7 @@ Critical infrastructure may require shorter intervals.
 
 ---
 
-# 30.44 Recording Rules
+ # 44 Recording Rules
 
 Recording rules can reduce expensive repeated PromQL calculations.
 
@@ -1166,7 +1166,7 @@ Grafana can query the precomputed series.
 
 ---
 
-# 30.45 Grafana Cost
+ # 45 Grafana Cost
 
 Grafana itself may have low compute requirements compared with data storage.
 
@@ -1190,7 +1190,7 @@ on every refresh.
 
 ---
 
-# 30.46 Dashboard Optimization
+ # 46 Dashboard Optimization
 
 Good dashboard:
 
@@ -1215,7 +1215,7 @@ Use variables carefully.
 
 ---
 
-# 30.47 Observability Architecture Cost
+ # 47 Observability Architecture Cost
 
 For the capstone:
 
@@ -1242,7 +1242,7 @@ Do not remove monitoring blindly to save money.
 
 ---
 
-# 30.48 Prometheus Retention
+ # 48 Prometheus Retention
 
 Long retention increases storage requirements.
 
@@ -1259,7 +1259,7 @@ For longer historical data, consider an appropriate long-term metrics architectu
 
 ---
 
-# 30.49 Kubernetes EmptyDir and Storage
+ # 49 Kubernetes EmptyDir and Storage
 
 Temporary data should not automatically use expensive persistent storage.
 
@@ -1281,7 +1281,7 @@ Use the correct storage class based on requirements.
 
 ---
 
-# 30.50 EBS Cost
+ # 50 EBS Cost
 
 Review:
 
@@ -1296,7 +1296,7 @@ Find unattached resources through AWS inventory and automation.
 
 ---
 
-# 30.51 Snapshot Cost
+ # 51 Snapshot Cost
 
 Snapshots are useful for recovery but can accumulate.
 
@@ -1314,7 +1314,7 @@ Do not delete backups blindly for cost reduction.
 
 ---
 
-# 30.52 Backup vs Cost
+ # 52 Backup vs Cost
 
 A backup is valuable only if:
 
@@ -1336,7 +1336,7 @@ A cheap backup strategy that cannot restore is false economy.
 
 ---
 
-# 30.53 Database Cost Optimization
+ # 53 Database Cost Optimization
 
 Database optimization may include:
 
@@ -1353,7 +1353,7 @@ Do not reduce database capacity below safe production requirements.
 
 ---
 
-# 30.54 Connection Pooling
+ # 54 Connection Pooling
 
 Without pooling:
 
@@ -1389,7 +1389,7 @@ latency
 
 ---
 
-# 30.55 Application Cost Optimization
+ # 55 Application Cost Optimization
 
 Optimize:
 
@@ -1416,7 +1416,7 @@ compress appropriate payloads
 
 ---
 
-# 30.56 CI/CD Cost Optimization
+ # 56 CI/CD Cost Optimization
 
 CI can consume significant compute.
 
@@ -1432,7 +1432,7 @@ Optimize:
 
 ---
 
-# 30.57 Maven Cache
+ # 57 Maven Cache
 
 For Java builds, dependency downloads can be expensive.
 
@@ -1454,7 +1454,7 @@ runner consumption
 
 ---
 
-# 30.58 Docker Build Optimization
+ # 58 Docker Build Optimization
 
 Use:
 
@@ -1472,7 +1472,7 @@ Multi-stage builds can reduce final image size.
 
 ---
 
-# 30.59 Container Image Size
+ # 59 Container Image Size
 
 Large image:
 
@@ -1497,7 +1497,7 @@ Do not optimize image size at the expense of security or operational clarity.
 
 ---
 
-# 30.60 Multi-Stage Docker Builds
+ # 60 Multi-Stage Docker Builds
 
 Example:
 
@@ -1524,7 +1524,7 @@ The runtime image does not need the Maven build environment.
 
 ---
 
-# 30.61 Terraform Cost Governance
+ # 61 Terraform Cost Governance
 
 Terraform can enforce standards.
 
@@ -1542,7 +1542,7 @@ Policy-as-code can prevent expensive or unsafe resources from being created.
 
 ---
 
-# 30.62 Terraform Plan Cost Review
+ # 62 Terraform Plan Cost Review
 
 Before applying:
 
@@ -1565,7 +1565,7 @@ For large organizations, integrate a cost-estimation tool into CI where appropri
 
 ---
 
-# 30.63 Preventing Accidental Expensive Resources
+ # 63 Preventing Accidental Expensive Resources
 
 Guard against:
 
@@ -1589,7 +1589,7 @@ Use:
 
 ---
 
-# 30.64 AWS Budgets
+ # 64 AWS Budgets
 
 Create budgets by:
 
@@ -1615,7 +1615,7 @@ Thresholds should be aligned with business expectations.
 
 ---
 
-# 30.65 Cost Anomaly Detection
+ # 65 Cost Anomaly Detection
 
 Unexpected cost growth may indicate:
 
@@ -1632,7 +1632,7 @@ Cost monitoring can therefore become a security and reliability signal.
 
 ---
 
-# 30.66 Production Cost Alerting
+ # 66 Production Cost Alerting
 
 Useful alerts:
 
@@ -1649,7 +1649,7 @@ These can complement standard production alerts.
 
 ---
 
-# 30.67 Log Storm Cost Incident
+ # 67 Log Storm Cost Incident
 
 Scenario:
 
@@ -1686,7 +1686,7 @@ Cost optimization and incident response intersect here.
 
 ---
 
-# 30.68 Kubernetes Cost Incident
+ # 68 Kubernetes Cost Incident
 
 Scenario:
 
@@ -1720,7 +1720,7 @@ Never blindly reduce capacity if legitimate customer traffic is causing the incr
 
 ---
 
-# 30.69 Cost Optimization and SLOs
+ # 69 Cost Optimization and SLOs
 
 Cost must be evaluated against SLOs.
 
@@ -1755,7 +1755,7 @@ as the optimization objective.
 
 ---
 
-# 30.70 Unit Economics
+ # 70 Unit Economics
 
 Useful production metrics include:
 
@@ -1780,7 +1780,7 @@ This can be more useful than total monthly spend alone.
 
 ---
 
-# 30.71 Cost per Environment
+ # 71 Cost per Environment
 
 Track:
 
@@ -1802,7 +1802,7 @@ If QA consumes 50% of cost, investigate.
 
 ---
 
-# 30.72 Cost per Team
+ # 72 Cost per Team
 
 Using tags:
 
@@ -1826,7 +1826,7 @@ better engineering decisions
 
 ---
 
-# 30.73 Cost Review Cadence
+ # 73 Cost Review Cadence
 
 A practical model:
 
@@ -1848,7 +1848,7 @@ Large environments may use automated dashboards continuously.
 
 ---
 
-# 30.74 Production Cost Dashboard
+ # 74 Production Cost Dashboard
 
 A useful dashboard includes:
 
@@ -1870,7 +1870,7 @@ Forecast
 
 ---
 
-# 30.75 Cost Optimization Workflow for RoboShop
+ # 75 Cost Optimization Workflow for RoboShop
 
 ```text
 RoboShop
@@ -1909,7 +1909,7 @@ RoboShop
 
 ---
 
-# 30.76 Production Cost Optimization Checklist
+ # 76 Production Cost Optimization Checklist
 
 ## Compute
 
@@ -1960,7 +1960,7 @@ RoboShop
 
 ---
 
-# 30.77 Cost Optimization Anti-Patterns
+ # 77 Cost Optimization Anti-Patterns
 
 ## Anti-Pattern 1: Delete Monitoring
 
@@ -2046,7 +2046,7 @@ business risk
 
 ---
 
-# 30.78 Production Cost Optimization Architecture
+ # 78 Production Cost Optimization Architecture
 
 ```text
                   AWS
@@ -2082,7 +2082,7 @@ AWS billing / budgets
 
 ---
 
-# 30.79 Cost Optimization Decision Example
+ # 79 Cost Optimization Decision Example
 
 Suppose monthly spend rises 30%.
 
@@ -2132,7 +2132,7 @@ This is better than cutting EKS replicas.
 
 ---
 
-# 30.80 Senior-Level Cost Optimization Approach
+ # 80 Senior-Level Cost Optimization Approach
 
 A senior DevOps engineer should say:
 
@@ -2161,7 +2161,7 @@ security and SLO requirements.
 
 ---
 
-# 30.81 Interview Questions
+ # 81 Interview Questions
 
 ## Q1. How do you optimize EKS cost?
 
@@ -2213,7 +2213,7 @@ Unexpected cost spikes can indicate compromised resources, cryptocurrency mining
 
 ---
 
-# 30.82 Practical Production Cost Commands
+ # 82 Practical Production Cost Commands
 
 AWS inventory:
 
@@ -2276,7 +2276,7 @@ These commands are starting points. Production cost reporting should generally u
 
 ---
 
-# 30.83 Cost Optimization Incident Runbook
+ # 83 Cost Optimization Incident Runbook
 
 ### Symptom
 
@@ -2355,7 +2355,7 @@ automation
 
 ---
 
-# 30.84 Cost Optimization and GitOps
+ # 84 Cost Optimization and GitOps
 
 Configuration affecting cost should be managed through Git where practical.
 
@@ -2392,7 +2392,7 @@ This creates an audit trail for capacity changes.
 
 ---
 
-# 30.85 Cost Optimization and Terraform
+ # 85 Cost Optimization and Terraform
 
 Infrastructure cost changes should similarly be controlled through Terraform.
 
@@ -2423,7 +2423,7 @@ business demand
 
 ---
 
-# 30.86 Cost Optimization Governance
+ # 86 Cost Optimization Governance
 
 A mature organization defines:
 
@@ -2439,7 +2439,7 @@ Production DevOps should treat cost as an engineering metric.
 
 ---
 
-# 30.87 Final Cost Optimization Model
+ # 87 Final Cost Optimization Model
 
 ```text
                  COST VISIBILITY
