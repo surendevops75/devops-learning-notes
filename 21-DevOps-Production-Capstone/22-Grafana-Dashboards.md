@@ -1,4 +1,4 @@
-# 22 --- Grafana Dashboards --- Production DevOps Capstone
+# Grafana Dashboards
 
 > Deep production-focused chapter for designing, deploying, securing,
 > operating, and troubleshooting Grafana dashboards in AWS/EKS
@@ -2939,3 +2939,5 @@ unknown failure modes and understand internal system behavior.
 is: "I designed an observability interface that lets production
 engineers detect impact, isolate the failure domain, correlate changes,
 investigate dependencies, execute the runbook, and verify recovery."**
+
+---
