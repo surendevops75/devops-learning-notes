@@ -1,6 +1,6 @@
-# 31. Security Hardening
+# Security Hardening
 
-## 31.1 Purpose
+## 1 Purpose
 
 Production DevOps security is a continuous engineering discipline.
 
@@ -66,7 +66,7 @@ compliance
 
 ---
 
-# 31.2 Security Objectives
+ # 2 Security Objectives
 
 A production security program protects:
 
@@ -103,7 +103,7 @@ Protect against:
 
 ---
 
-# 31.3 Defense in Depth
+ # 3 Defense in Depth
 
 Production security should use multiple independent controls.
 
@@ -137,7 +137,7 @@ If one layer fails, another layer should reduce the impact.
 
 ---
 
-# 31.4 Security Layers
+ # 4 Security Layers
 
 The capstone security model:
 
@@ -165,7 +165,7 @@ The capstone security model:
 
 ---
 
-# 31.5 Shared Responsibility
+ # 5 Shared Responsibility
 
 Cloud providers secure the underlying cloud infrastructure.
 
@@ -196,7 +196,7 @@ A managed EKS control plane does not make the application automatically secure.
 
 ---
 
-# 31.6 AWS Account Security
+ # 6 AWS Account Security
 
 Production should use controlled AWS accounts.
 
@@ -216,7 +216,7 @@ Avoid using the root account for normal operations.
 
 ---
 
-# 31.7 Root Account Protection
+ # 7 Root Account Protection
 
 The AWS root account should:
 
@@ -238,7 +238,7 @@ developer laptops
 
 ---
 
-# 31.8 IAM Least Privilege
+ # 8 IAM Least Privilege
 
 Principle:
 
@@ -262,7 +262,7 @@ Prefer scoped permissions.
 
 ---
 
-# 31.9 IAM Roles Over Long-Lived Keys
+ # 9 IAM Roles Over Long-Lived Keys
 
 Prefer:
 
@@ -288,7 +288,7 @@ Benefits:
 
 ---
 
-# 31.10 EKS IAM Integration
+ # 10 EKS IAM Integration
 
 EKS workloads can use AWS IAM roles through modern workload identity mechanisms.
 
@@ -311,7 +311,7 @@ This is safer than putting AWS access keys inside a Secret.
 
 ---
 
-# 31.11 Kubernetes RBAC
+ # 11 Kubernetes RBAC
 
 Kubernetes RBAC controls:
 
@@ -334,7 +334,7 @@ ServiceAccount
 
 ---
 
-# 31.12 Namespace-Level RBAC
+ # 12 Namespace-Level RBAC
 
 Prefer namespace-scoped permissions when possible.
 
@@ -361,7 +361,7 @@ This role does not grant cluster-wide administrative access.
 
 ---
 
-# 31.13 RoleBinding
+ # 13 RoleBinding
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -393,7 +393,7 @@ who receives permissions
 
 ---
 
-# 31.14 Avoid ClusterRoleBinding for Applications
+ # 14 Avoid ClusterRoleBinding for Applications
 
 Avoid:
 
@@ -407,7 +407,7 @@ A compromised application with cluster-admin privileges can become a cluster-wid
 
 ---
 
-# 31.15 Service Accounts
+ # 15 Service Accounts
 
 Every application should use an explicit ServiceAccount.
 
@@ -425,7 +425,7 @@ Avoid sharing one highly privileged ServiceAccount across unrelated applications
 
 ---
 
-# 31.16 Disable Unnecessary Service Account Token Mounting
+ # 16 Disable Unnecessary Service Account Token Mounting
 
 If a workload does not need Kubernetes API access:
 
@@ -438,7 +438,7 @@ This reduces credential exposure.
 
 ---
 
-# 31.17 Pod Security
+ # 17 Pod Security
 
 Production workloads should follow Pod Security Standards.
 
@@ -454,7 +454,7 @@ use read-only root filesystem where practical
 
 ---
 
-# 31.18 Security Context
+ # 18 Security Context
 
 Example:
 
@@ -472,7 +472,7 @@ This provides stronger runtime isolation.
 
 ---
 
-# 31.19 Container Security Context
+ # 19 Container Security Context
 
 ```yaml
 containers:
@@ -490,7 +490,7 @@ Not every application can immediately support a read-only filesystem. Validate a
 
 ---
 
-# 31.20 Privileged Containers
+ # 20 Privileged Containers
 
 Avoid:
 
@@ -505,7 +505,7 @@ Privileged containers significantly increase the blast radius of compromise.
 
 ---
 
-# 31.21 Linux Capabilities
+ # 21 Linux Capabilities
 
 Linux capabilities split traditional root privileges into smaller permissions.
 
@@ -521,7 +521,7 @@ Add only narrowly required capabilities.
 
 ---
 
-# 31.22 Host Namespace Restrictions
+ # 22 Host Namespace Restrictions
 
 Avoid unnecessary:
 
@@ -535,7 +535,7 @@ These settings can increase access to host-level resources.
 
 ---
 
-# 31.23 HostPath Risks
+ # 23 HostPath Risks
 
 Avoid:
 
@@ -550,7 +550,7 @@ A compromised container with broad host access can potentially affect the node.
 
 ---
 
-# 31.24 Network Segmentation
+ # 24 Network Segmentation
 
 The production architecture should separate:
 
@@ -566,7 +566,7 @@ EKS worker nodes should generally reside in private subnets.
 
 ---
 
-# 31.25 VPC Security Groups
+ # 25 VPC Security Groups
 
 Security groups should allow only required traffic.
 
@@ -595,7 +595,7 @@ to arbitrary application ports.
 
 ---
 
-# 31.26 Security Group Anti-Pattern
+ # 26 Security Group Anti-Pattern
 
 Bad:
 
@@ -616,7 +616,7 @@ administrative access through controlled paths
 
 ---
 
-# 31.27 NACLs
+ # 27 NACLs
 
 Network ACLs operate at subnet boundaries.
 
@@ -632,7 +632,7 @@ application authentication
 
 ---
 
-# 31.28 Kubernetes NetworkPolicy
+ # 28 Kubernetes NetworkPolicy
 
 NetworkPolicy can restrict pod-to-pod communication.
 
@@ -654,7 +654,7 @@ This should be implemented carefully because it can break legitimate traffic.
 
 ---
 
-# 31.29 Application NetworkPolicy
+ # 29 Application NetworkPolicy
 
 Example concept:
 
@@ -684,7 +684,7 @@ Now only approved workloads can access the payment service on the specified port
 
 ---
 
-# 31.30 EKS Control Plane Security
+ # 30 EKS Control Plane Security
 
 Protect:
 
@@ -705,7 +705,7 @@ Controls include:
 
 ---
 
-# 31.31 EKS Endpoint Strategy
+ # 31 EKS Endpoint Strategy
 
 A production cluster may use:
 
@@ -725,7 +725,7 @@ Do not expose the Kubernetes API broadly without a security reason.
 
 ---
 
-# 31.32 Kubernetes Audit Logs
+ # 32 Kubernetes Audit Logs
 
 Audit logs help answer:
 
@@ -745,7 +745,7 @@ Important during:
 
 ---
 
-# 31.33 EKS Logging
+ # 33 EKS Logging
 
 Enable appropriate EKS control-plane logs according to requirements.
 
@@ -763,7 +763,7 @@ Costs should be considered, but security evidence should not be removed blindly.
 
 ---
 
-# 31.34 Secrets Management
+ # 34 Secrets Management
 
 Do not store secrets directly in:
 
@@ -783,7 +783,7 @@ password: MyRealPassword123
 
 ---
 
-# 31.35 Kubernetes Secrets
+ # 35 Kubernetes Secrets
 
 Kubernetes Secrets are API objects, but base64 encoding is not encryption by itself.
 
@@ -799,7 +799,7 @@ Use encrypted storage and external secret management appropriate to the environm
 
 ---
 
-# 31.36 AWS Secrets Manager
+ # 36 AWS Secrets Manager
 
 A production architecture can use:
 
@@ -820,7 +820,7 @@ Use appropriate IAM permissions for the workload.
 
 ---
 
-# 31.37 Secret Rotation
+ # 37 Secret Rotation
 
 Secrets should have a defined lifecycle:
 
@@ -841,7 +841,7 @@ Examples:
 
 ---
 
-# 31.38 Secret Exposure Response
+ # 38 Secret Exposure Response
 
 If a credential is committed to Git:
 
@@ -859,7 +859,7 @@ Deleting the visible line is not enough.
 
 ---
 
-# 31.39 ECR Image Security
+ # 39 ECR Image Security
 
 Production images should be:
 
@@ -887,7 +887,7 @@ latest
 
 ---
 
-# 31.40 Image Tagging
+ # 40 Image Tagging
 
 Avoid:
 
@@ -913,7 +913,7 @@ This improves reproducibility.
 
 ---
 
-# 31.41 Trivy
+ # 41 Trivy
 
 Trivy can scan:
 
@@ -944,7 +944,7 @@ Thresholds should be aligned with organizational vulnerability policy.
 
 ---
 
-# 31.42 Vulnerability Management
+ # 42 Vulnerability Management
 
 A vulnerability should be evaluated using:
 
@@ -961,7 +961,7 @@ Do not blindly block every vulnerability without understanding the risk.
 
 ---
 
-# 31.43 SonarQube
+ # 43 SonarQube
 
 SonarQube provides code-quality and security analysis.
 
@@ -985,7 +985,7 @@ The exact quality-gate policy should be defined by the organization.
 
 ---
 
-# 31.44 Veracode
+ # 44 Veracode
 
 Veracode can be used as part of application security testing.
 
@@ -1008,7 +1008,7 @@ remediation ownership
 
 ---
 
-# 31.45 CI/CD Security
+ # 45 CI/CD Security
 
 The pipeline is a high-value target.
 
@@ -1027,7 +1027,7 @@ A compromised CI system can become a supply-chain compromise.
 
 ---
 
-# 31.46 CI Runner Security
+ # 46 CI Runner Security
 
 Prefer:
 
@@ -1049,7 +1049,7 @@ Do not allow untrusted pull requests to freely access production credentials.
 
 ---
 
-# 31.47 Pipeline Credential Isolation
+ # 47 Pipeline Credential Isolation
 
 Bad:
 
@@ -1077,7 +1077,7 @@ Use separate identities.
 
 ---
 
-# 31.48 GitHub/GitLab Security
+ # 48 GitHub/GitLab Security
 
 Protect:
 
@@ -1094,7 +1094,7 @@ Production deployment should not depend on a developer directly pushing to the p
 
 ---
 
-# 31.49 GitOps Security
+ # 49 GitOps Security
 
 Git becomes the desired-state authority.
 
@@ -1117,7 +1117,7 @@ Compromise of the GitOps repository can result in production compromise.
 
 ---
 
-# 31.50 GitOps Repository Protection
+ # 50 GitOps Repository Protection
 
 Use:
 
@@ -1133,7 +1133,7 @@ secret scanning
 
 ---
 
-# 31.51 Argo CD Security
+ # 51 Argo CD Security
 
 Argo CD should have:
 
@@ -1151,7 +1151,7 @@ Do not give every Argo CD user unrestricted cluster administration.
 
 ---
 
-# 31.52 Argo CD Project
+ # 52 Argo CD Project
 
 Projects can restrict:
 
@@ -1183,7 +1183,7 @@ The exact allowed resources should be explicitly defined for the application's n
 
 ---
 
-# 31.53 Argo CD RBAC
+ # 53 Argo CD RBAC
 
 Use role-based permissions.
 
@@ -1210,7 +1210,7 @@ permissions.
 
 ---
 
-# 31.54 GitOps Drift Security
+ # 54 GitOps Drift Security
 
 If someone manually changes production:
 
@@ -1226,7 +1226,7 @@ The operational policy should define whether Argo CD automatically self-heals or
 
 ---
 
-# 31.55 Terraform Security
+ # 55 Terraform Security
 
 Protect:
 
@@ -1250,7 +1250,7 @@ Use a secure remote backend.
 
 ---
 
-# 31.56 Terraform State Security
+ # 56 Terraform State Security
 
 Production state should have:
 
@@ -1267,7 +1267,7 @@ Restrict who can modify state.
 
 ---
 
-# 31.57 Terraform IAM
+ # 57 Terraform IAM
 
 Terraform should use an IAM role with only the permissions required to manage its infrastructure.
 
@@ -1290,7 +1290,7 @@ AWS
 
 ---
 
-# 31.58 Infrastructure Drift
+ # 58 Infrastructure Drift
 
 Security drift can occur when:
 
@@ -1311,7 +1311,7 @@ monitoring
 
 ---
 
-# 31.59 ALB Security
+ # 59 ALB Security
 
 The ALB is the public entry point.
 
@@ -1328,7 +1328,7 @@ rate limiting / application controls
 
 ---
 
-# 31.60 TLS
+ # 60 TLS
 
 Production external traffic should generally use:
 
@@ -1348,7 +1348,7 @@ certificate expiration
 
 ---
 
-# 31.61 HTTP to HTTPS Redirect
+ # 61 HTTP to HTTPS Redirect
 
 Ingress can redirect:
 
@@ -1365,7 +1365,7 @@ Validate generated AWS resources after deployment.
 
 ---
 
-# 31.62 DNS Security
+ # 62 DNS Security
 
 Protect DNS changes.
 
@@ -1382,7 +1382,7 @@ audit logs
 
 ---
 
-# 31.63 Application Security
+ # 63 Application Security
 
 Infrastructure security cannot compensate for insecure application code.
 
@@ -1401,7 +1401,7 @@ error handling
 
 ---
 
-# 31.64 SQL Injection
+ # 64 SQL Injection
 
 Bad:
 
@@ -1415,7 +1415,7 @@ DevSecOps should catch common application vulnerabilities before deployment.
 
 ---
 
-# 31.65 Dependency Security
+ # 65 Dependency Security
 
 Dependencies should be scanned for:
 
@@ -1436,7 +1436,7 @@ Use organizational dependency-scanning controls as part of CI.
 
 ---
 
-# 31.66 Supply Chain Security
+ # 66 Supply Chain Security
 
 Software supply-chain risks include:
 
@@ -1462,7 +1462,7 @@ artifact provenance
 
 ---
 
-# 31.67 Base Image Security
+ # 67 Base Image Security
 
 Avoid unknown images.
 
@@ -1478,7 +1478,7 @@ The organization should validate and approve base images.
 
 ---
 
-# 31.68 Minimal Images
+ # 68 Minimal Images
 
 Smaller runtime images generally reduce:
 
@@ -1503,7 +1503,7 @@ in the runtime image unless required.
 
 ---
 
-# 31.69 Container User
+ # 69 Container User
 
 Avoid:
 
@@ -1523,7 +1523,7 @@ when the application supports it.
 
 ---
 
-# 31.70 Dockerfile Security
+ # 70 Dockerfile Security
 
 Example:
 
@@ -1543,7 +1543,7 @@ Build the image in CI and scan it before publishing.
 
 ---
 
-# 31.71 Runtime Security
+ # 71 Runtime Security
 
 Monitor for:
 
@@ -1568,7 +1568,7 @@ events.
 
 ---
 
-# 31.72 ELK Security
+ # 72 ELK Security
 
 Logs can contain sensitive data.
 
@@ -1586,7 +1586,7 @@ Use structured logging and data masking.
 
 ---
 
-# 31.73 Log Access Control
+ # 73 Log Access Control
 
 Not every engineer needs unrestricted access to every production log.
 
@@ -1602,7 +1602,7 @@ role
 
 ---
 
-# 31.74 Prometheus Security
+ # 74 Prometheus Security
 
 Prometheus contains operational information.
 
@@ -1618,7 +1618,7 @@ Do not expose management endpoints publicly without appropriate authentication a
 
 ---
 
-# 31.75 Grafana Security
+ # 75 Grafana Security
 
 Use:
 
@@ -1635,7 +1635,7 @@ Avoid shared administrator accounts.
 
 ---
 
-# 31.76 Alertmanager Security
+ # 76 Alertmanager Security
 
 Alertmanager may contain:
 
@@ -1652,7 +1652,7 @@ Notification integrations should use secure credentials stored outside Git.
 
 ---
 
-# 31.77 Security Monitoring
+ # 77 Security Monitoring
 
 Security-related alerts may include:
 
@@ -1669,7 +1669,7 @@ secret access anomaly
 
 ---
 
-# 31.78 Security Alert Example
+ # 78 Security Alert Example
 
 A suspicious security-group change:
 
@@ -1692,7 +1692,7 @@ Production response:
 
 ---
 
-# 31.79 AWS Security Monitoring
+ # 79 AWS Security Monitoring
 
 A production environment may integrate services such as:
 
@@ -1717,7 +1717,7 @@ They do not replace application observability.
 
 ---
 
-# 31.80 CloudTrail
+ # 80 CloudTrail
 
 CloudTrail helps investigate:
 
@@ -1738,7 +1738,7 @@ Protect CloudTrail logs from unauthorized modification.
 
 ---
 
-# 31.81 GuardDuty
+ # 81 GuardDuty
 
 GuardDuty can provide managed threat detection signals.
 
@@ -1754,7 +1754,7 @@ Treat findings as investigation inputs, not automatic proof of compromise.
 
 ---
 
-# 31.82 Security Hub
+ # 82 Security Hub
 
 Security Hub can centralize security findings across AWS security services.
 
@@ -1762,7 +1762,7 @@ This can help security teams prioritize findings.
 
 ---
 
-# 31.83 AWS Config
+ # 83 AWS Config
 
 AWS Config can evaluate resource configuration.
 
@@ -1776,7 +1776,7 @@ Configuration monitoring can detect drift from security standards.
 
 ---
 
-# 31.84 Production Security Baseline
+ # 84 Production Security Baseline
 
 Minimum baseline:
 
@@ -1802,7 +1802,7 @@ security monitoring
 
 ---
 
-# 31.85 Encryption at Rest
+ # 85 Encryption at Rest
 
 Protect:
 
@@ -1819,7 +1819,7 @@ Use AWS-managed or customer-managed keys according to requirements.
 
 ---
 
-# 31.86 Encryption in Transit
+ # 86 Encryption in Transit
 
 Use encryption for:
 
@@ -1836,7 +1836,7 @@ The exact TLS topology depends on application requirements.
 
 ---
 
-# 31.87 KMS
+ # 87 KMS
 
 AWS KMS can manage encryption keys.
 
@@ -1854,7 +1854,7 @@ Do not grant every workload unrestricted KMS access.
 
 ---
 
-# 31.88 Backup Security
+ # 88 Backup Security
 
 Backups should be:
 
@@ -1870,7 +1870,7 @@ A compromised production account should not automatically be able to destroy eve
 
 ---
 
-# 31.89 Immutable Backup Concepts
+ # 89 Immutable Backup Concepts
 
 Where supported and required, use:
 
@@ -1885,7 +1885,7 @@ This reduces ransomware and accidental-deletion risk.
 
 ---
 
-# 31.90 Security and Disaster Recovery
+ # 90 Security and Disaster Recovery
 
 Security incidents can become DR events.
 
@@ -1914,7 +1914,7 @@ DR plans should include cyberattack scenarios.
 
 ---
 
-# 31.91 Production Security YAML
+ # 91 Production Security YAML
 
 A hardened Deployment example:
 
@@ -1993,7 +1993,7 @@ spec:
 
 ---
 
-# 31.92 YAML Security Explanation
+ # 92 YAML Security Explanation
 
 Important fields:
 
@@ -2047,7 +2047,7 @@ pins the deployment to a specific immutable artifact.
 
 ---
 
-# 31.93 Pod Security Admission
+ # 93 Pod Security Admission
 
 A namespace can be labeled according to Pod Security Standards.
 
@@ -2068,7 +2068,7 @@ Validate application compatibility before enforcing this in production.
 
 ---
 
-# 31.94 Security Policy as Code
+ # 94 Security Policy as Code
 
 Security should be automated.
 
@@ -2096,7 +2096,7 @@ Terraform policies
 
 ---
 
-# 31.95 Admission Control
+ # 95 Admission Control
 
 Admission controls can prevent insecure resources before they run.
 
@@ -2127,7 +2127,7 @@ missing security context
 
 ---
 
-# 31.96 Image Admission
+ # 96 Image Admission
 
 Production policy:
 
@@ -2149,7 +2149,7 @@ The exact implementation depends on the admission tooling selected by the organi
 
 ---
 
-# 31.97 NetworkPolicy Baseline
+ # 97 NetworkPolicy Baseline
 
 A production namespace can start with:
 
@@ -2172,7 +2172,7 @@ Document every exception.
 
 ---
 
-# 31.98 DNS Policy
+ # 98 DNS Policy
 
 Applications often require DNS.
 
@@ -2184,7 +2184,7 @@ This is a common production NetworkPolicy mistake.
 
 ---
 
-# 31.99 Egress Control
+ # 99 Egress Control
 
 Do not allow every pod unrestricted outbound internet access if business requirements do not require it.
 
@@ -2209,7 +2209,7 @@ Test carefully.
 
 ---
 
-# 31.100 Security Hardening Workflow
+ # 100 Security Hardening Workflow
 
 ```text
 Discover
@@ -2238,7 +2238,7 @@ Review
 
 ---
 
-# 31.101 Production Security Review
+ # 101 Production Security Review
 
 Before production deployment:
 
@@ -2264,7 +2264,7 @@ Before production deployment:
 
 ---
 
-# 31.102 Security Failure Scenario: Compromised Pod
+ # 102 Security Failure Scenario: Compromised Pod
 
 ### Symptom
 
@@ -2323,7 +2323,7 @@ runtime monitoring
 
 ---
 
-# 31.103 Security Failure Scenario: Exposed AWS Credentials
+ # 103 Security Failure Scenario: Exposed AWS Credentials
 
 ### Symptom
 
@@ -2359,7 +2359,7 @@ least privilege
 
 ---
 
-# 31.104 Security Failure Scenario: Vulnerable Image
+ # 104 Security Failure Scenario: Vulnerable Image
 
 ### Symptom
 
@@ -2385,7 +2385,7 @@ CRITICAL vulnerability
 
 ---
 
-# 31.105 Security Failure Scenario: Malicious GitOps Commit
+ # 105 Security Failure Scenario: Malicious GitOps Commit
 
 ### Symptom
 
@@ -2414,7 +2414,7 @@ review repository permissions
 
 ---
 
-# 31.106 Security Failure Scenario: Public Security Group
+ # 106 Security Failure Scenario: Public Security Group
 
 ### Symptom
 
@@ -2445,7 +2445,7 @@ least privilege
 
 ---
 
-# 31.107 Security Testing
+ # 107 Security Testing
 
 Security controls should be tested.
 
@@ -2474,7 +2474,7 @@ unapproved pod → protected service = denied
 
 ---
 
-# 31.108 RBAC Verification
+ # 108 RBAC Verification
 
 Useful:
 
@@ -2488,7 +2488,7 @@ This reveals effective permissions and helps detect over-privilege.
 
 ---
 
-# 31.109 Security Scanning Pipeline
+ # 109 Security Scanning Pipeline
 
 Production pipeline:
 
@@ -2527,7 +2527,7 @@ EKS
 
 ---
 
-# 31.110 Security Gates
+ # 110 Security Gates
 
 A production pipeline may stop when:
 
@@ -2551,7 +2551,7 @@ tracked
 
 ---
 
-# 31.111 Security and GitOps Separation
+ # 111 Security and GitOps Separation
 
 The architecture should separate:
 
@@ -2586,7 +2586,7 @@ This reduces direct production credential exposure.
 
 ---
 
-# 31.112 Production Security Architecture
+ # 112 Production Security Architecture
 
 ```text
                          INTERNET
@@ -2639,7 +2639,7 @@ AWS CloudTrail / GuardDuty / Config
 
 ---
 
-# 31.113 Security Ownership
+ # 113 Security Ownership
 
 Security responsibilities should be explicit.
 
@@ -2675,7 +2675,7 @@ nobody owns security
 
 ---
 
-# 31.114 Security Metrics
+ # 114 Security Metrics
 
 Track:
 
@@ -2694,7 +2694,7 @@ security incidents
 
 ---
 
-# 31.115 Mean Time to Remediate
+ # 115 Mean Time to Remediate
 
 MTTR for security vulnerabilities should be measured.
 
@@ -2715,7 +2715,7 @@ These are example organizational targets, not universal requirements.
 
 ---
 
-# 31.116 Security Exception Process
+ # 116 Security Exception Process
 
 Sometimes remediation cannot happen immediately.
 
@@ -2737,7 +2737,7 @@ Avoid permanent exceptions.
 
 ---
 
-# 31.117 Production Hardening Checklist
+ # 117 Production Hardening Checklist
 
 ## AWS
 
@@ -2793,7 +2793,7 @@ Avoid permanent exceptions.
 
 ---
 
-# 31.118 Senior Interview Answer: How Do You Secure EKS?
+ # 118 Senior Interview Answer: How Do You Secure EKS?
 
 A strong production answer:
 
@@ -2822,7 +2822,7 @@ controls instead of assuming that configuration alone means security.
 
 ---
 
-# 31.119 Senior Interview Answer: How Do You Prevent Container Escape Risk?
+ # 119 Senior Interview Answer: How Do You Prevent Container Escape Risk?
 
 ```text
 I avoid privileged containers, host namespaces and unnecessary
@@ -2836,7 +2836,7 @@ Image scanning and runtime monitoring provide additional layers.
 
 ---
 
-# 31.120 Senior Interview Answer: How Do You Secure CI/CD?
+ # 120 Senior Interview Answer: How Do You Secure CI/CD?
 
 ```text
 I treat CI/CD as production infrastructure.
@@ -2853,7 +2853,7 @@ the desired state.
 
 ---
 
-# 31.121 Senior Interview Answer: How Do You Handle a Leaked Secret?
+ # 121 Senior Interview Answer: How Do You Handle a Leaked Secret?
 
 ```text
 I assume the secret is compromised.
@@ -2869,7 +2869,7 @@ secret management.
 
 ---
 
-# 31.122 Senior Interview Answer: How Do You Secure GitOps?
+ # 122 Senior Interview Answer: How Do You Secure GitOps?
 
 ```text
 The GitOps repository is part of the production security boundary.
@@ -2884,7 +2884,7 @@ unexpected production changes can be traced back to their source.
 
 ---
 
-# 31.123 Security Operations Workflow
+ # 123 Security Operations Workflow
 
 ```text
 Security Event
@@ -2919,7 +2919,7 @@ Preventive Control
 
 ---
 
-# 31.124 Final Production Security Model
+ # 124 Final Production Security Model
 
 The complete security mindset is:
 
@@ -2995,7 +2995,7 @@ and are continuously tested.
 
 ---
 
-# 31.125 Final Security Principle
+ # 125 Final Security Principle
 
 ```text
 Least privilege
@@ -3052,3 +3052,5 @@ Recovery
 ```
 
 That is the production DevSecOps security model.
+
+---
