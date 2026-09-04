@@ -1,4 +1,4 @@
-# 01 — DevOps Production Capstone Requirements
+# DevOps Production Capstone Requirements
 
 ## 1. Purpose
 
@@ -2271,3 +2271,5 @@ How does it recover?
 ```
 
 Every later capstone document should remain consistent with that reference architecture.
+
+---
