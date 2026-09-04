@@ -1,4 +1,4 @@
-# 08 — ECR and Artifact Management
+# ECR and Artifact Management
 
 ## 1. Purpose
 
@@ -3912,3 +3912,5 @@ DR can retrieve the same digest
 ```
 
 That is the production artifact-management model this capstone should demonstrate.
+
+---
