@@ -1,4 +1,4 @@
-# 16 --- Multi-Cluster Deployment --- Production DevOps Capstone
+# Multi-Cluster Deployment
 
 > Deep production guide for deploying and operating applications across
 > multiple AWS EKS clusters using Argo CD, ApplicationSets, GitOps,
@@ -2555,3 +2555,5 @@ convergence across every cluster.
 3.  What happens if this cluster or region fails?
 4.  How is the workload restored?
 5.  How do we prove all clusters converged to the intended release?
+
+---
