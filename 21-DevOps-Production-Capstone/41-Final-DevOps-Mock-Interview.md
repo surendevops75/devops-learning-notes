@@ -1,4 +1,4 @@
-# 41-Final-DevOps-Mock-Interview
+# Final-DevOps-Mock-Interview
 
 # Final Senior DevOps / DevSecOps Production Mock Interview
 
