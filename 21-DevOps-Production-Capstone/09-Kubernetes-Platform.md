@@ -1,4 +1,4 @@
-# 09 — Kubernetes Platform
+# Kubernetes Platform
 
 ## 1. Purpose
 
@@ -4945,3 +4945,5 @@ Tested recovery
 ```
 
 That is the Kubernetes platform layer expected in a serious production DevOps environment.
+
+---
