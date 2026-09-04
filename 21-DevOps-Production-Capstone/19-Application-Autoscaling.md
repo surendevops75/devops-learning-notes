@@ -1,4 +1,4 @@
-# 19 --- Application Autoscaling --- Production DevOps Capstone
+# Application Autoscaling
 
 > Deep production guide for Kubernetes HPA, VPA, KEDA, Prometheus
 > metrics, Prometheus Adapter, EKS node autoscaling, Karpenter, Cluster
@@ -3516,3 +3516,5 @@ universal template.
 3.  What limits scaling?
 4.  What dependency could fail when replicas increase?
 5.  How do we observe and recover the scaling system?
+
+---
