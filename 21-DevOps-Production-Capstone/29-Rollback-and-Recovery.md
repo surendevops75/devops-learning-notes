@@ -1,6 +1,6 @@
-# 29. Rollback and Recovery
+# Rollback and Recovery
 
-## 29.1 Purpose
+## 1. Purpose
 
 Rollback and recovery are critical production operations used to return a system to a known-good state after a bad deployment, configuration change, infrastructure change, or application failure.
 
@@ -48,7 +48,7 @@ Rollback must therefore preserve the source-of-truth model wherever possible.
 
 ---
 
-# 29.2 Rollback vs Recovery
+ # 2 Rollback vs Recovery
 
 These terms are related but different.
 
@@ -85,7 +85,7 @@ Rollback is one recovery technique.
 
 ---
 
-# 29.3 Why Rollback Matters
+ # 3 Why Rollback Matters
 
 A deployment can fail because of:
 
@@ -113,7 +113,7 @@ incident duration
 
 ---
 
-# 29.4 Rollback Principles
+ # 4 Rollback Principles
 
 Production rollback should be:
 
@@ -138,7 +138,7 @@ It should be a designed production capability.
 
 ---
 
-# 29.5 Known-Good Version
+ # 5 Known-Good Version
 
 Rollback requires a known-good version.
 
@@ -186,7 +186,7 @@ or immutable image digests.
 
 ---
 
-# 29.6 Rollback Decision Framework
+ # 6 Rollback Decision Framework
 
 Before rollback ask:
 
@@ -218,7 +218,7 @@ assess data compatibility
 
 ---
 
-# 29.7 Rollback Hierarchy
+ # 7 Rollback Hierarchy
 
 A useful preference order is:
 
@@ -238,7 +238,7 @@ For GitOps production environments, the desired permanent state should ultimatel
 
 ---
 
-# 29.8 Application Rollback
+ # 8 Application Rollback
 
 Suppose:
 
@@ -273,7 +273,7 @@ Therefore the permanent rollback should normally be represented in Git.
 
 ---
 
-# 29.9 GitOps Rollback
+ # 9 GitOps Rollback
 
 Preferred production workflow:
 
@@ -309,7 +309,7 @@ This creates:
 
 ---
 
-# 29.10 Git Revert
+ # 10 Git Revert
 
 Suppose a GitOps commit introduced:
 
@@ -360,7 +360,7 @@ If auto-sync is enabled, the synchronization may happen automatically.
 
 ---
 
-# 29.11 Why Git Revert Is Better Than Git Reset
+ # 11 Why Git Revert Is Better Than Git Reset
 
 For shared production branches:
 
@@ -388,7 +388,7 @@ Force-pushing production history is generally undesirable.
 
 ---
 
-# 29.12 Argo CD Rollback
+ # 12 Argo CD Rollback
 
 Argo CD maintains application history.
 
@@ -416,7 +416,7 @@ However, the permanent desired state should still be updated in Git.
 
 ---
 
-# 29.13 Argo CD Emergency Recovery Model
+ # 13 Argo CD Emergency Recovery Model
 
 Example:
 
@@ -462,7 +462,7 @@ Git = cluster
 
 ---
 
-# 29.14 Helm Rollback
+ # 14 Helm Rollback
 
 Helm tracks releases and revisions.
 
@@ -507,7 +507,7 @@ kubectl rollout status deployment/payment -n roboshop
 
 ---
 
-# 29.15 Helm Rollback in GitOps
+ # 15 Helm Rollback in GitOps
 
 Direct Helm rollback is usually an emergency operation when Argo CD manages the application.
 
@@ -539,7 +539,7 @@ must be coordinated.
 
 ---
 
-# 29.16 Image Rollback
+ # 16 Image Rollback
 
 If the image is the problem:
 
@@ -573,7 +573,7 @@ Image digests provide stronger immutability than mutable tags.
 
 ---
 
-# 29.17 Why Image Tags Should Be Immutable
+ # 17 Why Image Tags Should Be Immutable
 
 Bad:
 
@@ -603,7 +603,7 @@ The deployment should identify exactly which artifact is running.
 
 ---
 
-# 29.18 Kubernetes Rollback
+ # 18 Kubernetes Rollback
 
 Check rollout history:
 
@@ -639,7 +639,7 @@ kubectl get pods -n roboshop -l app=payment
 
 ---
 
-# 29.19 Deployment Rollback Validation
+ # 19 Deployment Rollback Validation
 
 Never stop after:
 
@@ -664,7 +664,7 @@ A Kubernetes rollout can be technically successful while the application remains
 
 ---
 
-# 29.20 Rollback and Readiness Probes
+ # 20 Rollback and Readiness Probes
 
 A proper readiness probe prevents traffic from being sent to an unhealthy version.
 
@@ -693,7 +693,7 @@ only healthy pods receive traffic
 
 ---
 
-# 29.21 Rollback and Liveness Probes
+ # 21 Rollback and Liveness Probes
 
 Liveness probes answer:
 
@@ -723,7 +723,7 @@ This can prevent rollback from stabilizing.
 
 ---
 
-# 29.22 Rollback Strategy with RollingUpdate
+ # 22 Rollback Strategy with RollingUpdate
 
 Example:
 
@@ -747,7 +747,7 @@ But rollback behavior depends on:
 
 ---
 
-# 29.23 Blue-Green Recovery
+ # 23 Blue-Green Recovery
 
 Blue-green:
 
@@ -794,7 +794,7 @@ Disadvantages:
 
 ---
 
-# 29.24 Canary Recovery
+ # 24 Canary Recovery
 
 Canary:
 
@@ -828,7 +828,7 @@ Canary deployment dramatically reduces blast radius.
 
 ---
 
-# 29.25 Automated Rollback
+ # 25 Automated Rollback
 
 Automated rollback can use signals such as:
 
@@ -860,7 +860,7 @@ Automation should include safeguards against rollback loops.
 
 ---
 
-# 29.26 Rollback Loops
+ # 26 Rollback Loops
 
 Bad automation:
 
@@ -893,7 +893,7 @@ Prevent it with:
 
 ---
 
-# 29.27 Database Rollback Is Different
+ # 27 Database Rollback Is Different
 
 Application rollback can be easy.
 
@@ -925,7 +925,7 @@ backward compatibility
 
 ---
 
-# 29.28 Expand-and-Contract Pattern
+ # 28 Expand-and-Contract Pattern
 
 Safer database migration:
 
@@ -950,7 +950,7 @@ This makes application rollback safer.
 
 ---
 
-# 29.29 Example of Safe Database Migration
+ # 29 Example of Safe Database Migration
 
 Old:
 
@@ -987,7 +987,7 @@ This allows old and new application versions to coexist during deployment.
 
 ---
 
-# 29.30 Dangerous Database Rollback
+ # 30 Dangerous Database Rollback
 
 Suppose deployment:
 
@@ -1019,7 +1019,7 @@ Database rollback requires separate planning.
 
 ---
 
-# 29.31 Data Recovery vs Application Rollback
+ # 31 Data Recovery vs Application Rollback
 
 If application data is corrupted:
 
@@ -1042,7 +1042,7 @@ The recovery plan must identify the data layer separately.
 
 ---
 
-# 29.32 Terraform Rollback
+ # 32 Terraform Rollback
 
 Terraform does not provide a simple universal:
 
@@ -1080,7 +1080,7 @@ Always review the plan carefully.
 
 ---
 
-# 29.33 Terraform Rollback Safety
+ # 33 Terraform Rollback Safety
 
 Never blindly run:
 
@@ -1106,7 +1106,7 @@ A rollback plan that destroys a production database is not a safe rollback.
 
 ---
 
-# 29.34 Terraform State
+ # 34 Terraform State
 
 Terraform rollback depends on accurate state.
 
@@ -1122,7 +1122,7 @@ State is critical production data.
 
 ---
 
-# 29.35 Infrastructure Recovery Example
+ # 35 Infrastructure Recovery Example
 
 Bad change:
 
@@ -1150,7 +1150,7 @@ Recovery:
 
 ---
 
-# 29.36 ECR Recovery
+ # 36 ECR Recovery
 
 ECR should retain enough image history for rollback.
 
@@ -1167,7 +1167,7 @@ Do not delete the previous production image immediately after deployment.
 
 ---
 
-# 29.37 ECR Image Retention
+ # 37 ECR Image Retention
 
 Example policy concept:
 
@@ -1189,7 +1189,7 @@ storage cost
 
 ---
 
-# 29.38 ECR Image Verification
+ # 38 ECR Image Verification
 
 Before rollback:
 
@@ -1209,7 +1209,7 @@ Verify:
 
 ---
 
-# 29.39 Helm Values Rollback
+ # 39 Helm Values Rollback
 
 A release may fail because of configuration rather than code.
 
@@ -1241,7 +1241,7 @@ But production teams should also fix the underlying capacity/configuration probl
 
 ---
 
-# 29.40 ConfigMap Rollback
+ # 40 ConfigMap Rollback
 
 Configuration changes can break production.
 
@@ -1270,7 +1270,7 @@ A ConfigMap update does not always cause application processes to reload configu
 
 ---
 
-# 29.41 Secret Rollback
+ # 41 Secret Rollback
 
 Secrets require extra caution.
 
@@ -1292,7 +1292,7 @@ Audit secret changes separately.
 
 ---
 
-# 29.42 Certificate Recovery
+ # 42 Certificate Recovery
 
 If a certificate change breaks ingress:
 
@@ -1317,7 +1317,7 @@ Rollback to a known-good certificate configuration where appropriate.
 
 ---
 
-# 29.43 ALB Recovery
+ # 43 ALB Recovery
 
 If an ingress change causes outage:
 
@@ -1337,7 +1337,7 @@ Rollback the Ingress/Helm configuration through GitOps.
 
 ---
 
-# 29.44 DNS Recovery
+ # 44 DNS Recovery
 
 For a bad DNS change:
 
@@ -1359,7 +1359,7 @@ Recovery may not be instantaneous because cached responses can persist.
 
 ---
 
-# 29.45 Argo CD Rollback and Drift
+ # 45 Argo CD Rollback and Drift
 
 Suppose:
 
@@ -1396,7 +1396,7 @@ desired state = actual state
 
 ---
 
-# 29.46 Rollback Verification with Prometheus
+ # 46 Rollback Verification with Prometheus
 
 Before rollback:
 
@@ -1433,7 +1433,7 @@ after
 
 ---
 
-# 29.47 Rollback Verification with Logs
+ # 47 Rollback Verification with Logs
 
 Check:
 
@@ -1454,7 +1454,7 @@ Confirm that errors associated with the bad release disappear.
 
 ---
 
-# 29.48 Rollback Verification with Business Metrics
+ # 48 Rollback Verification with Business Metrics
 
 Technical health is not enough.
 
@@ -1478,7 +1478,7 @@ while the business transaction is still broken.
 
 ---
 
-# 29.49 Rollback Runbook
+ # 49 Rollback Runbook
 
 ## Step 1 — Confirm Incident
 
@@ -1562,7 +1562,7 @@ follow-up
 
 ---
 
-# 29.50 Emergency Kubernetes Rollback Example
+ # 50 Emergency Kubernetes Rollback Example
 
 ```bash
 kubectl config current-context
@@ -1592,7 +1592,7 @@ And verify application behavior.
 
 ---
 
-# 29.51 Emergency Helm Rollback Example
+ # 51 Emergency Helm Rollback Example
 
 ```bash
 helm history payment -n roboshop
@@ -1610,7 +1610,7 @@ Then update Git if Helm is managed by Argo CD.
 
 ---
 
-# 29.52 Emergency GitOps Rollback Example
+ # 52 Emergency GitOps Rollback Example
 
 ```bash
 git log --oneline -- deployment/payment/values.yaml
@@ -1650,7 +1650,7 @@ Healthy
 
 ---
 
-# 29.53 Rollback YAML Example
+ # 53 Rollback YAML Example
 
 Example deployment:
 
@@ -1709,7 +1709,7 @@ rolling strategy
 
 ---
 
-# 29.54 Rollback and PodDisruptionBudget
+ # 54 Rollback and PodDisruptionBudget
 
 A PDB can protect availability during planned disruption.
 
@@ -1734,7 +1734,7 @@ Capacity must exist.
 
 ---
 
-# 29.55 Rollback and Horizontal Pod Autoscaler
+ # 55 Rollback and Horizontal Pod Autoscaler
 
 If HPA is configured:
 
@@ -1757,7 +1757,7 @@ During incident response, avoid fighting the controller manually without underst
 
 ---
 
-# 29.56 Rollback and Cluster Capacity
+ # 56 Rollback and Cluster Capacity
 
 Suppose:
 
@@ -1789,7 +1789,7 @@ Production clusters should maintain sufficient headroom for recovery.
 
 ---
 
-# 29.57 Rollback and Node Autoscaling
+ # 57 Rollback and Node Autoscaling
 
 If capacity is insufficient:
 
@@ -1813,7 +1813,7 @@ rollback capacity
 
 ---
 
-# 29.58 Rollback and Service Mesh
+ # 58 Rollback and Service Mesh
 
 This capstone does not require a service mesh.
 
@@ -1833,7 +1833,7 @@ route traffic to known-good version
 
 ---
 
-# 29.59 Rollback and API Compatibility
+ # 59 Rollback and API Compatibility
 
 Suppose:
 
@@ -1866,7 +1866,7 @@ contract
 
 ---
 
-# 29.60 Rollback and Microservices
+ # 60 Rollback and Microservices
 
 For RoboShop:
 
@@ -1894,7 +1894,7 @@ Targeted rollback reduces blast radius.
 
 ---
 
-# 29.61 Coordinated Rollback
+ # 61 Coordinated Rollback
 
 Sometimes multiple services must roll back together.
 
@@ -1925,7 +1925,7 @@ Use compatibility matrices for major API changes.
 
 ---
 
-# 29.62 Rollback Testing
+ # 62 Rollback Testing
 
 Rollback must be tested before a real outage.
 
@@ -1945,7 +1945,7 @@ A rollback process that has never been tested is not a reliable production capab
 
 ---
 
-# 29.63 Recovery Game Day
+ # 63 Recovery Game Day
 
 Example game day:
 
@@ -1976,7 +1976,7 @@ errors during recovery
 
 ---
 
-# 29.64 Rollback Safety Checklist
+ # 64 Rollback Safety Checklist
 
 Before:
 
@@ -2010,7 +2010,7 @@ After:
 
 ---
 
-# 29.65 Common Rollback Mistakes
+ # 65 Common Rollback Mistakes
 
 ## Mistake 1: Rolling back without checking database changes
 
@@ -2079,7 +2079,7 @@ unnecessary infrastructure changes
 
 ---
 
-# 29.66 Recovery Validation Matrix
+ # 66 Recovery Validation Matrix
 
 | Layer | Validation |
 |---|---|
@@ -2099,7 +2099,7 @@ unnecessary infrastructure changes
 
 ---
 
-# 29.67 Rollback Architecture
+ # 67 Rollback Architecture
 
 ```text
                     Git
@@ -2140,7 +2140,7 @@ unnecessary infrastructure changes
 
 ---
 
-# 29.68 End-to-End Production Rollback Scenario
+ # 68 End-to-End Production Rollback Scenario
 
 ### Situation
 
@@ -2263,7 +2263,7 @@ canary release
 
 ---
 
-# 29.69 Failed Rollback Scenario
+ # 69 Failed Rollback Scenario
 
 Suppose:
 
@@ -2305,7 +2305,7 @@ This demonstrates why database-aware deployment strategies are essential.
 
 ---
 
-# 29.70 Recovery When Rollback Is Impossible
+ # 70 Recovery When Rollback Is Impossible
 
 Rollback may be impossible when:
 
@@ -2336,7 +2336,7 @@ Recovery does not always mean going backward.
 
 ---
 
-# 29.71 Forward Fix vs Rollback
+ # 71 Forward Fix vs Rollback
 
 Use rollback when:
 
@@ -2360,7 +2360,7 @@ Senior engineers should be comfortable with both.
 
 ---
 
-# 29.72 Recovery from GitOps Repository Failure
+ # 72 Recovery from GitOps Repository Failure
 
 If GitOps repository is unavailable:
 
@@ -2389,7 +2389,7 @@ Therefore maintain:
 
 ---
 
-# 29.73 Recovery from Argo CD Failure
+ # 73 Recovery from Argo CD Failure
 
 If Argo CD control plane fails:
 
@@ -2413,7 +2413,7 @@ The application platform and GitOps control plane should be treated as separate 
 
 ---
 
-# 29.74 Recovery from EKS Control Plane Issue
+ # 74 Recovery from EKS Control Plane Issue
 
 If EKS control-plane operations are impaired:
 
@@ -2438,7 +2438,7 @@ Preserve running workloads if they are serving traffic.
 
 ---
 
-# 29.75 Recovery from Node Failure
+ # 75 Recovery from Node Failure
 
 If a node fails:
 
@@ -2467,7 +2467,7 @@ Rollback is not necessarily required because this is an infrastructure failure r
 
 ---
 
-# 29.76 Recovery from Availability-Zone Failure
+ # 76 Recovery from Availability-Zone Failure
 
 With multi-AZ EKS:
 
@@ -2494,7 +2494,7 @@ A cluster with three AZs is not automatically highly available if all replicas a
 
 ---
 
-# 29.77 Recovery from Region Failure
+ # 77 Recovery from Region Failure
 
 Regional recovery requires:
 
@@ -2539,7 +2539,7 @@ This belongs to the broader DR plan covered later in the capstone.
 
 ---
 
-# 29.78 Rollback Security
+ # 78 Rollback Security
 
 Rollback should respect:
 
@@ -2561,7 +2561,7 @@ Production recovery must be fast without becoming uncontrolled.
 
 ---
 
-# 29.79 Break-Glass Access
+ # 79 Break-Glass Access
 
 A break-glass account or role may be used during severe incidents.
 
@@ -2578,7 +2578,7 @@ Break-glass access should not become the normal operating model.
 
 ---
 
-# 29.80 Rollback Observability
+ # 80 Rollback Observability
 
 Track:
 
@@ -2612,7 +2612,7 @@ This makes incident analysis easier.
 
 ---
 
-# 29.81 Production Rollback Best Practices
+ # 81 Production Rollback Best Practices
 
 1. Keep previous production images.
 2. Use immutable image references.
@@ -2637,7 +2637,7 @@ This makes incident analysis easier.
 
 ---
 
-# 29.82 Senior Interview Questions
+ # 82 Senior Interview Questions
 
 ## Q1. How do you rollback a production deployment in Kubernetes?
 
@@ -2701,7 +2701,7 @@ Restore customer-facing reliability quickly while minimizing additional risk. I 
 
 ---
 
-# 29.83 Final Production Recovery Model
+ # 83 Final Production Recovery Model
 
 The production rollback model should be:
 
@@ -2784,3 +2784,5 @@ HOW to prevent the incident from recurring
 ```
 
 That is the production-level rollback and recovery mindset.
+
+---
