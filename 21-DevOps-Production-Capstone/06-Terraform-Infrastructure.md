@@ -1,4 +1,4 @@
-# 06 — Terraform Infrastructure
+# Terraform Infrastructure
 
 ## 1. Purpose
 
@@ -4342,3 +4342,5 @@ creates a controlled production infrastructure lifecycle.
 The next layer is the EKS platform itself.
 
 That platform must consume the VPC, IAM, security, and Terraform foundation established here and turn it into a highly available production Kubernetes environment.
+
+---
