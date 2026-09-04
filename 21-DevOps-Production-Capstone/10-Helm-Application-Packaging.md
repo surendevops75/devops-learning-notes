@@ -1,4 +1,4 @@
-# 10 — Helm Application Packaging
+# Helm Application Packaging
 
 ## Production DevOps Capstone
 
@@ -5416,3 +5416,5 @@ Auditability
 ```
 
 That is the difference between knowing Helm commands and understanding Helm as part of a production DevOps platform.
+
+---
