@@ -1,4 +1,4 @@
-# 12 --- DevSecOps Pipeline --- Production DevOps Capstone
+# DevSecOps Pipeline
 
 > Deep production-oriented security notes for GitLab CI, AWS, ECR, EKS,
 > Docker, Kubernetes, GitOps, Argo CD, and software supply-chain
@@ -2519,3 +2519,5 @@ independent boundaries, risk is visible before production, identities
 are short-lived and least-privileged, artifacts are traceable and
 immutable, and the organization can recover quickly when a control or
 dependency is compromised.**
+
+---
