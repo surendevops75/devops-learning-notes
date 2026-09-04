@@ -1,4 +1,4 @@
-# 23 — ELK Logging — Production DevOps Capstone
+# ELK Logging
 
 > Deep production-focused chapter for centralized logging with Elasticsearch, Logstash, Kibana, and Kubernetes log collectors in AWS/EKS environments.
 
@@ -3358,3 +3358,5 @@ Incident Closed
 ```
 
 **Production mindset:** Logging is successful only when an engineer can reliably reconstruct what happened during an incident, correlate it with metrics and traces, protect sensitive information, recover the logging platform after failure, and operate the entire pipeline at predictable cost and performance.
+
+---
