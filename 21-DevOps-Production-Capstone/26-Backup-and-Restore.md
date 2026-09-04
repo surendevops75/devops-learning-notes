@@ -1,4 +1,4 @@
-# 26 — Backup and Restore
+# Backup and Restore
 
 ## 1. Purpose
 
@@ -3636,3 +3636,6 @@ For the RoboShop production capstone, Terraform and GitOps provide reproducibili
 The final standard is simple:
 
 > If you have never restored it, you do not truly know whether you have a backup.
+
+
+---
