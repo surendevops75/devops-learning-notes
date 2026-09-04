@@ -1,4 +1,4 @@
-# 38-Failure-Scenarios.md
+# Failure-Scenarios.md
 
 # DevOps Production Capstone — Failure Scenarios
 
