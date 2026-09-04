@@ -1,4 +1,4 @@
-# 37 — Complete Production YAMLs
+# Complete Production YAMLs
 
 ## 1. Purpose
 
