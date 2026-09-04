@@ -1,4 +1,4 @@
-# 36 — Complete CI/CD Pipeline
+# Complete CI/CD Pipeline
 
 ## 1. Purpose
 
