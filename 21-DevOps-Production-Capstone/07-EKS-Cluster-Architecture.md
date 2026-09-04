@@ -1,4 +1,4 @@
-# 07 — EKS Cluster Architecture
+# EKS Cluster Architecture
 
 ## 1. Purpose
 
@@ -4396,3 +4396,5 @@ What happens if the entire cluster is lost?
 ```
 
 A production EKS architecture is successful when these questions have tested, documented answers rather than assumptions.
+
+---
