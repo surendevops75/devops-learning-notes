@@ -1,4 +1,4 @@
-# 15 --- Multi-Environment Deployment --- Production DevOps Capstone
+# Multi-Environment Deployment
 
 > Deep production deployment strategy for Dev, QA, Staging, and
 > Production using GitLab CI, ECR, Helm, GitOps, Argo CD, EKS, immutable
@@ -2137,3 +2137,5 @@ Metrics + Logs + SLOs
 3.  What evidence proves the artifact is safe to advance?
 4.  What changes are environment-specific?
 5.  How will the release be rolled back if health degrades?
+
+---
