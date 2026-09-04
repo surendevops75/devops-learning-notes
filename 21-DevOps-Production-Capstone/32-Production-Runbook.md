@@ -1,6 +1,6 @@
-# 32-Production-Runbook
+# Production-Runbook
 
-## 32.1 Purpose
+## 1 Purpose
 
 A production runbook is an operational document that tells an engineer:
 
@@ -46,7 +46,7 @@ Operations / On-call
 
 ---
 
-# 32.2 Runbook Principles
+ # 2 Runbook Principles
 
 Production runbooks should be:
 
@@ -86,7 +86,7 @@ Prefer:
 
 ---
 
-# 32.3 Production Safety Rules
+ # 3 Production Safety Rules
 
 Before changing production:
 
@@ -103,7 +103,7 @@ Before changing production:
 
 ---
 
-# 32.4 Golden Rule
+ # 4 Golden Rule
 
 ```text
 Observe first.
@@ -128,7 +128,7 @@ without understanding the impact.
 
 ---
 
-# 32.5 Production Access
+ # 5 Production Access
 
 Typical access flow:
 
@@ -152,7 +152,7 @@ Use temporary, auditable access whenever possible.
 
 ---
 
-# 32.6 Confirm AWS Account
+ # 6 Confirm AWS Account
 
 Before production commands:
 
@@ -166,7 +166,7 @@ Always verify the account before destructive operations.
 
 ---
 
-# 32.7 Confirm Kubernetes Context
+ # 7 Confirm Kubernetes Context
 
 ```bash
 kubectl config current-context
@@ -194,7 +194,7 @@ kubectl config current-context
 
 ---
 
-# 32.8 Production Namespace
+ # 8 Production Namespace
 
 RoboShop production namespace:
 
@@ -210,7 +210,7 @@ kubectl get all -n roboshop
 
 ---
 
-# 32.9 Initial Health Check
+ # 9 Initial Health Check
 
 When an incident starts:
 
@@ -231,7 +231,7 @@ kubectl get events -n roboshop \
 
 ---
 
-# 32.10 Incident Triage Checklist
+ # 10 Incident Triage Checklist
 
 ```text
 [ ] Confirm alert
@@ -254,7 +254,7 @@ kubectl get events -n roboshop \
 
 ---
 
-# 32.11 Service Down Runbook
+ # 11 Service Down Runbook
 
 ## Symptoms
 
@@ -286,7 +286,7 @@ kubectl logs -l app=payment \
 
 ---
 
-# 32.12 Service Down Decision Tree
+ # 12 Service Down Decision Tree
 
 ```text
 Service unavailable
@@ -305,7 +305,7 @@ events       endpoints
 
 ---
 
-# 32.13 Pod CrashLoopBackOff
+ # 13 Pod CrashLoopBackOff
 
 Check:
 
@@ -339,7 +339,7 @@ permission issue
 
 ---
 
-# 32.14 CrashLoopBackOff — Configuration
+ # 14 CrashLoopBackOff — Configuration
 
 Inspect:
 
@@ -353,7 +353,7 @@ Do not print sensitive Secret values unnecessarily.
 
 ---
 
-# 32.15 CrashLoopBackOff — Previous Logs
+ # 15 CrashLoopBackOff — Previous Logs
 
 Always check:
 
@@ -367,7 +367,7 @@ This is especially useful when the container restarts too quickly.
 
 ---
 
-# 32.16 ImagePullBackOff
+ # 16 ImagePullBackOff
 
 Check:
 
@@ -397,7 +397,7 @@ registry connectivity
 
 ---
 
-# 32.17 ECR Image Pull Troubleshooting
+ # 17 ECR Image Pull Troubleshooting
 
 Check image:
 
@@ -413,7 +413,7 @@ If using a private ECR repository, confirm the node/workload has the required pe
 
 ---
 
-# 32.18 ErrImagePull
+ # 18 ErrImagePull
 
 Typical causes:
 
@@ -432,7 +432,7 @@ Fix the artifact or access problem first.
 
 ---
 
-# 32.19 OOMKilled Runbook
+ # 19 OOMKilled Runbook
 
 Check:
 
@@ -462,7 +462,7 @@ kubectl get deployment <deployment> \
 
 ---
 
-# 32.20 OOMKilled Investigation
+ # 20 OOMKilled Investigation
 
 Determine:
 
@@ -479,7 +479,7 @@ Do not simply increase the limit without understanding why memory grew.
 
 ---
 
-# 32.21 OOM Prevention
+ # 21 OOM Prevention
 
 Use:
 
@@ -502,7 +502,7 @@ OOMKilled events
 
 ---
 
-# 32.22 CPU Saturation
+ # 22 CPU Saturation
 
 Check:
 
@@ -526,7 +526,7 @@ HPA behavior
 
 ---
 
-# 32.23 CPU Throttling
+ # 23 CPU Throttling
 
 High CPU usage is not always the same as CPU throttling.
 
@@ -543,7 +543,7 @@ A too-low CPU limit can increase latency even when the node has spare capacity.
 
 ---
 
-# 32.24 High Memory on Node
+ # 24 High Memory on Node
 
 Check:
 
@@ -563,7 +563,7 @@ pod requests
 
 ---
 
-# 32.25 Node NotReady
+ # 25 Node NotReady
 
 Check:
 
@@ -585,7 +585,7 @@ kubelet problems
 
 ---
 
-# 32.26 EKS Node Failure
+ # 26 EKS Node Failure
 
 Production response:
 
@@ -602,7 +602,7 @@ Production response:
 
 ---
 
-# 32.27 Safely Drain Node
+ # 27 Safely Drain Node
 
 Before draining:
 
@@ -625,7 +625,7 @@ PodDisruptionBudgets and workload capacity must be considered.
 
 ---
 
-# 32.28 Node Replacement
+ # 28 Node Replacement
 
 In managed EKS node groups, replacement may be handled by the node-group lifecycle.
 
@@ -645,7 +645,7 @@ after replacement.
 
 ---
 
-# 32.29 DiskPressure
+ # 29 DiskPressure
 
 Check:
 
@@ -667,7 +667,7 @@ unused images
 
 ---
 
-# 32.30 Disk Full
+ # 30 Disk Full
 
 Linux checks:
 
@@ -686,7 +686,7 @@ Do not blindly delete files from `/var/lib/containerd` or Kubernetes-managed dir
 
 ---
 
-# 32.31 Inode Exhaustion
+ # 31 Inode Exhaustion
 
 A filesystem can have free bytes but no free inodes.
 
@@ -707,7 +707,7 @@ application cache
 
 ---
 
-# 32.32 Pod Pending
+ # 32 Pod Pending
 
 Check:
 
@@ -731,7 +731,7 @@ PVC unavailable
 
 ---
 
-# 32.33 Pending Due to Resources
+ # 33 Pending Due to Resources
 
 Check:
 
@@ -763,7 +763,7 @@ The scheduler primarily uses requests for placement decisions.
 
 ---
 
-# 32.34 Pending Due to Taint
+ # 34 Pending Due to Taint
 
 Check:
 
@@ -781,7 +781,7 @@ Then verify whether the workload has an appropriate toleration.
 
 ---
 
-# 32.35 Deployment Has Zero Available Replicas
+ # 35 Deployment Has Zero Available Replicas
 
 ```bash
 kubectl get deployment <deployment> -n roboshop
@@ -800,7 +800,7 @@ available
 
 ---
 
-# 32.36 Deployment Rollout Stuck
+ # 36 Deployment Rollout Stuck
 
 ```bash
 kubectl rollout status \
@@ -822,7 +822,7 @@ kubectl get rs -n roboshop
 
 ---
 
-# 32.37 Deployment Rollout History
+ # 37 Deployment Rollout History
 
 ```bash
 kubectl rollout history \
@@ -834,7 +834,7 @@ This helps identify recent changes.
 
 ---
 
-# 32.38 Kubernetes Rollback
+ # 38 Kubernetes Rollback
 
 If the previous ReplicaSet is known-good:
 
@@ -850,7 +850,7 @@ A manual rollback can otherwise be overwritten by Argo CD.
 
 ---
 
-# 32.39 Service Has No Endpoints
+ # 39 Service Has No Endpoints
 
 Check:
 
@@ -878,7 +878,7 @@ kubectl get pods \
 
 ---
 
-# 32.40 Service Selector Mismatch
+ # 40 Service Selector Mismatch
 
 Example:
 
@@ -904,7 +904,7 @@ Fix the desired configuration through GitOps.
 
 ---
 
-# 32.41 DNS Failure Inside Cluster
+ # 41 DNS Failure Inside Cluster
 
 Test from a diagnostic pod:
 
@@ -925,7 +925,7 @@ kubectl get pods -n kube-system -l k8s-app=kube-dns
 
 ---
 
-# 32.42 Service-to-Service Failure
+ # 42 Service-to-Service Failure
 
 Test:
 
@@ -949,7 +949,7 @@ Check each layer rather than assuming the application is broken.
 
 ---
 
-# 32.43 NetworkPolicy Failure
+ # 43 NetworkPolicy Failure
 
 Symptoms:
 
@@ -979,7 +979,7 @@ application dependencies
 
 ---
 
-# 32.44 ALB Ingress Health
+ # 44 ALB Ingress Health
 
 Check:
 
@@ -1002,7 +1002,7 @@ listener configuration
 
 ---
 
-# 32.45 ALB Returns 502
+ # 45 ALB Returns 502
 
 Investigate:
 
@@ -1025,7 +1025,7 @@ kubectl get endpoints payment -n roboshop
 
 ---
 
-# 32.46 ALB Returns 503
+ # 46 ALB Returns 503
 
 A common cause is no healthy targets.
 
@@ -1040,7 +1040,7 @@ target group healthy?
 
 ---
 
-# 32.47 ALB Target Unhealthy
+ # 47 ALB Target Unhealthy
 
 Check:
 
@@ -1063,7 +1063,7 @@ inside the container can cause connectivity problems.
 
 ---
 
-# 32.48 TLS Certificate Problem
+ # 48 TLS Certificate Problem
 
 Symptoms:
 
@@ -1087,7 +1087,7 @@ Do not manually replace certificates without understanding the certificate-manag
 
 ---
 
-# 32.49 DNS Incident
+ # 49 DNS Incident
 
 Symptoms:
 
@@ -1111,7 +1111,7 @@ recent DNS changes
 
 ---
 
-# 32.50 High 5xx Rate
+ # 50 High 5xx Rate
 
 Start with:
 
@@ -1135,7 +1135,7 @@ Metric names vary by application instrumentation.
 
 ---
 
-# 32.51 High Latency
+ # 51 High Latency
 
 Use the golden signals:
 
@@ -1161,7 +1161,7 @@ connection pools
 
 ---
 
-# 32.52 Application Logs
+ # 52 Application Logs
 
 Use:
 
@@ -1183,7 +1183,7 @@ ELK should be preferred for historical cross-service analysis.
 
 ---
 
-# 32.53 ELK Investigation
+ # 53 ELK Investigation
 
 Search by:
 
@@ -1204,7 +1204,7 @@ A correlation ID is extremely useful for tracing a request across microservices 
 
 ---
 
-# 32.54 Prometheus Investigation
+ # 54 Prometheus Investigation
 
 Useful checks:
 
@@ -1231,7 +1231,7 @@ How large is the impact?
 
 ---
 
-# 32.55 Grafana Investigation
+ # 55 Grafana Investigation
 
 Start with:
 
@@ -1255,7 +1255,7 @@ deployment timestamp
 
 ---
 
-# 32.56 HPA Not Scaling
+ # 56 HPA Not Scaling
 
 Check:
 
@@ -1276,7 +1276,7 @@ cluster capacity?
 
 ---
 
-# 32.57 HPA at MaxReplicas
+ # 57 HPA at MaxReplicas
 
 If:
 
@@ -1297,7 +1297,7 @@ Do not increase replicas blindly.
 
 ---
 
-# 32.58 Cluster Autoscaler / Node Scaling
+ # 58 Cluster Autoscaler / Node Scaling
 
 If pods cannot schedule:
 
@@ -1313,7 +1313,7 @@ A perfectly configured HPA cannot help if the cluster cannot provide nodes.
 
 ---
 
-# 32.59 Argo CD Application OutOfSync
+ # 59 Argo CD Application OutOfSync
 
 Check:
 
@@ -1336,7 +1336,7 @@ failed sync
 
 ---
 
-# 32.60 Argo CD Sync Failure
+ # 60 Argo CD Sync Failure
 
 Inspect:
 
@@ -1362,7 +1362,7 @@ image/config issue
 
 ---
 
-# 32.61 GitOps Emergency Change
+ # 61 GitOps Emergency Change
 
 During a severe incident, a temporary manual change may be necessary.
 
@@ -1382,7 +1382,7 @@ Never leave undocumented drift.
 
 ---
 
-# 32.62 Terraform Emergency Change
+ # 62 Terraform Emergency Change
 
 Avoid manual AWS changes when Terraform owns the resource unless incident response requires it.
 
@@ -1398,7 +1398,7 @@ Then update Terraform source if the emergency state should become permanent.
 
 ---
 
-# 32.63 Terraform Plan Safety
+ # 63 Terraform Plan Safety
 
 Always inspect:
 
@@ -1428,7 +1428,7 @@ A replacement can be more dangerous than an update.
 
 ---
 
-# 32.64 Terraform State Lock
+ # 64 Terraform State Lock
 
 If Terraform reports state locking:
 
@@ -1442,7 +1442,7 @@ Forced unlock can corrupt concurrent operations.
 
 ---
 
-# 32.65 Jenkins Failure
+ # 65 Jenkins Failure
 
 Check:
 
@@ -1463,7 +1463,7 @@ Do not rerun repeatedly without reading the failure.
 
 ---
 
-# 32.66 GitHub Actions Failure
+ # 66 GitHub Actions Failure
 
 Check:
 
@@ -1488,7 +1488,7 @@ repository policy
 
 ---
 
-# 32.67 ECR Push Failure
+ # 67 ECR Push Failure
 
 Check:
 
@@ -1514,7 +1514,7 @@ docker login \
 
 ---
 
-# 32.68 ECR Pull Failure
+ # 68 ECR Pull Failure
 
 Check:
 
@@ -1530,7 +1530,7 @@ Never solve a pull problem by making the registry public.
 
 ---
 
-# 32.69 Database Connectivity
+ # 69 Database Connectivity
 
 Symptoms:
 
@@ -1556,7 +1556,7 @@ application configuration
 
 ---
 
-# 32.70 Database Saturation
+ # 70 Database Saturation
 
 Metrics to inspect:
 
@@ -1582,7 +1582,7 @@ thread exhaustion
 
 ---
 
-# 32.71 Redis / Cache Failure
+ # 71 Redis / Cache Failure
 
 Check:
 
@@ -1607,7 +1607,7 @@ A cache failure can become a database overload incident.
 
 ---
 
-# 32.72 RabbitMQ / Queue Failure
+ # 72 RabbitMQ / Queue Failure
 
 Check:
 
@@ -1624,7 +1624,7 @@ A growing queue indicates processing is slower than incoming work.
 
 ---
 
-# 32.73 Queue Backlog Response
+ # 73 Queue Backlog Response
 
 Do not immediately add consumers.
 
@@ -1641,7 +1641,7 @@ Scaling consumers can make a downstream bottleneck worse.
 
 ---
 
-# 32.74 Security Incident Runbook
+ # 74 Security Incident Runbook
 
 If suspicious behavior is detected:
 
@@ -1661,7 +1661,7 @@ If suspicious behavior is detected:
 
 ---
 
-# 32.75 Compromised Pod
+ # 75 Compromised Pod
 
 First:
 
@@ -1676,7 +1676,7 @@ Then coordinate containment.
 
 ---
 
-# 32.76 Secret Leak
+ # 76 Secret Leak
 
 Immediate:
 
@@ -1698,7 +1698,7 @@ identify affected services
 
 ---
 
-# 32.77 Certificate Expiry Runbook
+ # 77 Certificate Expiry Runbook
 
 Check:
 
@@ -1726,7 +1726,7 @@ check monitoring
 
 ---
 
-# 32.78 Disk Full on Application
+ # 78 Disk Full on Application
 
 Symptoms:
 
@@ -1752,7 +1752,7 @@ Do not delete application data blindly.
 
 ---
 
-# 32.79 High Network Errors
+ # 79 High Network Errors
 
 Check:
 
@@ -1779,7 +1779,7 @@ to correlate.
 
 ---
 
-# 32.80 Packet / Connectivity Testing
+ # 80 Packet / Connectivity Testing
 
 Use a controlled diagnostic pod:
 
@@ -1803,7 +1803,7 @@ Use approved diagnostic images in real production environments.
 
 ---
 
-# 32.81 IAM AccessDenied
+ # 81 IAM AccessDenied
 
 Check:
 
@@ -1831,7 +1831,7 @@ as a troubleshooting shortcut.
 
 ---
 
-# 32.82 EKS AccessDenied
+ # 82 EKS AccessDenied
 
 Determine whether access failure is at:
 
@@ -1845,7 +1845,7 @@ These are separate layers.
 
 ---
 
-# 32.83 Kubernetes RBAC Failure
+ # 83 Kubernetes RBAC Failure
 
 Check:
 
@@ -1866,7 +1866,7 @@ kubectl auth can-i \
 
 ---
 
-# 32.84 Security Group Troubleshooting
+ # 84 Security Group Troubleshooting
 
 Check:
 
@@ -1884,7 +1884,7 @@ Do not modify several controls simultaneously. Change one layer, test, and conti
 
 ---
 
-# 32.85 NACL Troubleshooting
+ # 85 NACL Troubleshooting
 
 Remember NACLs are stateless.
 
@@ -1901,7 +1901,7 @@ An overly restrictive NACL can create confusing intermittent connectivity.
 
 ---
 
-# 32.86 ALB + EKS Connectivity Model
+ # 86 ALB + EKS Connectivity Model
 
 ```text
 Client
@@ -1926,7 +1926,7 @@ When troubleshooting, identify exactly which hop fails.
 
 ---
 
-# 32.87 Prometheus Down
+ # 87 Prometheus Down
 
 Check:
 
@@ -1954,7 +1954,7 @@ rule evaluation
 
 ---
 
-# 32.88 Prometheus High Memory
+ # 88 Prometheus High Memory
 
 Common cause:
 
@@ -1984,7 +1984,7 @@ to metrics.
 
 ---
 
-# 32.89 Grafana Down
+ # 89 Grafana Down
 
 Check:
 
@@ -2000,7 +2000,7 @@ Grafana failure does not necessarily mean monitoring data is lost.
 
 ---
 
-# 32.90 ELK Ingestion Failure
+ # 90 ELK Ingestion Failure
 
 Check:
 
@@ -2027,7 +2027,7 @@ source
 
 ---
 
-# 32.91 Elasticsearch Disk Watermark
+ # 91 Elasticsearch Disk Watermark
 
 If Elasticsearch approaches disk thresholds:
 
@@ -2051,7 +2051,7 @@ Do not simply add disk without addressing uncontrolled log growth.
 
 ---
 
-# 32.92 Log Storm
+ # 92 Log Storm
 
 Symptoms:
 
@@ -2077,7 +2077,7 @@ Do not simply increase Elasticsearch capacity indefinitely.
 
 ---
 
-# 32.93 Production Deployment Runbook
+ # 93 Production Deployment Runbook
 
 Before deployment:
 
@@ -2095,7 +2095,7 @@ Before deployment:
 
 ---
 
-# 32.94 Deployment Execution
+ # 94 Deployment Execution
 
 GitOps flow:
 
@@ -2126,7 +2126,7 @@ kubectl rollout status deployment/<name> -n roboshop
 
 ---
 
-# 32.95 Deployment Validation
+ # 95 Deployment Validation
 
 Validate:
 
@@ -2151,7 +2151,7 @@ to mean the deployment is fully validated.
 
 ---
 
-# 32.96 Deployment Rollback Decision
+ # 96 Deployment Rollback Decision
 
 Rollback when:
 
@@ -2168,7 +2168,7 @@ Do not rollback solely because a non-critical warning appears.
 
 ---
 
-# 32.97 GitOps Rollback
+ # 97 GitOps Rollback
 
 Preferred permanent rollback:
 
@@ -2183,7 +2183,7 @@ This preserves desired-state history.
 
 ---
 
-# 32.98 Emergency Kubernetes Rollback
+ # 98 Emergency Kubernetes Rollback
 
 If immediate mitigation is required:
 
@@ -2197,7 +2197,7 @@ Then reconcile GitOps immediately.
 
 ---
 
-# 32.99 HPA Incident
+ # 99 HPA Incident
 
 Symptoms:
 
@@ -2220,7 +2220,7 @@ downstream limits
 
 ---
 
-# 32.100 Alert Fatigue Runbook
+ # 100 Alert Fatigue Runbook
 
 If an alert repeatedly fires without useful action:
 
@@ -2238,7 +2238,7 @@ Do not solve alert fatigue by silencing everything.
 
 ---
 
-# 32.101 Critical Alert Response
+ # 101 Critical Alert Response
 
 Example:
 
@@ -2263,7 +2263,7 @@ Actions:
 
 ---
 
-# 32.102 Incident Communication
+ # 102 Incident Communication
 
 A useful update:
 
@@ -2281,7 +2281,7 @@ Avoid speculation presented as fact.
 
 ---
 
-# 32.103 Production Change During Incident
+ # 103 Production Change During Incident
 
 Before emergency change:
 
@@ -2297,7 +2297,7 @@ If answers are unclear, pause and investigate.
 
 ---
 
-# 32.104 Database Change During Incident
+ # 104 Database Change During Incident
 
 Database changes have higher risk.
 
@@ -2321,7 +2321,7 @@ data integrity
 
 ---
 
-# 32.105 Data Integrity Incident
+ # 105 Data Integrity Incident
 
 Priority:
 
@@ -2338,7 +2338,7 @@ Do not treat a data incident as an ordinary application restart.
 
 ---
 
-# 32.106 Disaster Runbook
+ # 106 Disaster Runbook
 
 If an entire AZ is affected:
 
@@ -2357,7 +2357,7 @@ Multi-AZ architecture should make this survivable.
 
 ---
 
-# 32.107 Regional Failure
+ # 107 Regional Failure
 
 If region-level DR is required:
 
@@ -2374,7 +2374,7 @@ Do not invent recovery steps during a real regional outage.
 
 ---
 
-# 32.108 Backup Restore Runbook
+ # 108 Backup Restore Runbook
 
 Before restore:
 
@@ -2391,7 +2391,7 @@ Then restore into a controlled environment where practical.
 
 ---
 
-# 32.109 Restore Validation
+ # 109 Restore Validation
 
 Validate:
 
@@ -2408,7 +2408,7 @@ A restore is not successful merely because the restore command completed.
 
 ---
 
-# 32.110 Production Access Audit
+ # 110 Production Access Audit
 
 Periodically review:
 
@@ -2426,7 +2426,7 @@ Remove unused access.
 
 ---
 
-# 32.111 On-Call Handoff
+ # 111 On-Call Handoff
 
 At shift change, communicate:
 
@@ -2442,7 +2442,7 @@ security findings
 
 ---
 
-# 32.112 Daily Production Health Check
+ # 112 Daily Production Health Check
 
 Example:
 
@@ -2463,7 +2463,7 @@ Example:
 
 ---
 
-# 32.113 Weekly Health Review
+ # 113 Weekly Health Review
 
 Review:
 
@@ -2483,7 +2483,7 @@ alert noise
 
 ---
 
-# 32.114 Monthly Production Review
+ # 114 Monthly Production Review
 
 Review:
 
@@ -2502,7 +2502,7 @@ technical debt
 
 ---
 
-# 32.115 Runbook Version Control
+ # 115 Runbook Version Control
 
 Runbooks should live in Git.
 
@@ -2525,7 +2525,7 @@ Changes should be reviewed like code.
 
 ---
 
-# 32.116 Runbook Testing
+ # 116 Runbook Testing
 
 A runbook should be tested during:
 
@@ -2541,7 +2541,7 @@ An untested runbook is documentation, not operational readiness.
 
 ---
 
-# 32.117 Production Command Quick Reference
+ # 117 Production Command Quick Reference
 
 ## Kubernetes
 
@@ -2586,7 +2586,7 @@ helm history <release> -n <namespace>
 
 ---
 
-# 32.118 Production Investigation Order
+ # 118 Production Investigation Order
 
 When unsure:
 
@@ -2606,7 +2606,7 @@ Always correlate with timestamps.
 
 ---
 
-# 32.119 Symptom → Investigation → Root Cause → Fix
+ # 119 Symptom → Investigation → Root Cause → Fix
 
 A strong production troubleshooting format:
 
@@ -2637,7 +2637,7 @@ PREVENTION
 
 ---
 
-# 32.120 Example: Checkout 5xx
+ # 120 Example: Checkout 5xx
 
 ### Symptom
 
@@ -2685,7 +2685,7 @@ deployment verification
 
 ---
 
-# 32.121 Example: Payment Pods OOMKilled
+ # 121 Example: Payment Pods OOMKilled
 
 ### Symptom
 
@@ -2728,7 +2728,7 @@ capacity testing
 
 ---
 
-# 32.122 Example: ALB 503
+ # 122 Example: ALB 503
 
 ### Symptom
 
@@ -2767,7 +2767,7 @@ minimum available replicas
 
 ---
 
-# 32.123 Example: Pods Pending
+ # 123 Example: Pods Pending
 
 ### Symptom
 
@@ -2801,7 +2801,7 @@ resource monitoring
 
 ---
 
-# 32.124 Example: Argo CD OutOfSync
+ # 124 Example: Argo CD OutOfSync
 
 ### Symptom
 
@@ -2837,7 +2837,7 @@ audit monitoring
 
 ---
 
-# 32.125 Production Runbook Decision Tree
+ # 125 Production Runbook Decision Tree
 
 ```text
 ALERT
@@ -2878,7 +2878,7 @@ Post-incident review
 
 ---
 
-# 32.126 What Not to Do
+ # 126 What Not to Do
 
 Never make these default responses:
 
@@ -2899,7 +2899,7 @@ These actions can increase the blast radius.
 
 ---
 
-# 32.127 Production Escalation Matrix
+ # 127 Production Escalation Matrix
 
 Example:
 
@@ -2931,7 +2931,7 @@ Customer-critical incident
 
 ---
 
-# 32.128 Severity Model
+ # 128 Severity Model
 
 Example:
 
@@ -2968,7 +2968,7 @@ Exact definitions should be organization-specific.
 
 ---
 
-# 32.129 Incident Commander
+ # 129 Incident Commander
 
 For major incidents, one person should coordinate:
 
@@ -2984,7 +2984,7 @@ The incident commander should not necessarily perform every technical action.
 
 ---
 
-# 32.130 Technical Lead
+ # 130 Technical Lead
 
 Technical lead coordinates:
 
@@ -2997,7 +2997,7 @@ validation
 
 ---
 
-# 32.131 Communications Lead
+ # 131 Communications Lead
 
 Responsible for:
 
@@ -3010,7 +3010,7 @@ incident timeline
 
 ---
 
-# 32.132 Post-Incident Review
+ # 132 Post-Incident Review
 
 Document:
 
@@ -3032,7 +3032,7 @@ deadlines
 
 ---
 
-# 32.133 Blameless Culture
+ # 133 Blameless Culture
 
 A production postmortem should focus on:
 
@@ -3054,7 +3054,7 @@ The goal is recurrence prevention.
 
 ---
 
-# 32.134 Runbook Improvement
+ # 134 Runbook Improvement
 
 Every major incident should ask:
 
@@ -3071,7 +3071,7 @@ Then update the runbook.
 
 ---
 
-# 32.135 Production Readiness Checklist
+ # 135 Production Readiness Checklist
 
 ## Infrastructure
 
@@ -3125,7 +3125,7 @@ Then update the runbook.
 
 ---
 
-# 32.136 Production Deployment Final Gate
+ # 136 Production Deployment Final Gate
 
 Before approving production:
 
@@ -3155,7 +3155,7 @@ Every stage should have evidence.
 
 ---
 
-# 32.137 Runbook for New Engineer
+ # 137 Runbook for New Engineer
 
 A new engineer should be able to answer:
 
@@ -3178,7 +3178,7 @@ If the runbook cannot answer these questions, it is incomplete.
 
 ---
 
-# 32.138 Production Mental Model
+ # 138 Production Mental Model
 
 When production breaks:
 
@@ -3198,7 +3198,7 @@ Document.
 
 ---
 
-# 32.139 Complete RoboShop Incident Flow
+ # 139 Complete RoboShop Incident Flow
 
 Example:
 
@@ -3251,7 +3251,7 @@ Customer recovery
 
 ---
 
-# 32.140 Final Production Runbook Principle
+ # 140 Final Production Runbook Principle
 
 A production runbook should make the safe path obvious.
 
@@ -3284,3 +3284,5 @@ Continuous improvement
 ```
 
 That is the operational foundation for the RoboShop production DevOps platform.
+
+---
