@@ -1,4 +1,4 @@
-# 04 — AWS Account Strategy
+# AWS Account Strategy
 
 ## 1. Purpose
 
@@ -3550,3 +3550,5 @@ Production Terraform structure
 ```
 
 It will become the networking foundation for the EKS and Terraform implementation.
+
+---
