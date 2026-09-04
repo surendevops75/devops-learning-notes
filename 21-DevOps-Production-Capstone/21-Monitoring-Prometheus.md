@@ -1,4 +1,4 @@
-# 21 --- Monitoring & Prometheus --- Production DevOps Capstone
+# Monitoring & Prometheus
 
 > Deep production-focused Prometheus chapter for AWS/EKS environments.
 > This chapter covers architecture, Kubernetes discovery, exporters,
@@ -3100,3 +3100,5 @@ The most important DevOps mindset is:
 **Do not ask only "Can Prometheus collect the metric?" Ask "Can the team
 detect the failure, understand its impact, identify the change, take the
 correct action, and prove recovery?"**
+
+---
