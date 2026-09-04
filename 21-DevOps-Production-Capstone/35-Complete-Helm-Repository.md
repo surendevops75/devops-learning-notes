@@ -1315,7 +1315,7 @@ Use this alongside, not instead of, real smoke tests and SLI monitoring.
 
 ---
 
-# 35. CI Quality Gates
+ #  CI Quality Gates
 
 Recommended pipeline:
 
