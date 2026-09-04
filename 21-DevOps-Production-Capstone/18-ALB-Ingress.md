@@ -1,4 +1,4 @@
-# 18 --- ALB Ingress --- Production DevOps Capstone
+# ALB Ingress
 
 > Deep production guide for AWS Application Load Balancer, AWS Load
 > Balancer Controller, Kubernetes Ingress, Route 53, ACM, WAF, security
@@ -3574,3 +3574,5 @@ over the same dynamically managed ALB configuration.
 3.  What proves the target is healthy?
 4.  What happens during deployment or failure?
 5.  How do we recover without introducing manual configuration drift?
+
+---
