@@ -1,4 +1,4 @@
-# 13 --- GitOps Repository --- Production DevOps Capstone
+# GitOps Repository
 
 > Deep production-oriented GitOps repository design for GitLab CI, ECR,
 > Helm, Argo CD, EKS, multi-environment and multi-cluster deployments.
@@ -2654,3 +2654,5 @@ reviewable, auditable desired state. The strongest production design
 connects source commit -\> verified artifact -\> immutable digest -\>
 GitOps commit -\> Argo CD reconciliation -\> EKS workload, with every
 transition protected and observable.**
+
+---
