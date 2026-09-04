@@ -1,4 +1,4 @@
-# 05 — AWS VPC Architecture
+# AWS VPC Architecture
 
 ## 1. Purpose
 
@@ -3335,3 +3335,5 @@ Operationally Understandable
 ```
 
 That is the networking foundation required for the production capstone.
+
+---
