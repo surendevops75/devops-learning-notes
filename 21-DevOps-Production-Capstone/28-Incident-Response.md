@@ -1,6 +1,6 @@
-# 28. Incident Response
+# Incident Response
 
-## 28.1 Purpose
+# # 1 Purpose
 
 Incident response is the structured process used to detect, assess, contain, recover from, and learn from production failures.
 
@@ -66,7 +66,7 @@ This chapter uses the production capstone stack:
 
 ---
 
-# 28.2 What Is a Production Incident?
+ # 2 What Is a Production Incident?
 
 An incident is an event that causes, or has a significant potential to cause:
 
@@ -120,7 +120,7 @@ is likely an operational incident.
 
 ---
 
-# 28.3 Incident vs Problem vs Change
+ # 3 Incident vs Problem vs Change
 
 These concepts must be separated.
 
@@ -170,7 +170,7 @@ Corrective change
 
 ---
 
-# 28.4 Severity and Priority
+ # 4 Severity and Priority
 
 A production organization should define incident severity before an outage occurs.
 
@@ -211,7 +211,7 @@ Non-production monitoring dashboard unavailable.
 
 ---
 
-# 28.5 Impact Assessment
+ # 5 Impact Assessment
 
 During the first few minutes, answer:
 
@@ -245,7 +245,7 @@ This information immediately narrows investigation.
 
 ---
 
-# 28.6 Incident Lifecycle
+ # 6 Incident Lifecycle
 
 A mature incident lifecycle is:
 
@@ -271,7 +271,7 @@ Each stage has a purpose.
 
 ---
 
-# 28.7 Detection
+ # 7 Detection
 
 Incidents can originate from:
 
@@ -311,7 +311,7 @@ Detection should be automated whenever possible.
 
 ---
 
-# 28.8 Alert vs Incident
+ # 8 Alert vs Incident
 
 An alert says:
 
@@ -353,7 +353,7 @@ SEV-2 incident.
 
 ---
 
-# 28.9 Acknowledgement
+ # 9 Acknowledgement
 
 The first responder should acknowledge the alert.
 
@@ -373,7 +373,7 @@ The responder should either:
 
 ---
 
-# 28.10 Incident Commander
+ # 10 Incident Commander
 
 For serious incidents, appoint an Incident Commander (IC).
 
@@ -406,7 +406,7 @@ Incident Commander
 
 ---
 
-# 28.11 Technical Lead
+ # 11 Technical Lead
 
 The technical lead coordinates technical investigation.
 
@@ -437,7 +437,7 @@ Check database health.
 
 ---
 
-# 28.12 Communications Lead
+ # 12 Communications Lead
 
 For major incidents, communication should be separated from technical troubleshooting.
 
@@ -452,7 +452,7 @@ The technical team should not stop debugging every five minutes just to write st
 
 ---
 
-# 28.13 Scribe
+ # 13 Scribe
 
 The scribe records:
 
@@ -481,7 +481,7 @@ This timeline is extremely valuable for the post-incident review.
 
 ---
 
-# 28.14 Incident Communication
+ # 14 Incident Communication
 
 Communication should be:
 
@@ -505,7 +505,7 @@ Checkout requests are currently experiencing elevated 5xx errors. Investigation 
 
 ---
 
-# 28.15 First Five Minutes
+ # 15 First Five Minutes
 
 A practical first-five-minute workflow:
 
@@ -526,7 +526,7 @@ Do not spend the first five minutes making random changes.
 
 ---
 
-# 28.16 Production Investigation Sequence
+ # 16 Production Investigation Sequence
 
 Use this sequence:
 
@@ -592,7 +592,7 @@ Kubernetes
 
 ---
 
-# 28.17 Recent Change Analysis
+ # 17 Recent Change Analysis
 
 The question:
 
@@ -648,7 +648,7 @@ Do not assume the latest change caused the incident, but always investigate it.
 
 ---
 
-# 28.18 Containment vs Root Cause
+ # 18 Containment vs Root Cause
 
 During a live incident:
 
@@ -674,7 +674,7 @@ Trying to fully understand the root cause before restoring service can unnecessa
 
 ---
 
-# 28.19 Safe Mitigation
+ # 19 Safe Mitigation
 
 Possible mitigation actions:
 
@@ -693,7 +693,7 @@ Choose the least risky action that restores service.
 
 ---
 
-# 28.20 Rollback Decision
+ # 20 Rollback Decision
 
 Rollback is appropriate when:
 
@@ -716,7 +716,7 @@ Never assume application rollback is automatically safe after database migration
 
 ---
 
-# 28.21 Kubernetes Incident Response
+ # 21 Kubernetes Incident Response
 
 First commands:
 
@@ -751,7 +751,7 @@ kubectl get endpointslice -n <namespace>
 
 ---
 
-# 28.22 EKS Incident Response
+ # 22 EKS Incident Response
 
 EKS incidents should be split into:
 
@@ -789,7 +789,7 @@ Look for:
 
 ---
 
-# 28.23 ALB Incident Response
+ # 23 ALB Incident Response
 
 For ALB incidents:
 
@@ -822,7 +822,7 @@ Investigate timeout and slow downstream dependencies.
 
 ---
 
-# 28.24 Prometheus During an Incident
+ # 24 Prometheus During an Incident
 
 Prometheus should answer:
 
@@ -881,7 +881,7 @@ container_memory_working_set_bytes
 
 ---
 
-# 28.25 ELK During an Incident
+ # 25 ELK During an Incident
 
 Metrics tell you:
 
@@ -922,7 +922,7 @@ A good logging design makes incident investigation dramatically faster.
 
 ---
 
-# 28.26 AWS Incident Evidence
+ # 26 AWS Incident Evidence
 
 Collect:
 
@@ -947,7 +947,7 @@ Do not expose credentials while collecting evidence.
 
 ---
 
-# 28.27 Security Incident Handling
+ # 27 Security Incident Handling
 
 Security incidents require a different level of caution.
 
@@ -976,7 +976,7 @@ Do not destroy the compromised resource immediately if doing so would destroy ev
 
 ---
 
-# 28.28 Secrets During Incidents
+ # 28 Secrets During Incidents
 
 Never paste secrets into:
 
@@ -1001,7 +1001,7 @@ If a credential is suspected to be compromised:
 
 ---
 
-# 28.29 Incident Escalation
+ # 29 Incident Escalation
 
 Escalate when:
 
@@ -1020,7 +1020,7 @@ Good engineers escalate early enough to reduce impact.
 
 ---
 
-# 28.30 On-Call Handoff
+ # 30 On-Call Handoff
 
 A handoff should include:
 
@@ -1056,7 +1056,7 @@ Application team investigating connection-pool behavior.
 
 ---
 
-# 28.31 Incident Resolution Criteria
+ # 31 Incident Resolution Criteria
 
 Do not close an incident merely because one request succeeds.
 
@@ -1078,7 +1078,7 @@ Observe the system for an appropriate period.
 
 ---
 
-# 28.32 Incident Closure
+ # 32 Incident Closure
 
 Before closure:
 
@@ -1096,7 +1096,7 @@ But unresolved root cause should create a follow-up problem record.
 
 ---
 
-# 28.33 Post-Incident Review
+ # 33 Post-Incident Review
 
 A post-incident review should answer:
 
@@ -1119,7 +1119,7 @@ The objective is system improvement.
 
 ---
 
-# 28.34 Root Cause Analysis
+ # 34 Root Cause Analysis
 
 A useful RCA contains:
 
@@ -1164,7 +1164,7 @@ Prevention:
 
 ---
 
-# 28.35 Five Whys
+ # 35 Five Whys
 
 Example:
 
@@ -1195,7 +1195,7 @@ That is not a useful systemic root cause.
 
 ---
 
-# 28.36 Fault Tree Thinking
+ # 36 Fault Tree Thinking
 
 For:
 
@@ -1236,7 +1236,7 @@ This prevents tunnel vision.
 
 ---
 
-# 28.37 Incident Runbook Structure
+ # 37 Incident Runbook Structure
 
 Each critical service should have a runbook containing:
 
@@ -1271,7 +1271,7 @@ Rollback: Git revert + Argo CD sync
 
 ---
 
-# 28.38 Production Incident Runbook — High Error Rate
+ # 38 Production Incident Runbook — High Error Rate
 
 ## Symptom
 
@@ -1344,7 +1344,7 @@ pod readiness
 
 ---
 
-# 28.39 Production Incident Runbook — Pods CrashLooping
+ # 39 Production Incident Runbook — Pods CrashLooping
 
 ```bash
 kubectl get pods -n <namespace>
@@ -1375,7 +1375,7 @@ rollback if safe
 
 ---
 
-# 28.40 Production Incident Runbook — Node NotReady
+ # 40 Production Incident Runbook — Node NotReady
 
 ```bash
 kubectl get nodes
@@ -1408,7 +1408,7 @@ Do not drain nodes blindly during capacity shortages.
 
 ---
 
-# 28.41 Production Incident Runbook — Database Saturation
+ # 41 Production Incident Runbook — Database Saturation
 
 Symptoms:
 
@@ -1445,7 +1445,7 @@ Never execute destructive database operations during a high-pressure incident wi
 
 ---
 
-# 28.42 Production Incident Runbook — Disk Full
+ # 42 Production Incident Runbook — Disk Full
 
 Linux:
 
@@ -1488,7 +1488,7 @@ Prevention:
 
 ---
 
-# 28.43 Production Incident Runbook — Argo CD Sync Failure
+ # 43 Production Incident Runbook — Argo CD Sync Failure
 
 ```bash
 argocd app get <app>
@@ -1519,7 +1519,7 @@ Do not repeatedly press Sync without understanding the failure.
 
 ---
 
-# 28.44 Production Incident Runbook — Terraform Failure
+ # 44 Production Incident Runbook — Terraform Failure
 
 Check:
 
@@ -1549,7 +1549,7 @@ Review before apply.
 
 ---
 
-# 28.45 Incident Channel Template
+ # 45 Incident Channel Template
 
 Use a standard structure:
 
@@ -1585,7 +1585,7 @@ Compare payment revision and database connection metrics.
 
 ---
 
-# 28.46 Incident Timeline Template
+ # 46 Incident Timeline Template
 
 ```text
 | Time | Event | Owner | Evidence |
@@ -1600,7 +1600,7 @@ Compare payment revision and database connection metrics.
 
 ---
 
-# 28.47 Customer Communication Example
+ # 47 Customer Communication Example
 
 ```text
 We are investigating elevated error rates affecting checkout requests.
@@ -1616,7 +1616,7 @@ Avoid revealing internal security details or unconfirmed root causes.
 
 ---
 
-# 28.48 Internal Technical Update Example
+ # 48 Internal Technical Update Example
 
 ```text
 Checkout 5xx rate increased from baseline to approximately 12% beginning at 10:17 IST.
@@ -1632,7 +1632,7 @@ Rollback is being evaluated while database connection metrics are being reviewed
 
 ---
 
-# 28.49 Incident Metrics
+ # 49 Incident Metrics
 
 Measure incident-management performance.
 
@@ -1663,7 +1663,7 @@ A fast but unsafe mitigation can create a larger incident.
 
 ---
 
-# 28.50 Alert Quality and Incident Response
+ # 50 Alert Quality and Incident Response
 
 Poor alerts create poor incident response.
 
@@ -1697,7 +1697,7 @@ Alert quality should reduce noise so engineers can focus on real incidents.
 
 ---
 
-# 28.51 SLO-Based Incident Detection
+ # 51 SLO-Based Incident Detection
 
 Suppose:
 
@@ -1721,7 +1721,7 @@ Burn-rate alerting is especially useful because it detects rapid SLO degradation
 
 ---
 
-# 28.52 Error Budget During Incidents
+ # 52 Error Budget During Incidents
 
 If the service has an error budget:
 
@@ -1749,7 +1749,7 @@ SLOs should influence engineering decisions, not exist only on dashboards.
 
 ---
 
-# 28.53 Multi-Team Incident Response
+ # 53 Multi-Team Incident Response
 
 Production incidents often cross teams.
 
@@ -1782,7 +1782,7 @@ The IC should maintain one coordinated incident rather than creating disconnecte
 
 ---
 
-# 28.54 Incident Escalation Matrix
+ # 54 Incident Escalation Matrix
 
 Example:
 
@@ -1816,7 +1816,7 @@ Exact escalation policy depends on the organization.
 
 ---
 
-# 28.55 Major Incident Example — RoboShop
+ # 55 Major Incident Example — RoboShop
 
 Architecture:
 
@@ -1909,7 +1909,7 @@ add canary rollout
 
 ---
 
-# 28.56 Major Incident Example — EKS Node Failure
+ # 56 Major Incident Example — EKS Node Failure
 
 Symptoms:
 
@@ -1982,7 +1982,7 @@ capacity headroom
 
 ---
 
-# 28.57 Major Incident Example — GitOps Drift
+ # 57 Major Incident Example — GitOps Drift
 
 Someone manually changes production:
 
@@ -2030,7 +2030,7 @@ drift alerting
 
 ---
 
-# 28.58 Major Incident Example — IAM Failure
+ # 58 Major Incident Example — IAM Failure
 
 Application reports:
 
@@ -2067,7 +2067,7 @@ Do not immediately grant broad permissions.
 
 ---
 
-# 28.59 Major Incident Example — DNS Failure
+ # 59 Major Incident Example — DNS Failure
 
 Symptoms:
 
@@ -2100,7 +2100,7 @@ Wrong record?
 
 ---
 
-# 28.60 Major Incident Example — ECR Image Pull Failure
+ # 60 Major Incident Example — ECR Image Pull Failure
 
 Symptoms:
 
@@ -2138,7 +2138,7 @@ A deployment can fail even when CI succeeded if the production cluster cannot re
 
 ---
 
-# 28.61 Major Incident Example — CI/CD Failure
+ # 61 Major Incident Example — CI/CD Failure
 
 A production deployment pipeline fails after image creation.
 
@@ -2171,7 +2171,7 @@ The complete delivery chain must be healthy.
 
 ---
 
-# 28.62 Production Incident Command Discipline
+ # 62 Production Incident Command Discipline
 
 Before running:
 
@@ -2208,7 +2208,7 @@ This simple discipline prevents many catastrophic mistakes.
 
 ---
 
-# 28.63 Incident Evidence Preservation
+ # 63 Incident Evidence Preservation
 
 Before changing systems, preserve:
 
@@ -2226,7 +2226,7 @@ For high-severity incidents, avoid destroying the only evidence of the failure.
 
 ---
 
-# 28.64 Temporary Changes
+ # 64 Temporary Changes
 
 Every temporary change should have:
 
@@ -2261,7 +2261,7 @@ Temporary fixes should not silently become permanent infrastructure drift.
 
 ---
 
-# 28.65 Emergency Changes in a GitOps Environment
+ # 65 Emergency Changes in a GitOps Environment
 
 Normal:
 
@@ -2293,7 +2293,7 @@ The emergency path should eventually return to the normal source-of-truth model.
 
 ---
 
-# 28.66 Incident Response Checklist
+ # 66 Incident Response Checklist
 
 ## Detection
 
@@ -2344,7 +2344,7 @@ The emergency path should eventually return to the normal source-of-truth model.
 
 ---
 
-# 28.67 Incident Response Best Practices
+ # 67 Incident Response Best Practices
 
 1. Stabilize before optimizing.
 2. Use evidence instead of assumptions.
@@ -2369,7 +2369,7 @@ The emergency path should eventually return to the normal source-of-truth model.
 
 ---
 
-# 28.68 Interview Questions — Incident Response
+ # 68 Interview Questions — Incident Response
 
 ## Q1. What is your incident response process?
 
@@ -2433,7 +2433,7 @@ I would say: **reduce uncertainty systematically while minimizing additional ris
 
 ---
 
-# 28.69 Senior-Level Incident Response Scenario
+ # 69 Senior-Level Incident Response Scenario
 
 ### Scenario
 
@@ -2529,7 +2529,7 @@ customer impact
 
 ---
 
-# 28.70 Final Production Incident Response Model
+ # 70 Final Production Incident Response Model
 
 A senior DevOps engineer should be able to explain incident response as:
 
@@ -2603,3 +2603,5 @@ Detect
 ```
 
 That is the foundation of reliable production operations.
+
+---
