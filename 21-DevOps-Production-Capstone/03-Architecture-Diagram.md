@@ -1,4 +1,4 @@
-# 03 — Architecture Diagram
+# Architecture Diagram
 
 ## 1. Purpose
 
@@ -2607,3 +2607,5 @@ Multi-account governance
 ```
 
 It will define how the AWS organization is operated before Terraform creates the production infrastructure.
+
+---
