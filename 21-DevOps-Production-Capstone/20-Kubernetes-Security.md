@@ -1,4 +1,4 @@
-# 20 --- Kubernetes Security --- Production DevOps Capstone
+# Kubernetes Security
 
 > Deep production-focused Kubernetes/EKS security chapter covering AWS
 > IAM, EKS identity, RBAC, workload identity, secrets, NetworkPolicy,
@@ -4388,3 +4388,5 @@ response and rebuild procedures provide recovery.
 The objective is not to make compromise mathematically impossible. The
 objective is to make unauthorized access difficult, blast radius small,
 detection fast, containment practical, and recovery repeatable.
+
+---
