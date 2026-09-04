@@ -1,4 +1,4 @@
-# 24 — Production Alerting
+# Production Alerting
 
 > **Project:** DevOps Production Capstone  
 > **Environment:** AWS + EKS + Kubernetes + Helm + Argo CD + Prometheus + Grafana + ELK  
@@ -6071,11 +6071,3 @@ When those questions are answered consistently, alerting becomes a reliability s
 ```
 
 ---
-
-## Next File
-
-```text
-21-DevOps-Production-Capstone/25-Disaster-Recovery.md
-```
-
-The next chapter will cover production **RPO/RTO, HA vs DR, multi-AZ and multi-region architecture, EKS recovery, Terraform recovery, ECR, GitOps, Argo CD, Kubernetes, databases, ELK, Prometheus/Grafana, restore testing, DR drills, failover and failback**.
