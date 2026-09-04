@@ -1,4 +1,4 @@
-# 39 - Architecture Review
+# Architecture Review
 
 ## Production DevOps / DevSecOps Capstone
 
