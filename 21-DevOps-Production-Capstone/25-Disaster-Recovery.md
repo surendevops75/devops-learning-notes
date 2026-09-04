@@ -1,4 +1,4 @@
-# 25 — Disaster Recovery
+# Disaster Recovery
 
 ## 1. Purpose
 
@@ -4054,3 +4054,5 @@ The most important production mindset is:
 > **Do not ask whether you have backups. Ask whether you can repeatedly restore the entire service within the required RTO and with the required RPO.**
 
 That distinction separates a documented DR plan from a tested production recovery capability.
+
+---
