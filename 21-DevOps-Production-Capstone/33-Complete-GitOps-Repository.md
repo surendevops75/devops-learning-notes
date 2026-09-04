@@ -1,6 +1,6 @@
-# 33-Complete-GitOps-Repository
+# Complete-GitOps-Repository
 
-## 33.1 Purpose
+## 1 Purpose
 
 This chapter defines a realistic production GitOps repository for the RoboShop platform running on AWS EKS.
 
@@ -47,7 +47,7 @@ Argo CD = reconciliation engine
 
 ---
 
-# 33.2 Why GitOps
+ # 2 Why GitOps
 
 Traditional deployment:
 
@@ -92,7 +92,7 @@ GitOps provides:
 
 ---
 
-# 33.3 Repository Responsibilities
+ # 3 Repository Responsibilities
 
 The GitOps repository should contain:
 
@@ -119,7 +119,7 @@ plaintext production secrets
 
 ---
 
-# 33.4 Recommended Repository
+ # 4 Recommended Repository
 
 ```text
 roboshop-gitops/
@@ -138,7 +138,7 @@ roboshop-gitops/
 
 ---
 
-# 33.5 Complete Structure
+ # 5 Complete Structure
 
 ```text
 roboshop-gitops/
@@ -196,7 +196,7 @@ roboshop-gitops/
 
 ---
 
-# 33.6 Environment Strategy
+ # 6 Environment Strategy
 
 Use:
 
@@ -228,7 +228,7 @@ prod
 
 ---
 
-# 33.7 Branching Strategy
+ # 7 Branching Strategy
 
 A practical approach:
 
@@ -251,7 +251,7 @@ A single main branch with environment directories provides a clear desired-state
 
 ---
 
-# 33.8 CODEOWNERS
+ # 8 CODEOWNERS
 
 Example:
 
@@ -268,7 +268,7 @@ Production changes should require appropriate reviewers.
 
 ---
 
-# 33.9 GitOps Security
+ # 9 GitOps Security
 
 Protect:
 
@@ -292,7 +292,7 @@ least-privilege access
 
 ---
 
-# 33.10 Application Base
+ # 10 Application Base
 
 Example:
 
@@ -312,7 +312,7 @@ The base defines common application behavior.
 
 ---
 
-# 33.11 Kustomization Base
+ # 11 Kustomization Base
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -330,7 +330,7 @@ resources:
 
 ---
 
-# 33.12 Production Overlay
+ # 12 Production Overlay
 
 ```text
 applications/catalogue/overlays/prod/
@@ -342,7 +342,7 @@ applications/catalogue/overlays/prod/
 
 ---
 
-# 33.13 Production Kustomization
+ # 13 Production Kustomization
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -360,7 +360,7 @@ patches:
 
 ---
 
-# 33.14 Production Replica Patch
+ # 14 Production Replica Patch
 
 ```yaml
 apiVersion: apps/v1
@@ -373,7 +373,7 @@ spec:
 
 ---
 
-# 33.15 Production Resources
+ # 15 Production Resources
 
 ```yaml
 apiVersion: apps/v1
@@ -396,7 +396,7 @@ spec:
 
 ---
 
-# 33.16 Production Deployment
+ # 16 Production Deployment
 
 ```yaml
 apiVersion: apps/v1
@@ -476,7 +476,7 @@ spec:
 
 ---
 
-# 33.17 Why Image Digest
+ # 17 Why Image Digest
 
 Production should prefer:
 
@@ -499,7 +499,7 @@ Digest pinning gives:
 
 ---
 
-# 33.18 Service
+ # 18 Service
 
 ```yaml
 apiVersion: v1
@@ -523,7 +523,7 @@ spec:
 
 ---
 
-# 33.19 ServiceAccount
+ # 19 ServiceAccount
 
 ```yaml
 apiVersion: v1
@@ -541,7 +541,7 @@ Do not place AWS access keys in Kubernetes manifests.
 
 ---
 
-# 33.20 ConfigMap
+ # 20 ConfigMap
 
 ```yaml
 apiVersion: v1
@@ -559,7 +559,7 @@ Non-sensitive configuration belongs here.
 
 ---
 
-# 33.21 Secrets
+ # 21 Secrets
 
 Do not commit:
 
@@ -580,7 +580,7 @@ The GitOps repository should contain references/configuration, not secret values
 
 ---
 
-# 33.22 PodDisruptionBudget
+ # 22 PodDisruptionBudget
 
 ```yaml
 apiVersion: policy/v1
@@ -599,7 +599,7 @@ This protects availability during voluntary disruptions.
 
 ---
 
-# 33.23 HPA
+ # 23 HPA
 
 ```yaml
 apiVersion: autoscaling/v2
@@ -633,7 +633,7 @@ spec:
 
 ---
 
-# 33.24 NetworkPolicy
+ # 24 NetworkPolicy
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -673,7 +673,7 @@ In production, DNS egress and required dependencies must also be allowed explici
 
 ---
 
-# 33.25 Default Deny
+ # 25 Default Deny
 
 A namespace-level default-deny policy can be used:
 
@@ -694,7 +694,7 @@ Additional allow policies must then be carefully defined.
 
 ---
 
-# 33.26 Namespace
+ # 26 Namespace
 
 ```yaml
 apiVersion: v1
@@ -710,7 +710,7 @@ metadata:
 
 ---
 
-# 33.27 Argo CD Project
+ # 27 Argo CD Project
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -747,7 +747,7 @@ Production projects should be more restrictive than broad examples.
 
 ---
 
-# 33.28 Argo CD Application
+ # 28 Argo CD Application
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -784,7 +784,7 @@ spec:
 
 ---
 
-# 33.29 Why prune false
+ # 29 Why prune false
 
 Production pruning can be dangerous.
 
@@ -800,7 +800,7 @@ A controlled organization may enable pruning after mature governance and testing
 
 ---
 
-# 33.30 Why Self-Heal
+ # 30 Why Self-Heal
 
 ```yaml
 selfHeal: true
@@ -822,7 +822,7 @@ Argo CD detects the difference and reconciles toward Git.
 
 ---
 
-# 33.31 ApplicationSet
+ # 31 ApplicationSet
 
 For multiple environments/clusters, ApplicationSet can generate Applications.
 
@@ -870,7 +870,7 @@ spec:
 
 ---
 
-# 33.32 Multi-Cluster GitOps
+ # 32 Multi-Cluster GitOps
 
 Production architecture:
 
@@ -890,7 +890,7 @@ Argo CD centrally reconciles multiple clusters.
 
 ---
 
-# 33.33 Cluster Separation
+ # 33 Cluster Separation
 
 A production design can use:
 
@@ -906,7 +906,7 @@ The GitOps repository remains the source of desired state.
 
 ---
 
-# 33.34 Environment Directory
+ # 34 Environment Directory
 
 Example:
 
@@ -925,7 +925,7 @@ environments/
 
 ---
 
-# 33.35 Production Environment Kustomization
+ # 35 Production Environment Kustomization
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -943,7 +943,7 @@ resources:
 
 ---
 
-# 33.36 Complete RoboShop Services
+ # 36 Complete RoboShop Services
 
 A representative platform can include:
 
@@ -969,7 +969,7 @@ Database ownership and deployment strategy should be determined separately.
 
 ---
 
-# 33.37 Application Ownership
+ # 37 Application Ownership
 
 Example:
 
@@ -987,7 +987,7 @@ Labels should make ownership visible.
 
 ---
 
-# 33.38 Standard Labels
+ # 38 Standard Labels
 
 Use:
 
@@ -1012,7 +1012,7 @@ These labels improve:
 
 ---
 
-# 33.39 Image Update Flow
+ # 39 Image Update Flow
 
 Suppose CI builds:
 
@@ -1039,7 +1039,7 @@ catalogue@sha256:abc123...
 
 ---
 
-# 33.40 GitOps Commit
+ # 40 GitOps Commit
 
 Example:
 
@@ -1060,7 +1060,7 @@ rollback version
 
 ---
 
-# 33.41 Pull Request Flow
+ # 41 Pull Request Flow
 
 ```text
 CI
@@ -1088,7 +1088,7 @@ Argo CD
 
 ---
 
-# 33.42 GitOps Validation
+ # 42 GitOps Validation
 
 Useful local commands:
 
@@ -1108,7 +1108,7 @@ Where server-side validation is appropriate and access is available.
 
 ---
 
-# 33.43 Kustomize Build
+ # 43 Kustomize Build
 
 ```bash
 kustomize build \
@@ -1127,7 +1127,7 @@ Review before deployment.
 
 ---
 
-# 33.44 Diff
+ # 44 Diff
 
 ```bash
 kubectl diff \
@@ -1140,7 +1140,7 @@ In GitOps, Argo CD should ultimately perform reconciliation.
 
 ---
 
-# 33.45 Repository Validation Script
+ # 45 Repository Validation Script
 
 Example:
 
@@ -1164,7 +1164,7 @@ echo "Validation completed."
 
 ---
 
-# 33.46 GitOps Policy
+ # 46 GitOps Policy
 
 Every production deployment should answer:
 
@@ -1184,7 +1184,7 @@ Git provides much of this audit trail.
 
 ---
 
-# 33.47 Rollback Through Git
+ # 47 Rollback Through Git
 
 Preferred process:
 
@@ -1214,7 +1214,7 @@ This is safer than manually changing production and forgetting the desired state
 
 ---
 
-# 33.48 Emergency Rollback
+ # 48 Emergency Rollback
 
 If customer impact is severe:
 
@@ -1228,7 +1228,7 @@ The emergency state should not remain unmanaged.
 
 ---
 
-# 33.49 Argo CD Drift
+ # 49 Argo CD Drift
 
 Example:
 
@@ -1256,7 +1256,7 @@ Not every live-field difference should be interpreted as unauthorized drift.
 
 ---
 
-# 33.50 Ignore Differences Carefully
+ # 50 Ignore Differences Carefully
 
 Argo CD can ignore selected fields.
 
@@ -1266,7 +1266,7 @@ Ignoring too much can hide real drift.
 
 ---
 
-# 33.51 Monitoring in GitOps
+ # 51 Monitoring in GitOps
 
 Monitoring configuration can live in:
 
@@ -1292,7 +1292,7 @@ Argo CD
 
 ---
 
-# 33.52 PrometheusRule
+ # 52 PrometheusRule
 
 ```yaml
 apiVersion: monitoring.coreos.com/v1
@@ -1339,7 +1339,7 @@ Metric names must match the application's actual instrumentation.
 
 ---
 
-# 33.53 Alert Ownership
+ # 53 Alert Ownership
 
 Every actionable alert should contain:
 
@@ -1363,7 +1363,7 @@ labels:
 
 ---
 
-# 33.54 Alertmanager GitOps
+ # 54 Alertmanager GitOps
 
 Example configuration:
 
@@ -1410,7 +1410,7 @@ Actual webhook URLs and credentials must be supplied securely rather than commit
 
 ---
 
-# 33.55 Secret Management
+ # 55 Secret Management
 
 The above example illustrates structure only.
 
@@ -1426,7 +1426,7 @@ depending on organizational standards.
 
 ---
 
-# 33.56 Argo CD Notifications
+ # 56 Argo CD Notifications
 
 Argo CD can notify on:
 
@@ -1447,7 +1447,7 @@ metadata:
 
 ---
 
-# 33.57 Production Notifications
+ # 57 Production Notifications
 
 Use notifications for:
 
@@ -1461,7 +1461,7 @@ Avoid sending every normal reconciliation event to paging systems.
 
 ---
 
-# 33.58 Repository Security Scanning
+ # 58 Repository Security Scanning
 
 Recommended checks:
 
@@ -1489,7 +1489,7 @@ The exact tooling should match the approved platform.
 
 ---
 
-# 33.59 Secret Scanning
+ # 59 Secret Scanning
 
 Run secret scanning before merge.
 
@@ -1508,7 +1508,7 @@ Never assume `.gitignore` is enough after a secret has already been committed.
 
 ---
 
-# 33.60 Secret Rotation
+ # 60 Secret Rotation
 
 If a secret was committed:
 
@@ -1525,7 +1525,7 @@ Git deletion alone does not revoke a credential.
 
 ---
 
-# 33.61 Production Branch Protection
+ # 61 Production Branch Protection
 
 Require:
 
@@ -1541,7 +1541,7 @@ For highly critical repositories, require separate production approval.
 
 ---
 
-# 33.62 Separation of Duties
+ # 62 Separation of Duties
 
 A mature model:
 
@@ -1568,7 +1568,7 @@ Developers do not need direct production write access.
 
 ---
 
-# 33.63 Argo CD RBAC
+ # 63 Argo CD RBAC
 
 Separate:
 
@@ -1583,7 +1583,7 @@ Production access should be least privilege.
 
 ---
 
-# 33.64 Application Ownership Metadata
+ # 64 Application Ownership Metadata
 
 Example:
 
@@ -1599,7 +1599,7 @@ This supports operations and chargeback/showback.
 
 ---
 
-# 33.65 Complete Repository Example
+ # 65 Complete Repository Example
 
 ```text
 roboshop-gitops/
@@ -1666,7 +1666,7 @@ roboshop-gitops/
 
 ---
 
-# 33.66 README
+ # 66 README
 
 The repository README should document:
 
@@ -1687,7 +1687,7 @@ validation
 
 ---
 
-# 33.67 Promotion Strategy
+ # 67 Promotion Strategy
 
 A controlled promotion:
 
@@ -1717,7 +1717,7 @@ Production promotion
 
 ---
 
-# 33.68 Immutable Artifact Promotion
+ # 68 Immutable Artifact Promotion
 
 Prefer:
 
@@ -1739,7 +1739,7 @@ rather than rebuilding different binaries for every environment.
 
 ---
 
-# 33.69 Why This Matters
+ # 69 Why This Matters
 
 If the image is rebuilt between environments:
 
@@ -1754,7 +1754,7 @@ Promotion should move the tested artifact.
 
 ---
 
-# 33.70 Environment Configuration
+ # 70 Environment Configuration
 
 Environment-specific values may differ:
 
@@ -1772,7 +1772,7 @@ But application code should remain identical.
 
 ---
 
-# 33.71 Configuration Anti-Pattern
+ # 71 Configuration Anti-Pattern
 
 Avoid:
 
@@ -1797,7 +1797,7 @@ inside production manifests.
 
 ---
 
-# 33.72 Production Manifest Review
+ # 72 Production Manifest Review
 
 Review:
 
@@ -1818,7 +1818,7 @@ namespace
 
 ---
 
-# 33.73 Probes
+ # 73 Probes
 
 A production application should distinguish:
 
@@ -1844,7 +1844,7 @@ Startup protects slow-starting applications.
 
 ---
 
-# 33.74 Deployment Strategy
+ # 74 Deployment Strategy
 
 Default:
 
@@ -1862,7 +1862,7 @@ Exact values depend on application startup time and capacity.
 
 ---
 
-# 33.75 Topology Spread
+ # 75 Topology Spread
 
 Production workloads should consider spreading replicas across nodes/AZs.
 
@@ -1882,7 +1882,7 @@ For critical services, stronger scheduling constraints may be appropriate.
 
 ---
 
-# 33.76 Anti-Affinity
+ # 76 Anti-Affinity
 
 Another option:
 
@@ -1902,7 +1902,7 @@ This reduces concentration on one node.
 
 ---
 
-# 33.77 Resource Quotas
+ # 77 Resource Quotas
 
 Namespace-level resource controls can prevent runaway consumption.
 
@@ -1926,7 +1926,7 @@ Tune values from actual capacity planning.
 
 ---
 
-# 33.78 LimitRange
+ # 78 LimitRange
 
 Example:
 
@@ -1951,7 +1951,7 @@ Defaults should be deliberate rather than arbitrary.
 
 ---
 
-# 33.79 Production Ingress
+ # 79 Production Ingress
 
 The GitOps repository can manage ALB Ingress.
 
@@ -1988,7 +1988,7 @@ Certificate and WAF configuration should be managed according to the approved AW
 
 ---
 
-# 33.80 GitOps and ALB
+ # 80 GitOps and ALB
 
 Flow:
 
@@ -2017,7 +2017,7 @@ The Kubernetes controller reconciles the Ingress into AWS resources.
 
 ---
 
-# 33.81 Monitoring Ownership
+ # 81 Monitoring Ownership
 
 Monitoring configuration should have ownership.
 
@@ -2033,7 +2033,7 @@ Alert ownership should be explicit.
 
 ---
 
-# 33.82 Alert Runbook URL
+ # 82 Alert Runbook URL
 
 Example:
 
@@ -2056,7 +2056,7 @@ escalation
 
 ---
 
-# 33.83 GitOps Incident Flow
+ # 83 GitOps Incident Flow
 
 ```text
 Alert
@@ -2093,7 +2093,7 @@ This makes Git history an important incident-management tool.
 
 ---
 
-# 33.84 Deployment Audit
+ # 84 Deployment Audit
 
 For a deployment, record:
 
@@ -2109,7 +2109,7 @@ application version
 
 ---
 
-# 33.85 Rollback Audit
+ # 85 Rollback Audit
 
 A rollback should produce:
 
@@ -2125,7 +2125,7 @@ validation result
 
 ---
 
-# 33.86 GitOps Drift Detection
+ # 86 GitOps Drift Detection
 
 Drift can be caused by:
 
@@ -2141,7 +2141,7 @@ Use Argo CD diff and Kubernetes ownership metadata to determine whether the diff
 
 ---
 
-# 33.87 Manual kubectl Policy
+ # 87 Manual kubectl Policy
 
 Normal production changes:
 
@@ -2165,7 +2165,7 @@ This preserves the desired-state model.
 
 ---
 
-# 33.88 Repository Backup
+ # 88 Repository Backup
 
 Git itself should be protected through:
 
@@ -2181,7 +2181,7 @@ The GitOps repository is a critical recovery asset.
 
 ---
 
-# 33.89 Disaster Recovery Dependency
+ # 89 Disaster Recovery Dependency
 
 If the production EKS cluster is lost:
 
@@ -2205,7 +2205,7 @@ This is why infrastructure and desired state must be version-controlled independ
 
 ---
 
-# 33.90 Bootstrap Sequence
+ # 90 Bootstrap Sequence
 
 A new production cluster can be bootstrapped:
 
@@ -2225,7 +2225,7 @@ A new production cluster can be bootstrapped:
 
 ---
 
-# 33.91 Argo CD Bootstrap
+ # 91 Argo CD Bootstrap
 
 Example:
 
@@ -2241,7 +2241,7 @@ In production, pin and approve a specific Argo CD release rather than consuming 
 
 ---
 
-# 33.92 Repository Registration
+ # 92 Repository Registration
 
 Argo CD requires access to the Git repository.
 
@@ -2257,7 +2257,7 @@ Use least privilege.
 
 ---
 
-# 33.93 No Long-Lived Developer Credentials
+ # 93 No Long-Lived Developer Credentials
 
 Do not embed:
 
@@ -2274,7 +2274,7 @@ Use secret management.
 
 ---
 
-# 33.94 GitOps Repository Review Checklist
+ # 94 GitOps Repository Review Checklist
 
 ```text
 [ ] No plaintext secrets
@@ -2295,7 +2295,7 @@ Use secret management.
 
 ---
 
-# 33.95 Production Promotion Checklist
+ # 95 Production Promotion Checklist
 
 ```text
 [ ] CI passed
@@ -2317,7 +2317,7 @@ Use secret management.
 
 ---
 
-# 33.96 Production Rollback Checklist
+ # 96 Production Rollback Checklist
 
 ```text
 [ ] confirm impact
@@ -2336,7 +2336,7 @@ Use secret management.
 
 ---
 
-# 33.97 Failure Scenario — Bad Manifest
+ # 97 Failure Scenario — Bad Manifest
 
 Symptom:
 
@@ -2373,7 +2373,7 @@ CI validation
 
 ---
 
-# 33.98 Failure Scenario — Wrong Image
+ # 98 Failure Scenario — Wrong Image
 
 Symptom:
 
@@ -2402,7 +2402,7 @@ digest pinning
 
 ---
 
-# 33.99 Failure Scenario — Manual Drift
+ # 99 Failure Scenario — Manual Drift
 
 Symptom:
 
@@ -2432,7 +2432,7 @@ drift alerts
 
 ---
 
-# 33.100 Failure Scenario — Argo CD Cannot Sync
+ # 100 Failure Scenario — Argo CD Cannot Sync
 
 Possible causes:
 
@@ -2456,7 +2456,7 @@ Git
 
 ---
 
-# 33.101 GitOps Repository Health
+ # 101 GitOps Repository Health
 
 Monitor:
 
@@ -2470,7 +2470,7 @@ manifest generation failures
 
 ---
 
-# 33.102 Production Repository Metrics
+ # 102 Production Repository Metrics
 
 Useful metrics include:
 
@@ -2487,7 +2487,7 @@ GitOps enables reliable deployment measurement.
 
 ---
 
-# 33.103 GitOps and DORA
+ # 103 GitOps and DORA
 
 Git history plus CI/CD data can support:
 
@@ -2502,7 +2502,7 @@ These should be measured from actual system events rather than guessed.
 
 ---
 
-# 33.104 Complete Deployment Lifecycle
+ # 104 Complete Deployment Lifecycle
 
 ```text
 Developer
@@ -2546,7 +2546,7 @@ Prometheus/Grafana/ELK
 
 ---
 
-# 33.105 Senior DevOps Explanation
+ # 105 Senior DevOps Explanation
 
 If asked:
 
@@ -2569,7 +2569,7 @@ This gives us auditability, review, reproducibility, controlled promotion and a 
 
 ---
 
-# 33.106 Senior Question — Why Not kubectl from CI?
+ # 106 Senior Question — Why Not kubectl from CI?
 
 Strong answer:
 
@@ -2584,7 +2584,7 @@ This reduces direct production credentials in CI, improves auditability and give
 
 ---
 
-# 33.107 Senior Question — How Do You Roll Back?
+ # 107 Senior Question — How Do You Roll Back?
 
 Answer:
 
@@ -2598,7 +2598,7 @@ For severe incidents, I can use a temporary kubectl rollback to reduce customer 
 
 ---
 
-# 33.108 Senior Question — What If Someone Changes Production Manually?
+ # 108 Senior Question — What If Someone Changes Production Manually?
 
 Answer:
 
@@ -2612,7 +2612,7 @@ I also investigate why the manual change was possible and tighten RBAC if necess
 
 ---
 
-# 33.109 Senior Question — How Do You Protect Production?
+ # 109 Senior Question — How Do You Protect Production?
 
 Answer:
 
@@ -2622,7 +2622,7 @@ I protect the GitOps main branch with reviews and status checks, restrict Argo C
 
 ---
 
-# 33.110 Senior Question — How Do You Promote the Same Artifact?
+ # 110 Senior Question — How Do You Promote the Same Artifact?
 
 Answer:
 
@@ -2636,7 +2636,7 @@ Environment differences are represented by configuration, not by rebuilding the 
 
 ---
 
-# 33.111 Senior Question — How Does GitOps Help DR?
+ # 111 Senior Question — How Does GitOps Help DR?
 
 Answer:
 
@@ -2650,7 +2650,7 @@ This reduces dependence on manual reconstruction.
 
 ---
 
-# 33.112 Production GitOps Anti-Patterns
+ # 112 Production GitOps Anti-Patterns
 
 Avoid:
 
@@ -2670,7 +2670,7 @@ unvalidated manifests
 
 ---
 
-# 33.113 GitOps Best Practices
+ # 113 GitOps Best Practices
 
 Use:
 
@@ -2694,7 +2694,7 @@ rollback procedures
 
 ---
 
-# 33.114 Final Repository Architecture
+ # 114 Final Repository Architecture
 
 ```text
                     ┌─────────────────────┐
@@ -2739,7 +2739,7 @@ rollback procedures
 
 ---
 
-# 33.115 Final Production Checklist
+ # 115 Final Production Checklist
 
 ```text
 Repository
@@ -2790,7 +2790,7 @@ Delivery
 
 ---
 
-# 33.116 Final Takeaway
+ # 116 Final Takeaway
 
 The production GitOps repository is not simply a directory containing YAML files.
 
@@ -2833,3 +2833,5 @@ Rollback through version-controlled desired state.
 ```
 
 This creates a deployment system that is auditable, reproducible, secure, operationally recoverable and suitable for a production EKS environment.
+
+---
