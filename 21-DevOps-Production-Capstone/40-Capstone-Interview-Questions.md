@@ -1,4 +1,4 @@
-# 40 - Capstone Interview Questions
+# Capstone Interview Questions
 
 ## Senior DevOps / DevSecOps Production Interview Preparation
 
