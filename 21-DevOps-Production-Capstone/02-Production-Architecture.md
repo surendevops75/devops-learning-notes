@@ -1,4 +1,4 @@
-# 02 — Production Architecture
+# Production Architecture
 
 ## 1. Document Purpose
 
@@ -2475,3 +2475,5 @@ Failure/recovery flow
 ```
 
 Those diagrams will become the visual reference for the implementation documents that follow.
+
+---
