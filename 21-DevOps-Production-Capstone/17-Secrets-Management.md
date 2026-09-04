@@ -1,4 +1,4 @@
-# 17 --- Secrets Management --- Production DevOps Capstone
+# Secrets Management
 
 > Deep production guide for AWS Secrets Manager, Kubernetes Secrets,
 > External Secrets Operator, EKS workload identity, IAM/KMS, GitOps,
@@ -2829,3 +2829,5 @@ The secret value is intentionally absent from the GitOps repository.
 3.  Which namespace and application consume it?
 4.  How is it rotated and revoked?
 5.  How is access audited and recovered during DR?
+
+---
