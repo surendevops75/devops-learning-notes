@@ -1,4 +1,4 @@
-# 27. Production Troubleshooting
+# Production Troubleshooting
 
 This chapter is a production-oriented troubleshooting playbook for a DevOps engineer operating AWS, Kubernetes/EKS, Linux, containers, Terraform, Helm, CI/CD, GitOps, ALB, observability, networking, storage, IAM, and application platforms.
 
@@ -1931,3 +1931,5 @@ Prevent recurrence
 ```
 
 That workflow is more valuable than memorizing isolated commands.
+
+---
