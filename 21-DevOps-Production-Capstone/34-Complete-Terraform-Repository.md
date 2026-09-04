@@ -1,6 +1,6 @@
 # 34-Complete-Terraform-Repository
 
-## 34.1 Purpose
+# # 1 Purpose
 
 This chapter defines a realistic production Terraform repository for the RoboShop DevOps/DevSecOps platform.
 
@@ -40,7 +40,7 @@ GitOps    = Kubernetes/application desired state
 
 ---
 
-# 34.2 Why Terraform
+ # 2 Why Terraform
 
 Terraform provides:
 
@@ -71,7 +71,7 @@ Terraform defines them declaratively.
 
 ---
 
-# 34.3 Production Architecture
+ # 3 Production Architecture
 
 ```text
                     Git
@@ -117,7 +117,7 @@ Terraform defines them declaratively.
 
 ---
 
-# 34.4 Repository Responsibilities
+ # 4 Repository Responsibilities
 
 Terraform should manage infrastructure such as:
 
@@ -156,7 +156,7 @@ unless a specific bootstrap dependency requires Terraform to install or configur
 
 ---
 
-# 34.5 Recommended Repository
+ # 5 Recommended Repository
 
 ```text
 roboshop-infrastructure/
@@ -207,7 +207,7 @@ roboshop-infrastructure/
 
 ---
 
-# 34.6 Environment Separation
+ # 6 Environment Separation
 
 Production should not share state with development.
 
@@ -231,7 +231,7 @@ The exact bucket naming convention is organization-specific.
 
 ---
 
-# 34.7 Remote State
+ # 7 Remote State
 
 Never depend on a developer laptop for production state.
 
@@ -249,7 +249,7 @@ State must be protected because it may contain sensitive infrastructure informat
 
 ---
 
-# 34.8 Backend Example
+ # 8 Backend Example
 
 ```hcl
 terraform {
@@ -269,7 +269,7 @@ Do not hard-code sensitive credentials.
 
 ---
 
-# 34.9 Backend Security
+ # 9 Backend Security
 
 The state bucket should have:
 
@@ -287,7 +287,7 @@ The Terraform state itself should be treated as sensitive.
 
 ---
 
-# 34.10 Provider
+ # 10 Provider
 
 Example:
 
@@ -316,7 +316,7 @@ In an actual project, pin to an organization-approved provider version.
 
 ---
 
-# 34.11 Provider Authentication
+ # 11 Provider Authentication
 
 Do not put:
 
@@ -340,7 +340,7 @@ Production CI should use short-lived credentials wherever possible.
 
 ---
 
-# 34.12 Provider Aliases
+ # 12 Provider Aliases
 
 For multi-region architectures:
 
@@ -359,7 +359,7 @@ Modules can then receive the appropriate provider.
 
 ---
 
-# 34.13 Naming Convention
+ # 13 Naming Convention
 
 Use consistent names:
 
@@ -382,7 +382,7 @@ ManagedBy
 
 ---
 
-# 34.14 Common Tags
+ # 14 Common Tags
 
 ```hcl
 locals {
@@ -406,7 +406,7 @@ Tags improve:
 
 ---
 
-# 34.15 VPC Architecture
+ # 15 VPC Architecture
 
 Production VPC:
 
@@ -430,7 +430,7 @@ Use multiple Availability Zones.
 
 ---
 
-# 34.16 Subnet Strategy
+ # 16 Subnet Strategy
 
 Example:
 
@@ -455,7 +455,7 @@ CIDRs are examples and must be designed around the organization's address plan.
 
 ---
 
-# 34.17 VPC Module Interface
+ # 17 VPC Module Interface
 
 ```hcl
 variable "name" {
@@ -486,7 +486,7 @@ variable "enable_nat_gateway" {
 
 ---
 
-# 34.18 VPC Module Example
+ # 18 VPC Module Example
 
 ```hcl
 module "vpc" {
@@ -509,7 +509,7 @@ A production implementation may use an approved upstream VPC module rather than 
 
 ---
 
-# 34.19 NAT Gateway Strategy
+ # 19 NAT Gateway Strategy
 
 Options:
 
@@ -532,7 +532,7 @@ better AZ resilience
 
 ---
 
-# 34.20 VPC Endpoints
+ # 20 VPC Endpoints
 
 Use VPC endpoints where appropriate for AWS services such as:
 
@@ -552,7 +552,7 @@ Exact endpoint requirements depend on workloads.
 
 ---
 
-# 34.21 EKS Architecture
+ # 21 EKS Architecture
 
 ```text
 AWS VPC
@@ -570,7 +570,7 @@ Use managed node groups or another approved compute strategy.
 
 ---
 
-# 34.22 EKS Terraform Example
+ # 22 EKS Terraform Example
 
 ```hcl
 module "eks" {
@@ -599,7 +599,7 @@ A real module should expose only required options and use approved defaults.
 
 ---
 
-# 34.23 EKS API Endpoint
+ # 23 EKS API Endpoint
 
 Production should evaluate:
 
@@ -615,7 +615,7 @@ If public access is required, restrict allowed CIDRs.
 
 ---
 
-# 34.24 EKS Control Plane Logging
+ # 24 EKS Control Plane Logging
 
 Enable relevant control plane logs:
 
@@ -637,7 +637,7 @@ AWS charges apply.
 
 ---
 
-# 34.25 EKS Encryption
+ # 25 EKS Encryption
 
 Use KMS for Kubernetes secrets encryption where supported by the selected EKS design.
 
@@ -656,7 +656,7 @@ Key policies must be carefully restricted.
 
 ---
 
-# 34.26 EKS Access Management
+ # 26 EKS Access Management
 
 Avoid broad:
 
@@ -679,7 +679,7 @@ The exact EKS access mechanism should match the cluster version and organization
 
 ---
 
-# 34.27 EKS Node Groups
+ # 27 EKS Node Groups
 
 Example:
 
@@ -705,7 +705,7 @@ For a real implementation, the EKS module would normally separate cluster and no
 
 ---
 
-# 34.28 Workload Node Groups
+ # 28 Workload Node Groups
 
 Consider separate groups:
 
@@ -734,7 +734,7 @@ Use taints/tolerations only when there is a real scheduling requirement.
 
 ---
 
-# 34.29 EKS Autoscaling
+ # 29 EKS Autoscaling
 
 Infrastructure autoscaling may include:
 
@@ -758,7 +758,7 @@ node autoscaling = node capacity scaling
 
 ---
 
-# 34.30 ECR
+ # 30 ECR
 
 Create separate repositories:
 
@@ -774,7 +774,7 @@ roboshop/checkout
 
 ---
 
-# 34.31 ECR Terraform
+ # 31 ECR Terraform
 
 ```hcl
 resource "aws_ecr_repository" "catalogue" {
@@ -797,7 +797,7 @@ KMS-backed ECR encryption may be selected if required by organizational policy.
 
 ---
 
-# 34.32 ECR Lifecycle Policy
+ # 32 ECR Lifecycle Policy
 
 ```hcl
 resource "aws_ecr_lifecycle_policy" "catalogue" {
@@ -829,7 +829,7 @@ Test lifecycle rules carefully before enabling aggressive cleanup.
 
 ---
 
-# 34.33 ECR Repository Policy
+ # 33 ECR Repository Policy
 
 Only required principals should be allowed to:
 
@@ -843,7 +843,7 @@ Application nodes normally need pull permissions, not repository administration.
 
 ---
 
-# 34.34 IAM Architecture
+ # 34 IAM Architecture
 
 Separate roles:
 
@@ -860,7 +860,7 @@ break-glass role
 
 ---
 
-# 34.35 Terraform CI Role
+ # 35 Terraform CI Role
 
 The CI role should have only permissions required for:
 
@@ -881,7 +881,7 @@ for routine CI.
 
 ---
 
-# 34.36 IAM Role for Service Account
+ # 36 IAM Role for Service Account
 
 A workload may require AWS access.
 
@@ -912,7 +912,7 @@ AWS API
 
 ---
 
-# 34.37 Security Group Strategy
+ # 37 Security Group Strategy
 
 Use purpose-specific security groups.
 
@@ -935,7 +935,7 @@ unless explicitly required.
 
 ---
 
-# 34.38 ALB Security Group
+ # 38 ALB Security Group
 
 Internet-facing ALB typically allows:
 
@@ -949,7 +949,7 @@ Node/application security groups should not expose application ports directly to
 
 ---
 
-# 34.39 Database Security Group
+ # 39 Database Security Group
 
 Example conceptual rule:
 
@@ -969,7 +969,7 @@ The database should not be:
 
 ---
 
-# 34.40 Network ACLs
+ # 40 Network ACLs
 
 NACLs operate at subnet boundaries.
 
@@ -981,7 +981,7 @@ Do not create overly complex NACL rules without operational justification.
 
 ---
 
-# 34.41 KMS
+ # 41 KMS
 
 Potential keys:
 
@@ -1004,7 +1004,7 @@ deletion protection considerations
 
 ---
 
-# 34.42 S3 State Bucket
+ # 42 S3 State Bucket
 
 Example:
 
@@ -1035,7 +1035,7 @@ access logging where required
 
 ---
 
-# 34.43 S3 Public Access Block
+ # 43 S3 Public Access Block
 
 ```hcl
 resource "aws_s3_bucket_public_access_block" "terraform_state" {
@@ -1050,7 +1050,7 @@ resource "aws_s3_bucket_public_access_block" "terraform_state" {
 
 ---
 
-# 34.44 S3 Encryption
+ # 44 S3 Encryption
 
 ```hcl
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
@@ -1068,7 +1068,7 @@ Use KMS if required by the security standard.
 
 ---
 
-# 34.45 Terraform State Locking
+ # 45 Terraform State Locking
 
 State locking prevents concurrent operations.
 
@@ -1085,7 +1085,7 @@ The CI pipeline should serialize production applies.
 
 ---
 
-# 34.46 State Isolation
+ # 46 State Isolation
 
 Never use:
 
@@ -1103,7 +1103,7 @@ separate approval
 
 ---
 
-# 34.47 Terraform Modules
+ # 47 Terraform Modules
 
 Good modules should have:
 
@@ -1128,7 +1128,7 @@ modules/vpc/
 
 ---
 
-# 34.48 Module Inputs
+ # 48 Module Inputs
 
 Avoid huge modules with hundreds of options.
 
@@ -1147,7 +1147,7 @@ Defaults should be safe.
 
 ---
 
-# 34.49 Module Outputs
+ # 49 Module Outputs
 
 Example:
 
@@ -1169,7 +1169,7 @@ Outputs become dependencies for other modules.
 
 ---
 
-# 34.50 Root Module
+ # 50 Root Module
 
 Production environment:
 
@@ -1203,7 +1203,7 @@ module "ecr" {
 
 ---
 
-# 34.51 Variables
+ # 51 Variables
 
 ```hcl
 variable "aws_region" {
@@ -1228,7 +1228,7 @@ variable "eks_version" {
 
 ---
 
-# 34.52 Variable Validation
+ # 52 Variable Validation
 
 Good validation catches mistakes before AWS changes.
 
@@ -1247,7 +1247,7 @@ variable "vpc_cidr" {
 
 ---
 
-# 34.53 Locals
+ # 53 Locals
 
 ```hcl
 locals {
@@ -1265,7 +1265,7 @@ Keep locals understandable.
 
 ---
 
-# 34.54 Outputs
+ # 54 Outputs
 
 Production outputs may include:
 
@@ -1292,7 +1292,7 @@ Do not expose unnecessary sensitive information.
 
 ---
 
-# 34.55 Environment tfvars
+ # 55 Environment tfvars
 
 Example:
 
@@ -1317,7 +1317,7 @@ Versions must be selected according to current AWS/EKS support and organizationa
 
 ---
 
-# 34.56 Do Not Put Secrets in tfvars
+ # 56 Do Not Put Secrets in tfvars
 
 Avoid:
 
@@ -1339,7 +1339,7 @@ for secrets.
 
 ---
 
-# 34.57 Terraform Lifecycle
+ # 57 Terraform Lifecycle
 
 ```text
 terraform fmt
@@ -1368,7 +1368,7 @@ terraform apply
 
 ---
 
-# 34.58 Format
+ # 58 Format
 
 ```bash
 terraform fmt -recursive
@@ -1378,7 +1378,7 @@ CI should fail when formatting is incorrect.
 
 ---
 
-# 34.59 Init
+ # 59 Init
 
 ```bash
 terraform init
@@ -1394,7 +1394,7 @@ downloads modules
 
 ---
 
-# 34.60 Validate
+ # 60 Validate
 
 ```bash
 terraform validate
@@ -1404,7 +1404,7 @@ Checks Terraform configuration syntax and internal consistency.
 
 ---
 
-# 34.61 Plan
+ # 61 Plan
 
 ```bash
 terraform plan \
@@ -1416,7 +1416,7 @@ The plan should be reviewed before apply.
 
 ---
 
-# 34.62 Apply
+ # 62 Apply
 
 ```bash
 terraform apply tfplan
@@ -1426,7 +1426,7 @@ Applying the saved plan is preferable in controlled CI workflows because the rev
 
 ---
 
-# 34.63 Destroy
+ # 63 Destroy
 
 Production:
 
@@ -1440,7 +1440,7 @@ Do not provide routine destroy permissions to normal CI.
 
 ---
 
-# 34.64 CI Pipeline
+ # 64 CI Pipeline
 
 Recommended stages:
 
@@ -1468,7 +1468,7 @@ Post-apply validation
 
 ---
 
-# 34.65 Terraform Plan Security
+ # 65 Terraform Plan Security
 
 Plan files can contain sensitive infrastructure details.
 
@@ -1485,7 +1485,7 @@ Do not publish them publicly.
 
 ---
 
-# 34.66 Security Scanning
+ # 66 Security Scanning
 
 Useful tooling:
 
@@ -1506,7 +1506,7 @@ Use approved organizational tooling.
 
 ---
 
-# 34.67 Policy Example
+ # 67 Policy Example
 
 Policies can reject:
 
@@ -1521,7 +1521,7 @@ unapproved regions
 
 ---
 
-# 34.68 Example Security Requirement
+ # 68 Example Security Requirement
 
 Bad:
 
@@ -1542,7 +1542,7 @@ or tightly restricted management CIDRs
 
 ---
 
-# 34.69 SSM
+ # 69 SSM
 
 For EC2-based administration, consider:
 
@@ -1554,7 +1554,7 @@ This can remove the need for public SSH.
 
 ---
 
-# 34.70 EKS Access Through Terraform
+ # 70 EKS Access Through Terraform
 
 Terraform can establish:
 
@@ -1570,7 +1570,7 @@ Application deployment should remain in GitOps.
 
 ---
 
-# 34.71 ALB Controller Prerequisites
+ # 71 ALB Controller Prerequisites
 
 Terraform can create:
 
@@ -1584,7 +1584,7 @@ Then GitOps/Helm can install the controller if that is the chosen architecture.
 
 ---
 
-# 34.72 Terraform and Helm Boundary
+ # 72 Terraform and Helm Boundary
 
 Possible design:
 
@@ -1605,7 +1605,7 @@ Avoid having Terraform and Argo CD manage the same Kubernetes resource.
 
 ---
 
-# 34.73 Ownership Conflict
+ # 73 Ownership Conflict
 
 Bad:
 
@@ -1627,7 +1627,7 @@ Argo CD    → Kubernetes desired state
 
 ---
 
-# 34.74 ECR Ownership
+ # 74 ECR Ownership
 
 Terraform owns:
 
@@ -1655,7 +1655,7 @@ This is a clean boundary.
 
 ---
 
-# 34.75 IAM Ownership
+ # 75 IAM Ownership
 
 Terraform owns:
 
@@ -1677,7 +1677,7 @@ when Kubernetes-side configuration is managed there.
 
 ---
 
-# 34.76 State Drift
+ # 76 State Drift
 
 Terraform drift occurs when:
 
@@ -1703,7 +1703,7 @@ to detect differences.
 
 ---
 
-# 34.77 Drift Response
+ # 77 Drift Response
 
 Do not automatically apply every drift.
 
@@ -1721,7 +1721,7 @@ Then reconcile safely.
 
 ---
 
-# 34.78 Terraform Import
+ # 78 Terraform Import
 
 If an existing resource must be brought under Terraform:
 
@@ -1744,7 +1744,7 @@ import {
 
 ---
 
-# 34.79 Import Best Practice
+ # 79 Import Best Practice
 
 After import:
 
@@ -1758,7 +1758,7 @@ Match the configuration to the real resource carefully.
 
 ---
 
-# 34.80 Resource Replacement
+ # 80 Resource Replacement
 
 Terraform may show:
 
@@ -1780,7 +1780,7 @@ before approval.
 
 ---
 
-# 34.81 Lifecycle Ignore Changes
+ # 81 Lifecycle Ignore Changes
 
 Use carefully:
 
@@ -1798,7 +1798,7 @@ But broad `ignore_changes` can hide real drift.
 
 ---
 
-# 34.82 Prevent Destroy
+ # 82 Prevent Destroy
 
 Critical resources may use:
 
@@ -1820,7 +1820,7 @@ This is not a substitute for backups.
 
 ---
 
-# 34.83 EKS Upgrade Strategy
+ # 83 EKS Upgrade Strategy
 
 Do not blindly change:
 
@@ -1851,7 +1851,7 @@ validate workloads
 
 ---
 
-# 34.84 EKS Add-ons
+ # 84 EKS Add-ons
 
 Terraform can manage approved EKS add-ons such as:
 
@@ -1866,7 +1866,7 @@ Pin versions where appropriate.
 
 ---
 
-# 34.85 EBS CSI
+ # 85 EBS CSI
 
 For persistent volumes:
 
@@ -1880,7 +1880,7 @@ Storage classes can then be managed through Kubernetes/GitOps.
 
 ---
 
-# 34.86 S3 and EBS Backup
+ # 86 S3 and EBS Backup
 
 Terraform can establish:
 
@@ -1895,7 +1895,7 @@ Actual workload backup configuration should be tested separately.
 
 ---
 
-# 34.87 CloudWatch
+ # 87 CloudWatch
 
 Terraform can create:
 
@@ -1921,7 +1921,7 @@ Retention should match operational and compliance requirements.
 
 ---
 
-# 34.88 AWS Alarms vs Prometheus
+ # 88 AWS Alarms vs Prometheus
 
 AWS-native signals:
 
@@ -1948,7 +1948,7 @@ Use both where appropriate.
 
 ---
 
-# 34.89 Terraform and Prometheus
+ # 89 Terraform and Prometheus
 
 Terraform should not normally create every Prometheus alert.
 
@@ -1968,7 +1968,7 @@ This keeps Kubernetes observability under GitOps.
 
 ---
 
-# 34.90 Terraform and ELK
+ # 90 Terraform and ELK
 
 Terraform can create AWS prerequisites:
 
@@ -1991,7 +1991,7 @@ should be owned by the approved Kubernetes/platform deployment mechanism.
 
 ---
 
-# 34.91 Complete Production Environment
+ # 91 Complete Production Environment
 
 ```hcl
 module "vpc" {
@@ -2033,7 +2033,7 @@ module "ecr" {
 
 ---
 
-# 34.92 Complete variables
+ # 92 Complete variables
 
 ```hcl
 variable "project" {
@@ -2076,7 +2076,7 @@ variable "ecr_repositories" {
 
 ---
 
-# 34.93 Complete ECR Repository List
+ # 93 Complete ECR Repository List
 
 ```hcl
 ecr_repositories = [
@@ -2092,7 +2092,7 @@ ecr_repositories = [
 
 ---
 
-# 34.94 Production tfvars
+ # 94 Production tfvars
 
 ```hcl
 project     = "roboshop"
@@ -2137,7 +2137,7 @@ These are example values. Validate CIDRs, AZ availability and supported EKS vers
 
 ---
 
-# 34.95 Production Backend
+ # 95 Production Backend
 
 ```hcl
 terraform {
@@ -2155,7 +2155,7 @@ The CI identity should have access only to the appropriate state path.
 
 ---
 
-# 34.96 CI Role Separation
+ # 96 CI Role Separation
 
 Example:
 
@@ -2172,7 +2172,7 @@ A separate approval step should be used for production.
 
 ---
 
-# 34.97 GitHub Actions Example
+ # 97 GitHub Actions Example
 
 ```yaml
 name: Terraform
@@ -2225,7 +2225,7 @@ Pin action versions according to organizational policy and supply-chain requirem
 
 ---
 
-# 34.98 Terraform Apply Workflow
+ # 98 Terraform Apply Workflow
 
 A production apply can be:
 
@@ -2255,7 +2255,7 @@ The exact implementation may use GitHub Actions, Jenkins or another approved CI 
 
 ---
 
-# 34.99 Jenkins Terraform Pipeline
+ # 99 Jenkins Terraform Pipeline
 
 Conceptual stages:
 
@@ -2311,7 +2311,7 @@ The actual Jenkins implementation must authenticate using a secure workload iden
 
 ---
 
-# 34.100 Terraform Concurrency
+ # 100 Terraform Concurrency
 
 Only one production apply should run at a time.
 
@@ -2325,7 +2325,7 @@ environment locks
 
 ---
 
-# 34.101 Terraform Workspace Strategy
+ # 101 Terraform Workspace Strategy
 
 Workspaces can be useful, but for major environments many teams prefer separate root modules/state.
 
@@ -2341,7 +2341,7 @@ This makes production configuration and access boundaries explicit.
 
 ---
 
-# 34.102 Production Approval
+ # 102 Production Approval
 
 Production changes should have:
 
@@ -2356,7 +2356,7 @@ post-apply validation
 
 ---
 
-# 34.103 Terraform Rollback
+ # 103 Terraform Rollback
 
 Terraform does not have a simple universal:
 
@@ -2378,7 +2378,7 @@ Infrastructure rollback can be dangerous because resource recreation may cause d
 
 ---
 
-# 34.104 Terraform State Recovery
+ # 104 Terraform State Recovery
 
 If state is lost:
 
@@ -2396,7 +2396,7 @@ S3 versioning is therefore important.
 
 ---
 
-# 34.105 Disaster Recovery
+ # 105 Disaster Recovery
 
 Terraform repository is a critical DR asset.
 
@@ -2429,7 +2429,7 @@ GitOps
 
 ---
 
-# 34.106 DR Region
+ # 106 DR Region
 
 For multi-region DR:
 
@@ -2449,7 +2449,7 @@ Data replication must also exist.
 
 ---
 
-# 34.107 Multi-Region Architecture
+ # 107 Multi-Region Architecture
 
 ```text
                     Git
@@ -2475,7 +2475,7 @@ The exact DNS/failover mechanism depends on RTO/RPO requirements.
 
 ---
 
-# 34.108 Terraform Dependencies
+ # 108 Terraform Dependencies
 
 Example:
 
@@ -2497,7 +2497,7 @@ Avoid unnecessary explicit `depends_on`.
 
 ---
 
-# 34.109 Explicit depends_on
+ # 109 Explicit depends_on
 
 Use only when Terraform cannot infer dependency.
 
@@ -2519,7 +2519,7 @@ Terraform then understands the dependency naturally.
 
 ---
 
-# 34.110 Data Sources
+ # 110 Data Sources
 
 Use data sources to query existing resources.
 
@@ -2535,7 +2535,7 @@ Be careful with dynamic data in production because changes in AWS can alter plan
 
 ---
 
-# 34.111 Data Source vs Resource
+ # 111 Data Source vs Resource
 
 Resource:
 
@@ -2557,7 +2557,7 @@ data "aws_caller_identity" "current" {}
 
 ---
 
-# 34.112 Provider Lock File
+ # 112 Provider Lock File
 
 Commit:
 
@@ -2571,7 +2571,7 @@ Do not casually delete it.
 
 ---
 
-# 34.113 Version Pinning
+ # 113 Version Pinning
 
 Pin:
 
@@ -2586,7 +2586,7 @@ Avoid uncontrolled floating versions in production.
 
 ---
 
-# 34.114 Module Versioning
+ # 114 Module Versioning
 
 A mature module repository can use:
 
@@ -2600,7 +2600,7 @@ Breaking changes should be versioned.
 
 ---
 
-# 34.115 Terraform Repository CODEOWNERS
+ # 115 Terraform Repository CODEOWNERS
 
 Example:
 
@@ -2614,7 +2614,7 @@ Example:
 
 ---
 
-# 34.116 Terraform Repository README
+ # 116 Terraform Repository README
 
 Document:
 
@@ -2635,7 +2635,7 @@ emergency access
 
 ---
 
-# 34.117 Terraform Production Checklist
+ # 117 Terraform Production Checklist
 
 ```text
 [ ] Remote state
@@ -2659,7 +2659,7 @@ emergency access
 
 ---
 
-# 34.118 VPC Checklist
+ # 118 VPC Checklist
 
 ```text
 [ ] multi-AZ
@@ -2677,7 +2677,7 @@ emergency access
 
 ---
 
-# 34.119 EKS Checklist
+ # 119 EKS Checklist
 
 ```text
 [ ] supported version
@@ -2697,7 +2697,7 @@ emergency access
 
 ---
 
-# 34.120 ECR Checklist
+ # 120 ECR Checklist
 
 ```text
 [ ] immutable tags
@@ -2713,7 +2713,7 @@ emergency access
 
 ---
 
-# 34.121 IAM Checklist
+ # 121 IAM Checklist
 
 ```text
 [ ] least privilege
@@ -2728,7 +2728,7 @@ emergency access
 
 ---
 
-# 34.122 Production Incident — Terraform Failure
+ # 122 Production Incident — Terraform Failure
 
 Symptom:
 
@@ -2754,7 +2754,7 @@ dependency
 
 ---
 
-# 34.123 Failure — State Lock
+ # 123 Failure — State Lock
 
 Symptom:
 
@@ -2774,7 +2774,7 @@ Never blindly force-unlock a state lock while another operation may still be act
 
 ---
 
-# 34.124 Failure — AccessDenied
+ # 124 Failure — AccessDenied
 
 Symptom:
 
@@ -2802,7 +2802,7 @@ aws sts get-caller-identity
 
 ---
 
-# 34.125 Failure — Wrong AWS Account
+ # 125 Failure — Wrong AWS Account
 
 Always verify:
 
@@ -2816,7 +2816,7 @@ In CI, log the account ID safely.
 
 ---
 
-# 34.126 Failure — Unexpected Destroy
+ # 126 Failure — Unexpected Destroy
 
 If plan shows:
 
@@ -2846,7 +2846,7 @@ Do not approve automatically.
 
 ---
 
-# 34.127 Failure — EKS Unavailable
+ # 127 Failure — EKS Unavailable
 
 Check:
 
@@ -2868,7 +2868,7 @@ endpoint configuration
 
 ---
 
-# 34.128 Failure — Nodes Not Joining
+ # 128 Failure — Nodes Not Joining
 
 Check:
 
@@ -2893,7 +2893,7 @@ and AWS console/CLI node-group status.
 
 ---
 
-# 34.129 Failure — ECR Push Denied
+ # 129 Failure — ECR Push Denied
 
 Check:
 
@@ -2916,7 +2916,7 @@ docker login \
 
 ---
 
-# 34.130 Failure — Terraform Drift
+ # 130 Failure — Terraform Drift
 
 Symptom:
 
@@ -2938,7 +2938,7 @@ Do not blindly apply.
 
 ---
 
-# 34.131 Production Change Example
+ # 131 Production Change Example
 
 Request:
 
@@ -2982,7 +2982,7 @@ kubectl get pods -A
 
 ---
 
-# 34.132 Terraform and GitOps Deployment
+ # 132 Terraform and GitOps Deployment
 
 The complete lifecycle:
 
@@ -3011,7 +3011,7 @@ Infrastructure must exist before dependent Kubernetes resources can operate.
 
 ---
 
-# 34.133 Bootstrap Dependency
+ # 133 Bootstrap Dependency
 
 A clean approach:
 
@@ -3031,7 +3031,7 @@ applications
 
 ---
 
-# 34.134 Layer 1 — Terraform
+ # 134 Layer 1 — Terraform
 
 Terraform:
 
@@ -3046,7 +3046,7 @@ networking
 
 ---
 
-# 34.135 Layer 2 — Platform
+ # 135 Layer 2 — Platform
 
 Platform deployment:
 
@@ -3063,7 +3063,7 @@ The selected mechanism may be Helm/GitOps after Argo CD bootstrap.
 
 ---
 
-# 34.136 Layer 3 — Argo CD
+ # 136 Layer 3 — Argo CD
 
 Argo CD manages:
 
@@ -3076,7 +3076,7 @@ policies
 
 ---
 
-# 34.137 Layer 4 — RoboShop
+ # 137 Layer 4 — RoboShop
 
 ```text
 frontend
@@ -3090,7 +3090,7 @@ checkout
 
 ---
 
-# 34.138 Terraform vs GitOps Decision Table
+ # 138 Terraform vs GitOps Decision Table
 
 | Requirement | Terraform | GitOps |
 |---|---|---|
@@ -3113,7 +3113,7 @@ The exact boundary can vary, but avoid dual ownership.
 
 ---
 
-# 34.139 Production Cost Considerations
+ # 139 Production Cost Considerations
 
 Terraform should help enforce:
 
@@ -3131,7 +3131,7 @@ Cost optimization must not destroy required production resilience.
 
 ---
 
-# 34.140 Tagging for Cost
+ # 140 Tagging for Cost
 
 Every resource should receive:
 
@@ -3147,7 +3147,7 @@ Where AWS service support permits tagging.
 
 ---
 
-# 34.141 Terraform Documentation
+ # 141 Terraform Documentation
 
 Every module should explain:
 
@@ -3163,7 +3163,7 @@ upgrade notes
 
 ---
 
-# 34.142 Module README Example
+ # 142 Module README Example
 
 ```text
 # VPC Module
@@ -3191,7 +3191,7 @@ Outputs:
 
 ---
 
-# 34.143 Testing
+ # 143 Testing
 
 Terraform testing can include:
 
@@ -3213,7 +3213,7 @@ can validate module behavior where suitable.
 
 ---
 
-# 34.144 Terraform Test Philosophy
+ # 144 Terraform Test Philosophy
 
 Test:
 
@@ -3229,7 +3229,7 @@ Do not rely only on successful `terraform validate`.
 
 ---
 
-# 34.145 Production Plan Review
+ # 145 Production Plan Review
 
 Senior engineer reviews:
 
@@ -3249,7 +3249,7 @@ The highest risk is often not the number of resources but the type of change.
 
 ---
 
-# 34.146 Emergency Terraform Change
+ # 146 Emergency Terraform Change
 
 Emergency infrastructure changes should still have:
 
@@ -3266,7 +3266,7 @@ Never leave production infrastructure permanently changed only through the conso
 
 ---
 
-# 34.147 Manual AWS Change
+ # 147 Manual AWS Change
 
 If an emergency console change is required:
 
@@ -3290,7 +3290,7 @@ Otherwise future Terraform runs may undo it.
 
 ---
 
-# 34.148 Terraform Drift Monitoring
+ # 148 Terraform Drift Monitoring
 
 Run scheduled:
 
@@ -3310,7 +3310,7 @@ Do not automatically apply drift unless explicitly designed and approved.
 
 ---
 
-# 34.149 Security Hardening
+ # 149 Security Hardening
 
 Terraform repository should enforce:
 
@@ -3330,7 +3330,7 @@ policy checks
 
 ---
 
-# 34.150 Supply Chain Security
+ # 150 Supply Chain Security
 
 Protect:
 
@@ -3346,7 +3346,7 @@ Pin trusted versions and review dependency changes.
 
 ---
 
-# 34.151 Complete Directory Example
+ # 151 Complete Directory Example
 
 ```text
 roboshop-infrastructure/
@@ -3396,7 +3396,7 @@ roboshop-infrastructure/
 
 ---
 
-# 34.152 Production Scripts
+ # 152 Production Scripts
 
 ## fmt-check.sh
 
@@ -3428,7 +3428,7 @@ trivy config .
 
 ---
 
-# 34.153 Plan Script
+ # 153 Plan Script
 
 ```bash
 #!/usr/bin/env bash
@@ -3448,7 +3448,7 @@ CI should inject credentials and variable values securely.
 
 ---
 
-# 34.154 Production Apply Script
+ # 154 Production Apply Script
 
 ```bash
 #!/usr/bin/env bash
@@ -3470,7 +3470,7 @@ Production approval should happen in CI before invoking this.
 
 ---
 
-# 34.155 Complete Terraform Workflow
+ # 155 Complete Terraform Workflow
 
 ```text
 Developer
@@ -3511,7 +3511,7 @@ GitOps
 
 ---
 
-# 34.156 Senior Interview — What Does Terraform Manage?
+ # 156 Senior Interview — What Does Terraform Manage?
 
 Strong answer:
 
@@ -3527,7 +3527,7 @@ That separation prevents Terraform and Argo CD from competing over the same Kube
 
 ---
 
-# 34.157 Senior Interview — Why Remote State?
+ # 157 Senior Interview — Why Remote State?
 
 Answer:
 
@@ -3541,7 +3541,7 @@ It also makes CI/CD-based infrastructure operations possible.
 
 ---
 
-# 34.158 Senior Interview — How Do You Secure State?
+ # 158 Senior Interview — How Do You Secure State?
 
 Answer:
 
@@ -3555,7 +3555,7 @@ The CI identity gets only the state access and AWS permissions it needs.
 
 ---
 
-# 34.159 Senior Interview — Terraform Drift
+ # 159 Senior Interview — Terraform Drift
 
 Answer:
 
@@ -3572,7 +3572,7 @@ I don't blindly apply a plan because it may overwrite an emergency or controller
 
 ---
 
-# 34.160 Senior Interview — Terraform Rollback
+ # 160 Senior Interview — Terraform Rollback
 
 Answer:
 
@@ -3586,7 +3586,7 @@ For stateful resources I treat rollback especially carefully because recreation 
 
 ---
 
-# 34.161 Senior Interview — Terraform vs Ansible
+ # 161 Senior Interview — Terraform vs Ansible
 
 Answer:
 
@@ -3600,7 +3600,7 @@ In this architecture Terraform creates AWS infrastructure, while Kubernetes and 
 
 ---
 
-# 34.162 Senior Interview — Why Not Terraform Everything?
+ # 162 Senior Interview — Why Not Terraform Everything?
 
 Answer:
 
@@ -3617,7 +3617,7 @@ Clear ownership boundaries make the platform easier to operate.
 
 ---
 
-# 34.163 Senior Interview — How Would You Rebuild Production?
+ # 163 Senior Interview — How Would You Rebuild Production?
 
 Answer:
 
@@ -3629,7 +3629,7 @@ Data recovery is handled separately according to the database backup and replica
 
 ---
 
-# 34.164 Senior Interview — EKS Security
+ # 164 Senior Interview — EKS Security
 
 Answer:
 
@@ -3641,7 +3641,7 @@ I also avoid static AWS credentials inside pods.
 
 ---
 
-# 34.165 Senior Interview — ECR Security
+ # 165 Senior Interview — ECR Security
 
 Answer:
 
@@ -3653,7 +3653,7 @@ CI gets push access while workloads get only the pull access they require.
 
 ---
 
-# 34.166 Senior Interview — Infrastructure Change Process
+ # 166 Senior Interview — Infrastructure Change Process
 
 Answer:
 
@@ -3669,7 +3669,7 @@ After apply, I validate AWS and dependent Kubernetes services.
 
 ---
 
-# 34.167 Production Terraform Principles
+ # 167 Production Terraform Principles
 
 ```text
 Infrastructure as Code
@@ -3693,7 +3693,7 @@ Reliable Infrastructure Delivery
 
 ---
 
-# 34.168 Final Architecture
+ # 168 Final Architecture
 
 ```text
                  ┌──────────────────────┐
@@ -3740,7 +3740,7 @@ Reliable Infrastructure Delivery
 
 ---
 
-# 34.169 Final Production Checklist
+ # 169 Final Production Checklist
 
 ```text
 Repository
@@ -3797,7 +3797,7 @@ GitOps boundary
 
 ---
 
-# 34.170 Final Takeaway
+ # 170 Final Takeaway
 
 A production Terraform repository should be treated as a critical engineering system, not merely a collection of `.tf` files.
 
