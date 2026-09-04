@@ -1,4 +1,4 @@
-# 11 --- CI Pipeline --- Production DevOps Capstone
+# CI Pipeline
 
 > Deep production-oriented notes for AWS, EKS, ECR, GitLab CI, Docker,
 > DevSecOps, GitOps, and Argo CD.
@@ -2217,3 +2217,5 @@ ECR = immutable artifact registry
 **A production CI pipeline should make it difficult to deploy an unknown
 artifact, easy to prove what was deployed, and fast to recover to a
 known-good state.**
+
+---
